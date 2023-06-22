@@ -68,7 +68,6 @@ class TestModels(unittest.TestCase):
     def run_instance(self, case: Tuple[str, str]):
         (model_file, request_file) = case 
 
-        
         model = self.get_model(model_file)
         request = pydantic.parse_file_as(FunmanWorkRequest, request_file)
         
@@ -78,17 +77,17 @@ class TestModels(unittest.TestCase):
         sleep(2)  # need to sleep until worker has a chance to start working
         while True:
             if self._worker.is_processing_id(work_unit.id):
-                sleep(1)
+                results = self._worker.get_results(work_unit.id)
+                ParameterSpacePlotter(
+                    results.parameter_space, plot_points=True
+                ).plot(show=True)
+                plt.savefig(f"{out_dir}/{model.__module__}.png")
+                sleep(2)
             else:
                 results = self._worker.get_results(work_unit.id)
                 break
 
         assert results
-
-        ParameterSpacePlotter(results.parameter_space, plot_points=True).plot(
-            show=True
-        )
-        plt.savefig(f"{out_dir}/{model.name}.png")
 
         assert True
 
