@@ -122,14 +122,13 @@ class TestDeterminism(unittest.TestCase):
         request = json.loads(REQUEST_PATH.read_bytes())
         return model, request
 
-    @unittest.skip("tmp")
     def test_without_mcts(self):
         model, request = self.get_amr_petrinet_sir()
         request["config"]["dreal_mcts"] = False
         request["config"]["dreal_log_level"] = "debug"
         self.check_determinism(model, request)
 
-    # @unittest.skip("Disable until mcts has an assignable seed")
+    @unittest.skip("Disable until mcts has an assignable seed")
     def test_with_mcts(self):
         model, request = self.get_amr_petrinet_sir()
         request["config"]["dreal_mcts"] = True
