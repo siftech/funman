@@ -7,8 +7,6 @@ import logging
 from functools import total_ordering
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
-import hashlib
-
 
 from pydantic import BaseModel
 from pysmt.fnode import FNode

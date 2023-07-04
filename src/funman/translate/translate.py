@@ -5,7 +5,6 @@ This module defines the abstract base classes for the model encoder classes in f
 from abc import ABC, abstractmethod
 from typing import Dict, List, Set, Tuple, Union
 
-
 import pysmt
 from numpy import isin
 from pydantic import BaseModel, Extra

@@ -4,7 +4,6 @@ This module defines the Parameter Synthesis scenario.
 import threading
 from typing import Callable, Dict, List, Optional, Union
 
-
 from pandas import DataFrame
 from pydantic import BaseModel
 from pysmt.formula import FNode
@@ -28,7 +27,7 @@ from funman.model.query import (
     QueryLE,
 )
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation import Parameter, StructureParameter, ModelParameter
+from funman.representation import ModelParameter, Parameter, StructureParameter
 from funman.representation.representation import (
     ModelParameter,
     ParameterSpace,
