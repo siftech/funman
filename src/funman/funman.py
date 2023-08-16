@@ -77,11 +77,11 @@ class FUNMANConfig(BaseModel):
     """ Simplify query by propagating substutions """
     simplify_query = True
     """ Series approximation threshold for dropping series terms """
-    series_approximation_threshold = 0
+    series_approximation_threshold = 1e-10
     """ Generate profiling output"""
     profile = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
-    taylor_series_order: int = None
+    taylor_series_order: int = 4
 
     @validator("solver")
     def import_dreal(cls, v):
