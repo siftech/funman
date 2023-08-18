@@ -219,9 +219,9 @@ class FunmanWorker:
                         resultsCallback=self._update_current_results,
                     )
                     self.current_results.finalize_result(result)
-                    print(f"Completed work on: {work.id}")
+                    l.info(f"Completed work on: {work.id}")
                 except Exception as e:
-                    print(
+                    l.exception(
                         f"Internal Server Error ({work.id}):", file=sys.stderr
                     )
                     traceback.print_exc()
