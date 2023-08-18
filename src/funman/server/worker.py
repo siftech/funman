@@ -220,7 +220,7 @@ class FunmanWorker:
                     )
                     self.current_results.finalize_result(result)
                     l.info(f"Completed work on: {work.id}")
-                except Exception:
+                except Exception as e:
                     l.exception(
                         f"Internal Server Error ({work.id}):", file=sys.stderr
                     )
