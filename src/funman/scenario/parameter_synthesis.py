@@ -70,7 +70,7 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
     ]
     query: Union[
         QueryAnd, QueryGE, QueryLE, QueryEncoded, QueryFunction, QueryTrue
-    ]
+    ] = QueryTrue()
     _search: str = "BoxSearch"
     _smt_encoder: Optional[
         Encoder
