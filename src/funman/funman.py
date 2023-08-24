@@ -77,7 +77,7 @@ class FUNMANConfig(BaseModel):
     """ Simplify query by propagating substutions """
     simplify_query = True
     """ Series approximation threshold for dropping series terms """
-    series_approximation_threshold = 1e-10
+    series_approximation_threshold = 1e-5
     """ Generate profiling output"""
     profile = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
