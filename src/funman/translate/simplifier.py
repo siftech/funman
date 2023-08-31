@@ -1,6 +1,5 @@
 from typing import Dict, List
-from funman.constants import POS_INFINITY
-import sys
+
 import pysmt
 from pysmt.fnode import FNode
 from pysmt.shortcuts import get_env
@@ -21,6 +20,7 @@ from sympy import (
     sympify,
 )
 
+from funman.constants import POS_INFINITY
 from funman.representation.representation import ModelParameter
 from funman.utils.sympy_utils import (
     replace_reserved,

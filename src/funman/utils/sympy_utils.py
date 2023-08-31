@@ -144,7 +144,9 @@ def to_sympy(
     elif isinstance(formula, Expr):
         expr = formula
     else:
-        raise NotImplementedError(f"to_sympy() cannot convert formula {formula} of type {type(formula)} to sympy expression")
+        raise NotImplementedError(
+            f"to_sympy() cannot convert formula {formula} of type {type(formula)} to sympy expression"
+        )
     return expr
 
 
