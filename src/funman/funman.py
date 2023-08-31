@@ -67,21 +67,21 @@ class FUNMANConfig(BaseModel):
     """Constraint noise term to relax constraints"""
     constraint_noise: float = 0.0
     """Use MCTS in dreal"""
-    dreal_mcts = True
+    dreal_mcts: bool = True
     """Substitute subformulas to simplify overall encoding"""
-    substitute_subformulas = True
+    substitute_subformulas: bool = True
     """Enforce compartmental variable constraints"""
-    use_compartmental_constraints = True
-    """Normalize"""
-    normalize = True
+    use_compartmental_constraints: bool = True
+    """Normalization constant > 0 if float, auto calculate if True, or no normalization if False"""
+    normalize: Union[float, bool] = 1.0
     """ Simplify query by propagating substutions """
-    simplify_query = True
+    simplify_query: bool = True
     """ Series approximation threshold for dropping series terms """
-    series_approximation_threshold = 1e-5
+    series_approximation_threshold: float = 1e-8
     """ Generate profiling output"""
-    profile = False
+    profile: bool = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
-    taylor_series_order: int = 4
+    taylor_series_order: int = 3
 
     @validator("solver")
     def import_dreal(cls, v):
@@ -131,8 +131,7 @@ class Funman(object):
             The resulting data, statistics, and other relevant information
             produced by the analysis.
         """
-        problem.model._normalize = config.normalize
-
+        
         if config.profile:
             import cProfile
 
