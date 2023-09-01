@@ -102,8 +102,8 @@ class GeneratedRegnetModel(AbstractRegnetModel):
             else transitition.id
         )
 
-    def _get_init_value(self, var: str):
-        value = Model._get_init_value(self, var)
+    def _get_init_value(self, var: str, scenario:"AnalysisScenario"):
+        value = Model._get_init_value(self, var, scenario)
         if value is None:
             state_var = next(s for s in self._state_vars() if s.id == var)
             value = state_var.initial.__root__
@@ -117,8 +117,8 @@ class RegnetDynamics(BaseModel):
 class RegnetModel(AbstractRegnetModel):
     regnet: RegnetDynamics
 
-    def _get_init_value(self, var: str):
-        value = Model._get_init_value(self, var)
+    def _get_init_value(self, var: str, scenario:"AnalysisScenario"):
+        value = Model._get_init_value(self, var, scenario)
         if value is None:
             state_var = next(s for s in self._state_vars() if s["id"] == var)
             if "initial" in state_var:

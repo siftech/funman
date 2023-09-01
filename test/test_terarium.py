@@ -2,6 +2,7 @@ import json
 import unittest
 from pathlib import Path
 from time import sleep
+import os
 
 import httpx
 from fastapi.testclient import TestClient
@@ -9,9 +10,11 @@ from fastapi.testclient import TestClient
 from funman.api.api import app
 
 # Read in the model associated with this example
-RESOURCES_PREFIX = "resources/"
+RESOURCES_PREFIX = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "../resources"
+)
 TEST_JSON = json.loads(
-    Path(f"{RESOURCES_PREFIX}terarium-tests.json").read_bytes()
+    Path(f"{RESOURCES_PREFIX}/terarium-tests.json").read_bytes()
 )
 
 
@@ -23,7 +26,7 @@ class TestTerarium(unittest.TestCase):
 
             # Read in the model dict
             model = json.loads(
-                Path(f'{RESOURCES_PREFIX}{test["model-path"]}').read_bytes()
+                Path(f'{RESOURCES_PREFIX}/{test["model-path"]}').read_bytes()
             )
 
             # Either read in the request json or default to an empty dict
@@ -32,7 +35,7 @@ class TestTerarium(unittest.TestCase):
             else:
                 request = json.loads(
                     Path(
-                        f'{RESOURCES_PREFIX}{test["request-path"]}'
+                        f'{RESOURCES_PREFIX}/{test["request-path"]}'
                     ).read_bytes()
                 )
 
@@ -181,3 +184,7 @@ class TestTerarium(unittest.TestCase):
                 is_done_processing is True
             ), f"Expected work to be done for {uuid}"
         return results
+
+
+if __name__ == "__main__":
+    unittest.main()
