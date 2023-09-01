@@ -3,6 +3,7 @@ import os
 import unittest
 from pathlib import Path
 from time import sleep
+import os
 
 import httpx
 from fastapi.testclient import TestClient
@@ -181,3 +182,7 @@ class TestTerarium(unittest.TestCase):
                 is_done_processing is True
             ), f"Expected work to be done for {uuid}"
         return results
+
+
+if __name__ == "__main__":
+    unittest.main()
