@@ -1,3 +1,4 @@
+import logging
 import queue
 import sys
 import threading
@@ -15,10 +16,10 @@ from funman.server.query import (
     FunmanWorkRequest,
     FunmanWorkUnit,
 )
-import logging
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)
+
 
 class WorkerState(Enum):
     """

@@ -135,12 +135,12 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
         self._extract_non_overriden_parameters()
         self._filter_parameters()
 
-        if config.normalize:
-            if config.normalization_constant is not None:
-                self.normalization_constant = config.normalization_constant
-            else: # is bool True
-                self.normalization_constant = self.model.calculate_normalization_constant(self)
-         
+        if config.normalization_constant is not None:
+            self.normalization_constant = config.normalization_constant
+        else:
+            self.normalization_constant = (
+                self.model.calculate_normalization_constant(self, config)
+            )
 
         num_parameters = len(self.parameters)
         if self._smt_encoder is None:
@@ -149,8 +149,6 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
         self._original_parameter_widths = {
             p: minus(p.ub, p.lb) for p in self.parameters
         }
-
-   
 
         parameter_space: ParameterSpace = search.search(
             self,
@@ -186,7 +184,9 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
             self._smt_encoder = self.model.default_encoder(config)
         self._assume_model = Symbol("assume_model")
         self._assume_query = Symbol("assume_query")
-        self._model_encoding = self._smt_encoder.encode_model(self.model, config)
+        self._model_encoding = self._smt_encoder.encode_model(
+            self.model, config
+        )
         self._model_encoding._formula = Iff(
             self._assume_model, self._model_encoding._formula
         )
@@ -230,7 +230,9 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
         # self._query_encoding.assume(self._assume_query)
         return self._model_encoding, self._query_encoding
 
-    def encode_simplified(self, box: Box, timepoint: int):
+    def encode_simplified(
+        self, box: Box, timepoint: int, config: "FUNMANConfig"
+    ):
         model_encoding = self._model_encoding.encoding(
             self._model_encoding._encoder.encode_model_layer,
             layers=list(range(timepoint + 1)),
@@ -240,7 +242,8 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
             partial(
                 self._query_encoding._encoder.encode_query_layer,
                 self.query,
-                self
+                self,
+                config,
             ),
             layers=[timepoint],
             box=box,

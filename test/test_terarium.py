@@ -1,8 +1,8 @@
 import json
+import os
 import unittest
 from pathlib import Path
 from time import sleep
-import os
 
 import httpx
 from fastapi.testclient import TestClient
@@ -155,7 +155,6 @@ class TestTerarium(unittest.TestCase):
         *,
         expect_error: bool = False,
     ) -> dict:
-
         """
         Make a query with a provided model and request and wait until it is done processing
         (by polling the status of the request until it reports it is done).
