@@ -483,6 +483,7 @@ class Box(BaseModel):
     type: Literal["box"] = "box"
     label: Label = LABEL_UNKNOWN
     bounds: Dict[str, Interval] = {}
+    explanation: Optional[str]
     cached_width: Optional[float] = None
 
     class Config:
