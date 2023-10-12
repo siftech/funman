@@ -4,7 +4,7 @@ This module encodes bilayer models into a SMTLib formula.
 """
 import logging
 from functools import reduce
-from typing import Dict, List, Tuple, Set
+from typing import Dict, Set, Tuple
 
 from pysmt.formula import FNode
 from pysmt.shortcuts import (

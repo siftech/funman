@@ -1,16 +1,5 @@
-from typing import List
-
 from pysmt.formula import FNode
-from pysmt.shortcuts import (
-    REAL,
-    TRUE,
-    And,
-    Equals,
-    Plus,
-    Real,
-    Symbol,
-    Times,
-)
+from pysmt.shortcuts import REAL, TRUE, And, Equals, Plus, Real, Symbol, Times
 
 from funman.model.model import Model
 

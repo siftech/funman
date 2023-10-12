@@ -5,10 +5,7 @@ from numpy import average
 from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
-from funman.constants import (
-    NEG_INFINITY,
-    POS_INFINITY,
-)
+from funman.constants import NEG_INFINITY, POS_INFINITY
 
 
 class Interval(BaseModel):

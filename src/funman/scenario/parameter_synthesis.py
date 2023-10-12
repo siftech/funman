@@ -78,7 +78,7 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
             resultsCallback=resultsCallback,
         )
 
-        parameter_space.num_dimensions =  len(self.parameters)
+        parameter_space.num_dimensions = len(self.parameters)
         return ParameterSynthesisScenarioResult(
             parameter_space=parameter_space, scenario=self
         )

@@ -5,8 +5,6 @@ from time import sleep
 from timeit import default_timer
 from typing import Dict, Tuple, Union
 
-# import matplotlib.pyplot as plt
-
 from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
@@ -18,6 +16,9 @@ from funman.server.query import (
 )
 from funman.server.storage import Storage
 from funman.server.worker import FunmanWorker
+
+# import matplotlib.pyplot as plt
+
 
 # from funman_demo.parameter_space_plotter import ParameterSpacePlotter
 

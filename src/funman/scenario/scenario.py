@@ -1,3 +1,4 @@
+import logging
 import threading
 from abc import ABC, abstractclassmethod, abstractmethod
 from decimal import Decimal
@@ -35,9 +36,9 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 
-import logging
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)
+
 
 class AnalysisScenario(ABC, BaseModel):
     """
@@ -66,7 +67,7 @@ class AnalysisScenario(ABC, BaseModel):
         DecapodeModel,
         BilayerModel,
         EncodedModel,
-        EnsembleModel
+        EnsembleModel,
     ]
     query: Union[
         QueryAnd, QueryGE, QueryLE, QueryEncoded, QueryFunction, QueryTrue
