@@ -866,6 +866,9 @@ class ParameterSpace(BaseModel):
     def points(self) -> List[Point]:
         return self.true_points + self.false_points
 
+    def boxes(self) -> List[Box]:
+        return self.true_boxes + self.false_boxes
+
     def explain(self) -> ParameterSpaceExplanation:
         true_explanations = [box.explain() for box in self.true_boxes]
         false_explanations = [box.explain() for box in self.false_boxes]

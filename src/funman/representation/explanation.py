@@ -76,6 +76,8 @@ class BoxExplanation(Explanation):
             expl["expression"] = self.expression
         return expl
 
+    def __str__(self) -> str:
+        return self.explain()
 
 class ParameterSpaceExplanation(Explanation):
     true_explanations: List[BoxExplanation] = []
