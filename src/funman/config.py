@@ -81,7 +81,7 @@ class FUNMANConfig(BaseModel):
     """ Generate profiling output"""
     profile: bool = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
-    taylor_series_order: int = 3
+    taylor_series_order: Optional[int] = 3
 
     @field_validator("solver")
     @classmethod
