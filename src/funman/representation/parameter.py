@@ -7,12 +7,7 @@ from pysmt.fnode import FNode
 from pysmt.shortcuts import REAL, Symbol
 
 import funman.utils.math_utils as math_utils
-from funman import (
-    LABEL_ALL,
-    LABEL_ANY,
-    NEG_INFINITY,
-    POS_INFINITY,
-)
+from funman import LABEL_ALL, LABEL_ANY, NEG_INFINITY, POS_INFINITY
 
 from .symbol import ModelSymbol
 

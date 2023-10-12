@@ -14,9 +14,7 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import (
-    StateVariableConstraint,
-)
+from funman.representation.constraint import StateVariableConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     LabeledParameter,

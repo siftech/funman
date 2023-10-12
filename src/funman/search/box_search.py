@@ -16,10 +16,10 @@ from queue import PriorityQueue as PQueueSP
 from queue import Queue as QueueSP
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pydantic import ConfigDict, BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import And, Not, Solver, Implies
+from pysmt.shortcuts import And, Implies, Not, Solver
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman import (
@@ -31,9 +31,7 @@ from funman import (
 )
 from funman.config import FUNMANConfig
 from funman.representation.assumption import Assumption
-from funman.representation.constraint import (
-    ParameterConstraint,
-)
+from funman.representation.constraint import ParameterConstraint
 from funman.representation.explanation import Explanation
 from funman.search import Box, ParameterSpace, Point, Search, SearchEpisode
 from funman.search.search import SearchStaticsMP, SearchStatistics
@@ -45,10 +43,10 @@ LOG_LEVEL = logging.INFO
 l = logging.getLogger(__file__)
 l.setLevel(LOG_LEVEL)
 
+
 class FormulaStackFrame(BaseModel):
     formulas: List[FNode] = []
     simplified_formulas: List[FNode] = []
-
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -56,7 +54,7 @@ class FormulaStackFrame(BaseModel):
 
     def add_assertion(self, formula, is_simplified=False):
         if is_simplified:
-            self.simplified_formulas.append(formula)            
+            self.simplified_formulas.append(formula)
         else:
             self.formulas.append(formula)
 
@@ -76,18 +74,19 @@ class FormulaStack(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
     )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.push(1, push_solver=False)
 
-    def pop(self, levels:int=1, pop_solver: bool = True):
+    def pop(self, levels: int = 1, pop_solver: bool = True):
         for i in range(levels):
             if pop_solver:
                 self.solver.pop(1)
             self.formula_stack.pop()
             self.time -= 1
-    
-    def push(self, levels: int=1, push_solver: bool = True):
+
+    def push(self, levels: int = 1, push_solver: bool = True):
         for i in range(levels):
             self.formula_stack.append(FormulaStackFrame())
             if push_solver:
@@ -99,34 +98,45 @@ class FormulaStack(BaseModel):
     #     return str({"formula_stack": s_stack, "time": str(self.time)})
 
     def add_assertion(self, formula):
-        
-        self.formula_stack[self.time+1].add_assertion(formula, is_simplified=False)
+        self.formula_stack[self.time + 1].add_assertion(
+            formula, is_simplified=False
+        )
 
-        if self.substitutions is not None:    
-            simplified_formula = formula.substitute(self.substitutions).simplify()
-            self.formula_stack[self.time+1].add_assertion(simplified_formula, is_simplified=True)
+        if self.substitutions is not None:
+            simplified_formula = formula.substitute(
+                self.substitutions
+            ).simplify()
+            self.formula_stack[self.time + 1].add_assertion(
+                simplified_formula, is_simplified=True
+            )
             self.solver.add_assertion(simplified_formula)
         else:
             self.solver.add_assertion(formula)
 
-    def to_list(self, simplified=False)-> List[FNode]:
+    def to_list(self, simplified=False) -> List[FNode]:
         if simplified:
-            return [f for sf in self.formula_stack for f in sf.simplified_formulas]
+            return [
+                f for sf in self.formula_stack for f in sf.simplified_formulas
+            ]
         else:
             return [f for sf in self.formula_stack for f in sf.formulas]
 
-
     def compute_assignment(self) -> pysmtModel:
         self.push()
-        original_formulas = [formula for frame in self.formula_stack for formula in frame.formulas]
+        original_formulas = [
+            formula
+            for frame in self.formula_stack
+            for formula in frame.formulas
+        ]
         for formula in original_formulas:
             self.solver.add_assertion(formula)
             self.formula_stack[-1].add_assertion(formula)
-        assert self.solver.solve(), f"Could not compute Assignment from simplified formulas"
+        assert (
+            self.solver.solve()
+        ), f"Could not compute Assignment from simplified formulas"
         result = self.solver.get_model()
         self.pop()
         return result
-
 
 
 class BoxSearchEpisode(SearchEpisode):
@@ -160,7 +170,11 @@ class BoxSearchEpisode(SearchEpisode):
         self._unknown_boxes = QueueSP()
         self.statistics = SearchStatistics()
         if self.config.substitute_subformulas and self.config.simplify_query:
-            self._formula_stack.substitutions = self.problem._encodings[self.structural_configuration["step_size"]]._encoder.substitutions(self.structural_configuration["step_size"])
+            self._formula_stack.substitutions = self.problem._encodings[
+                self.structural_configuration["step_size"]
+            ]._encoder.substitutions(
+                self.structural_configuration["step_size"]
+            )
 
     # def __init__(
     #     self,
@@ -399,8 +413,15 @@ class BoxSearch(Search):
         else:
             return True
 
-    def _simplify_formula(self, formula: FNode, episode:BoxSearchEpisode, options: EncodingOptions)->FNode:
-        substitutions = episode.problem._encodings[options.step_size]._encoder.substitutions(options.step_size)
+    def _simplify_formula(
+        self,
+        formula: FNode,
+        episode: BoxSearchEpisode,
+        options: EncodingOptions,
+    ) -> FNode:
+        substitutions = episode.problem._encodings[
+            options.step_size
+        ]._encoder.substitutions(options.step_size)
         return formula.substitute(substitutions).simplify()
 
     def _initialize_encoding(
@@ -431,9 +452,9 @@ class BoxSearch(Search):
         # Prepare the formula stack by popping irrelevant layers
         time_difference = timepoint - episode._formula_stack.time
         if time_difference < 0:
-            for i in range(abs(int(time_difference-1))):
+            for i in range(abs(int(time_difference - 1))):
                 episode._formula_stack.pop()
-                
+
         elif time_difference > 0:
             # Prepare the formulas for each added layer
             layer_formulas = []
@@ -447,7 +468,7 @@ class BoxSearch(Search):
             #     "step_sizes"
             # ].index(step_size)
 
-            for t in range(episode._formula_stack.time+1, timepoint+1):
+            for t in range(episode._formula_stack.time + 1, timepoint + 1):
                 encoded_constraints = []
                 for constraint in episode.problem.constraints:
                     if constraint.encodable() and constraint.relevant_at_time(
@@ -465,12 +486,10 @@ class BoxSearch(Search):
                         )
                 formula = And(encoded_constraints)
                 layer_formulas.append(formula)
-                
 
             for layer, formula in enumerate(layer_formulas):
                 episode._formula_stack.push(1)
                 episode._formula_stack.add_assertion(formula)
-                
 
     def _initialize_box(
         self,
@@ -504,6 +523,7 @@ class BoxSearch(Search):
             )
         formula = And(parameter_formulas)
         episode._formula_stack.add_assertion(formula)
+
     def _setup_false_query(self, solver, episode, box, options):
         """
         Setup the assumptions so that satisfying the formulas requires that  either the model or the query is false
@@ -517,27 +537,50 @@ class BoxSearch(Search):
         """
         episode._formula_stack.push(1)
         timepoint = int(box.bounds["num_steps"].lb)
-        encoder = episode.problem._encodings[
-            options.step_size
-        ]._encoder
-        assumptions = encoder.encode_assumptions(episode.problem._assumptions, options)
+        encoder = episode.problem._encodings[options.step_size]._encoder
+        assumptions = encoder.encode_assumptions(
+            episode.problem._assumptions, options
+        )
         formula = Not(And([v for k, v in assumptions.items()]))
 
         box_timepoint = int(box.bounds["num_steps"].lb)
-        formula1 = And([Implies(And([
-            encoder.encode_assumption(k, options, layer_idx=i)
-            for i in range(box_timepoint+1)
-        ]), v) for k, v in assumptions.items()])
+        formula1 = And(
+            [
+                Implies(
+                    And(
+                        [
+                            encoder.encode_assumption(k, options, layer_idx=i)
+                            for i in range(box_timepoint + 1)
+                        ]
+                    ),
+                    v,
+                )
+                for k, v in assumptions.items()
+            ]
+        )
 
-        formula2 = And([And([
-            encoder.encode_assumption(k, options, layer_idx=i)
-            for i in range(box_timepoint)
-        ] + [Not(encoder.encode_assumption(k, options, layer_idx=box_timepoint))]) for k, v in assumptions.items()])
+        formula2 = And(
+            [
+                And(
+                    [
+                        encoder.encode_assumption(k, options, layer_idx=i)
+                        for i in range(box_timepoint)
+                    ]
+                    + [
+                        Not(
+                            encoder.encode_assumption(
+                                k, options, layer_idx=box_timepoint
+                            )
+                        )
+                    ]
+                )
+                for k, v in assumptions.items()
+            ]
+        )
 
         formulas = And([formula, formula1, formula2])
 
         episode._formula_stack.add_assertion(formulas)
-
 
     def store_smtlib(self, episode, box, filename="dbg.smt2"):
         with open(filename, "w") as f:
@@ -560,22 +603,39 @@ class BoxSearch(Search):
         """
         episode._formula_stack.push(1)
         timepoint = int(box.bounds["num_steps"].lb)
-        encoder = episode.problem._encodings[
-            options.step_size
-        ]._encoder
-        assumptions = encoder.encode_assumptions(episode.problem._assumptions, options)
+        encoder = episode.problem._encodings[options.step_size]._encoder
+        assumptions = encoder.encode_assumptions(
+            episode.problem._assumptions, options
+        )
         formula = And([v for k, v in assumptions.items()])
 
         box_timepoint = int(box.bounds["num_steps"].lb)
-        formula1 = And([Implies(And([
-            encoder.encode_assumption(k, options, layer_idx=i)
-            for i in range(box_timepoint+1)
-        ]), v) for k, v in assumptions.items()])
+        formula1 = And(
+            [
+                Implies(
+                    And(
+                        [
+                            encoder.encode_assumption(k, options, layer_idx=i)
+                            for i in range(box_timepoint + 1)
+                        ]
+                    ),
+                    v,
+                )
+                for k, v in assumptions.items()
+            ]
+        )
 
-        formula2 = And([And([
-            encoder.encode_assumption(k, options, layer_idx=i)
-            for i in range(box_timepoint+1)
-        ]) for k, v in assumptions.items()])
+        formula2 = And(
+            [
+                And(
+                    [
+                        encoder.encode_assumption(k, options, layer_idx=i)
+                        for i in range(box_timepoint + 1)
+                    ]
+                )
+                for k, v in assumptions.items()
+            ]
+        )
 
         formulas = And([formula, formula1, formula2])
 
@@ -606,7 +666,10 @@ class BoxSearch(Search):
             result = self.invoke_solver(solver)
             if result is not None and isinstance(result, pysmtModel):
                 # If substituted formulas are on the stack, then add the original formulas to compute the values of all variables
-                if episode.config.substitute_subformulas and episode.config.simplify_query:
+                if (
+                    episode.config.substitute_subformulas
+                    and episode.config.simplify_query
+                ):
                     result = episode._formula_stack.compute_assignment()
 
                 # Record the false point
@@ -928,7 +991,7 @@ class BoxSearch(Search):
                             )  # TODO consider merging lists of boxes
                             rval.put(box.model_dump())
                             print(f"--- [{box.width()}] False({box})")
-                        episode._formula_stack.pop() # Remove box from solver
+                        episode._formula_stack.pop()  # Remove box from solver
                         episode._on_iteration()
                         if handler:
                             all_results = handler(

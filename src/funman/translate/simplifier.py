@@ -4,14 +4,7 @@ from typing import Dict, List
 import pysmt
 from pysmt.fnode import FNode
 from pysmt.shortcuts import get_env
-from sympy import (
-    Add,
-    Expr,
-    N,
-    expand,
-    lambdify,
-    symbols,
-)
+from sympy import Add, Expr, N, expand, lambdify, symbols
 
 from funman import ModelParameter
 from funman.utils.sympy_utils import (
