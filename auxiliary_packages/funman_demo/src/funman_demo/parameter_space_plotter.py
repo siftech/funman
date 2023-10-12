@@ -10,7 +10,9 @@ from funman.representation.representation import (
     ParameterSpace,
     Point,
 )
-
+import logging
+logging.getLogger("matplotlib.font_manager").disabled = True
+logging.getLogger("matplotlib.pyplot").disabled = True
 
 class ParameterSpacePlotter:
     def __init__(
