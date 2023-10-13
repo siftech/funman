@@ -12,7 +12,7 @@ from pydantic import AnyUrl, BaseModel, ConfigDict, Field, RootModel
 class Header(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
     name: str
-    schema_: AnyUrl = Field(..., alias='schema')
+    schema_: AnyUrl = Field(..., alias="schema")
     schema_name: Optional[str] = None
     description: str
     model_version: Optional[str] = None
@@ -25,7 +25,7 @@ class Distribution(BaseModel):
 
 class Grounding(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     identifiers: Optional[Dict[str, Any]] = None
     modifiers: Optional[Dict[str, Any]] = None
@@ -66,7 +66,7 @@ class Edge(SignedGraphElement):
 
 class Model1(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     vertices: List[Vertice]
     edges: List[Edge]

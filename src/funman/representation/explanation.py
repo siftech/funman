@@ -79,6 +79,7 @@ class BoxExplanation(Explanation):
     def __str__(self) -> str:
         return self.explain()
 
+
 class ParameterSpaceExplanation(Explanation):
     true_explanations: List[BoxExplanation] = []
     false_explanations: List[BoxExplanation] = []
