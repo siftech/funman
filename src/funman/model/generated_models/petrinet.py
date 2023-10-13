@@ -12,7 +12,7 @@ from pydantic import AnyUrl, BaseModel, ConfigDict, Field, RootModel
 class Header(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
     name: str
-    schema_: AnyUrl = Field(..., alias='schema')
+    schema_: AnyUrl = Field(..., alias="schema")
     schema_name: Optional[str] = None
     description: str
     model_version: Optional[str] = None
@@ -30,7 +30,7 @@ class Initial(Rate):
 
 class Distribution(BaseModel):
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
     type: str
     parameters: Dict[str, Any]
@@ -38,7 +38,7 @@ class Distribution(BaseModel):
 
 class Grounding(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     identifiers: Dict[str, Any]
     modifiers: Optional[Dict[str, Any]] = None
@@ -46,7 +46,7 @@ class Grounding(BaseModel):
 
 class Properties(BaseModel):
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
     name: str
     description: Optional[str] = None
@@ -55,7 +55,7 @@ class Properties(BaseModel):
 
 class Unit(BaseModel):
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
     expression: Optional[str] = None
     expression_mathml: Optional[str] = None
@@ -118,9 +118,10 @@ class Transitions(RootModel[List[Transition]]):
     def __getitem__(self, item):
         return self.root[item]
 
+
 class Model1(BaseModel):
     model_config = ConfigDict(
-        extra='forbid',
+        extra="forbid",
     )
     states: States
     transitions: Transitions
@@ -130,24 +131,24 @@ class Semantics(BaseModel):
     ode: Optional[OdeSemantics] = None
     typing: Optional[TypingSemantics] = Field(
         None,
-        description='(Optional) Information for aligning models for stratification',
+        description="(Optional) Information for aligning models for stratification",
     )
     span: Optional[List[TypingSemantics]] = Field(
         None,
-        description='(Optional) Legs of a span, each of which are a full ASKEM Petri Net',
+        description="(Optional) Legs of a span, each of which are a full ASKEM Petri Net",
     )
 
 
 class Model(BaseModel):
     model_config = ConfigDict(
-        extra='allow',
+        extra="allow",
     )
     header: Header
     properties: Optional[Dict[str, Any]] = None
     model: Model1
     semantics: Optional[Semantics] = Field(
         None,
-        description='Information specific to a given semantics (e.g., ODEs) associated with a model.',
+        description="Information specific to a given semantics (e.g., ODEs) associated with a model.",
     )
     metadata: Optional[Dict[str, Any]] = Field(
         None,
@@ -162,7 +163,7 @@ class TypingSemantics(BaseModel):
     )
     map: List[List[str]] = Field(
         ...,
-        description='A map between the (state and transition) nodes of the model and the (state and transition) nodes of the type system',
+        description="A map between the (state and transition) nodes of the model and the (state and transition) nodes of the type system",
     )
 
 

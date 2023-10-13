@@ -19,8 +19,8 @@ from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     LabeledParameter,
     ModelParameter,
+    Parameter,
     StructureParameter,
-    Parameter
 )
 from funman.representation.representation import ParameterSpace, Point
 from funman.scenario.consistency import (
@@ -220,7 +220,9 @@ class FunmanResults(BaseModel):
         ).to_scenario()
         return scenario
 
-    def point_parameters(self, point: Point, scenario: AnalysisScenario = None) -> Dict[Parameter, float]:
+    def point_parameters(
+        self, point: Point, scenario: AnalysisScenario = None
+    ) -> Dict[Parameter, float]:
         if scenario is None:
             scenario = self._scenario()
         parameters = scenario.parameters
