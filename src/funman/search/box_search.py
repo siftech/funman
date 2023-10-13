@@ -121,7 +121,9 @@ class FormulaStack(BaseModel):
         else:
             return [f for sf in self.formula_stack for f in sf.formulas]
 
-    def compute_assignment(self, episode: SearchEpisode, _smtlib_save_fn:Callable=None) -> pysmtModel:
+    def compute_assignment(
+        self, episode: SearchEpisode, _smtlib_save_fn: Callable = None
+    ) -> pysmtModel:
         self.push()
         original_formulas = [
             formula
@@ -130,12 +132,16 @@ class FormulaStack(BaseModel):
         ]
         for formula in original_formulas:
             self.solver.add_assertion(formula)
-            self.formula_stack[-1].add_assertion(formula, is_simplified=True) # formula is not simplified but want to layer on top of simplified formulas to compute state variables
+            self.formula_stack[-1].add_assertion(
+                formula, is_simplified=True
+            )  # formula is not simplified but want to layer on top of simplified formulas to compute state variables
         if _smtlib_save_fn:
             _smtlib_save_fn(filename=f"box_search_{episode._iteration}")
-        
+
         if not self.solver.solve():
-            raise Exception(f"Could not compute Assignment from simplified formulas")
+            raise Exception(
+                f"Could not compute Assignment from simplified formulas"
+            )
         result = self.solver.get_model()
         self.pop()
         return result
@@ -585,9 +591,9 @@ class BoxSearch(Search):
         episode._formula_stack.add_assertion(formulas)
 
     def store_smtlib(self, episode, box, filename="dbg"):
-        tmp_name = filename+"_0"
-        if os.path.exists(tmp_name+".smt2"):
-            filename, count = tmp_name.rsplit("_",1)
+        tmp_name = filename + "_0"
+        if os.path.exists(tmp_name + ".smt2"):
+            filename, count = tmp_name.rsplit("_", 1)
             count = int(count) + 1
             filename = f"{filename}_{count}"
         else:
@@ -596,7 +602,9 @@ class BoxSearch(Search):
         with open(filename, "w") as f:
             print(f"Saving smtlib file: {filename}")
             smtlibscript_from_formula_list(
-                episode._formula_stack.to_list(simplified=episode.config.simplify_query),
+                episode._formula_stack.to_list(
+                    simplified=episode.config.simplify_query
+                ),
                 logic=QF_NRA,
             ).serialize(f, daggify=False)
 
@@ -680,7 +688,9 @@ class BoxSearch(Search):
                     episode.config.substitute_subformulas
                     and episode.config.simplify_query
                 ):
-                    result = episode._formula_stack.compute_assignment(episode, _smtlib_save_fn=_smtlib_save_fn)
+                    result = episode._formula_stack.compute_assignment(
+                        episode, _smtlib_save_fn=_smtlib_save_fn
+                    )
 
                 # Record the false point
                 points = [episode._extract_point(result, box)]
@@ -836,11 +846,7 @@ class BoxSearch(Search):
             episode._add_true_point,
             my_solver,
             options,
-            _smtlib_save_fn=partial(
-                self.store_smtlib,
-                episode,
-                box
-            )
+            _smtlib_save_fn=partial(self.store_smtlib, episode, box)
             if episode.config.save_smtlib
             else None,
         )
