@@ -1,6 +1,8 @@
+import json
 import os
 
 from funman.api.run import Runner
+from funman import Point
 
 
 def main():
@@ -19,12 +21,25 @@ def main():
         #     "ub": 300
         # },
         "constraints": [
-            # {
-            #     "name": "I_bounds",
-            #     "variable" : "I",
-            #     "bounds": {"lb":0.85, "ub":2},
-            #     "timepoints": {"lb":1, "ub":2}
-            # },
+            {
+                "name": "I_bounds",
+                "variable" : "I",
+                "bounds": {"lb":0.85},
+                "timepoints": {"lb":1, "ub":2}
+            },
+                        {
+                "name": "I_bounds",
+                "variable" : "I",
+                "bounds": {"lb":0.8},
+                "timepoints": {"lb":2, "ub":3}
+            },
+                        {
+                "name": "I_bounds",
+                "variable" : "I",
+                "bounds": {"lb":0.7},
+                "timepoints": {"lb":3, "ub":4}
+            },
+
             # {
             #     "name": "R_bounds",
             #     "variable" : "R",
@@ -46,18 +61,19 @@ def main():
             {"name": "R0", "lb": 0, "ub": 0, "label": "any"},
         ],
         "structure_parameters": [
-            {"name": "num_steps", "lb": 10, "ub": 20, "label": "all"},
+            {"name": "num_steps", "lb": 1, "ub": 10, "label": "all"},
             {"name": "step_size", "lb": 1, "ub": 1, "label": "all"},
         ],
         "config": {
-            "normalize": False,
-            "tolerance": 1e-3,
-            # "simplify_query": False,
-            "use_compartmental_constraints": False,
-            # "profile": True
-            # "save_smtlib" : True,
-            # "substitute_subformulas": False
-            "taylor_series_order": None,
+      "normalize": False,
+      "tolerance": 1e-3,
+      "simplify_query": False,
+      # "use_compartmental_constraints" : False,
+      # "profile": True
+    #   "save_smtlib" : True,
+      # "substitute_subformulas": False
+      "taylor_series_order": None,
+    #   "dreal_log_level": "debug"
         },
     }
 
@@ -68,6 +84,20 @@ def main():
         description="Basic SIR with simple request",
         case_out_dir="./out",
     )
+    points = results.points()
+    boxes = results.parameter_space.boxes()
+
+    print(f"{len(points)} Points (+:{len(results.parameter_space.true_points)}, -:{len(results.parameter_space.false_points)}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})")
+    if points and len(points)>0:
+        point: Point = points[-1]
+        parameters = results.point_parameters(point)
+        print(parameters)
+        print(results.dataframe([point]))
+    else:
+        # if there are no points, then we have a box that we found without needing points
+       
+        box = boxes[0]
+        print(json.dumps(box.explain(), indent=4))
 
 
 # Use request file
