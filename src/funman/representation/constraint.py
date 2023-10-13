@@ -6,7 +6,7 @@ from funman.model import Model
 from funman.model.query import Query
 
 from .interval import Interval
-from .parameter import Parameter, StructureParameter
+from .parameter import StructureParameter, ModelParameter
 
 
 class Constraint(BaseModel):
@@ -40,7 +40,7 @@ class ModelConstraint(Constraint):
 
 class ParameterConstraint(Constraint):
     _assumable: bool = False
-    parameter: Parameter
+    parameter: Union[ModelParameter, StructureParameter]
 
     model_config = ConfigDict(extra="forbid")
 
@@ -73,6 +73,22 @@ class StateVariableConstraint(Constraint):
 
     def __hash__(self) -> int:
         return 3
+
+    def contains_time(self, time: Union[float, int]) -> bool:
+        return self.timepoints is None or self.timepoints.contains_value(time)
+
+    def relevant_at_time(self, time: int) -> bool:
+        return self.contains_time(time)
+
+
+class CompartmentalConstraint(Constraint):
+    bounds: "Interval" = None
+    timepoints: Optional["Interval"] = None
+
+    model_config = ConfigDict(extra="forbid")
+
+    def __hash__(self) -> int:
+        return 4
 
     def contains_time(self, time: Union[float, int]) -> bool:
         return self.timepoints is None or self.timepoints.contains_value(time)
