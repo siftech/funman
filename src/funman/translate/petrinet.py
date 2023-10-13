@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Union, Set
+from typing import Dict, List, Set, Union
 
 import sympy
 from pysmt.formula import FNode
@@ -249,37 +249,35 @@ class PetrinetEncoder(Encoder):
         substitutions: Dict[FNode, FNode] = {},
     ):
         bounds = []
-        for var in scenario.model._state_vars():
-            lb = (
-                GE(
-                    self._encode_state_var(
-                        scenario.model._state_var_name(var), time=step
-                    ),
-                    Real(0.0),
-                )
-                # .substitute(substitutions)
-                # .simplify()
-            )
+
+        if self.config.normalize:
+            population = Real(1.0)
+        else:
             population = (
-                Real(1.0)
-                if self.config.normalize
-                else Real(scenario.normalization_constant)
+                Plus(
+                    [
+                        self._encode_state_var(
+                            scenario.model._state_var_name(var1), time=step
+                        )
+                        for var1 in scenario.model._state_vars()
+                    ]
+                )
+                .substitute(substitutions)
+                .simplify()
+            )
+
+        for var in scenario.model._state_vars():
+            lb = GE(
+                self._encode_state_var(
+                    scenario.model._state_var_name(var), time=step
+                ),
+                Real(0.0),
             )
             ub = LE(
                 self._encode_state_var(
                     scenario.model._state_var_name(var), time=step
                 ),
-                population
-                # Plus(
-                #     [
-                #         self._encode_state_var(
-                #             model._state_var_name(var1), time=step
-                #         )
-                #         for var1 in model._state_vars()
-                #     ]
-                # )
-                # .substitute(substitutions)
-                # .simplify(),
+                population,
             )
 
             bounds += [lb, ub]

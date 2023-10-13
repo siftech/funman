@@ -2,17 +2,16 @@ import json
 import logging
 import sys
 import threading
-from functools import partial
 from typing import Callable, Optional, Tuple, Union
 
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import REAL, And, Equals, Real, Solver, Symbol, BOOL, Bool
+from pysmt.shortcuts import BOOL, REAL, And, Bool, Equals, Real, Solver, Symbol
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman.config import FUNMANConfig
-from funman.representation.explanation import Explanation
 from funman.constants import LABEL_FALSE, LABEL_TRUE
+from funman.representation.explanation import Explanation
 from funman.representation.representation import (
     Box,
     Interval,
@@ -67,7 +66,8 @@ class SMTCheck(Search):
                 structural_configuration=structural_configuration,
             )
             options = EncodingOptions(
-                num_steps=structural_configuration["num_steps"], step_size=structural_configuration["step_size"]
+                num_steps=structural_configuration["num_steps"],
+                step_size=structural_configuration["step_size"],
             )
             # self._initialize_encoding(solver, episode, box_timepoint, box)
             result = self.expand(
@@ -114,21 +114,20 @@ class SMTCheck(Search):
     def build_formula(
         self, episode: SearchEpisode, timepoints, options: EncodingOptions
     ) -> Tuple[FNode, FNode]:
-        
         step_size = options.step_size
         encoding = episode.problem._encodings[step_size]
         layer_formulas = []
         simplified_layer_formulas = []
         assumption_formulas = []
         for a in episode.problem._assumptions:
-            assumption_formulas.append(encoding._encoder.encode_assumption(a, options))
+            assumption_formulas.append(
+                encoding._encoder.encode_assumption(a, options)
+            )
 
         for t in timepoints:
             encoded_constraints = []
             for constraint in episode.problem.constraints:
-                if constraint.encodable() and constraint.relevant_at_time(
-                    t
-                ):
+                if constraint.encodable() and constraint.relevant_at_time(t):
                     encoded_constraints.append(
                         encoding.construct_encoding(
                             episode.problem,
@@ -137,7 +136,7 @@ class SMTCheck(Search):
                             layers=[t],
                             assumptions=episode.problem._assumptions,
                         )
-                    )  
+                    )
             formula = And(encoded_constraints)
             layer_formulas.append(formula)
 
@@ -151,11 +150,19 @@ class SMTCheck(Search):
                     x.substitute(substitutions).simplify()
                     for x in layer_formulas
                 ]
-                
-        all_layers_formula = And(And(assumption_formulas), And([f for f in layer_formulas]))
-        all_simplified_layers_formula = And(And(assumption_formulas), And([f for f in simplified_layer_formulas])) if len(simplified_layer_formulas)> 0 else None
+
+        all_layers_formula = And(
+            And(assumption_formulas), And([f for f in layer_formulas])
+        )
+        all_simplified_layers_formula = (
+            And(
+                And(assumption_formulas),
+                And([f for f in simplified_layer_formulas]),
+            )
+            if len(simplified_layer_formulas) > 0
+            else None
+        )
         return all_layers_formula, all_simplified_layers_formula
-            
 
     def solve_formula(
         self, s: Solver, formula: FNode, episode
@@ -171,7 +178,14 @@ class SMTCheck(Search):
         s.pop(1)
         return result
 
-    def expand(self, problem, episode, options: EncodingOptions, parameter_space, timepoints):
+    def expand(
+        self,
+        problem,
+        episode,
+        options: EncodingOptions,
+        parameter_space,
+        timepoints,
+    ):
         if episode.config.solver == "dreal":
             opts = {
                 "dreal_precision": episode.config.dreal_precision,
@@ -200,16 +214,22 @@ class SMTCheck(Search):
                 if result is not None and isinstance(result, pysmtModel):
                     assigned_vars = result.to_dict()
                     substitution = {
-                        Symbol(p, (REAL if isinstance(v, float) else BOOL)): (Real(v) if isinstance(v, float) else Bool(v))
+                        Symbol(p, (REAL if isinstance(v, float) else BOOL)): (
+                            Real(v) if isinstance(v, float) else Bool(v)
+                        )
                         for p, v in assigned_vars.items()
                     }
                     result_assignment = And(
                         [
-                            (Equals(Symbol(p, REAL), Real(v)) 
-                             if isinstance(v, float) 
-                             else (Symbol(p, BOOL) 
-                                   if v 
-                                   else Not(Symbol(p, BOOL)))) 
+                            (
+                                Equals(Symbol(p, REAL), Real(v))
+                                if isinstance(v, float)
+                                else (
+                                    Symbol(p, BOOL)
+                                    if v
+                                    else Not(Symbol(p, BOOL))
+                                )
+                            )
                             for p, v in assigned_vars.items()
                         ]
                         + [

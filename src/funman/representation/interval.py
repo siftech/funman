@@ -5,10 +5,7 @@ from numpy import average
 from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
-from funman.constants import (
-    NEG_INFINITY,
-    POS_INFINITY,
-)
+from funman.constants import NEG_INFINITY, POS_INFINITY
 
 
 class Interval(BaseModel):
@@ -16,8 +13,8 @@ class Interval(BaseModel):
     An interval is a pair [lb, ub) that is open (i.e., an interval specifies all points x where lb <= x and ub < x).
     """
 
-    lb: Union[float, str]
-    ub: Union[float, str]
+    lb: Optional[Union[float, str]]= NEG_INFINITY
+    ub: Optional[Union[float, str]]= POS_INFINITY
     cached_width: Optional[float] = Field(default=None, exclude=True)
 
     def __hash__(self):

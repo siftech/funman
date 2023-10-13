@@ -70,7 +70,7 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
             haltEvent=haltEvent,
             resultsCallback=resultsCallback,
         )
-        parameter_space.num_dimensions =  len(self.parameters)
+        parameter_space.num_dimensions = len(self.parameters)
 
         scenario_result = ConsistencyScenarioResult(
             scenario=self,
@@ -127,7 +127,8 @@ class ConsistencyScenarioResult(AnalysisScenarioResult, BaseModel):
         """
         if self.consistent:
             timeseries = self.scenario._smt_encoder.symbol_timeseries(
-                self.scenario._encodings[point.values['step_size']], self._models[point]
+                self.scenario._encodings[point.values["step_size"]],
+                self._models[point],
             )
             df = pd.DataFrame.from_dict(timeseries)
             if interpolate:

@@ -20,7 +20,7 @@ from pysmt.exceptions import (
 )
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import Real, get_env, BOOL, Bool
+from pysmt.shortcuts import BOOL, Bool, Real, get_env
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand
 from pysmt.smtlib.solver import SmtLibOptions, SmtLibSolver
@@ -591,7 +591,7 @@ class DRealNative(
     def get_value(self, symbol_pair):
         # print(f"get_value() {item}: {self.model[item]}")
         (symbol, item) = symbol_pair
-        if symbol.get_type()  == BOOL:
+        if symbol.get_type() == BOOL:
             return Bool(bool(self.model[item]))
         else:
             ub = self.model[item].ub()

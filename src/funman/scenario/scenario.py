@@ -1,3 +1,4 @@
+import logging
 import threading
 from abc import ABC, abstractclassmethod, abstractmethod
 from decimal import Decimal
@@ -35,6 +36,9 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 
+l = logging.getLogger(__name__)
+l.setLevel(logging.INFO)
+
 
 class AnalysisScenario(ABC, BaseModel):
     """
@@ -63,7 +67,7 @@ class AnalysisScenario(ABC, BaseModel):
         DecapodeModel,
         BilayerModel,
         EncodedModel,
-        EnsembleModel
+        EnsembleModel,
     ]
     query: Union[
         QueryAnd, QueryGE, QueryLE, QueryEncoded, QueryFunction, QueryTrue
@@ -272,10 +276,13 @@ class AnalysisScenario(ABC, BaseModel):
     def _set_normalization(self, config):
         if config.normalization_constant is not None:
             self.normalization_constant = config.normalization_constant
-        else:
+        elif config.normalize:
             self.normalization_constant = (
                 self.model.calculate_normalization_constant(self, config)
             )
+        else:
+            self.normalization_constant = 1.0
+            l.warn("Warning: The scenario is not normalized!")
 
 
 class AnalysisScenarioResult(ABC):
