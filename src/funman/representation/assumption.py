@@ -2,21 +2,11 @@ from typing import Union
 
 from pydantic import BaseModel
 
-from .constraint import (
-    ModelConstraint,
-    ParameterConstraint,
-    QueryConstraint,
-    StateVariableConstraint,
-)
+from .constraint import FunmanConstraint
 
 
 class Assumption(BaseModel):
-    constraint: Union[
-        "ModelConstraint",
-        "ParameterConstraint",
-        "StateVariableConstraint",
-        "QueryConstraint",
-    ]
+    constraint: Union[FunmanConstraint]
 
     def __str__(self) -> str:
         if hasattr(self.constraint, "name"):

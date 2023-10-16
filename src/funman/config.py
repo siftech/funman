@@ -5,7 +5,16 @@ analysis.
 import logging
 from typing import Optional, Union
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationInfo,
+    WrapValidator,
+    field_validator,
+    model_validator,
+)
+from typing_extensions import Annotated
 
 from funman.utils.handlers import (
     NoopResultHandler,
@@ -69,12 +78,12 @@ class FUNMANConfig(BaseModel):
     """Substitute subformulas to simplify overall encoding"""
     substitute_subformulas: bool = True
     """Enforce compartmental variable constraints"""
+    normalization_constant: Optional[float] = None
+    """ Simplify query by propagating substutions """
     use_compartmental_constraints: bool = True
     """Normalize scenarios prior to solving"""
     normalize: bool = True
     """Normalization constant to use for normalization (attempt to compute if None)"""
-    normalization_constant: Optional[float] = None
-    """ Simplify query by propagating substutions """
     simplify_query: bool = True
     """ Series approximation threshold for dropping series terms """
     series_approximation_threshold: float = 1e-8
@@ -96,3 +105,11 @@ class FUNMANConfig(BaseModel):
             else:
                 funman_dreal.ensure_dreal_in_pysmt()
         return v
+
+    @model_validator(mode="after")
+    def check_use_compartmental_constraints(self) -> "FUNMANConfig":
+        if self.use_compartmental_constraints:
+            assert (
+                self.normalization_constant
+            ), "Need to set normalization_constant in configuration to enforce compartmental constraints.  The normalization_constant provides the population size used in the constraint upper bound."
+        return self

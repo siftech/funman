@@ -21,6 +21,11 @@ def main():
         #     "ub": 300
         # },
         "constraints": [
+            # {
+            #     "name": "compartmental bounds",
+            #     "additive_bounds": {"lb": 1001, "ub": 1002},
+            #     "variables": ["S", "I", "R"]
+            # },
             {
                 "name": "I_bounds",
                 "variable": "I",
@@ -67,6 +72,7 @@ def main():
             "normalize": False,
             "tolerance": 1e-3,
             "simplify_query": False,
+            "normalization_constant": 1001,
             # "use_compartmental_constraints" : False,
             # "profile": True
             #   "save_smtlib" : True,

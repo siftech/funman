@@ -24,7 +24,7 @@ class Funman(object):
     def solve(
         self,
         problem: "AnalysisScenario",
-        config: FUNMANConfig = FUNMANConfig(),
+        config: FUNMANConfig = None,
         haltEvent: Optional[threading.Event] = None,
         resultsCallback: Optional[Callable[["ParameterSpace"], None]] = None,
     ) -> "AnalysisScenarioResult":
@@ -49,6 +49,10 @@ class Funman(object):
             The resulting data, statistics, and other relevant information
             produced by the analysis.
         """
+
+        # Setting config here instead of keyword default because otherwise it will be validated prematurely by Pydantic
+        if config is None:
+            config = FUNMANConfig()
         try:
             if config.profile:
                 import cProfile

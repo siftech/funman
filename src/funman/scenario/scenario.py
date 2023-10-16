@@ -29,12 +29,12 @@ from funman import (
     QueryGE,
     QueryLE,
     QueryTrue,
-    StateVariableConstraint,
     StructureParameter,
 )
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
+from funman.representation.constraint import FunmanConstraint
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)
@@ -47,16 +47,7 @@ class AnalysisScenario(ABC, BaseModel):
 
     parameters: List[Parameter]
     normalization_constant: Optional[float] = None
-    constraints: Optional[
-        List[
-            Union[
-                "ModelConstraint",
-                "ParameterConstraint",
-                "StateVariableConstraint",
-                "QueryConstraint",
-            ]
-        ]
-    ] = None
+    constraints: Optional[List[Union[FunmanConstraint]]] = None
     model_config = ConfigDict(extra="forbid")
 
     model: Union[
@@ -122,7 +113,17 @@ class AnalysisScenario(ABC, BaseModel):
         ]
 
         self._set_normalization(config)
+
+        if config.use_compartmental_constraints:
+            cc = self.model.compartmental_constraints(
+                self.normalization_constant
+            )
+            if cc is not None:
+                self.constraints += [cc]
+                self._assumptions.append(Assumption(constraint=cc))
+
         self._initialize_encodings(config)
+
         return search
 
     def _initialize_encodings(self, config: "FUNMANConfig"):
