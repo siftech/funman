@@ -128,6 +128,9 @@ class Model(ABC, BaseModel):
     #         self._normalization_term = Real(self._normalization_constant)
     #     return self._normalization_term
 
+    def compartmental_constraints(self):
+        return None
+
     def _is_normalized(self, var: str):
         try:
             name, time = var.rsplit("_", 1)

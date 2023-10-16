@@ -14,7 +14,7 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import StateVariableConstraint
+from funman.representation.constraint import FunmanConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     LabeledParameter,
@@ -36,7 +36,7 @@ from funman.scenario.scenario import AnalysisScenario
 
 class FunmanWorkRequest(BaseModel):
     query: Optional[Union[QueryAnd, QueryLE, QueryFunction, QueryTrue]] = None
-    constraints: Optional[List[Union[StateVariableConstraint]]] = None
+    constraints: Optional[List[FunmanConstraint]] = None
     parameters: Optional[List[LabeledParameter]] = None
     config: Optional[FUNMANConfig] = None
     structure_parameters: Optional[List[LabeledParameter]] = None

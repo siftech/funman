@@ -20,8 +20,10 @@ from pysmt.shortcuts import (  # type: ignore
     Equals,
     Iff,
     Implies,
+    Plus,
     Real,
     Symbol,
+    Times,
     get_env,
 )
 from pysmt.solvers.solver import Model as pysmtModel
@@ -46,6 +48,7 @@ from funman.model.query import (
 )
 from funman.representation.constraint import (
     Constraint,
+    LinearConstraint,
     ModelConstraint,
     ParameterConstraint,
     QueryConstraint,
@@ -253,6 +256,7 @@ class Encoder(ABC, BaseModel):
             ParameterConstraint: self.encode_parameter,
             StateVariableConstraint: self.encode_query_layer,
             QueryConstraint: self.encode_query_layer,
+            LinearConstraint: self.encode_linear_constraint,
         }
 
     def step_size_index(self, step_size: int) -> int:
@@ -725,6 +729,40 @@ class Encoder(ABC, BaseModel):
             return (formula, {str(s): s for s in formula.get_free_variables()})
         else:
             return None
+
+    def encode_linear_constraint(
+        self,
+        scenario: "AnalysisScenario",
+        constraint: LinearConstraint,
+        layer_idx: int,
+        options: EncodingOptions,
+        assumptions: List[Assumption],
+    ) -> Optional[EncodedFormula]:
+        bounds = constraint.additive_bounds
+        vars = constraint.variables
+        weights = constraint.weights
+        step = self.state_timepoint(options.step_size, layer_idx=layer_idx)
+        expression = Plus(
+            [
+                Times(
+                    Real(weights[i]),
+                    self._encode_state_var(vars[i], time=step),
+                )
+                for i in range(len(vars))
+            ]
+        )
+        lb = Real(bounds.lb)
+        ub = Real(bounds.ub)
+
+        if options.normalize:
+            expression = Div(expression, options.normalization_constant)
+            lb = Div(lb, options.normalization_constant)
+            ub = Div(ub, options.normalization_constant)
+
+        lbe = GE(expression, lb)
+        ube = LT(expression, ub)
+        formula = And(lbe, ube).simplify()
+        return (formula, {str(s): s for s in formula.get_free_variables()})
 
     def _encode_untimed_constraints(
         self, scenario: "AnalysisScenario"
