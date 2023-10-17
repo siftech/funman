@@ -13,13 +13,13 @@ from automates.model_assembly.gromet.model.gromet_fn_module import (
 from automates.model_assembly.gromet.model.gromet_port import GrometPort
 from automates.model_assembly.gromet.model.literal_value import LiteralValue
 from automates.model_assembly.gromet.model.typed_value import TypedValue
-from funman.translate.translate import EncodingSchedule
 from pysmt.shortcuts import And, Equals, Int, Symbol
 from pysmt.typing import INT
 
 from funman.model import Model
 from funman.model.gromet import GrometModel
 from funman.translate import Encoder, EncodingOptions, EncodingSchedule
+from funman.translate.translate import EncodingSchedule
 
 
 class GrometEncodingOptions(EncodingOptions):
