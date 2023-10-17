@@ -15,7 +15,7 @@ from matplotlib.lines import Line2D
 from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
-from funman import to_sympy
+from funman import EncodingSchedule, to_sympy
 from funman.constants import LABEL_UNKNOWN, Label
 
 from .explanation import BoxExplanation, ParameterSpaceExplanation
@@ -24,6 +24,9 @@ from .parameter import ModelParameter
 from .symbol import ModelSymbol
 
 l = logging.getLogger(__name__)
+
+Timepoint = Union[int, float]
+Timestep = Union[int, float]
 
 
 class Point(BaseModel):
@@ -97,6 +100,8 @@ class Box(BaseModel):
     bounds: Dict[str, Interval] = {}
     explanation: Optional[BoxExplanation] = None
     cached_width: Optional[float] = Field(default=None, exclude=True)
+    timepoint: Timepoint = 0
+    schedule: Optional[EncodingSchedule] = None
 
     def explain(self) -> BoxExplanation:
         expl = {"box": {k: v.model_dump() for k, v in self.bounds.items()}}

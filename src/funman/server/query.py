@@ -21,8 +21,8 @@ from funman.representation.parameter import (
     ModelParameter,
     NumSteps,
     Parameter,
-    StepSize,
     Schedules,
+    StepSize,
     StructureParameter,
 )
 from funman.representation.representation import ParameterSpace, Point
@@ -37,12 +37,15 @@ from funman.scenario.parameter_synthesis import (
 from funman.scenario.scenario import AnalysisScenario
 from funman.translate import EncodingSchedule
 
+
 class FunmanWorkRequest(BaseModel):
     query: Optional[Union[QueryAnd, QueryLE, QueryFunction, QueryTrue]] = None
     constraints: Optional[List[FunmanConstraint]] = None
     parameters: Optional[List[ModelParameter]] = None
     config: Optional[FUNMANConfig] = None
-    structure_parameters: Optional[List[Union[Union[NumSteps, StepSize], Schedules]]] = None
+    structure_parameters: Optional[
+        List[Union[Union[NumSteps, StepSize], Schedules]]
+    ] = None
 
 
 class FunmanProgress(BaseModel):

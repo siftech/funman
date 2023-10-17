@@ -181,18 +181,16 @@ class BoxSearchEpisode(SearchEpisode):
         if self.config.substitute_subformulas and self.config.simplify_query:
             self._formula_stack.substitutions = self.problem._encodings[
                 self.schedule
-            ]._encoder.substitutions(
-                self.schedule
-            )
+            ]._encoder.substitutions(self.schedule)
 
-    def _initialize_boxes(self, expander_count):
+    def _initialize_boxes(self, expander_count, schedule: EncodingSchedule):
         # initial_box = self._initial_box()
         # if not self.add_unknown(initial_box):
         #     l.exception(
         #         f"Did not add an initial box (of width {initial_box.width()}), try reducing config.tolerance, currently {self.config.tolerance}"
         #     )
         initial_boxes = QueueSP()
-        initial_boxes.put(self._initial_box())
+        initial_boxes.put(self._initial_box(schedule))
         num_boxes = 1
         while num_boxes < expander_count:
             b1, b2 = initial_boxes.get().split()
@@ -491,8 +489,7 @@ class BoxSearch(Search):
         episode: BoxSearchEpisode,
         options: EncodingOptions,
     ):
-        box_timepoint = int(box.bounds["num_steps"].lb)
-        self._initialize_encoding(solver, episode, options, box_timepoint, box)
+        self._initialize_encoding(solver, episode, options, box.timepoint, box)
 
         episode._formula_stack.push(1)
 
@@ -1206,20 +1203,17 @@ class BoxSearch(Search):
         config._handler.open()
 
         if problem._smt_encoder._timed_model_elements:
-            schedules = problem._smt_encoder._timed_model_elements['schedules'].schedules
-            
+            schedules = problem._smt_encoder._timed_model_elements[
+                "schedules"
+            ].schedules
+
             # initialize empty encoding
             for schedule in schedules:
-                
                 episode = BoxSearchEpisode(
-                    config=config,
-                    problem=problem,
-                    schedule=schedule
+                    config=config, problem=problem, schedule=schedule
                 )
-                episode._initialize_boxes(config.num_initial_boxes)
-                options = EncodingOptions(
-                    schedule=schedule
-                )
+                episode._initialize_boxes(config.num_initial_boxes, schedule)
+                options = EncodingOptions(schedule=schedule)
                 self._expand(
                     rval,
                     episode,

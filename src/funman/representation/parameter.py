@@ -1,7 +1,6 @@
 import copy
 import logging
-
-from typing import Literal, Union, List
+from typing import List, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from pysmt.fnode import FNode
@@ -41,28 +40,33 @@ class StructureParameter(LabeledParameter):
     def is_synthesized(self):
         return True
 
+
 class NumSteps(StructureParameter):
     @field_validator("name")
     @classmethod
-    def check_name(cls, name: str, info:ValidationInfo):
+    def check_name(cls, name: str, info: ValidationInfo):
         assert name == "num_steps", "NumSteps.name must be 'num_steps'"
+
 
 class StepSize(StructureParameter):
     @field_validator("name")
     @classmethod
-    def check_name(cls, name: str, info:ValidationInfo):
+    def check_name(cls, name: str, info: ValidationInfo):
         assert name == "step_size", "StepSize.name must be 'step_size'"
 
 
 StepListValue = List[Union[float, int]]
+
+
 class Schedules(StructureParameter):
     schedules: List["EncodingSchedule"]
 
     @field_validator("name")
     @classmethod
-    def check_name(cls, name: str, info:ValidationInfo):
+    def check_name(cls, name: str, info: ValidationInfo):
         assert name == "schedules", "StepList.name must be 'step_list'"
         return name
+
 
 class ModelParameter(LabeledParameter):
     """

@@ -138,11 +138,13 @@ class AnalysisScenario(ABC, BaseModel):
             self.constraints += [query_constraint]
             self._assumptions.append(Assumption(constraint=query_constraint))
 
-        
-        for schedule in self._smt_encoder._timed_model_elements["schedules"].schedules:
-            encoding = self._smt_encoder.initialize_encodings(self, len(schedule.timepoints))
+        for schedule in self._smt_encoder._timed_model_elements[
+            "schedules"
+        ].schedules:
+            encoding = self._smt_encoder.initialize_encodings(
+                self, len(schedule.timepoints)
+            )
             self._encodings[schedule] = encoding
-
 
     def num_dimensions(self):
         """
