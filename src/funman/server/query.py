@@ -14,13 +14,12 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import (
-    StateVariableConstraint,
-)
+from funman.representation.constraint import StateVariableConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     LabeledParameter,
     ModelParameter,
+    Parameter,
     StructureParameter,
 )
 from funman.representation.representation import ParameterSpace, Point
@@ -215,6 +214,20 @@ class FunmanResults(BaseModel):
         self.done = True
         self.progress.progress = 1.0
 
+    def _scenario(self) -> AnalysisScenario:
+        scenario = FunmanWorkUnit(
+            id=self.id, model=self.model, request=self.request
+        ).to_scenario()
+        return scenario
+
+    def point_parameters(
+        self, point: Point, scenario: AnalysisScenario = None
+    ) -> Dict[Parameter, float]:
+        if scenario is None:
+            scenario = self._scenario()
+        parameters = scenario.parameters
+        return {p: point.values[p.name] for p in parameters}
+
     def dataframe(
         self, points: List[Point], interpolate="linear", max_time=None
     ):
@@ -236,9 +249,7 @@ class FunmanResults(BaseModel):
         Exception
             fails if scenario is not consistent
         """
-        scenario = FunmanWorkUnit(
-            id=self.id, model=self.model, request=self.request
-        ).to_scenario()
+        scenario = self._scenario()
         to_plot = scenario.model._state_var_names()
         time_var = scenario.model._time_var()
         if time_var:
@@ -249,6 +260,10 @@ class FunmanResults(BaseModel):
             timeseries = self.symbol_timeseries(point, to_plot)
             df = pd.DataFrame.from_dict(timeseries)
             df["id"] = i
+            parameters = self.point_parameters(point=point, scenario=scenario)
+            for p, v in parameters.items():
+                df[p.name] = v
+            df["label"] = point.label
             # if max_time:
             # if time_var:
             #     df = df.at[max_time, :] = None

@@ -11,6 +11,9 @@ from .config import FUNMANConfig
 l = logging.getLogger(__file__)
 l.setLevel(logging.ERROR)
 
+logging.getLogger("matplotlib.font_manager").disabled = True
+logging.getLogger("matplotlib.pyplot").disabled = True
+
 
 class Funman(object):
     """

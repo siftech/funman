@@ -8,9 +8,9 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from pydantic import BaseModel, ConfigDict
 from pysmt.constants import Numeral
 from pysmt.formula import FNode
-from pysmt.shortcuts import (
+from pysmt.shortcuts import (  # type: ignore
     BOOL,
-    GE, 
+    GE,
     LE,
     LT,
     REAL,
@@ -19,14 +19,21 @@ from pysmt.shortcuts import (
     Div,
     Equals,
     Iff,
+    Implies,
     Real,
     Symbol,
     get_env,
-    Implies
-)  # type: ignore
+)
 from pysmt.solvers.solver import Model as pysmtModel
 
-from funman import Box, Interval, ModelParameter, Point, Assumption, ModelSymbol
+from funman import (
+    Assumption,
+    Box,
+    Interval,
+    ModelParameter,
+    ModelSymbol,
+    Point,
+)
 from funman.config import FUNMANConfig
 from funman.constants import NEG_INFINITY, POS_INFINITY
 from funman.model.model import Model
@@ -37,7 +44,6 @@ from funman.model.query import (
     QueryLE,
     QueryTrue,
 )
-
 from funman.representation.constraint import (
     Constraint,
     ModelConstraint,
@@ -355,9 +361,7 @@ class Encoder(ABC, BaseModel):
             str(assumption), time=time, symbol_type=BOOL
         )
         if time is not None:
-
-            self._timed_symbols.add(
-            str(assumption))
+            self._timed_symbols.add(str(assumption))
         else:
             self._untimed_symbols.add(str(assumption))
         return formula
@@ -880,7 +884,7 @@ class Encoder(ABC, BaseModel):
             if not isinstance(query.variable, ModelSymbol)
             else str(query.variable)
         )
- 
+
     def _encode_query_and(
         self,
         scenario: "AnalysisScenario",
@@ -890,7 +894,9 @@ class Encoder(ABC, BaseModel):
         assumptions: List[Assumption],
     ):
         queries = [
-            self.encode_query_layer(scenario, q, layer_idx, options, assumptions)
+            self.encode_query_layer(
+                scenario, q, layer_idx, options, assumptions
+            )
             for q in query.queries
         ]
 

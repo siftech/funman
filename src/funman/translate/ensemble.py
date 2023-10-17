@@ -1,14 +1,7 @@
-from typing import Dict, List, Set
+from typing import Dict, Set
 
 from pysmt.formula import FNode
-from pysmt.shortcuts import (
-    REAL,
-    TRUE,
-    And,
-    Symbol,
-    Times,
-    substitute,
-)
+from pysmt.shortcuts import REAL, TRUE, And, Symbol, Times, substitute
 
 from funman.model.model import Model
 

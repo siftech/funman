@@ -2,7 +2,6 @@ from typing import Union
 
 from pydantic import BaseModel
 
-
 from .constraint import (
     ModelConstraint,
     ParameterConstraint,
