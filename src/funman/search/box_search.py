@@ -35,7 +35,7 @@ from funman.representation.constraint import ParameterConstraint
 from funman.representation.explanation import Explanation
 from funman.search import Box, ParameterSpace, Point, Search, SearchEpisode
 from funman.search.search import SearchStaticsMP, SearchStatistics
-from funman.translate.translate import EncodingOptions
+from funman.translate.translate import EncodingOptions, EncodingSchedule
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
 
 LOG_LEVEL = logging.INFO
@@ -172,6 +172,7 @@ class BoxSearchEpisode(SearchEpisode):
     _unknown_boxes: PQueueSP
     _iteration: int = 0
     _formula_stack: FormulaStack = FormulaStack()
+    schedule: EncodingSchedule
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -179,26 +180,10 @@ class BoxSearchEpisode(SearchEpisode):
         self.statistics = SearchStatistics()
         if self.config.substitute_subformulas and self.config.simplify_query:
             self._formula_stack.substitutions = self.problem._encodings[
-                self.structural_configuration["step_size"]
+                self.schedule
             ]._encoder.substitutions(
-                self.structural_configuration["step_size"]
+                self.schedule
             )
-
-    # def __init__(
-    #     self,
-    #     config: SearchConfig,
-    #     problem: "ParameterSynthesisScenario",
-    #     manager: Optional[SyncManager] = None,
-    # ) -> None:
-    #     super(BoxSearchEpisode, self).__init__(config, problem)
-    #     self.statistics = SearchStatistics.from_manager(manager)
-    #     self._unknown_boxes = manager.Queue() if manager else SQueue()
-    #     self._true_boxes: List[Box] = []
-    #     self.false_boxes: List[Box] = []
-    #     self._true_points: Set[Point] = set({})
-    #     self._false_points: Set[Point] = set({})
-
-    #     self.iteration = manager.Value("i", 0) if manager else 0
 
     def _initialize_boxes(self, expander_count):
         # initial_box = self._initial_box()
@@ -1221,37 +1206,19 @@ class BoxSearch(Search):
         config._handler.open()
 
         if problem._smt_encoder._timed_model_elements:
-            step_sizes = problem._smt_encoder._timed_model_elements[
-                "step_sizes"
-            ]
-
-            configurations_by_step_size = {
-                step_size: [
-                    c["num_steps"]
-                    for c in problem._smt_encoder._timed_model_elements[
-                        "configurations"
-                    ]
-                    if c["step_size"] == step_size
-                ]
-                for step_size in step_sizes
-            }
+            schedules = problem._smt_encoder._timed_model_elements['schedules'].schedules
+            
             # initialize empty encoding
-            # problem._initialize_encodings(config)
-            for step_size_idx, step_size in enumerate(step_sizes):
-                num_steps = max(configurations_by_step_size[step_size])
-
-                structural_configuration = {
-                    "step_size": step_size,
-                    "num_steps": num_steps,
-                }
+            for schedule in schedules:
+                
                 episode = BoxSearchEpisode(
                     config=config,
                     problem=problem,
-                    structural_configuration=structural_configuration,
+                    schedule=schedule
                 )
                 episode._initialize_boxes(config.num_initial_boxes)
                 options = EncodingOptions(
-                    num_steps=num_steps, step_size=step_size
+                    schedule=schedule
                 )
                 self._expand(
                     rval,

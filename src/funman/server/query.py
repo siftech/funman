@@ -19,7 +19,10 @@ from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     LabeledParameter,
     ModelParameter,
+    NumSteps,
     Parameter,
+    StepSize,
+    Schedules,
     StructureParameter,
 )
 from funman.representation.representation import ParameterSpace, Point
@@ -32,14 +35,14 @@ from funman.scenario.parameter_synthesis import (
     ParameterSynthesisScenarioResult,
 )
 from funman.scenario.scenario import AnalysisScenario
-
+from funman.translate import EncodingSchedule
 
 class FunmanWorkRequest(BaseModel):
     query: Optional[Union[QueryAnd, QueryLE, QueryFunction, QueryTrue]] = None
     constraints: Optional[List[FunmanConstraint]] = None
-    parameters: Optional[List[LabeledParameter]] = None
+    parameters: Optional[List[ModelParameter]] = None
     config: Optional[FUNMANConfig] = None
-    structure_parameters: Optional[List[LabeledParameter]] = None
+    structure_parameters: Optional[List[Union[Union[NumSteps, StepSize], Schedules]]] = None
 
 
 class FunmanProgress(BaseModel):
@@ -97,12 +100,13 @@ class FunmanWorkUnit(BaseModel):
         ):
             for data in self.request.structure_parameters:
                 parameters.append(
-                    StructureParameter(
-                        name=data.name,
-                        ub=data.ub,
-                        lb=data.lb,
-                        label=data.label,
-                    )
+                    data
+                    # StructureParameter(
+                    #     name=data.name,
+                    #     ub=data.ub,
+                    #     lb=data.lb,
+                    #     label=data.label,
+                    # )
                 )
 
         if (

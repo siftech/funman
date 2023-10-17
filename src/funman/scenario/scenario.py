@@ -109,7 +109,7 @@ class AnalysisScenario(ABC, BaseModel):
 
         self.constraints += [
             ParameterConstraint(name=parameter.name, parameter=parameter)
-            for parameter in self.parameters
+            for parameter in self.model_parameters()
         ]
 
         self._set_normalization(config)
@@ -131,19 +131,6 @@ class AnalysisScenario(ABC, BaseModel):
         self._smt_encoder = self.model.default_encoder(config, self)
         assert self._smt_encoder._timed_model_elements
 
-        times = list(
-            set(
-                [
-                    t
-                    for s in self._smt_encoder._timed_model_elements[
-                        "state_timepoints"
-                    ]
-                    for t in s
-                ]
-            )
-        )
-        times.sort()
-
         # Initialize Assumptions
         # Maintain backward support for query as a single constraint
         if self.query is not None and not isinstance(self.query, QueryTrue):
@@ -151,28 +138,11 @@ class AnalysisScenario(ABC, BaseModel):
             self.constraints += [query_constraint]
             self._assumptions.append(Assumption(constraint=query_constraint))
 
-        # self._assume_query = [Symbol(f"assume_query_{t}") for t in times]
-        for step_size_idx, step_size in enumerate(
-            self._smt_encoder._timed_model_elements["step_sizes"]
-        ):
-            num_steps = max(
-                self._smt_encoder._timed_model_elements["state_timepoints"][
-                    step_size_idx
-                ]
-            )
-            (
-                # model_encoding,
-                # query_encoding,
-                encoding
-            ) = self._smt_encoder.initialize_encodings(self, num_steps)
-            # self._smt_encoder.encode_model_timed(
-            #     self, num_steps, step_size
-            # )
+        
+        for schedule in self._smt_encoder._timed_model_elements["schedules"].schedules:
+            encoding = self._smt_encoder.initialize_encodings(self, len(schedule.timepoints))
+            self._encodings[schedule] = encoding
 
-            self._encodings[step_size] = encoding
-
-            # self._model_encoding[step_size] = model_encoding
-            # self._query_encoding[step_size] = query_encoding
 
     def num_dimensions(self):
         """
@@ -193,18 +163,22 @@ class AnalysisScenario(ABC, BaseModel):
         return Box(bounds=bounds).volume()
 
     def structure_parameters(self):
-        return [
-            p for p in self.parameters if isinstance(p, StructureParameter)
-        ]
+        return self.parameters_of_type(StructureParameter)
 
     def model_parameters(self):
-        return [p for p in self.parameters if isinstance(p, ModelParameter)]
+        return self.parameters_of_type(ModelParameter)
 
     def synthesized_parameters(self):
         return [p for p in self.parameters if p.is_synthesized()]
 
+    def parameters_of_type(self, parameter_type) -> List[Parameter]:
+        return [p for p in self.parameters if isinstance(p, parameter_type)]
+
     def structure_parameter(self, name: str) -> StructureParameter:
-        return next(p for p in self.parameters if p.name == name)
+        try:
+            return next(p for p in self.parameters if p.name == name)
+        except StopIteration:
+            return None
 
     def _process_parameters(self):
         if len(self.structure_parameters()) == 0:

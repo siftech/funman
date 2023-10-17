@@ -66,16 +66,42 @@ l = logging.getLogger(__name__)
 l.setLevel(logging.DEBUG)
 
 
+
+
+class EncodingSchedule(BaseModel):
+    timepoints: List[Union[int, float]]
+
+    def __hash__(self):
+        return int(sum(self.timepoints))
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, EncodingSchedule):
+            return self.timepoints == other.timepoints
+        return False
+
+
+    @staticmethod
+    def from_steps(num_steps: int, step_size: Union[int, float]) -> "EncodingSchedule":
+        timepoints = list(range(0, num_steps, step_size))
+        return EncodingSchedule(timepoints=timepoints)
+
 class EncodingOptions(BaseModel):
     """
     EncodingOptions
     """
 
-    num_steps: int
-    step_size: int
+    schedule: EncodingSchedule
     normalize: bool = False
     normalization_constant: float = 1.0
 
+
+Timepoint = Union[int, float]
+Timestep = Union[int, float]
+StateTimepoints = List[Timepoint]
+TransitionTimepoints = List[Timepoint]
+TimeStepConstraints = Dict[Tuple[Timepoint, Timestep], List[FNode]]
+TimeStepSubstitutions = Dict[Tuple[Timepoint, Timestep], Dict[FNode, FNode]]
+TimedParameters = Dict[Tuple[Timepoint, Timestep], List["Parameter"]]
 
 class Encoding(BaseModel):
     _substitutions: Dict[FNode, FNode] = {}
@@ -796,44 +822,84 @@ class Encoder(ABC, BaseModel):
         self._untimed_symbols = self._get_untimed_symbols(model)
         step_sizes = scenario.structure_parameter("step_size")
         num_steps = scenario.structure_parameter("num_steps")
+        schedules = scenario.structure_parameter("schedules")
 
-        state_timepoints = []
-        transition_timepoints = []
+        state_timepoints: StateTimepoints = []
+        transition_timepoints: TransitionTimepoints = []
+        time_step_constraints: TimeStepConstraints = {}
+        time_step_substitutions: TimeStepSubstitutions = {}
+        timed_parameters: TimedParameters = {}
         initial_state, initial_substitutions = self._define_init(scenario)
-        for i, step_size in enumerate(
-            range(int(step_sizes.lb), int(step_sizes.ub) + 1)
-        ):
-            s_timepoints, t_timepoints = self._get_timepoints(
-                num_steps.ub, step_size
-            )
-            state_timepoints.append(s_timepoints)
-            transition_timepoints.append(transition_timepoints)
-
-        (
-            configurations,
-            max_step_index,
-            max_step_size,
-        ) = self._get_structural_configurations(scenario)
-        self._timed_model_elements = {
-            "step_sizes": list(
+        if step_sizes and num_steps:
+            schedules: List[EncodingSchedule] = [] 
+            for i, step_size in enumerate(
+                range(int(step_sizes.lb), int(step_sizes.ub) + 1)
+            ):
+                s_timepoints, t_timepoints = self._get_timepoints(
+                    num_steps.ub, step_size
+                )
+                state_timepoints.append(s_timepoints)
+                transition_timepoints.append(transition_timepoints)
+                schedule = EncodingScedule(timepoints=state_timepoints)
+            (
+                configurations,
+                max_step_index,
+                max_step_size,
+            ) = self._get_structural_configurations(scenario)
+            step_sizes= list(
                 range(int(step_sizes.lb), int(step_sizes.ub + 1))
-            ),
+            )
+            time_step_constraints = [
+                [None for i in range(max_step_size)]
+                for j in range(max_step_index)
+            ]
+            time_step_substitutions = [
+                initial_substitutions.copy() for i in range(max_step_size)
+            ]
+            timed_parameters= [
+                [None for i in range(max_step_size)]
+                for j in range(max_step_index)
+            ]
+            schedules = [
+                list(range(0, ))
+                for step_size in step_sizes
+                
+            ]
+        elif schedules:
+
+            
+            for schedule in schedules.schedules:
+                
+                state_timepoints.append(schedule.timepoints)
+                transition_timepoints.append(schedule.timepoints[:-1]) # Last timepoint is a state with no transition
+                time_step_constraints.update({
+                    (t1, t2-t1): [] for t1 in schedule.timepoints for t2 in schedule.timepoints if t1 < t2
+                    })
+                time_step_substitutions[schedule] = initial_substitutions.copy()
+                timed_parameters.update({
+                    (t1, t2-t1): [] for t1 in schedule.timepoints for t2 in schedule.timepoints if t1 < t2
+                    })
+
+            
+            configurations = None
+            max_step_index = None
+            max_step_size = None
+            step_sizes=None
+            
+        else:
+            raise Exception("Cannot translate scenario without either a step_list, or step_sizes and num_steps structural parameters")
+
+
+        self._timed_model_elements = {
+            "schedules": schedules,
             "state_timepoints": state_timepoints,
             "transition_timepoints": transition_timepoints,
             "init": initial_state,
-            "time_step_constraints": [
-                [None for i in range(max_step_size)]
-                for j in range(max_step_index)
-            ],
-            "time_step_substitutions": [
-                initial_substitutions.copy() for i in range(max_step_size)
-            ],
+            "time_step_constraints": time_step_constraints,
+            "time_step_substitutions": time_step_substitutions,
             "configurations": configurations,
             "untimed_constraints": self._encode_untimed_constraints(scenario),
-            "timed_parameters": [
-                [None for i in range(max_step_size)]
-                for j in range(max_step_index)
-            ],
+            "timed_parameters": timed_parameters,
         }
 
     def _get_timepoints(

@@ -65,8 +65,13 @@ def main():
             {"name": "R0", "lb": 0, "ub": 0, "label": "any"},
         ],
         "structure_parameters": [
-            {"name": "num_steps", "lb": 1, "ub": 10, "label": "all"},
-            {"name": "step_size", "lb": 1, "ub": 1, "label": "all"},
+            # {"name": "num_steps", "lb": 1, "ub": 10, "label": "all"},
+            # {"name": "step_size", "lb": 1, "ub": 1, "label": "all"},
+            {"name": "schedules", 
+             "schedules": [
+                 { "timepoints":[0, 50, 55, 60, 100]}
+                 ]
+            }
         ],
         "config": {
             "normalize": False,
