@@ -317,8 +317,9 @@ class BoxSearchEpisode(SearchEpisode):
                 # for p in self.problem.parameters
             }
         )
-        for k, v in self.structural_configuration.items():
-            point.values[k] = box.bounds[k].lb
+        point.values["schedules"] = box.schedule
+        # for k, v in self.structural_configuration.items():
+        #     point.values[k] = box.bounds[k].lb
         return point
 
 
@@ -420,7 +421,6 @@ class BoxSearch(Search):
         solver: Solver,
         episode: BoxSearchEpisode,
         options: EncodingOptions,
-        timepoint: int,
         box: Box,
     ):
         """
@@ -440,17 +440,21 @@ class BoxSearch(Search):
             data for the current search
         """
 
-        # Prepare the formula stack by popping irrelevant layers
-        time_difference = timepoint - episode._formula_stack.time
+        if box is None:
+            # Signal to pop the formula stack to the start
+            time_difference = -episode._formula_stack.time
+        else:
+            time_difference = box.timestep - episode._formula_stack.time
+
         if time_difference < 0:
+            # Prepare the formula stack by popping irrelevant layers
             for i in range(abs(int(time_difference - 1))):
                 episode._formula_stack.pop()
 
         elif time_difference > 0:
             # Prepare the formulas for each added layer
             layer_formulas = []
-            step_size = options.step_size
-            encoding = episode.problem._encodings[step_size]
+            encoding = episode.problem._encodings[box.schedule]
             # model_encoding = episode.problem._model_encoding[step_size]
             # model_encoder = model_encoding._encoder
             # query_encoding = episode.problem._query_encoding[step_size]
@@ -459,11 +463,12 @@ class BoxSearch(Search):
             #     "step_sizes"
             # ].index(step_size)
 
-            for t in range(episode._formula_stack.time + 1, timepoint + 1):
+            for t in range(episode._formula_stack.time + 1, box.timestep + 1):
+                timepoint = box.schedule.time_at_step(t)
                 encoded_constraints = []
                 for constraint in episode.problem.constraints:
                     if constraint.encodable() and constraint.relevant_at_time(
-                        t
+                        timepoint
                     ):
                         encoded_constraints.append(
                             encoding.construct_encoding(
@@ -489,7 +494,7 @@ class BoxSearch(Search):
         episode: BoxSearchEpisode,
         options: EncodingOptions,
     ):
-        self._initialize_encoding(solver, episode, options, box.timepoint, box)
+        self._initialize_encoding(solver, episode, options, box)
 
         episode._formula_stack.push(1)
 
@@ -526,21 +531,20 @@ class BoxSearch(Search):
             data for the current search
         """
         episode._formula_stack.push(1)
-        timepoint = int(box.bounds["num_steps"].lb)
-        encoder = episode.problem._encodings[options.step_size]._encoder
+        timestep = box.timestep
+        encoder = episode.problem._encodings[options.schedule]._encoder
         assumptions = encoder.encode_assumptions(
             episode.problem._assumptions, options
         )
         formula = Not(And([v for k, v in assumptions.items()]))
 
-        box_timepoint = int(box.bounds["num_steps"].lb)
         formula1 = And(
             [
                 Implies(
                     And(
                         [
                             encoder.encode_assumption(k, options, layer_idx=i)
-                            for i in range(box_timepoint + 1)
+                            for i in range(timestep + 1)
                         ]
                     ),
                     v,
@@ -554,12 +558,12 @@ class BoxSearch(Search):
                 And(
                     [
                         encoder.encode_assumption(k, options, layer_idx=i)
-                        for i in range(box_timepoint)
+                        for i in range(timestep)
                     ]
                     + [
                         Not(
                             encoder.encode_assumption(
-                                k, options, layer_idx=box_timepoint
+                                k, options, layer_idx=timestep
                             )
                         )
                     ]
@@ -602,21 +606,20 @@ class BoxSearch(Search):
             data for the current search
         """
         episode._formula_stack.push(1)
-        timepoint = int(box.bounds["num_steps"].lb)
-        encoder = episode.problem._encodings[options.step_size]._encoder
+        timestep = box.timestep
+        encoder = episode.problem._encodings[options.schedule]._encoder
         assumptions = encoder.encode_assumptions(
             episode.problem._assumptions, options
         )
         formula = And([v for k, v in assumptions.items()])
 
-        box_timepoint = int(box.bounds["num_steps"].lb)
         formula1 = And(
             [
                 Implies(
                     And(
                         [
                             encoder.encode_assumption(k, options, layer_idx=i)
-                            for i in range(box_timepoint + 1)
+                            for i in range(timestep + 1)
                         ]
                     ),
                     v,
@@ -630,7 +633,7 @@ class BoxSearch(Search):
                 And(
                     [
                         encoder.encode_assumption(k, options, layer_idx=i)
-                        for i in range(box_timepoint + 1)
+                        for i in range(timestep + 1)
                     ]
                 )
                 for k, v in assumptions.items()
@@ -976,7 +979,7 @@ class BoxSearch(Search):
                                     f"+++ [{box.width()}] True({curr_step_box})"
                                 )
 
-                                # Advance a true box to be considered for later timepoints
+                                # Advance a true box to be considered for later timesteps
                                 next_box = box.advance()
                                 if next_box:
                                     episode._add_unknown(next_box)
@@ -997,7 +1000,7 @@ class BoxSearch(Search):
                                 print(all_results["progress"])
                         l.info(f"{process_name} finished work")
                 self._initialize_encoding(
-                    solver, episode, options, 0, None
+                    solver, episode, options, None
                 )  # Reset solver stack to empty
         except KeyboardInterrupt:
             l.info(f"{process_name} Keyboard Interrupt")

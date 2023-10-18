@@ -6,13 +6,14 @@ from pysmt.fnode import FNode
 from pysmt.shortcuts import get_env
 from sympy import Add, Expr, N, expand, lambdify, symbols
 
-from funman import ModelParameter
 from funman.utils.sympy_utils import (
     replace_reserved,
     series_approx,
     sympy_to_pysmt,
     to_sympy,
 )
+
+from ..representation.parameter import ModelParameter
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)
