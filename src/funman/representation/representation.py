@@ -15,7 +15,7 @@ from matplotlib.lines import Line2D
 from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
-from funman import EncodingSchedule, to_sympy
+from funman import to_sympy
 from funman.constants import LABEL_UNKNOWN, Label
 
 from .explanation import BoxExplanation, ParameterSpaceExplanation
@@ -26,13 +26,53 @@ from .symbol import ModelSymbol
 l = logging.getLogger(__name__)
 
 Timepoint = Union[int, float]
-Timestep = Union[int, float]
+Timestep = int
+TimestepSize = Union[int, float]
+
+
+class EncodingSchedule(BaseModel):
+    timepoints: List[Timepoint]
+
+    def time_at_step(self, step: int) -> Timepoint:
+        return self.timepoints[step]
+
+    def stepsize_at_step(self, step: int) -> TimestepSize:
+        if step < len(self.timepoints) - 1:
+            return self.time_at_step(step + 1) - self.time_at_step(step)
+        elif step == len(self.timepoints) - 1:
+            return 0
+        else:
+            raise Exception(
+                f"Step {step} is not in timepoints (|timepoints|={len(timepoints)})"
+            )
+        return self.timepoints[step]
+
+    def __hash__(self):
+        return int(sum(self.timepoints))
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, EncodingSchedule):
+            return self.timepoints == other.timepoints
+        return False
+
+    def __len__(self) -> int:
+        return 1
+
+    @staticmethod
+    def from_steps(
+        num_steps: int, step_size: Union[int, float]
+    ) -> "EncodingSchedule":
+        timepoints = list(range(0, num_steps, step_size))
+        return EncodingSchedule(timepoints=timepoints)
+
+
+PointValue = Union[float, int, EncodingSchedule]
 
 
 class Point(BaseModel):
     type: Literal["point"] = "point"
     label: Label = LABEL_UNKNOWN
-    values: Dict[str, float]
+    values: Dict[str, PointValue]
     normalized_values: Optional[Dict[str, float]] = None
 
     # def __init__(self, **kw) -> None:
@@ -75,7 +115,9 @@ class Point(BaseModel):
                 [
                     v
                     for _, v in self.values.items()
-                    if v != sys.float_info.max and not math.isinf(v)
+                    if not isinstance(v, EncodingSchedule)
+                    and v != sys.float_info.max
+                    and not math.isinf(v)
                 ]
             )
         )
@@ -100,7 +142,7 @@ class Box(BaseModel):
     bounds: Dict[str, Interval] = {}
     explanation: Optional[BoxExplanation] = None
     cached_width: Optional[float] = Field(default=None, exclude=True)
-    timepoint: Timepoint = 0
+    timestep: Timestep = 0
     schedule: Optional[EncodingSchedule] = None
 
     def explain(self) -> BoxExplanation:
@@ -113,40 +155,16 @@ class Box(BaseModel):
 
     def advance(self):
         # Advancing a box means that we move the time step forward until it exhausts the possible number of steps
-        if (
-            "num_steps" in self.bounds
-            and self.bounds["num_steps"].lb < self.bounds["num_steps"].ub
-        ):
-            advanced_box = Box(
-                bounds={
-                    n: (
-                        itv
-                        if n != "num_steps"
-                        else Interval(lb=itv.lb + 1, ub=itv.ub)
-                    )
-                    for n, itv in self.bounds.items()
-                }
-            )
-            return advanced_box
+        if self.timestep == len(self.schedule.timepoints) - 1:
+            return None
         else:
-            None
+            box = self.model_copy()
+            box.timestep += 1
+            return box
 
-    def current_step(self):
+    def current_step(self) -> "Box":
         # Restrict bounds on num_steps to the lower bound (i.e., the current step)
-        if "num_steps" in self.bounds:
-            current_step_box = Box(
-                bounds={
-                    n: (
-                        itv
-                        if n != "num_steps"
-                        else Interval(lb=itv.lb, ub=itv.lb)
-                    )
-                    for n, itv in self.bounds.items()
-                }
-            )
-            return current_step_box
-        else:
-            None
+        return self
 
     def project(self, vars: Union[List[ModelParameter], List[str]]) -> "Box":
         """
@@ -279,7 +297,7 @@ class Box(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Box({self.bounds}), width = {self.width()}"
+        return self.json()  # f"Box({self.bounds}), width = {self.width()}"
 
     def finite(self) -> bool:
         """
@@ -633,8 +651,8 @@ class Box(BaseModel):
             mid = self.bounds[p].midpoint()
 
         # print(f"Split({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])")
-        b1 = self._copy()
-        b2 = self._copy()
+        b1 = self.model_copy()
+        b2 = self.model_copy()
 
         # b1 is lower half
         assert math_utils.lte(b1.bounds[p].lb, mid)

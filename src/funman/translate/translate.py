@@ -28,16 +28,6 @@ from pysmt.shortcuts import (  # type: ignore
 )
 from pysmt.solvers.solver import Model as pysmtModel
 
-from funman import (
-    Assumption,
-    Box,
-    Interval,
-    ModelParameter,
-    ModelSymbol,
-    Point,
-    Timepoint,
-    Timestep,
-)
 from funman.config import FUNMANConfig
 from funman.constants import NEG_INFINITY, POS_INFINITY
 from funman.model.model import Model
@@ -64,73 +54,28 @@ from funman.utils.sympy_utils import (
     to_sympy,
 )
 
+from ..representation.assumption import Assumption
+from ..representation.parameter import ModelParameter
+from ..representation.representation import (
+    Box,
+    Interval,
+    Point,
+    Timepoint,
+    Timestep,
+    TimestepSize,
+)
+from ..representation.symbol import ModelSymbol
+from .encoding import *
+
 l = logging.getLogger(__name__)
 l.setLevel(logging.DEBUG)
 
 
-class EncodingSchedule(BaseModel):
-    timepoints: List[Union[int, float]]
-
-    def __hash__(self):
-        return int(sum(self.timepoints))
-
-    def __eq__(self, other) -> bool:
-        if isinstance(other, EncodingSchedule):
-            return self.timepoints == other.timepoints
-        return False
-
-    @staticmethod
-    def from_steps(
-        num_steps: int, step_size: Union[int, float]
-    ) -> "EncodingSchedule":
-        timepoints = list(range(0, num_steps, step_size))
-        return EncodingSchedule(timepoints=timepoints)
-
-
-class EncodingOptions(BaseModel):
-    """
-    EncodingOptions
-    """
-
-    schedule: EncodingSchedule
-    normalize: bool = False
-    normalization_constant: float = 1.0
-
-
 StateTimepoints = List[Timepoint]
 TransitionTimepoints = List[Timepoint]
-TimeStepConstraints = Dict[Tuple[Timepoint, Timestep], List[FNode]]
-TimeStepSubstitutions = Dict[Tuple[Timepoint, Timestep], Dict[FNode, FNode]]
-TimedParameters = Dict[Tuple[Timepoint, Timestep], List["Parameter"]]
-
-
-class Encoding(BaseModel):
-    _substitutions: Dict[FNode, FNode] = {}
-
-
-class FlatEncoding(BaseModel):
-    """
-    An encoding comprises a formula over a set of symbols.
-
-    """
-
-    model_config = ConfigDict(arbitrary_types_allowed=True, extra="allow")
-
-    _formula: FNode = None
-    _symbols: Union[List[FNode], Dict[str, Dict[str, FNode]]] = None
-
-    def encoding(self):
-        return _formula
-
-    def assume(self, assumption: FNode):
-        _formula = Iff(assumption, _formula)
-
-    def symbols(self):
-        return self._symbols
-
-    # @validator("formula")
-    # def set_symbols(cls, v: FNode):
-    #     cls.symbols = Symbol(v, REAL)
+TimeStepConstraints = Dict[Tuple[Timestep, TimestepSize], FNode]
+TimeStepSubstitutions = Dict[Tuple[Timestep, TimestepSize], Dict[FNode, FNode]]
+TimedParameters = Dict[Tuple[Timestep, TimestepSize], List["Parameter"]]
 
 
 class Encoder:
@@ -289,36 +234,36 @@ class Encoder(ABC, BaseModel):
     def step_size_index(self, step_size: int) -> int:
         return self._timed_model_elements["step_sizes"].index(step_size)
 
-    def substitutions(self, step_size: int) -> Dict[FNode, FNode]:
-        step_size_idx = self.step_size_index(step_size)
-        return self._timed_model_elements["time_step_substitutions"][
-            step_size_idx
-        ]
+    def substitutions(self, schedule: EncodingSchedule) -> Dict[FNode, FNode]:
+        return self._timed_model_elements["time_step_substitutions"][schedule]
 
-    def state_timepoint(self, step_size: int, layer_idx: int) -> int:
+    def state_timepoint(
+        self, schedule: EncodingSchedule, layer_idx: int
+    ) -> int:
         step_size_idx = self.step_size_index(step_size)
         return self._timed_model_elements["state_timepoints"][step_size_idx][
             layer_idx
         ]
 
-    def time_step_constraints(self, layer_idx: int, step_size: int):
-        return self._timed_model_elements["time_step_constraints"][layer_idx][
-            step_size - self._min_step_size
+    def time_step_constraints(
+        self, timepoint: Timepoint, stepsize: TimestepSize
+    ):
+        return self._timed_model_elements["time_step_constraints"][
+            (timepoint, stepsize)
         ]
 
     def set_time_step_constraints(
-        self, layer_idx: int, step_size: int, c: FNode
+        self, layer_idx: int, step_size: TimestepSize, c: FNode
     ):
-        self._timed_model_elements["time_step_constraints"][layer_idx][
-            step_size - self._min_step_size
+        self._timed_model_elements["time_step_constraints"][
+            (layer_idx, step_size)
         ] = c
 
     def set_step_substitutions(
-        self, step_size: int, substitutions: Dict[FNode, FNode]
+        self, schedule: EncodingSchedule, substitutions: Dict[FNode, FNode]
     ):
-        step_size_idx = self.step_size_index(step_size)
         self._timed_model_elements["time_step_substitutions"][
-            step_size_idx
+            schedule
         ] = substitutions
 
     def encode_constraint(
@@ -383,7 +328,7 @@ class Encoder(ABC, BaseModel):
         layer_idx: int = None,
     ) -> FNode:
         time = (
-            self.state_timepoint(options.step_size, layer_idx)
+            options.schedule.time_at_step(layer_idx)
             if layer_idx is not None
             else None
         )
@@ -471,21 +416,24 @@ class Encoder(ABC, BaseModel):
         layer_idx: int,
         options: EncodingOptions,
     ) -> EncodedFormula:
-        c = self.time_step_constraints(layer_idx - 1, options.step_size)
+        stepsize: TimestepSize = options.schedule.stepsize_at_step(
+            layer_idx - 1
+        )
+        timepoint: Timepoint = options.schedule.time_at_step(layer_idx - 1)
+        c = self.time_step_constraints(timepoint, stepsize)
 
-        substitutions = self.substitutions(options.step_size)
+        substitutions = self.substitutions(options.schedule)
 
         if c is None:
-            timepoint = self.state_timepoint(options.step_size, layer_idx - 1)
-            next_timepoint = self.state_timepoint(options.step_size, layer_idx)
+            next_timepoint = options.schedule.time_at_step(layer_idx)
             c, substitutions = self._encode_next_step(
                 scenario,
                 timepoint,
                 next_timepoint,
                 substitutions=substitutions,
             )
-            self.set_time_step_constraints(layer_idx - 1, options.step_size, c)
-            self.set_step_substitutions(options.step_size, substitutions)
+            self.set_time_step_constraints(timepoint, stepsize, c)
+            self.set_step_substitutions(options.schedule, substitutions)
 
         return (c, {str(s): s for s in c.get_free_variables()})
 
@@ -765,15 +713,15 @@ class Encoder(ABC, BaseModel):
         options: EncodingOptions,
         assumptions: List[Assumption],
     ) -> Optional[EncodedFormula]:
-        bounds = constraint.additive_bounds
-        vars = constraint.variables
-        weights = constraint.weights
-        step = self.state_timepoint(options.step_size, layer_idx=layer_idx)
+        bounds: Interval = constraint.additive_bounds
+        vars: List[str] = constraint.variables
+        weights: List[int | float] = constraint.weights
+        timestep = options.schedule.time_at_step(layer_idx)
         expression = Plus(
             [
                 Times(
                     Real(weights[i]),
-                    self._encode_state_var(vars[i], time=step),
+                    self._encode_state_var(vars[i], time=timestep),
                 )
                 for i in range(len(vars))
             ]
@@ -877,10 +825,10 @@ class Encoder(ABC, BaseModel):
                 )  # Last timepoint is a state with no transition
                 time_step_constraints.update(
                     {
-                        (t1, t2 - t1): []
-                        for t1 in schedule.timepoints
-                        for t2 in schedule.timepoints
-                        if t1 < t2
+                        (t1, t2 - t1): None
+                        for s1, t1 in enumerate(schedule.timepoints)
+                        for s2, t2 in enumerate(schedule.timepoints)
+                        if s1 + 1 == s2
                     }
                 )
                 time_step_substitutions[
@@ -888,10 +836,10 @@ class Encoder(ABC, BaseModel):
                 ] = initial_substitutions.copy()
                 timed_parameters.update(
                     {
-                        (t1, t2 - t1): []
-                        for t1 in schedule.timepoints
-                        for t2 in schedule.timepoints
-                        if t1 < t2
+                        (t1, t2 - t1): None
+                        for s1, t1 in enumerate(schedule.timepoints)
+                        for s2, t2 in enumerate(schedule.timepoints)
+                        if s1 + 1 == s2
                     }
                 )
 

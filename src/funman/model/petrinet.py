@@ -152,7 +152,7 @@ class AbstractPetriNetModel(Model):
         vars = self._state_var_names()
         return LinearConstraint(
             name="compartmental_constraint",
-            additive_bounds={"lb": 0.0, "ub": population + 1.0},
+            additive_bounds={"lb": population, "ub": population + 1.0},
             variables=vars,
             weights=[1.0] * len(vars),
         )

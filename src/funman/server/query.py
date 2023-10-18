@@ -269,7 +269,12 @@ class FunmanResults(BaseModel):
             df["id"] = i
             parameters = self.point_parameters(point=point, scenario=scenario)
             for p, v in parameters.items():
-                df[p.name] = v
+                if (
+                    isinstance(v, int)
+                    or isinstance(v, float)
+                    or isinstance(v, bool)
+                ):
+                    df[p.name] = v
             df["label"] = point.label
             # if max_time:
             # if time_var:

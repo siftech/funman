@@ -79,7 +79,7 @@ def main():
             "normalization_constant": 1001,
             # "use_compartmental_constraints" : False,
             # "profile": True
-            #   "save_smtlib" : True,
+            "save_smtlib": True,
             # "substitute_subformulas": False
             "taylor_series_order": None,
             #   "dreal_log_level": "debug"
@@ -101,7 +101,7 @@ def main():
     )
     if points and len(points) > 0:
         point: Point = points[-1]
-        parameters = results.point_parameters(point)
+        parameters: Dict[Parameter, float] = results.point_parameters(point)
         print(parameters)
         print(results.dataframe([point]))
     else:

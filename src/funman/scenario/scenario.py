@@ -66,7 +66,7 @@ class AnalysisScenario(ABC, BaseModel):
     _assumptions: List[Assumption] = []
     _smt_encoder: Optional["Encoder"] = None
     # Encoding for different step sizes (key)
-    _encodings: Optional[Dict[int, "Encoding"]] = {}
+    _encodings: Optional[Dict["Schedule", "Encoding"]] = {}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
