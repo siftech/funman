@@ -12,14 +12,12 @@ from pysmt.solvers.solver import Model as pysmtModel
 from funman.config import FUNMANConfig
 from funman.constants import LABEL_FALSE, LABEL_TRUE
 from funman.representation.explanation import Explanation
-from funman.representation.representation import (
-    Box,
-    Interval,
-    ParameterSpace,
-    Point,
-)
 from funman.translate.translate import EncodingOptions
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
+
+from ..representation import Interval, Point
+from ..representation.box import Box
+from ..representation.parameter_space import ParameterSpace
 
 # import funman.search as search
 from .search import Search, SearchEpisode

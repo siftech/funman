@@ -6,9 +6,7 @@ from time import sleep
 
 from fastapi.testclient import TestClient
 
-from funman import Funman, FUNMANConfig
 from funman.api.api import app, settings
-from funman.representation.representation import ParameterSpace
 from funman.server.query import FunmanResults, FunmanWorkUnit
 
 FILE_DIRECTORY = Path(__file__).resolve().parent

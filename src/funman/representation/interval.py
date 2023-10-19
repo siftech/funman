@@ -1,11 +1,15 @@
+import logging
 from decimal import Decimal
 from typing import List, Optional, Union
 
 from numpy import average
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
+
+l = logging.Logger(__name__)
+l.setLevel(logging.INFO)
 
 
 class Interval(BaseModel):
@@ -15,6 +19,7 @@ class Interval(BaseModel):
 
     lb: Optional[Union[float, str]] = NEG_INFINITY
     ub: Optional[Union[float, str]] = POS_INFINITY
+    closed_upper_bound: bool = False
     cached_width: Optional[float] = Field(default=None, exclude=True)
 
     def __hash__(self):
@@ -52,9 +57,16 @@ class Interval(BaseModel):
         if self.cached_width is None:
             self.cached_width = Decimal(self.ub) - Decimal(self.lb)
         if normalize is not None:
-            return self.cached_width / normalize
+            return (
+                self.cached_width / normalize
+                if normalize > 0
+                else Decimal(0.0)
+            )
         else:
             return self.cached_width
+
+    def is_unbound(self) -> bool:
+        return self.lb == NEG_INFINITY and self.ub == POS_INFINITY
 
     def normalize(self, normalization_factor: Union[float, int]) -> "Interval":
         return Interval(
@@ -295,4 +307,21 @@ class Interval(BaseModel):
         bool
             the value is in the interval
         """
-        return math_utils.gte(value, self.lb) and math_utils.lt(value, self.ub)
+        lb_sat = math_utils.gte(value, self.lb)
+        ub_sat = (
+            math_utils.lte(value, self.ub)
+            if self.closed_upper_bound
+            else math_utils.lt(value, self.ub)
+        )
+        return lb_sat and ub_sat
+
+    @model_validator(mode="after")
+    def check_interval(self) -> str:
+        # Assume that intervals where lb == ub imply closed_upper_bound
+        if self.lb == self.ub and not self.closed_upper_bound:
+            l.warning(
+                f"{self} has equal lower and upper bounds, so assuming the upper bound is closed.  (I.e., [lb, ub) is actually [lb, ub])"
+            )
+            self.closed_upper_bound = True
+
+        return self

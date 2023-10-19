@@ -12,7 +12,7 @@ from funman import Funman
 from funman.config import FUNMANConfig
 from funman.model.decapode import DecapodeDynamics, DecapodeModel
 from funman.model.query import Query, QueryAnd, QueryTrue
-from funman.representation.representation import ModelParameter
+from funman.representation import ModelParameter
 from funman.scenario import (
     ConsistencyScenario,
     ConsistencyScenarioResult,

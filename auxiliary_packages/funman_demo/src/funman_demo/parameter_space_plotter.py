@@ -5,12 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.lines import Line2D
 
-from funman.representation.representation import (
-    Box,
-    Interval,
-    ParameterSpace,
-    Point,
-)
+from funman.representation import Box, Interval, ParameterSpace, Point
 
 logging.getLogger("matplotlib.font_manager").disabled = True
 logging.getLogger("matplotlib.pyplot").disabled = True

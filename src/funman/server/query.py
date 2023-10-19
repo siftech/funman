@@ -1,9 +1,10 @@
 import random
+from collections import Counter
 from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 from matplotlib import pyplot as plt
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationInfo, field_validator
 
 from funman import LABEL_ANY, ModelParameter
 from funman.config import FUNMANConfig
@@ -25,7 +26,7 @@ from funman.representation.parameter import (
     StepSize,
     StructureParameter,
 )
-from funman.representation.representation import ParameterSpace, Point
+from funman.representation.representation import EncodingSchedule, Point
 from funman.scenario.consistency import (
     ConsistencyScenario,
     ConsistencyScenarioResult,
@@ -35,7 +36,8 @@ from funman.scenario.parameter_synthesis import (
     ParameterSynthesisScenarioResult,
 )
 from funman.scenario.scenario import AnalysisScenario
-from funman.translate import EncodingSchedule
+
+from ..representation.parameter_space import ParameterSpace
 
 
 class FunmanWorkRequest(BaseModel):
@@ -46,6 +48,24 @@ class FunmanWorkRequest(BaseModel):
     structure_parameters: Optional[
         List[Union[Union[NumSteps, StepSize], Schedules]]
     ] = None
+
+    @field_validator("constraints")
+    @classmethod
+    def check_unique_names(
+        cls,
+        constraints: Optional[List[FunmanConstraint]],
+        info: ValidationInfo,
+    ) -> Optional[List[FunmanConstraint]]:
+        if constraints is not None and len(constraints) > 0:
+            name_counts = Counter([c.name for c in constraints])
+            dups = {k: v for k, v in name_counts.items() if v > 1}
+            assert (
+                max(name_counts.values()) == 1
+            ), f"Constraint names need to be unique, duplicate counts: {dups}"
+            assert (None not in name_counts) or name_counts[
+                None
+            ] == 0, f"Constraints need names, found {name_counts[None]} constraints without names."
+        return constraints
 
 
 class FunmanProgress(BaseModel):
@@ -92,8 +112,7 @@ class FunmanWorkUnit(BaseModel):
                 parameters.append(
                     ModelParameter(
                         name=data.name,
-                        ub=data.ub,
-                        lb=data.lb,
+                        interval=data.interval,
                         label=data.label,
                     )
                 )
@@ -232,7 +251,7 @@ class FunmanResults(BaseModel):
     ) -> Dict[Parameter, float]:
         if scenario is None:
             scenario = self._scenario()
-        parameters = scenario.parameters
+        parameters = scenario.model_parameters()
         return {p: point.values[p.name] for p in parameters}
 
     def dataframe(

@@ -86,7 +86,7 @@ class AnalysisScenario(ABC, BaseModel):
         # create assumptions for each constraint that may be assumed.
         if self.constraints is not None:
             for constraint in self.constraints:
-                if constraint.assumable():
+                if constraint.assumable:
                     self._assumptions.append(Assumption(constraint=constraint))
 
     @abstractclassmethod
@@ -115,12 +115,14 @@ class AnalysisScenario(ABC, BaseModel):
         self._set_normalization(config)
 
         if config.use_compartmental_constraints:
-            cc = self.model.compartmental_constraints(
+            ccs = self.model.compartmental_constraints(
                 self.normalization_constant
             )
-            if cc is not None:
-                self.constraints += [cc]
-                self._assumptions.append(Assumption(constraint=cc))
+            if ccs is not None:
+                self.constraints += ccs
+                for cc in ccs:
+                    if cc.assumable:
+                        self._assumptions.append(Assumption(constraint=cc))
 
         self._initialize_encodings(config)
 
@@ -155,7 +157,7 @@ class AnalysisScenario(ABC, BaseModel):
     def search_space_volume(self) -> Decimal:
         bounds = {}
         for param in self.parameters:
-            bounds[param.name] = Interval(lb=param.lb, ub=param.ub)
+            bounds[param.name] = param.interval.model_copy()
         return Box(bounds=bounds).volume()
 
     def representable_space_volume(self) -> Decimal:
@@ -188,7 +190,9 @@ class AnalysisScenario(ABC, BaseModel):
             # if wrong type, recover structure parameters
             self.parameters = [
                 (
-                    StructureParameter(name=p.name, lb=p.lb, ub=p.ub)
+                    StructureParameter(
+                        name=p.name, interval=Interval(lb=p.lb, ub=p.ub)
+                    )
                     if (p.name == "num_steps" or p.name == "step_size")
                     else p
                 )
@@ -197,8 +201,12 @@ class AnalysisScenario(ABC, BaseModel):
             if len(self.structure_parameters()) == 0:
                 # Add the structure parameters if still missing
                 self.parameters += [
-                    StructureParameter(name="num_steps", lb=0, ub=0),
-                    StructureParameter(name="step_size", lb=1, ub=1),
+                    StructureParameter(
+                        name="num_steps", interval=Interval(lb=0, ub=0)
+                    ),
+                    StructureParameter(
+                        name="step_size", interval=Interval(lb=1, ub=1)
+                    ),
                 ]
 
         self._extract_non_overriden_parameters()
@@ -232,7 +240,9 @@ class AnalysisScenario(ABC, BaseModel):
             else:
                 bounds = {}
             non_overriden_parameters.append(
-                ModelParameter(name=p, **bounds, label=LABEL_ANY)
+                ModelParameter(
+                    name=p, interval=Interval(**bounds), label=LABEL_ANY
+                )
             )
 
         self.parameters += non_overriden_parameters

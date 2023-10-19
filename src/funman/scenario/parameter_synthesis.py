@@ -2,18 +2,21 @@
 This module defines the Parameter Synthesis scenario.
 """
 import threading
+from decimal import Decimal
 from typing import Callable, Dict, List, Optional, Union
 
 from pandas import DataFrame
 from pydantic import BaseModel, ConfigDict
 
-from funman.representation.representation import ParameterSpace, Point
+from funman.representation.representation import Point
 from funman.scenario import (
     AnalysisScenario,
     AnalysisScenarioResult,
     ConsistencyScenario,
 )
 from funman.utils.math_utils import minus
+
+from ..representation.parameter_space import ParameterSpace
 
 
 class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
@@ -29,7 +32,7 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
 
     # _assume_model: Optional[FNode] = None
     # _assume_query: Optional[FNode] = None
-    _original_parameter_widths: Dict[str, float] = {}
+    _original_parameter_widths: Dict[str, Decimal] = {}
 
     @classmethod
     def get_kind(cls) -> str:
@@ -68,7 +71,8 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
         search = self.initialize(config)
 
         self._original_parameter_widths = {
-            p: minus(p.ub, p.lb) for p in self.parameters
+            p.name: Decimal(minus(p.interval.ub, p.interval.lb))
+            for p in self.parameters
         }
 
         parameter_space: ParameterSpace = search.search(
@@ -95,6 +99,11 @@ class ParameterSynthesisScenarioResult(AnalysisScenarioResult, BaseModel):
     # episode: SearchEpisode
     scenario: ParameterSynthesisScenario
     parameter_space: ParameterSpace
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parameter_space._reassign_point_labels()
+        self.parameter_space._compact()
 
     def plot(self, **kwargs):
         """

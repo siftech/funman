@@ -146,16 +146,29 @@ class AbstractPetriNetModel(Model):
                 f"Cannot calculate the normalization constant for {type(self)} because the initial state variables are not constants. Try setting the 'normalization_constant' in the configuration to constant."
             )
 
-    def compartmental_constraints(self, population: Union[float, int]):
+    def compartmental_constraints(
+        self, population: Union[float, int]
+    ) -> List["Constraint"]:
         from funman.representation.constraint import LinearConstraint
 
         vars = self._state_var_names()
-        return LinearConstraint(
-            name="compartmental_constraint",
-            additive_bounds={"lb": population, "ub": population + 1.0},
-            variables=vars,
-            weights=[1.0] * len(vars),
-        )
+        return [
+            LinearConstraint(
+                name="compartmental_constraint_population",
+                additive_bounds={"lb": population, "ub": population},
+                variables=vars,
+                closed_upper_bound=True,
+                assumable=False,
+            )
+        ] + [
+            LinearConstraint(
+                name=f"compartmental_{v}_nonnegative",
+                additive_bounds={"lb": 0},
+                variables=[v],
+                assumable=False,
+            )
+            for v in vars
+        ]
 
 
 class GeneratedPetriNetModel(AbstractPetriNetModel):

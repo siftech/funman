@@ -32,10 +32,11 @@ from funman.model.bilayer import (
     BilayerStateNode,
 )
 from funman.model.model import Model
-from funman.representation.representation import Box, Interval
 from funman.translate import Encoder, Encoding
 from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils.sympy_utils import to_sympy
+
+from ..representation import Box, Interval
 
 l = logging.Logger(__name__)
 

@@ -8,7 +8,6 @@ from enum import Enum
 from typing import Optional
 
 from funman.model.model import Model
-from funman.representation.representation import ParameterSpace
 from funman.scenario.scenario import AnalysisScenario
 from funman.server.exception import FunmanWorkerException
 from funman.server.query import (
@@ -17,6 +16,8 @@ from funman.server.query import (
     FunmanWorkRequest,
     FunmanWorkUnit,
 )
+
+from ..representation.parameter_space import ParameterSpace
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)

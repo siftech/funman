@@ -21,29 +21,24 @@ def main():
         #     "ub": 300
         # },
         "constraints": [
+            {
+                "name": "I_bounds_A",
+                "variable": "I",
+                "interval": {"lb": 1},
+                "timepoints": {"lb": 55, "ub": 60, "closed_upper_bound": True},
+            },
+            {
+                "name": "I_bounds_B",
+                "variable": "I",
+                "interval": {"ub": 20},
+                "timepoints": {"lb": 0, "ub": 20},
+            },
             # {
-            #     "name": "compartmental bounds",
-            #     "additive_bounds": {"lb": 1001, "ub": 1002},
-            #     "variables": ["S", "I", "R"]
+            #     "name": "I_bounds_C",
+            #     "variable": "I",
+            #     "interval": {"lb": 0.7},
+            #     "timepoints": {"lb": 3, "ub": 4},
             # },
-            {
-                "name": "I_bounds",
-                "variable": "I",
-                "bounds": {"lb": 0.85},
-                "timepoints": {"lb": 1, "ub": 2},
-            },
-            {
-                "name": "I_bounds",
-                "variable": "I",
-                "bounds": {"lb": 0.8},
-                "timepoints": {"lb": 2, "ub": 3},
-            },
-            {
-                "name": "I_bounds",
-                "variable": "I",
-                "bounds": {"lb": 0.7},
-                "timepoints": {"lb": 3, "ub": 4},
-            },
             # {
             #     "name": "R_bounds",
             #     "variable" : "R",
@@ -58,29 +53,66 @@ def main():
             #  }
         ],
         "parameters": [
-            {"name": "beta", "lb": 2.6e-7, "ub": 2.8e-7, "label": "all"},
-            {"name": "gamma", "lb": 0.1, "ub": 0.18, "label": "all"},
-            {"name": "S0", "lb": 1000, "ub": 1000, "label": "any"},
-            {"name": "I0", "lb": 1, "ub": 1, "label": "any"},
-            {"name": "R0", "lb": 0, "ub": 0, "label": "any"},
+            {
+                "name": "beta",
+                "interval": {"lb": 2.6e-7, "ub": 2.8e-3},
+                "label": "all",
+            },
+            {
+                "name": "gamma",
+                "interval": {"lb": 0.1, "ub": 0.18},
+                "label": "all",
+            },
+            {
+                "name": "S0",
+                "interval": {"lb": 1000, "ub": 1000},
+                "label": "any",
+            },
+            {"name": "I0", "interval": {"lb": 1, "ub": 1}, "label": "any"},
+            {"name": "R0", "interval": {"lb": 0, "ub": 0}, "label": "any"},
         ],
         "structure_parameters": [
-            # {"name": "num_steps", "lb": 1, "ub": 10, "label": "all"},
-            # {"name": "step_size", "lb": 1, "ub": 1, "label": "all"},
+            # {
+            #     "name": "num_steps",
+            #     "interval": {"lb": 1, "ub": 2, "closed_upper_bound": True},
+            #     "label": "all",
+            # },
+            # {
+            #     "name": "step_size",
+            #     "interval": {"lb": 1, "ub": 1, "closed_upper_bound": True},
+            #     "label": "all",
+            # },
             {
                 "name": "schedules",
-                "schedules": [{"timepoints": [0, 50, 55, 60, 100]}],
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            5,
+                            10,
+                            15,
+                            20,
+                            30,
+                            35,
+                            45,
+                            50,
+                            55,
+                            60,
+                            100,
+                        ]
+                    }
+                ],
             }
         ],
         "config": {
             "normalize": False,
-            "tolerance": 1e-3,
+            "tolerance": 5e-3,
             "simplify_query": False,
             "normalization_constant": 1001,
             # "use_compartmental_constraints" : False,
             # "profile": True
             "save_smtlib": True,
-            # "substitute_subformulas": False
+            "substitute_subformulas": False,
             "taylor_series_order": None,
             #   "dreal_log_level": "debug"
         },

@@ -9,6 +9,7 @@ from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
 from funman.model.model import _wrap_with_internal_model
+from funman.representation.representation import EncodingSchedule
 from funman.server.query import (
     FunmanResults,
     FunmanWorkRequest,
