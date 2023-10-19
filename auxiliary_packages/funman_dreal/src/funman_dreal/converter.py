@@ -49,7 +49,7 @@ class DRealConverter(Converter, DagWalker):
 
         # Replace integers with floats
         str_formula = re.sub(
-            r"(?<![.d_0-9a-z])[0-9]+(?!([.de-]|[0-9]))",
+            r"(?<![.d_0-9a-zA-Z])[0-9]+(?!([.de-]|[0-9]))",
             r"\g<0>.0",
             str_formula,
         )

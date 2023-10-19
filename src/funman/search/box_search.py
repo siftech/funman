@@ -225,7 +225,10 @@ class BoxSearchEpisode(SearchEpisode):
 
     def _add_unknown_box(self, box: Box) -> bool:
         if (
-            box.width(parameters=self.problem.model_parameters())
+            box.width(
+                parameters=self.problem.model_parameters(),
+                normalize=self.problem._original_parameter_widths,
+            )
             > self.config.tolerance
         ):
             box.label = LABEL_UNKNOWN
@@ -257,6 +260,7 @@ class BoxSearchEpisode(SearchEpisode):
         # self.statistics.iteration_operation.put("f")
 
     def _add_false_point(self, point: Point, explanation: Explanation = None):
+        l.info(f"Adding false point: {point}")
         if point in self._true_points:
             l.debug(
                 f"Point: {point} is marked false, but already marked true."
@@ -273,6 +277,7 @@ class BoxSearchEpisode(SearchEpisode):
         # self.statistics.iteration_operation.put("t")
 
     def _add_true_point(self, point: Point):
+        l.info(f"Adding true point: {point}")
         if point in self._false_points:
             l.debug(
                 f"Point: {point} is marked true, but already marked false."
@@ -308,18 +313,10 @@ class BoxSearchEpisode(SearchEpisode):
                     else p[1].constant_value()
                 )
                 for p in model
-                # p.name: (
-                #     float(model.get_py_value(p.symbol()))
-                #     if isinstance(p, ModelParameter)
-                #     else box.bounds[
-                #         p.name
-                #     ].lb
-                # for p in self.problem.parameters
-            }
+            },
+            timestep=box.timestep,
         )
         point.values["schedules"] = box.schedule
-        # for k, v in self.structural_configuration.items():
-        #     point.values[k] = box.bounds[k].lb
         return point
 
 
@@ -510,7 +507,7 @@ class BoxSearch(Search):
                     ParameterConstraint(
                         name=parameter_name,
                         parameter=ModelParameter(
-                            name=parameter_name, lb=interval.lb, ub=interval.ub
+                            name=parameter_name, interval=interval
                         ),
                     ),
                     options=options,
@@ -532,10 +529,15 @@ class BoxSearch(Search):
         """
         episode._formula_stack.push(1)
         timestep = box.timestep
+        timepoint = box.schedule.time_at_step(timestep)
         encoder = episode.problem._encodings[options.schedule]._encoder
-        assumptions = encoder.encode_assumptions(
-            episode.problem._assumptions, options
-        )
+        assumptions = {
+            k: v
+            for k, v in encoder.encode_assumptions(
+                episode.problem._assumptions, options
+            ).items()
+            if k.relevant_at_time(timepoint)
+        }
         formula = Not(And([v for k, v in assumptions.items()]))
 
         formula1 = And(
@@ -607,10 +609,15 @@ class BoxSearch(Search):
         """
         episode._formula_stack.push(1)
         timestep = box.timestep
+        timepoint = box.schedule.time_at_step(timestep)
         encoder = episode.problem._encodings[options.schedule]._encoder
-        assumptions = encoder.encode_assumptions(
-            episode.problem._assumptions, options
-        )
+        assumptions = {
+            k: v
+            for k, v in encoder.encode_assumptions(
+                episode.problem._assumptions, options
+            ).items()
+            if k.relevant_at_time(timepoint)
+        }
         formula = And([v for k, v in assumptions.items()])
 
         formula1 = And(

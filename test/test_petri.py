@@ -11,8 +11,7 @@ from funman.config import FUNMANConfig
 from funman.model import EnsembleModel, PetrinetModel, QueryLE
 from funman.model.petrinet import PetrinetDynamics
 from funman.model.query import QueryAnd
-from funman.representation.representation import ModelParameter
-from funman.representation.symbol import ModelSymbol
+from funman.representation import ModelParameter, ModelSymbol
 from funman.scenario import (
     ConsistencyScenario,
     ConsistencyScenarioResult,

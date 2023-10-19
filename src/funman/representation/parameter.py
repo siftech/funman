@@ -1,29 +1,37 @@
 import copy
 import logging
+from decimal import Decimal
 from typing import List, Literal, Union
 
-from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 from pysmt.fnode import FNode
 from pysmt.shortcuts import REAL, Symbol
 
-import funman.utils.math_utils as math_utils
-from funman import LABEL_ALL, LABEL_ANY, NEG_INFINITY, POS_INFINITY
+from funman import LABEL_ALL, LABEL_ANY
 
+from .encoding_schedule import EncodingSchedule
+from .interval import Interval
 from .symbol import ModelSymbol
 
-l = logging.getLogger(__name__)
+l: logging.Logger = logging.getLogger(__name__)
+l.setLevel(logging.INFO)
 
 
 class Parameter(BaseModel):
     name: Union[str, ModelSymbol]
-    lb: Union[float, str] = NEG_INFINITY
-    ub: Union[float, str] = POS_INFINITY
+    interval: Interval = Interval()
 
-    def width(self) -> Union[str, float]:
-        return math_utils.minus(self.ub, self.lb)
+    def width(self) -> Decimal:
+        return self.interval.width()
 
     def is_unbound(self) -> bool:
-        return self.lb == NEG_INFINITY and self.ub == POS_INFINITY
+        return self.interval.is_unbound()
 
     def __hash__(self):
         return abs(hash(self.name))
@@ -46,6 +54,7 @@ class NumSteps(StructureParameter):
     @classmethod
     def check_name(cls, name: str, info: ValidationInfo):
         assert name == "num_steps", "NumSteps.name must be 'num_steps'"
+        return name
 
 
 class StepSize(StructureParameter):
@@ -53,19 +62,27 @@ class StepSize(StructureParameter):
     @classmethod
     def check_name(cls, name: str, info: ValidationInfo):
         assert name == "step_size", "StepSize.name must be 'step_size'"
+        return name
 
 
 StepListValue = List[Union[float, int]]
 
 
 class Schedules(StructureParameter):
-    schedules: List["EncodingSchedule"]
+    schedules: List[EncodingSchedule]
 
     @field_validator("name")
     @classmethod
     def check_name(cls, name: str, info: ValidationInfo):
         assert name == "schedules", "StepList.name must be 'step_list'"
         return name
+
+    @model_validator(mode="before")
+    def check_empty_name(self) -> str:
+        if ("name" not in self) or (self["name"] is None):
+            self["name"] = "schedules"
+
+        return self
 
 
 class ModelParameter(LabeledParameter):
@@ -127,4 +144,4 @@ class ModelParameter(LabeledParameter):
         return hash(self.name)
 
     def __repr__(self) -> str:
-        return f"{self.name}[{self.lb}, {self.ub})"
+        return f"{self.name}[{self.interval.lb}, {self.interval.ub})"

@@ -108,8 +108,12 @@ class FUNMANSimplifier(pysmt.simplifier.Simplifier):
         if len(formula.free_symbols) == 0:
             return formula
 
-        ub_values = {replace_reserved(p.name): p.ub for p in parameters}
-        lb_values = {replace_reserved(p.name): p.lb for p in parameters}
+        ub_values = {
+            replace_reserved(p.name): p.interval.ub for p in parameters
+        }
+        lb_values = {
+            replace_reserved(p.name): p.interval.lb for p in parameters
+        }
         original_size = len(formula.args)
 
         # def calc_mag(g):

@@ -83,7 +83,7 @@ class SearchEpisode(BaseModel):
     def _initial_box(self, schedule: EncodingSchedule) -> Box:
         box = Box(
             bounds={
-                p.name: (Interval(lb=p.lb, ub=p.ub))
+                p.name: p.interval.model_copy(deep=True)
                 for p in self.problem.parameters
                 if (isinstance(p, ModelParameter))
             },

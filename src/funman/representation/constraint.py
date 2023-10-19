@@ -20,13 +20,10 @@ from .parameter import ModelParameter, StructureParameter
 
 
 class Constraint(BaseModel):
-    _assumable: bool = True
+    assumable: bool = True
     name: str
 
     # model_config = ConfigDict(extra="forbid")
-
-    def assumable(self) -> bool:
-        return self._assumable
 
     def __hash__(self) -> int:
         return 1
@@ -49,7 +46,7 @@ class TimedConstraint(Constraint):
 
 
 class ModelConstraint(Constraint):
-    _assumable: bool = False
+    assumable: bool = False
     model: Model
 
     model_config = ConfigDict(extra="forbid")
@@ -59,7 +56,7 @@ class ModelConstraint(Constraint):
 
 
 class ParameterConstraint(Constraint):
-    _assumable: bool = False
+    assumable: bool = False
     parameter: Union[ModelParameter, StructureParameter]
 
     model_config = ConfigDict(extra="forbid")
@@ -75,7 +72,7 @@ class ParameterConstraint(Constraint):
 
 
 class QueryConstraint(Constraint):
-    _assumable: bool = True
+    assumable: bool = True
     query: Query
 
     model_config = ConfigDict(extra="forbid")
@@ -86,7 +83,7 @@ class QueryConstraint(Constraint):
 
 class StateVariableConstraint(TimedConstraint):
     variable: str
-    bounds: "Interval" = None
+    interval: "Interval" = None
 
     model_config = ConfigDict(extra="forbid")
 
@@ -95,11 +92,13 @@ class StateVariableConstraint(TimedConstraint):
 
 
 class LinearConstraint(TimedConstraint):
+    assumable: bool = True
     additive_bounds: "Interval"
     variables: List[str]
     weights: Annotated[
         Optional[List[Union[int, float]]], Field(validate_default=True)
     ] = None
+    closed_upper_bound: bool = False
 
     model_config = ConfigDict(extra="forbid")
 
@@ -108,6 +107,10 @@ class LinearConstraint(TimedConstraint):
     def check_weights(
         cls, weights: Optional[List[Union[int, float]]], info: ValidationInfo
     ):
+        assert (
+            "variables" in info.data
+        ), "LinearConstraint must have a list of variables."
+
         if weights is None:
             weights = [1.0] * len(info.data["variables"])
         return weights
