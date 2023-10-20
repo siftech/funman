@@ -1058,7 +1058,7 @@ class Encoder(ABC, BaseModel):
         options: EncodingOptions,
         assumptions: List[Assumption],
     ):
-        time = self.state_timepoint(options.step_size, layer_idx)
+        time = options.schedule.time_at_step(layer_idx)
         if options.normalize:
             ub = Div(Real(query.ub), Real(scenario.normalization_constant))
         else:
@@ -1078,7 +1078,7 @@ class Encoder(ABC, BaseModel):
         options: EncodingOptions,
         assumptions: List[Assumption],
     ):
-        time = self.state_timepoint(options.step_size, layer_idx)
+        time = options.schedule.time_at_step(layer_idx)
         if options.normalize:
             lb = Div(Real(query.lb), Real(scenario.normalization_constant))
         else:

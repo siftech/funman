@@ -27,7 +27,8 @@ class Point(BaseModel):
     label: Label = LABEL_UNKNOWN
     values: Dict[str, PointValue]
     normalized_values: Optional[Dict[str, float]] = None
-    timestep: Timestep
+    timestep: Timestep = 0
+    schedule: Optional[EncodingSchedule] = None
 
     # def __init__(self, **kw) -> None:
     #     super().__init__(**kw)
@@ -38,11 +39,6 @@ class Point(BaseModel):
 
     def __repr__(self) -> str:
         return str(self.model_dump())
-
-    @staticmethod
-    def from_dict(data):
-        res = Point(values={k: v for k, v in data["values"].items()})
-        return res
 
     def denormalize(self, scenario):
         if scenario.normalization_constant:

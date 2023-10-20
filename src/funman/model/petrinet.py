@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import graphviz
 import sympy
@@ -139,7 +139,7 @@ class AbstractPetriNetModel(Model):
     ) -> float:
         vars = self._state_var_names()
         values = {v: self._get_init_value(v, scenario, config) for v in vars}
-        if all(v.is_constant() for v in values.values()):
+        if all((v is not None and v.is_constant()) for v in values.values()):
             return float(sum(v.constant_value() for v in values.values()))
         else:
             raise Exception(
@@ -363,7 +363,15 @@ class PetrinetDynamics(BaseModel):
         str,
         List[
             Dict[
-                str, Union[Dict[str, Union[str, bool, float]], int, str, float]
+                str,
+                Optional[
+                    Union[
+                        Dict[str, Optional[Union[str, bool, float]]],
+                        int,
+                        str,
+                        float,
+                    ]
+                ],
             ]
         ],
     ]

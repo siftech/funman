@@ -130,4 +130,5 @@ FunmanConstraint = Union[
     ParameterConstraint,
     StateVariableConstraint,
     LinearConstraint,
+    QueryConstraint,
 ]

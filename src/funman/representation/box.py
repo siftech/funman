@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
 from funman import to_sympy
-from funman.constants import LABEL_UNKNOWN, Label
+from funman.constants import LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN, Label
 
 from . import EncodingSchedule, Interval, Point, Timestep
 from .explanation import BoxExplanation
@@ -422,6 +422,7 @@ class Box(BaseModel):
             pnames = [
                 p.name if isinstance(p.name, str) else p.name.name
                 for p in parameters
+                if isinstance(p, ModelParameter)
             ]
 
         # handle the volume of zero dimensions
@@ -446,16 +447,26 @@ class Box(BaseModel):
         # that need this same treatment. Specifically looking for
         # strings 'num_steps' and 'step_size' is brittle.
         num_timepoints = 1
-        if "num_steps" in widths:
+        if self.schedule:
+            if self.label == LABEL_FALSE:
+                # Each false box covers from the self.timestep to the end of the schedule.
+                num_timepoints = Decimal(
+                    len(self.schedule.timepoints[self.timestep :])
+                ).to_integral_exact(rounding=ROUND_CEILING)
+            elif self.label == LABEL_TRUE:
+                # Each true box covers only one timestep, but
+                pass
+        elif "num_steps" in widths:
             del widths["num_steps"]
             # TODO this timepoint computation could use more thought
             # for the moment it just takes the ceil(width) + 1.0
             # so num steps 1.0 to 2.5 would result in:
             # ceil(2.5 - 1.0) + 1.0 = 3.0
             num_timepoints = Decimal(
-                self.bounds["num_steps"].width()
+                self.bounds["num_steps"].ub
             ).to_integral_exact(rounding=ROUND_CEILING)
             num_timepoints += 1
+
         if "step_size" in widths:
             del widths["step_size"]
 
@@ -597,12 +608,16 @@ class Box(BaseModel):
             else:
                 new_param = ModelParameter(
                     name=f"{p1}",
-                    lb=intersection_ans[0],
-                    ub=intersection_ans[1],
+                    interval=Interval(
+                        lb=intersection_ans[0], ub=intersection_ans[1]
+                    ),
                 )
                 params_ans.append(new_param)
         return Box(
-            bounds={p.name: Interval(lb=p.lb, ub=p.ub) for p in params_ans}
+            bounds={
+                p.name: Interval(lb=p.interval.lb, ub=p.interval.ub)
+                for p in params_ans
+            }
         )
 
     def symm_diff(b1: "Box", b2: "Box"):

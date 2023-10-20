@@ -157,7 +157,7 @@ class AnalysisScenario(ABC, BaseModel):
     def search_space_volume(self) -> Decimal:
         bounds = {}
         for param in self.parameters:
-            bounds[param.name] = param.interval.model_copy()
+            bounds[param.name] = param.interval
         return Box(bounds=bounds).volume()
 
     def representable_space_volume(self) -> Decimal:

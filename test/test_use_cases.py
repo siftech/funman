@@ -15,6 +15,7 @@ from funman import (
     EncodedModel,
     Funman,
     FUNMANConfig,
+    Interval,
     ModelParameter,
     ParameterSynthesisScenario,
     ParameterSynthesisScenarioResult,
@@ -64,14 +65,19 @@ class TestUseCases(unittest.TestCase):
                 ),
                 query=query,
                 parameters=[
-                    StructureParameter(name="num_steps", lb=3, ub=3),
-                    StructureParameter(name="step_size", lb=1, ub=1),
+                    StructureParameter(
+                        name="num_steps", interval=Interval(lb=3, ub=3)
+                    ),
+                    StructureParameter(
+                        name="step_size", interval=Interval(lb=1, ub=1)
+                    ),
                 ],
                 config=FUNMANConfig(
                     solver="dreal",
                     dreal_mcts=True,
                     number_of_processes=1,
                     normalize=False,
+                    use_compartmental_constraints=False,
                 ),
             )
         )
@@ -162,9 +168,13 @@ class TestUseCases(unittest.TestCase):
         [lb, ub] = model.parameter_bounds["beta"]
         scenario = ParameterSynthesisScenario(
             parameters=[
-                ModelParameter(name="beta", lb=lb, ub=ub),
-                StructureParameter(name="num_steps", lb=3, ub=3),
-                StructureParameter(name="step_size", lb=1, ub=1),
+                ModelParameter(name="beta", interval=Interval(lb=lb, ub=ub)),
+                StructureParameter(
+                    name="num_steps", interval=Interval(lb=3, ub=3)
+                ),
+                StructureParameter(
+                    name="step_size", interval=Interval(lb=1, ub=1)
+                ),
             ],
             model=model,
             query=query,
@@ -184,6 +194,7 @@ class TestUseCases(unittest.TestCase):
                 number_of_processes=1,
                 normalize=False,
                 simplify_query=False,
+                use_compartmental_constraints=False,
                 _handler=ResultCombinedHandler(
                     [
                         ResultCacheWriter(f"box_search.json"),
@@ -207,8 +218,12 @@ class TestUseCases(unittest.TestCase):
             model=model,
             query=query,
             parameters=[
-                StructureParameter(name="num_steps", lb=3, ub=3),
-                StructureParameter(name="step_size", lb=1, ub=1),
+                StructureParameter(
+                    name="num_steps", interval=Interval(lb=3, ub=3)
+                ),
+                StructureParameter(
+                    name="step_size", interval=Interval(lb=1, ub=1)
+                ),
             ],
         )
         return scenario
@@ -222,7 +237,10 @@ class TestUseCases(unittest.TestCase):
         result_sat: ConsistencyScenarioResult = funman.solve(
             scenario,
             config=FUNMANConfig(
-                solver="dreal", normalize=False, simplify_query=False
+                solver="dreal",
+                normalize=False,
+                simplify_query=False,
+                use_compartmental_constraints=False,
             ),
         )
         df = result_sat.dataframe(result_sat.parameter_space.true_points[0])
@@ -240,7 +258,13 @@ class TestUseCases(unittest.TestCase):
             0.000067 * 1.75,
         ]
         result_unsat: ConsistencyScenarioResult = funman.solve(
-            scenario, config=FUNMANConfig(solver="dreal", normalize=False)
+            scenario,
+            config=FUNMANConfig(
+                solver="dreal",
+                normalize=False,
+                simplify_query=False,
+                use_compartmental_constraints=False,
+            ),
         )
         assert not result_unsat.consistent
 

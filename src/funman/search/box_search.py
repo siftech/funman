@@ -315,8 +315,9 @@ class BoxSearchEpisode(SearchEpisode):
                 for p in model
             },
             timestep=box.timestep,
+            schedule=box.schedule,
         )
-        point.values["schedules"] = box.schedule
+
         return point
 
 

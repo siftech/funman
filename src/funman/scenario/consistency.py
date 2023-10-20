@@ -129,7 +129,7 @@ class ConsistencyScenarioResult(AnalysisScenarioResult, BaseModel):
         """
         if self.consistent:
             timeseries = self.scenario._smt_encoder.symbol_timeseries(
-                self.scenario._encodings[point.values["step_size"]],
+                self.scenario._encodings[point.schedule],
                 self._models[point],
             )
             df = pd.DataFrame.from_dict(timeseries)

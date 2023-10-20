@@ -4,6 +4,7 @@ import graphviz
 from pydantic import ConfigDict
 from pysmt.shortcuts import REAL, Div, Real, Symbol
 
+from funman.representation.interval import Interval
 from funman.representation.parameter import ModelParameter
 
 from .model import Model
@@ -80,8 +81,10 @@ class EnsembleModel(Model):
         self._parameter_map = {
             p_name: ModelParameter(
                 name=p_name,
-                lb=self._model_name_map[m_name].parameter_bounds[p][0],
-                ub=self._model_name_map[m_name].parameter_bounds[p][1],
+                interval=Interval(
+                    lb=self._model_name_map[m_name].parameter_bounds[p][0],
+                    ub=self._model_name_map[m_name].parameter_bounds[p][1],
+                ),
             )
             for p_name, (m_name, p) in self._parameter_name_map.items()
             if p in self._model_name_map[m_name].parameter_bounds

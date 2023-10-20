@@ -1,4 +1,3 @@
-import glob
 import json
 import os
 import unittest
@@ -24,9 +23,11 @@ RESOURCES = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "../resources"
 )
 
-ensemble_files = glob.glob(
-    os.path.join(RESOURCES, "miranet", "ensemble", "*_miranet.json")
-)
+ensemble_files = [
+    "/home/danbryce/funman/test/../resources/miranet/ensemble/BIOMD0000000955_miranet.json",
+    "/home/danbryce/funman/test/../resources/miranet/ensemble/BIOMD0000000960_miranet.json",
+    "/home/danbryce/funman/test/../resources/miranet/ensemble/BIOMD0000000983_miranet.json",
+]
 
 
 class TestUseCases(unittest.TestCase):
@@ -109,6 +110,7 @@ class TestUseCases(unittest.TestCase):
                 tolerance=1e-8,
                 number_of_processes=1,
                 save_smtlib=True,
+                normalize=False,
                 # dreal_log_level="debug",
                 _handler=ResultCombinedHandler(
                     [
@@ -167,8 +169,13 @@ class TestUseCases(unittest.TestCase):
         scenario = self.setup_use_case_petri_ensemble_consistency()
 
         # Show that region in parameter space is sat (i.e., there exists a true point)
-        result_sat: ConsistencyScenarioResult = Funman().solve(scenario)
-        assert result_sat.consistent
+        result_sat: ConsistencyScenarioResult = Funman().solve(
+            scenario,
+            config=FUNMANConfig(
+                normalize=False, use_compartmental_constraints=False
+            ),
+        )
+        assert result_sat is not None and result_sat.consistent
         point = result_sat.parameter_space.true_points[0]
         df = result_sat.dataframe(point)
 

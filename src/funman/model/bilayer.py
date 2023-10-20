@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 from funman.config import FUNMANConfig
 from funman.model import Model
+from funman.representation import Interval
 from funman.representation.parameter import ModelParameter
 
 
@@ -483,8 +484,10 @@ class BilayerModel(Model):
         params = [
             ModelParameter(
                 name=node.parameter,
-                lb=self.parameter_bounds[node.parameter][0],
-                ub=self.parameter_bounds[node.parameter][1],
+                interval=Interval(
+                    lb=self.parameter_bounds[node.parameter][0],
+                    ub=self.parameter_bounds[node.parameter][1],
+                ),
             )
             for _, node in self.bilayer._flux.items()
             if self.parameter_bounds

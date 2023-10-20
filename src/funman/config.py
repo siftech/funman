@@ -80,17 +80,17 @@ class FUNMANConfig(BaseModel):
     """Enforce compartmental variable constraints"""
     normalization_constant: Optional[float] = None
     """ Simplify query by propagating substutions """
-    use_compartmental_constraints: bool = True
+    use_compartmental_constraints: bool = False
     """Normalize scenarios prior to solving"""
     normalize: bool = True
     """Normalization constant to use for normalization (attempt to compute if None)"""
-    simplify_query: bool = True
+    simplify_query: bool = False
     """ Series approximation threshold for dropping series terms """
     series_approximation_threshold: float = 1e-8
     """ Generate profiling output"""
     profile: bool = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
-    taylor_series_order: Optional[int] = 3
+    taylor_series_order: Optional[int] = None
 
     @field_validator("solver")
     @classmethod
