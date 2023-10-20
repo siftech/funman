@@ -1,3 +1,4 @@
+import json
 import uuid
 from pathlib import Path
 from threading import Lock
@@ -72,6 +73,7 @@ class Storage:
             path = self.path / f"{id}.json"
             if not path.is_file():
                 raise NotFoundFunmanException("Result for id '{id}' not found")
-            result = FunmanResults.parse_file(path)
+            with open(path, "r") as f:
+                result = FunmanResults.model_validate(json.load(f))
             self.results[id] = result
             return result
