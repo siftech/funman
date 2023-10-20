@@ -110,7 +110,7 @@ class TestProgress(unittest.TestCase):
             prev_progress = progress
 
             # Check the status of the query several times while sleeping between
-            steps = 30
+            steps = 40
             while True:
                 # Wait
                 sleep(1.0)

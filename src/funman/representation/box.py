@@ -48,7 +48,7 @@ class Box(BaseModel):
         if self.timestep == len(self.schedule.timepoints) - 1:
             return None
         else:
-            box = self.model_copy()
+            box = self.model_copy(deep=True)
             box.timestep += 1
             return box
 
@@ -102,16 +102,20 @@ class Box(BaseModel):
         Box
             merge of two boxes that meet in one dimension
         """
-        merged = Box(
-            bounds={p: Interval(lb=0, ub=0) for p in self.bounds.keys()}
-        )
-        for p, i in merged.bounds.items():
+        bounds = {p: None for p in self.bounds.keys()}
+        for p in bounds:
             if self.bounds[p].meets(other.bounds[p]):
-                i.lb = min(self.bounds[p].lb, other.bounds[p].lb)
-                i.ub = max(self.bounds[p].ub, other.bounds[p].ub)
+                bounds[p] = Interval(
+                    lb=min(self.bounds[p].lb, other.bounds[p].lb),
+                    ub=max(self.bounds[p].ub, other.bounds[p].ub),
+                )
             else:
-                i.lb = self.bounds[p].lb
-                i.ub = self.bounds[p].ub
+                bounds[p] = Interval(
+                    lb=self.bounds[p].lb, ub=self.bounds[p].ub
+                )
+
+        merged = self.model_copy(deep=True)
+        merged.bounds = bounds
         return merged
 
     def _get_merge_candidates(self, boxes: Dict[ModelParameter, List["Box"]]):
@@ -130,9 +134,16 @@ class Box(BaseModel):
                 range(self_index + 1, len(boxes[p])),  # search backward
             ]:
                 for i in r:
+                    if sorted[i] == self:
+                        continue
+
                     if (
                         sorted[i].bounds[p].meets(self.bounds[p])
                         and sorted[i] not in disqualified_set
+                        and (
+                            sorted[i].timestep == self.timestep
+                            and sorted[i].schedule == self.schedule
+                        )
                     ):
                         if sorted[i] in meets_set:
                             # Need exactly one dimension where they meet, so disqualified
@@ -143,6 +154,10 @@ class Box(BaseModel):
                     elif (
                         sorted[i].bounds[p] == self.bounds[p]
                         and sorted[i] not in disqualified_set
+                        and (
+                            sorted[i].timestep == self.timestep
+                            and sorted[i].schedule == self.schedule
+                        )
                     ):
                         equals_set.add(sorted[i])
                     else:

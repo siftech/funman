@@ -1001,9 +1001,7 @@ class BoxSearch(Search):
                         episode._formula_stack.pop()  # Remove box from solver
                         episode._on_iteration()
                         if handler:
-                            all_results = handler(
-                                rval, episode.config, all_results
-                            )
+                            handler(rval, episode.config, all_results)
                             if "progress" in all_results:
                                 print(all_results["progress"])
                         l.info(f"{process_name} finished work")
@@ -1205,11 +1203,11 @@ class BoxSearch(Search):
         rval = QueueSP()
 
         def handler(rval, config: "FUNMANConfig", results) -> Dict[str, Any]:
-            new_results = self._run_handler_step(rval, config, results)
+            self._run_handler_step(rval, config, results)
             if resultsCallback is not None:
-                progress = resultsCallback(new_results.get("parameter_space"))
-                new_results["progress"] = progress
-            return new_results
+                progress = resultsCallback(results.get("parameter_space"))
+                results["progress"] = progress
+            return results
 
         config._handler.open()
 
