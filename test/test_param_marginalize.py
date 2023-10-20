@@ -25,7 +25,7 @@ def add_box_variable(b, vars_list, new_var_name, new_bounds_lb, new_bounds_ub):
     param_list.append(new_param)
     param_list = {i for i in param_list}
     box1_result = Box(
-        bounds={p.name: Interval(lb=p.lb, ub=p.ub) for p in param_list}
+        bounds={p.name: p.interval.model_copy(deep=True) for p in param_list}
     )
     return box1_result
 

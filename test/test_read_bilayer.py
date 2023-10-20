@@ -8,6 +8,7 @@ from funman import FUNMANConfig
 from funman.model import BilayerDynamics
 from funman.model.bilayer import BilayerModel
 from funman.model.query import QueryTrue
+from funman.representation.interval import Interval
 from funman.representation.parameter import StructureParameter
 from funman.scenario.consistency import ConsistencyScenario
 from funman.translate import BilayerEncoder
@@ -32,8 +33,12 @@ class TestCompilation(unittest.TestCase):
             model=BilayerModel(bilayer=bilayer),
             query=QueryTrue(),
             parameters=[
-                StructureParameter(name="step_size", lb=1, ub=1),
-                StructureParameter(name="num_steps", lb=1, ub=1),
+                StructureParameter(
+                    name="step_size", interval=Interval(lb=1, ub=1)
+                ),
+                StructureParameter(
+                    name="num_steps", interval=Interval(lb=1, ub=1)
+                ),
             ],
         )
         encoder = BilayerEncoder(

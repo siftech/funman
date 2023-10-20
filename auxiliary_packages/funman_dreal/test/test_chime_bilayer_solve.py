@@ -187,7 +187,7 @@ class TestChimeBilayerSolve(unittest.TestCase):
             for p, i in tbox.bounds.items():
                 param_assignment = (i.lb + i.ub) * 0.5
                 values[p.name] = param_assignment
-            points.append(Point.from_dict({"values": values}))
+            points.append(Point.model_validate({"values": values}))
 
         dfs = result.true_point_timeseries(points=points)
         for point, df in zip(points, dfs):

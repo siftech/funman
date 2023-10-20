@@ -11,7 +11,7 @@ from funman.funman import FUNMANConfig
 from funman.model import RegnetModel
 from funman.model.query import QueryGE, QueryLE, QueryTrue
 from funman.model.regnet import RegnetDynamics
-from funman.representation.representation import ModelParameter
+from funman.representation import ModelParameter
 from funman.scenario import (
     ConsistencyScenario,
     ConsistencyScenarioResult,

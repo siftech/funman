@@ -194,13 +194,6 @@ class PetrinetEncoder(Encoder):
             if self.config.substitute_subformulas:
                 substitutions[next_state[state_var_id]] = flows
 
-        if self.config.use_compartmental_constraints:
-            compartmental_bounds = self._encode_compartmental_bounds(
-                scenario, next_step, substitutions=substitutions
-            ).simplify()
-        else:
-            compartmental_bounds = TRUE()
-
         # If any variables depend upon time, then time updates need to be encoded.
         if time_var is not None:
             time_increment = (
@@ -215,7 +208,7 @@ class PetrinetEncoder(Encoder):
             time_update = TRUE()
 
         return (
-            And(net_flows + [compartmental_bounds, time_update]),
+            And(net_flows + [time_update]),
             substitutions,
         )
 

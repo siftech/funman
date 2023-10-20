@@ -42,14 +42,14 @@ class DRealConverter(Converter, DagWalker):
 
         # Remove scientific notation
         str_formula = re.sub(
-            r"(?<![.d_0-9a-z])[0-9]+.[0-9]+e(-|\+)[0-9]+(?![.d/])",
+            r"(?<![.d_0-9a-z])[0-9]+[.]*[0-9]*e(-|\+|)[0-9]+(?![.d/])",
             lambda x: str(Fraction(x.group())),
             str_formula,
         )
 
         # Replace integers with floats
         str_formula = re.sub(
-            r"(?<![.d_0-9a-z])[0-9]+(?!([.de-]|[0-9]))",
+            r"(?<![.d_0-9a-zA-Z])[0-9]+(?!([.de-]|[0-9]))",
             r"\g<0>.0",
             str_formula,
         )

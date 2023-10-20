@@ -9,9 +9,11 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict
 from pysmt.solvers.solver import Model as pysmt_Model
 
-from funman import ParameterSpace, Point
+from funman import Point
 from funman.scenario import AnalysisScenario, AnalysisScenarioResult
 from funman.translate import Encoding
+
+from ..representation.parameter_space import ParameterSpace
 
 
 class ConsistencyScenario(AnalysisScenario, BaseModel):
@@ -127,7 +129,7 @@ class ConsistencyScenarioResult(AnalysisScenarioResult, BaseModel):
         """
         if self.consistent:
             timeseries = self.scenario._smt_encoder.symbol_timeseries(
-                self.scenario._encodings[point.values["step_size"]],
+                self.scenario._encodings[point.schedule],
                 self._models[point],
             )
             df = pd.DataFrame.from_dict(timeseries)

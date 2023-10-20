@@ -6,13 +6,14 @@ from pysmt.fnode import FNode
 from pysmt.shortcuts import get_env
 from sympy import Add, Expr, N, expand, lambdify, symbols
 
-from funman import ModelParameter
 from funman.utils.sympy_utils import (
     replace_reserved,
     series_approx,
     sympy_to_pysmt,
     to_sympy,
 )
+
+from ..representation.parameter import ModelParameter
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)
@@ -107,8 +108,12 @@ class FUNMANSimplifier(pysmt.simplifier.Simplifier):
         if len(formula.free_symbols) == 0:
             return formula
 
-        ub_values = {replace_reserved(p.name): p.ub for p in parameters}
-        lb_values = {replace_reserved(p.name): p.lb for p in parameters}
+        ub_values = {
+            replace_reserved(p.name): p.interval.ub for p in parameters
+        }
+        lb_values = {
+            replace_reserved(p.name): p.interval.lb for p in parameters
+        }
         original_size = len(formula.args)
 
         # def calc_mag(g):

@@ -18,7 +18,8 @@ from pysmt.typing import INT
 
 from funman.model import Model
 from funman.model.gromet import GrometModel
-from funman.translate import Encoder, EncodingOptions
+from funman.translate import Encoder, EncodingOptions, EncodingSchedule
+from funman.translate.translate import EncodingSchedule
 
 
 class GrometEncodingOptions(EncodingOptions):
@@ -37,7 +38,7 @@ class GrometEncoder(Encoder):
         self,
         gromet_fn,
         config: GrometEncodingOptions = GrometEncodingOptions(
-            num_steps=0, step_size=0
+            schedule=EncodingSchedule(timepoints=[])
         ),
     ) -> None:
         super().__init__(config)

@@ -592,7 +592,8 @@ class DRealNative(
         # print(f"get_value() {item}: {self.model[item]}")
         (symbol, item) = symbol_pair
         if symbol.get_type() == BOOL:
-            return Bool(bool(self.model[item]))
+            is_true = self.model[item].lb() == self.model[item].ub() == 1.0
+            return Bool(is_true)
         else:
             ub = self.model[item].ub()
             lb = self.model[item].lb()

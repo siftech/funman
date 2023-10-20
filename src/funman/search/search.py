@@ -3,7 +3,7 @@ import threading
 from abc import ABC, abstractmethod
 from multiprocessing import Array, Queue, Value
 from queue import Queue as SQueue
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 import pysmt
 from pydantic import BaseModel, ConfigDict
@@ -11,6 +11,7 @@ from pysmt.shortcuts import Solver
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman import Box, Interval, ModelParameter
+from funman.translate.translate import EncodingSchedule
 
 from ..config import FUNMANConfig
 from ..representation.explanation import BoxExplanation
@@ -70,7 +71,7 @@ class SearchEpisode(BaseModel):
         arbitrary_types_allowed=True,
     )
 
-    structural_configuration: Dict[str, int] = {}
+    schedule: EncodingSchedule
     problem: AnalysisScenario
     config: "FUNMANConfig"
     statistics: SearchStatistics = None
@@ -79,19 +80,14 @@ class SearchEpisode(BaseModel):
     def num_parameters(self):
         return len(self.problem.parameters)
 
-    def _initial_box(self) -> Box:
+    def _initial_box(self, schedule: EncodingSchedule) -> Box:
         box = Box(
             bounds={
-                p.name: (
-                    Interval(lb=p.lb, ub=p.ub)
-                    if (isinstance(p, ModelParameter) or p.name == "num_steps")
-                    else Interval(
-                        lb=self.structural_configuration[p.name],
-                        ub=self.structural_configuration[p.name],
-                    )
-                )
+                p.name: p.interval.model_copy(deep=True)
                 for p in self.problem.parameters
-            }
+                if (isinstance(p, ModelParameter))
+            },
+            schedule=schedule,
         )
         return box
 

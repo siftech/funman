@@ -83,7 +83,7 @@ class TestTerarium(unittest.TestCase):
         return json.loads(response.content.decode())
 
     def poll_until_done(
-        self, client: TestClient, uuid: str, sleep_step=1.0, max_steps=30
+        self, client: TestClient, uuid: str, sleep_step=1.0, max_steps=40
     ):
         """
         Helper function to poll the status of the request associated

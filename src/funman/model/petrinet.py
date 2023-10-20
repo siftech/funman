@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import graphviz
 import sympy
@@ -139,12 +139,36 @@ class AbstractPetriNetModel(Model):
     ) -> float:
         vars = self._state_var_names()
         values = {v: self._get_init_value(v, scenario, config) for v in vars}
-        if all(v.is_constant() for v in values.values()):
+        if all((v is not None and v.is_constant()) for v in values.values()):
             return float(sum(v.constant_value() for v in values.values()))
         else:
             raise Exception(
                 f"Cannot calculate the normalization constant for {type(self)} because the initial state variables are not constants. Try setting the 'normalization_constant' in the configuration to constant."
             )
+
+    def compartmental_constraints(
+        self, population: Union[float, int]
+    ) -> List["Constraint"]:
+        from funman.representation.constraint import LinearConstraint
+
+        vars = self._state_var_names()
+        return [
+            LinearConstraint(
+                name="compartmental_constraint_population",
+                additive_bounds={"lb": population, "ub": population},
+                variables=vars,
+                closed_upper_bound=True,
+                assumable=False,
+            )
+        ] + [
+            LinearConstraint(
+                name=f"compartmental_{v}_nonnegative",
+                additive_bounds={"lb": 0},
+                variables=[v],
+                assumable=False,
+            )
+            for v in vars
+        ]
 
 
 class GeneratedPetriNetModel(AbstractPetriNetModel):
@@ -339,7 +363,15 @@ class PetrinetDynamics(BaseModel):
         str,
         List[
             Dict[
-                str, Union[Dict[str, Union[str, bool, float]], int, str, float]
+                str,
+                Optional[
+                    Union[
+                        Dict[str, Optional[Union[str, bool, float]]],
+                        int,
+                        str,
+                        float,
+                    ]
+                ],
             ]
         ],
     ]

@@ -11,15 +11,14 @@ from pysmt.solvers.solver import Model as pysmtModel
 
 from funman.config import FUNMANConfig
 from funman.constants import LABEL_FALSE, LABEL_TRUE
+from funman.representation.encoding_schedule import EncodingSchedule
 from funman.representation.explanation import Explanation
-from funman.representation.representation import (
-    Box,
-    Interval,
-    ParameterSpace,
-    Point,
-)
 from funman.translate.translate import EncodingOptions
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
+
+from ..representation import Interval, Point
+from ..representation.box import Box
+from ..representation.parameter_space import ParameterSpace
 
 # import funman.search as search
 from .search import Search, SearchEpisode
@@ -46,36 +45,23 @@ class SMTCheck(Search):
         models = {}
         consistent = {}
         # problem._initialize_encodings(config)
-        for (
-            structural_configuration
-        ) in problem._smt_encoder._timed_model_elements["configurations"]:
-            l.debug(f"Solving configuration: {structural_configuration}")
-            # encoding = episode.problem._encodings[structural_configuration["step_size"]]
-
-            # problem._smt_encoder.initialize_encodings(problem, structural_configuration["num_steps"], structural_configuration["step_size"])
-            # problem._encode_timed(
-            #     structural_configuration["num_steps"],
-            #     problem._smt_encoder._timed_model_elements["step_sizes"].index(
-            #         structural_configuration["step_size"]
-            #     ),
-            #     config,
-            # )
+        for schedule in problem._smt_encoder._timed_model_elements[
+            "schedules"
+        ].schedules:
+            l.debug(f"Solving schedule: {schedule}")
+            schedule_length = len(schedule.timepoints)
             episode = SearchEpisode(
-                config=config,
-                problem=problem,
-                structural_configuration=structural_configuration,
+                config=config, problem=problem, schedule=schedule
             )
-            options = EncodingOptions(
-                num_steps=structural_configuration["num_steps"],
-                step_size=structural_configuration["step_size"],
-            )
+            options = EncodingOptions(schedule=schedule)
+
             # self._initialize_encoding(solver, episode, box_timepoint, box)
             result = self.expand(
                 problem,
                 episode,
                 options,
                 parameter_space,
-                list(range(structural_configuration["num_steps"] + 1)),
+                schedule,
             )
 
             if result is not None and isinstance(result, pysmtModel):
@@ -87,9 +73,17 @@ class SMTCheck(Search):
                         for k, v in result_dict.items()
                         # if k in [p.name for p in problem.parameters]
                     }
-                    for k, v in structural_configuration.items():
-                        parameter_values[k] = v
-                    point = Point(values=parameter_values, label=LABEL_TRUE)
+                    # for k, v in structural_configuration.items():
+                    #     parameter_values[k] = v
+                    point = Point(
+                        values=parameter_values,
+                        label=LABEL_TRUE,
+                        timestep=schedule_length - 1,
+                        schedule=schedule,
+                    )
+                    point.timestep = schedule.time_at_step(
+                        len(schedule.timepoints) - 1
+                    )
                     if config.normalize:
                         denormalized_point = point.denormalize(problem)
                         point = denormalized_point
@@ -99,7 +93,7 @@ class SMTCheck(Search):
             elif result is not None and isinstance(result, Explanation):
                 box = Box(
                     bounds={
-                        p.name: Interval(lb=p.lb, ub=p.ub)
+                        p.name: Interval(lb=p.interval.lb, ub=p.interval.ub)
                         for p in problem.parameters
                     },
                     label=LABEL_FALSE,
@@ -112,10 +106,12 @@ class SMTCheck(Search):
         return parameter_space, models, consistent
 
     def build_formula(
-        self, episode: SearchEpisode, timepoints, options: EncodingOptions
+        self,
+        episode: SearchEpisode,
+        schedule: EncodingSchedule,
+        options: EncodingOptions,
     ) -> Tuple[FNode, FNode]:
-        step_size = options.step_size
-        encoding = episode.problem._encodings[step_size]
+        encoding = episode.problem._encodings[schedule]
         layer_formulas = []
         simplified_layer_formulas = []
         assumption_formulas = []
@@ -124,7 +120,7 @@ class SMTCheck(Search):
                 encoding._encoder.encode_assumption(a, options)
             )
 
-        for t in timepoints:
+        for t in schedule.timepoints:
             encoded_constraints = []
             for constraint in episode.problem.constraints:
                 if constraint.encodable() and constraint.relevant_at_time(t):
@@ -145,7 +141,7 @@ class SMTCheck(Search):
                 episode.config.simplify_query
                 and episode.config.substitute_subformulas
             ):
-                substitutions = encoding._encoder.substitutions(step_size)
+                substitutions = encoding._encoder.substitutions(schedule)
                 simplified_layer_formulas = [
                     x.substitute(substitutions).simplify()
                     for x in layer_formulas
@@ -172,7 +168,7 @@ class SMTCheck(Search):
         if episode.config.save_smtlib:
             self.store_smtlib(
                 formula,
-                filename=f"dbg_steps{episode.structural_configuration['num_steps']}_ssize{episode.structural_configuration['step_size']}.smt2",
+                filename=f"dbg_steps.smt2",
             )
         result = self.invoke_solver(s)
         s.pop(1)
@@ -184,7 +180,7 @@ class SMTCheck(Search):
         episode,
         options: EncodingOptions,
         parameter_space,
-        timepoints,
+        schedule: EncodingSchedule,
     ):
         if episode.config.solver == "dreal":
             opts = {
@@ -205,7 +201,7 @@ class SMTCheck(Search):
             solver_options=opts,
         ) as s:
             formula, simplified_formula = self.build_formula(
-                episode, timepoints, options
+                episode, schedule, options
             )
 
             if simplified_formula is not None:

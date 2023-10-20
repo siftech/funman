@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.shortcuts import REAL, Div, Real, Symbol
 
+from funman.representation.interval import Interval
 from funman.representation.parameter import ModelParameter
 
 # from .bilayer import BilayerModel
@@ -128,6 +129,9 @@ class Model(ABC, BaseModel):
     #         self._normalization_term = Real(self._normalization_constant)
     #     return self._normalization_term
 
+    def compartmental_constraints(self, populuation: int):
+        return None
+
     def _is_normalized(self, var: str):
         try:
             name, time = var.rsplit("_", 1)
@@ -145,8 +149,14 @@ class Model(ABC, BaseModel):
             [
                 ModelParameter(
                     name=p,
-                    lb=self.parameter_bounds[p][0],
-                    ub=self.parameter_bounds[p][1],
+                    interval=Interval(
+                        lb=self.parameter_bounds[p][0],
+                        ub=self.parameter_bounds[p][1],
+                        closed_upper_bounds=(
+                            self.parameter_bounds[p][0]
+                            == self.parameter_bounds[p][1]
+                        ),
+                    ),
                 )
                 for p in param_names
                 if self.parameter_bounds
@@ -164,8 +174,11 @@ class Model(ABC, BaseModel):
                 (
                     ModelParameter(
                         name=p,
-                        lb=param_values[p],
-                        ub=param_values[p],
+                        interval=Interval(
+                            lb=param_values[p],
+                            ub=param_values[p],
+                            closed_upper_bound=True,
+                        ),
                     )
                     if param_values[p]
                     else ModelParameter(name=p)

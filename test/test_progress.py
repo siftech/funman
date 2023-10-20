@@ -6,9 +6,7 @@ from time import sleep
 
 from fastapi.testclient import TestClient
 
-from funman import Funman, FUNMANConfig
 from funman.api.api import app, settings
-from funman.representation.representation import ParameterSpace
 from funman.server.query import FunmanResults, FunmanWorkUnit
 
 FILE_DIRECTORY = Path(__file__).resolve().parent
@@ -101,7 +99,9 @@ class TestProgress(unittest.TestCase):
             ), f"Response code was not 200: {response.status_code}"
 
             # Parse and extract the work id
-            work_unit = FunmanWorkUnit.parse_raw(response.content.decode())
+            work_unit = FunmanWorkUnit.model_validate(
+                json.loads(response.content.decode())
+            )
             work_id = work_unit.id
 
             # Check that the progress starts at 0.0
@@ -110,7 +110,7 @@ class TestProgress(unittest.TestCase):
             prev_progress = progress
 
             # Check the status of the query several times while sleeping between
-            steps = 30
+            steps = 40
             while True:
                 # Wait
                 sleep(1.0)
@@ -123,7 +123,9 @@ class TestProgress(unittest.TestCase):
                     response.status_code == 200
                 ), f"Response code was not 200: {response.status_code}"
                 # Parse data to a FunmanResults object
-                data = FunmanResults.parse_raw(response.content.decode())
+                data = FunmanResults.model_validate(
+                    json.loads(response.content.decode())
+                )
                 prev_progress = progress
                 progress = data.progress.progress
 
