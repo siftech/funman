@@ -246,8 +246,7 @@ class TestAPI(unittest.TestCase):
                         "parameters": [
                             {
                                 "name": "beta",
-                                "lb": lb,
-                                "ub": ub,
+                                "interval": {"lb": lb, "ub": ub},
                                 "label": "all",
                             }
                         ],
