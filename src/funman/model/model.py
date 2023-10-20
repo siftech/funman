@@ -152,10 +152,10 @@ class Model(ABC, BaseModel):
                     interval=Interval(
                         lb=self.parameter_bounds[p][0],
                         ub=self.parameter_bounds[p][1],
-                    ),
-                    closed_upper_bounds=(
-                        self.parameter_bounds[p][0]
-                        == self.parameter_bounds[p][1]
+                        closed_upper_bounds=(
+                            self.parameter_bounds[p][0]
+                            == self.parameter_bounds[p][1]
+                        ),
                     ),
                 )
                 for p in param_names
