@@ -67,8 +67,5 @@
       "label": "all"
     }
   ],
-  "config": {
-    "normalization_constant": 1001,
-    "simplify_query": false
-  }
+  "config": {}
 }
