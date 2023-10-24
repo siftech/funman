@@ -27,12 +27,14 @@ class Point(BaseModel):
     label: Label = LABEL_UNKNOWN
     values: Dict[str, PointValue]
     normalized_values: Optional[Dict[str, float]] = None
-    timestep: Timestep = 0
     schedule: Optional[EncodingSchedule] = None
 
     # def __init__(self, **kw) -> None:
     #     super().__init__(**kw)
     #     self.values = kw['values']
+
+    def timestep(self) -> int:
+        return int(self.values["timestep"])
 
     def __str__(self):
         return f"Point({self.model_dump()})"

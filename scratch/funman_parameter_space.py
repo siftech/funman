@@ -33,29 +33,11 @@ def main():
                 "interval": {"ub": 20},
                 "timepoints": {"lb": 0, "ub": 20},
             },
-            # {
-            #     "name": "I_bounds_C",
-            #     "variable": "I",
-            #     "interval": {"lb": 0.7},
-            #     "timepoints": {"lb": 3, "ub": 4},
-            # },
-            # {
-            #     "name": "R_bounds",
-            #     "variable" : "R",
-            #     "bounds": {"lb":0, "ub":1},
-            #     "timepoints": {"lb":0, "ub":2}
-            # },
-            #   {
-            #   "name": "S_bounds",
-            #   "variable" : "S",
-            #   "bounds": {"lb":980, "ub":1000},
-            #   "timepoints": {"lb":4, "ub":5}
-            #  }
         ],
         "parameters": [
             {
                 "name": "beta",
-                "interval": {"lb": 2.6e-7, "ub": 2.8e-3},
+                "interval": {"lb": 1.0e-3, "ub": 3.0e-3},
                 "label": "all",
             },
             {
@@ -105,16 +87,9 @@ def main():
             }
         ],
         "config": {
-            "normalize": False,
-            "tolerance": 5e-3,
-            "simplify_query": False,
             "normalization_constant": 1001,
-            # "use_compartmental_constraints" : False,
-            # "profile": True
-            "save_smtlib": True,
-            "substitute_subformulas": False,
-            "taylor_series_order": None,
-            #   "dreal_log_level": "debug"
+            "use_compartmental_constraints": True,
+            "tolerance": 5e-3,
         },
     }
 
@@ -142,9 +117,6 @@ def main():
         box = boxes[0]
         print(json.dumps(box.explain(), indent=4))
 
-
-# Use request file
-# results = Runner().run(MODEL_PATH, REQUEST_PATH, description="Basic SIR with simple request", case_out_dir="./out")
 
 if __name__ == "__main__":
     main()

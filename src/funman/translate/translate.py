@@ -1207,7 +1207,10 @@ class Encoder(ABC, BaseModel):
 
     def point_to_smt(self, pt: Point):
         return And(
-            [Equals(p.symbol(), Real(value)) for p, value in pt.values.items()]
+            [
+                Equals(Symbol(p, REAL), Real(value))
+                for p, value in pt.values.items()
+            ]
         )
 
     def box_to_smt(

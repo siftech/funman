@@ -128,7 +128,7 @@ class ParameterSpacePlotter:
                     color=color,
                     marker=shape,
                     alpha=alpha,
-                    s=4,
+                    s=10,
                 )
                 # self.fig.canvas.draw()
                 # self.fig.canvas.flush_events()

@@ -421,6 +421,8 @@ class FunmanResults(BaseModel):
         variables=None,
         log_y=False,
         max_time=None,
+        label_marker={"true": "+", "false": "o"},
+        label_color={"true": "g", "false": "r"},
         **kwargs,
     ):
         """
@@ -443,12 +445,28 @@ class FunmanResults(BaseModel):
             points = self.points()
 
         df = self.dataframe(points, max_time=max_time)
-
-        if variables is not None:
-            ax = df[variables].plot(marker="o", **kwargs)
-        else:
-            ax = df.plot(marker="o", **kwargs)
-
+        fig, ax = plt.subplots(figsize=(8, 6))
+        groups = df.groupby("label")
+        for label, group in groups:
+            if variables is not None:
+                for id, g in group.groupby("id"):
+                    plt.plot(
+                        g[variables],
+                        label=label,
+                        marker=label_marker[label],
+                        c=label_color[label],
+                        **kwargs,
+                    )
+            else:
+                plt.plot(
+                    group,
+                    label=label,
+                    marker=label_marker[label],
+                    c=label_color[label],
+                    **kwargs,
+                )
+                ax = df.plot(label=label, marker=label_marker[label], **kwargs)
+        # plt.legend()
         if log_y:
             ax.set_yscale("symlog")
             plt.ylim(bottom=0)
