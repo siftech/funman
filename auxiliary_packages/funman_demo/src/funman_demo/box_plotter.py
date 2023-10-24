@@ -29,7 +29,7 @@ class BoxPlotter(object):
             "false": "r",
             "unknown": "b",
         },
-        shape_map: Dict[str, str] = {"true": "x", "false": "o"},
+        shape_map: Dict[str, str] = {"true": "+", "false": "-"},
         alpha=0.2,
     ) -> None:
         self.parameters = parameters

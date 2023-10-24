@@ -37,7 +37,7 @@ class FUNMANConfig(BaseModel):
         validate_default=True,
     )
 
-    tolerance: float = 1e-8
+    tolerance: float = 1e-3
     """Algorithm-specific tolerance for approximation, used by BoxSearch"""
 
     queue_timeout: int = 1
@@ -76,7 +76,7 @@ class FUNMANConfig(BaseModel):
     """Use MCTS in dreal"""
     dreal_mcts: bool = True
     """Substitute subformulas to simplify overall encoding"""
-    substitute_subformulas: bool = True
+    substitute_subformulas: bool = False
     """Enforce compartmental variable constraints"""
     normalization_constant: Optional[float] = None
     """ Simplify query by propagating substutions """

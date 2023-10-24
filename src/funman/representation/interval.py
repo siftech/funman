@@ -43,6 +43,9 @@ class Interval(BaseModel):
             self.lb, other.ub
         )
 
+    def is_point(self) -> bool:
+        return self.lb == self.ub and self.closed_upper_bound
+
     def width(
         self, normalize: Optional[Union[Decimal, float]] = None
     ) -> Decimal:

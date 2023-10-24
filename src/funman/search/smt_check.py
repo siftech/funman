@@ -78,10 +78,9 @@ class SMTCheck(Search):
                     point = Point(
                         values=parameter_values,
                         label=LABEL_TRUE,
-                        timestep=schedule_length - 1,
                         schedule=schedule,
                     )
-                    point.timestep = schedule.time_at_step(
+                    point.values["timestep"] = schedule.time_at_step(
                         len(schedule.timepoints) - 1
                     )
                     if config.normalize:

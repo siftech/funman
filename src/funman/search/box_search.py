@@ -314,10 +314,10 @@ class BoxSearchEpisode(SearchEpisode):
                 )
                 for p in model
             },
-            timestep=box.timestep,
             schedule=box.schedule,
         )
-
+        # Timestep is not in the model (implicit)
+        point.values["timestep"] = box.timestep().lb
         return point
 
 
@@ -349,6 +349,18 @@ class BoxSearch(Search):
             parameters=episode.problem.model_parameters(),
         )
         episode.statistics._iteration_operation.put("s")
+        bw = box.width(
+            normalize=normalize, parameters=episode.problem.model_parameters()
+        )
+        b1w = b1.width(
+            normalize=normalize, parameters=episode.problem.model_parameters()
+        )
+        b2w = b2.width(
+            normalize=normalize, parameters=episode.problem.model_parameters()
+        )
+        l.info(
+            f"Split box with width = {bw} into boxes with widths = {[b1w, b2w]}"
+        )
         return episode._add_unknown([b1, b2])
 
     def _logger(self, config, process_name=None):
@@ -442,7 +454,7 @@ class BoxSearch(Search):
             # Signal to pop the formula stack to the start
             time_difference = -episode._formula_stack.time
         else:
-            time_difference = box.timestep - episode._formula_stack.time
+            time_difference = box.timestep().lb - episode._formula_stack.time
 
         if time_difference < 0:
             # Prepare the formula stack by popping irrelevant layers
@@ -461,7 +473,9 @@ class BoxSearch(Search):
             #     "step_sizes"
             # ].index(step_size)
 
-            for t in range(episode._formula_stack.time + 1, box.timestep + 1):
+            for t in range(
+                episode._formula_stack.time + 1, int(box.timestep().lb) + 1
+            ):
                 timepoint = box.schedule.time_at_step(t)
                 encoded_constraints = []
                 for constraint in episode.problem.constraints:
@@ -529,7 +543,7 @@ class BoxSearch(Search):
             data for the current search
         """
         episode._formula_stack.push(1)
-        timestep = box.timestep
+        timestep = int(box.timestep().lb)
         timepoint = box.schedule.time_at_step(timestep)
         encoder = episode.problem._encodings[options.schedule]._encoder
         assumptions = {
@@ -609,7 +623,7 @@ class BoxSearch(Search):
             data for the current search
         """
         episode._formula_stack.push(1)
-        timestep = box.timestep
+        timestep = int(box.timestep().lb)
         timepoint = box.schedule.time_at_step(timestep)
         encoder = episode.problem._encodings[options.schedule]._encoder
         assumptions = {
@@ -846,6 +860,30 @@ class BoxSearch(Search):
 
         return true_points, explanation
 
+    def get_box_corners(
+        self, solver, episode, box, rval, options, my_solver
+    ) -> List[Point]:
+        points: List[Point] = box.corners(
+            parameters=episode.problem.model_parameters()
+        )
+        corner_points: List[Point] = []
+        for point in points:
+            f = episode.problem._encodings[
+                options.schedule
+            ]._encoder.point_to_smt(point)
+            episode._formula_stack.push()
+            episode._formula_stack.add_assertion(f)
+            result = self.invoke_solver(solver)
+            if result is not None and isinstance(result, pysmtModel):
+                corner_point = episode._extract_point(result, box)
+                box.corner_points.append(corner_point)
+                corner_point.label = box.label
+                rval.put(corner_point.model_dump())
+                corner_points.append(corner_point)
+            episode._formula_stack.pop()
+
+        return corner_points
+
     def _expand(
         self,
         rval,
@@ -986,6 +1024,16 @@ class BoxSearch(Search):
                                 print(
                                     f"+++ [{box.width()}] True({curr_step_box})"
                                 )
+                                corner_points: List[
+                                    Point
+                                ] = self.get_box_corners(
+                                    solver,
+                                    episode,
+                                    curr_step_box,
+                                    rval,
+                                    options,
+                                    my_solver,
+                                )
 
                                 # Advance a true box to be considered for later timesteps
                                 next_box = box.advance()
@@ -996,8 +1044,12 @@ class BoxSearch(Search):
                             episode._add_false(
                                 box, explanation=not_true_explanation
                             )  # TODO consider merging lists of boxes
-                            rval.put(box.model_dump())
+
                             print(f"--- [{box.width()}] False({box})")
+                            corner_points: List[Point] = self.get_box_corners(
+                                solver, episode, box, rval, options, my_solver
+                            )
+                            rval.put(box.model_dump())
                         episode._formula_stack.pop()  # Remove box from solver
                         episode._on_iteration()
                         if handler:
