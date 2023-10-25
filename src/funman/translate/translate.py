@@ -279,7 +279,7 @@ class Encoder(ABC, BaseModel):
             encoded_constraint_layer = handler(
                 scenario, constraint, layer_idx, options, assumptions
             )
-            if constraint.assumable:
+            if constraint.soft:
                 encoded_constraint_layer = self.encode_assumed_constraint(
                     encoded_constraint_layer,
                     constraint,

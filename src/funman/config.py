@@ -91,6 +91,8 @@ class FUNMANConfig(BaseModel):
     profile: bool = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
     taylor_series_order: Optional[int] = None
+    """ Compute Corner points of each box """
+    corner_points: bool = False
 
     @field_validator("solver")
     @classmethod

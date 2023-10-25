@@ -394,13 +394,15 @@ class FunmanResults(BaseModel):
 
     def plot_trajectories(self, variable: str, num: int = 200):
         fig, ax = plt.subplots()
-        len_tps = len(self.parameter_space.true_points)
-        len_fps = len(self.parameter_space.false_points)
+        len_tps = len(self.parameter_space.true_points())
+        len_fps = len(self.parameter_space.false_points())
         num_tp_samples = min(len_tps, num)
         num_fp_samples = min(len_fps, num)
 
-        tps = random.sample(self.parameter_space.true_points, num_tp_samples)
-        fps = random.sample(self.parameter_space.false_points, num_fp_samples)
+        tps = random.sample(self.parameter_space.true_points(), num_tp_samples)
+        fps = random.sample(
+            self.parameter_space.false_points(), num_fp_samples
+        )
         if len(tps) > 0:
             tps_df = self.dataframe(tps)
             # tps_df = tps_df[tps_df[variable] != 0.0]

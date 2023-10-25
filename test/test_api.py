@@ -53,7 +53,7 @@ class TestAPI(unittest.TestCase):
     def tearDown(self):
         settings.data_path = "."
 
-    def wait_for_done(self, client, id, wait_time=1.0, steps=20):
+    def wait_for_done(self, client, id, wait_time=1.0, steps=30):
         while True:
             sleep(wait_time)
             response = client.get(
@@ -72,10 +72,10 @@ class TestAPI(unittest.TestCase):
 
     def check_consistency_success(self, parameter_space: ParameterSpace):
         assert parameter_space is not None
-        assert len(parameter_space.true_boxes) == 0
+        assert len(parameter_space.true_boxes) == 1
         assert len(parameter_space.false_boxes) == 0
-        assert len(parameter_space.true_points) == 1
-        assert len(parameter_space.false_points) == 0
+        assert len(parameter_space.true_points()) == 1
+        assert len(parameter_space.false_points()) == 0
 
     def check_parameter_synthesis_success(
         self, parameter_space: ParameterSpace

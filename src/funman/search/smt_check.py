@@ -88,7 +88,7 @@ class SMTCheck(Search):
                         point = denormalized_point
                     models[point] = result
                     consistent[point] = result_dict
-                    parameter_space.true_points.append(point)
+                    parameter_space.true_boxes.append(Box.from_point(point))
             elif result is not None and isinstance(result, Explanation):
                 box = Box(
                     bounds={
