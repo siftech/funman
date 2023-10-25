@@ -4,13 +4,10 @@ from decimal import ROUND_CEILING, Decimal
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
 
-from matplotlib import pyplot as plt
-from matplotlib.lines import Line2D
 from numpy import nextafter
 from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
-from funman import to_sympy
 from funman.constants import LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN, Label
 
 from . import EncodingSchedule, Interval, Point
@@ -106,7 +103,9 @@ class Box(BaseModel):
         # Restrict bounds on num_steps to the lower bound (i.e., the current step)
         curr = self.model_copy(deep=True)
         timestep = curr.timestep()
+        timestep.closed_upper_bound = True
         timestep.ub = timestep.lb
+
         return curr
 
     def project(self, vars: Union[List[ModelParameter], List[str]]) -> "Box":
@@ -252,7 +251,7 @@ class Box(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)))} {self.bounds}), width = {self.width()}"
+        return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
 
     def finite(self) -> bool:
         """

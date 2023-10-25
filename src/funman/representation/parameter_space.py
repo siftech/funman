@@ -3,17 +3,11 @@ from typing import Dict, List, Union
 
 from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
-from pydantic import BaseModel, Field
-
-import funman.utils.math_utils as math_utils
-from funman import to_sympy
-from funman.constants import LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN, Label
+from pydantic import BaseModel
 
 from . import Interval, Point
 from .box import Box
-from .explanation import BoxExplanation
 from .interval import Interval
-from .parameter import ModelParameter
 
 l = logging.getLogger(__name__)
 
@@ -174,7 +168,6 @@ class ParameterSpace(BaseModel):
         # remove matplotlib debugging
         logging.getLogger("matplotlib.font_manager").disabled = True
         logging.getLogger("matplotlib.pyplot").disabled = True
-        logging.getLogger("funman.translate.translate").setLevel(logging.DEBUG)
 
         custom_lines = [
             Line2D([0], [0], color="g", lw=4, alpha=alpha),

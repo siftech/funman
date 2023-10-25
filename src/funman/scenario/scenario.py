@@ -37,7 +37,6 @@ from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 from funman.representation.constraint import FunmanConstraint
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class AnalysisScenario(ABC, BaseModel):

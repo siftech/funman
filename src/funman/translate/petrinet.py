@@ -30,7 +30,6 @@ from funman.utils.sympy_utils import (
 from .translate import Encoder, Encoding
 
 l = logging.getLogger(__file__)
-l.setLevel(logging.INFO)
 
 
 class PetrinetEncoder(Encoder):

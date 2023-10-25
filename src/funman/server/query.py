@@ -18,15 +18,13 @@ from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 from funman.representation.constraint import FunmanConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
-    LabeledParameter,
     ModelParameter,
     NumSteps,
     Parameter,
     Schedules,
     StepSize,
-    StructureParameter,
 )
-from funman.representation.representation import EncodingSchedule, Point
+from funman.representation.representation import Point
 from funman.scenario.consistency import (
     ConsistencyScenario,
     ConsistencyScenarioResult,
@@ -441,7 +439,6 @@ class FunmanResults(BaseModel):
         # remove matplotlib debugging
         logging.getLogger("matplotlib.font_manager").disabled = True
         logging.getLogger("matplotlib.pyplot").disabled = True
-        logging.getLogger("funman.translate.translate").setLevel(logging.DEBUG)
 
         if points is None:
             points = self.points()

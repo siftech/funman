@@ -38,10 +38,7 @@ from funman.search.search import SearchStaticsMP, SearchStatistics
 from funman.translate.translate import EncodingOptions, EncodingSchedule
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
 
-LOG_LEVEL = logging.DEBUG
-
 l = logging.getLogger(__name__)
-l.setLevel(LOG_LEVEL)
 
 
 class FormulaStackFrame(BaseModel):
@@ -263,7 +260,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _add_false_point(
         self, box: Box, point: Point, explanation: Explanation = None
     ):
-        l.info(f"Adding false point: {point}")
+        l.debug(f"Adding false point: {point}")
         if point in self._true_points:
             l.debug(
                 f"Point: {point} is marked false, but already marked true."
@@ -279,7 +276,7 @@ class BoxSearchEpisode(SearchEpisode):
         # self.statistics.iteration_operation.put("t")
 
     def _add_true_point(self, box: Box, point: Point):
-        l.info(f"Adding true point: {point}")
+        l.debug(f"Adding true point: {point}")
         if point in self._false_points:
             l.debug(
                 f"Point: {point} is marked true, but already marked false."
@@ -363,7 +360,7 @@ class BoxSearch(Search):
             parameters=episode.problem.model_parameters(),
             overwrite_cache=True,
         )
-        l.info(
+        l.debug(
             f"Split box with width = {bw:.5f} into boxes with widths = [{b1w:.5f}, {b2w:.5f}]"
         )
         return episode._add_unknown([b1, b2])
@@ -373,7 +370,7 @@ class BoxSearch(Search):
             l = mp.log_to_stderr()
             if process_name:
                 l.name = process_name
-            l.setLevel(LOG_LEVEL)
+            l.setLevel(config.verbosity)
         else:
             if not process_name:
                 process_name = "BoxSearch"
@@ -1016,7 +1013,7 @@ class BoxSearch(Search):
                                     if more_work:
                                         with more_work:
                                             more_work.notify_all()
-                                l.info(f"XXX [{box.width()}] Split({box})")
+                                l.debug(f"XXX [{box.width()}] Split({box})")
                             else:
                                 # box does not intersect f, so it is in t (true region)
                                 curr_step_box = box.current_step()
@@ -1025,7 +1022,7 @@ class BoxSearch(Search):
                                     explanation=not_false_explanation,
                                 )
                                 rval.put(curr_step_box.model_dump())
-                                l.info(
+                                l.debug(
                                     f"+++ [{box.width()}] True({curr_step_box})"
                                 )
                                 if episode.config.corner_points:
@@ -1060,7 +1057,7 @@ class BoxSearch(Search):
                                 box, explanation=not_true_explanation
                             )  # TODO consider merging lists of boxes
 
-                            l.info(f"--- [{box.width()}] False({box})")
+                            l.debug(f"--- [{box.width()}] False({box})")
                             if episode.config.corner_points:
                                 corner_points: List[
                                     Point
@@ -1345,7 +1342,7 @@ class BoxSearch(Search):
         haltEvent: Optional[threading.Event],
     ) -> ParameterSpace:
         l = mp.get_logger()
-        l.setLevel(LOG_LEVEL)
+        l.setLevel(config.verbosity)
         processes = config.number_of_processes
         with mp.Manager() as manager:
             rval = manager.Queue()

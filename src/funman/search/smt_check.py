@@ -28,7 +28,6 @@ from .search import Search, SearchEpisode
 
 l = logging.getLogger(__file__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-l.setLevel(logging.INFO)
 
 
 class SMTCheck(Search):

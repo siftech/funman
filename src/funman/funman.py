@@ -9,18 +9,7 @@ from typing import Callable, Optional
 from .config import FUNMANConfig
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.ERROR)
 
-
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-# create formatter and add it to the handlers
-formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-ch.setFormatter(formatter)
-# add the handlers to the logger
-logging.root.addHandler(ch)
 
 logging.getLogger("matplotlib.font_manager").disabled = True
 logging.getLogger("matplotlib.pyplot").disabled = True
@@ -64,6 +53,10 @@ class Funman(object):
         # Setting config here instead of keyword default because otherwise it will be validated prematurely by Pydantic
         if config is None:
             config = FUNMANConfig()
+        handlers = logging.getLogger().handlers
+        for h in handlers:
+            h.setLevel(config.verbosity)
+
         try:
             if config.profile:
                 import cProfile

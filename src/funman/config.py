@@ -5,16 +5,7 @@ analysis.
 import logging
 from typing import Optional, Union
 
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    ValidationInfo,
-    WrapValidator,
-    field_validator,
-    model_validator,
-)
-from typing_extensions import Annotated
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from funman.utils.handlers import (
     NoopResultHandler,
@@ -24,7 +15,6 @@ from funman.utils.handlers import (
 )
 
 l = logging.getLogger(__file__)
-l.setLevel(logging.ERROR)
 
 
 class FUNMANConfig(BaseModel):
@@ -93,6 +83,8 @@ class FUNMANConfig(BaseModel):
     taylor_series_order: Optional[int] = None
     """ Compute Corner points of each box """
     corner_points: bool = False
+    """ Verbosity (INFO, DEBUG, WARN, ERROR)"""
+    verbosity: int = logging.INFO
 
     @field_validator("solver")
     @classmethod
