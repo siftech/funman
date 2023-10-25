@@ -1,6 +1,7 @@
 """
 This submodule defines a consistency scenario.  Consistency scenarios specify an existentially quantified model.  If consistent, the solution assigns any unassigned variable, subject to their bounds and other constraints.  
 """
+import logging
 import threading
 from typing import Callable, Dict, Optional
 
@@ -14,6 +15,8 @@ from funman.scenario import AnalysisScenario, AnalysisScenarioResult
 from funman.translate import Encoding
 
 from ..representation.parameter_space import ParameterSpace
+
+l = logging.getLogger(__name__)
 
 
 class ConsistencyScenario(AnalysisScenario, BaseModel):
@@ -73,7 +76,7 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
             resultsCallback=resultsCallback,
         )
         parameter_space.num_dimensions = len(self.parameters)
-
+        l.info(parameter_space)
         scenario_result = ConsistencyScenarioResult(
             scenario=self,
             consistent=consistent,

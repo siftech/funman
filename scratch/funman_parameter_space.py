@@ -1,8 +1,13 @@
 import json
+import logging
 import os
 
 from funman import Point
 from funman.api.run import Runner
+
+# logging.root.setLevel(logging.INFO)
+# logging.basicConfig()
+# logging.getLogger().setLevel(logging.DEBUG)
 
 
 def main():
@@ -21,41 +26,23 @@ def main():
         #     "ub": 300
         # },
         "constraints": [
-            {
-                "name": "I_bounds_A",
-                "variable": "I",
-                "interval": {"lb": 1},
-                "timepoints": {"lb": 55, "ub": 60, "closed_upper_bound": True},
-            },
-            {
-                "name": "I_bounds_B",
-                "variable": "I",
-                "interval": {"ub": 20},
-                "timepoints": {"lb": 0, "ub": 20},
-            },
             # {
-            #     "name": "I_bounds_C",
+            #     "name": "I_bounds_A",
             #     "variable": "I",
-            #     "interval": {"lb": 0.7},
-            #     "timepoints": {"lb": 3, "ub": 4},
+            #     "interval": {"lb": 0, "ub": 200},
+            #     "timepoints": {"lb": 0, "ub": 40, "closed_upper_bound": True},
             # },
             # {
-            #     "name": "R_bounds",
-            #     "variable" : "R",
-            #     "bounds": {"lb":0, "ub":1},
-            #     "timepoints": {"lb":0, "ub":2}
+            #     "name": "I_bounds_B",
+            #     "variable": "I",
+            #     "interval": {"lb": 10},
+            #     "timepoints": {"lb": 40, "ub": 100, "closed_upper_bound": True},
             # },
-            #   {
-            #   "name": "S_bounds",
-            #   "variable" : "S",
-            #   "bounds": {"lb":980, "ub":1000},
-            #   "timepoints": {"lb":4, "ub":5}
-            #  }
         ],
         "parameters": [
             {
                 "name": "beta",
-                "interval": {"lb": 2.6e-7, "ub": 2.8e-3},
+                "interval": {"lb": 1e-8, "ub": 1e-2},
                 "label": "all",
             },
             {
@@ -65,56 +52,55 @@ def main():
             },
             {
                 "name": "S0",
-                "interval": {"lb": 1000, "ub": 1000},
+                "interval": {
+                    "lb": 1000,
+                    "ub": 1000,
+                    "closed_upper_bound": True,
+                },
                 "label": "any",
             },
-            {"name": "I0", "interval": {"lb": 1, "ub": 1}, "label": "any"},
-            {"name": "R0", "interval": {"lb": 0, "ub": 0}, "label": "any"},
+            {
+                "name": "I0",
+                "interval": {"lb": 1, "ub": 1, "closed_upper_bound": True},
+                "label": "any",
+            },
+            {
+                "name": "R0",
+                "interval": {"lb": 0, "ub": 0, "closed_upper_bound": True},
+                "label": "any",
+            },
         ],
         "structure_parameters": [
-            # {
-            #     "name": "num_steps",
-            #     "interval": {"lb": 1, "ub": 2, "closed_upper_bound": True},
-            #     "label": "all",
-            # },
-            # {
-            #     "name": "step_size",
-            #     "interval": {"lb": 1, "ub": 1, "closed_upper_bound": True},
-            #     "label": "all",
-            # },
             {
                 "name": "schedules",
                 "schedules": [
                     {
                         "timepoints": [
                             0,
-                            5,
+                            # 5,
                             10,
-                            15,
+                            # 15,
                             20,
                             30,
-                            35,
+                            # 35,
+                            40,
                             45,
-                            50,
-                            55,
-                            60,
-                            100,
+                            # 50,
+                            # 55,
+                            # 60,
+                            # 100,
                         ]
                     }
                 ],
             }
         ],
         "config": {
-            "normalize": False,
-            "tolerance": 5e-3,
-            "simplify_query": False,
             "normalization_constant": 1001,
-            # "use_compartmental_constraints" : False,
+            "tolerance": 1e-1,
+            "use_compartmental_constraints": True,
+            "verbosity": logging.DEBUG,
+            "substitute_subformulas": True,
             # "profile": True
-            "save_smtlib": True,
-            "substitute_subformulas": False,
-            "taylor_series_order": None,
-            #   "dreal_log_level": "debug"
         },
     }
 
@@ -129,7 +115,7 @@ def main():
     boxes = results.parameter_space.boxes()
 
     print(
-        f"{len(points)} Points (+:{len(results.parameter_space.true_points)}, -:{len(results.parameter_space.false_points)}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})"
+        f"{len(points)} Points (+:{len(results.parameter_space.true_points())}, -:{len(results.parameter_space.false_points())}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})"
     )
     if points and len(points) > 0:
         point: Point = points[-1]
@@ -142,9 +128,6 @@ def main():
         box = boxes[0]
         print(json.dumps(box.explain(), indent=4))
 
-
-# Use request file
-# results = Runner().run(MODEL_PATH, REQUEST_PATH, description="Basic SIR with simple request", case_out_dir="./out")
 
 if __name__ == "__main__":
     main()

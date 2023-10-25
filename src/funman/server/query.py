@@ -18,15 +18,13 @@ from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 from funman.representation.constraint import FunmanConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
-    LabeledParameter,
     ModelParameter,
     NumSteps,
     Parameter,
     Schedules,
     StepSize,
-    StructureParameter,
 )
-from funman.representation.representation import EncodingSchedule, Point
+from funman.representation.representation import Point
 from funman.scenario.consistency import (
     ConsistencyScenario,
     ConsistencyScenarioResult,
@@ -394,13 +392,15 @@ class FunmanResults(BaseModel):
 
     def plot_trajectories(self, variable: str, num: int = 200):
         fig, ax = plt.subplots()
-        len_tps = len(self.parameter_space.true_points)
-        len_fps = len(self.parameter_space.false_points)
+        len_tps = len(self.parameter_space.true_points())
+        len_fps = len(self.parameter_space.false_points())
         num_tp_samples = min(len_tps, num)
         num_fp_samples = min(len_fps, num)
 
-        tps = random.sample(self.parameter_space.true_points, num_tp_samples)
-        fps = random.sample(self.parameter_space.false_points, num_fp_samples)
+        tps = random.sample(self.parameter_space.true_points(), num_tp_samples)
+        fps = random.sample(
+            self.parameter_space.false_points(), num_fp_samples
+        )
         if len(tps) > 0:
             tps_df = self.dataframe(tps)
             # tps_df = tps_df[tps_df[variable] != 0.0]
@@ -421,6 +421,8 @@ class FunmanResults(BaseModel):
         variables=None,
         log_y=False,
         max_time=None,
+        label_marker={"true": "+", "false": "o"},
+        label_color={"true": "g", "false": "r"},
         **kwargs,
     ):
         """
@@ -437,18 +439,33 @@ class FunmanResults(BaseModel):
         # remove matplotlib debugging
         logging.getLogger("matplotlib.font_manager").disabled = True
         logging.getLogger("matplotlib.pyplot").disabled = True
-        logging.getLogger("funman.translate.translate").setLevel(logging.DEBUG)
 
         if points is None:
             points = self.points()
 
         df = self.dataframe(points, max_time=max_time)
-
-        if variables is not None:
-            ax = df[variables].plot(marker="o", **kwargs)
-        else:
-            ax = df.plot(marker="o", **kwargs)
-
+        fig, ax = plt.subplots(figsize=(8, 6))
+        groups = df.groupby("label")
+        for label, group in groups:
+            if variables is not None:
+                for id, g in group.groupby("id"):
+                    plt.plot(
+                        g[variables],
+                        label=label,
+                        marker=label_marker[label],
+                        c=label_color[label],
+                        **kwargs,
+                    )
+            else:
+                plt.plot(
+                    group,
+                    label=label,
+                    marker=label_marker[label],
+                    c=label_color[label],
+                    **kwargs,
+                )
+                ax = df.plot(label=label, marker=label_marker[label], **kwargs)
+        # plt.legend()
         if log_y:
             ax.set_yscale("symlog")
             plt.ylim(bottom=0)

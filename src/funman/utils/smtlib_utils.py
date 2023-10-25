@@ -17,7 +17,6 @@ from pysmt.smtlib.script import SmtLibCommand, SmtLibScript
 from pysmt.solvers.solver import Model
 
 l = logging.Logger(__file__)
-l.setLevel(logging.WARNING)
 
 
 class FUNMANSmtLibScript(SmtLibScript):

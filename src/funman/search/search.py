@@ -89,6 +89,9 @@ class SearchEpisode(BaseModel):
             },
             schedule=schedule,
         )
+        box.bounds["timestep"] = Interval(
+            lb=0, ub=len(schedule.timepoints) - 1, closed_upper_bound=True
+        )
         return box
 
 

@@ -1,4 +1,5 @@
 import json
+import logging
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -9,6 +10,9 @@ from fastapi.testclient import TestClient
 from funman.api.api import app, settings
 from funman.representation import ParameterSpace
 from funman.server.query import FunmanResults, FunmanWorkUnit
+
+l = logging.getLogger(__name__)
+l.setLevel(logging.DEBUG)
 
 FILE_DIRECTORY = Path(__file__).resolve().parent
 API_BASE_PATH = FILE_DIRECTORY / ".."
@@ -53,7 +57,7 @@ class TestAPI(unittest.TestCase):
     def tearDown(self):
         settings.data_path = "."
 
-    def wait_for_done(self, client, id, wait_time=1.0, steps=20):
+    def wait_for_done(self, client, id, wait_time=1.0, steps=30):
         while True:
             sleep(wait_time)
             response = client.get(
@@ -72,10 +76,10 @@ class TestAPI(unittest.TestCase):
 
     def check_consistency_success(self, parameter_space: ParameterSpace):
         assert parameter_space is not None
-        assert len(parameter_space.true_boxes) == 0
+        assert len(parameter_space.true_boxes) == 1
         assert len(parameter_space.false_boxes) == 0
-        assert len(parameter_space.true_points) == 1
-        assert len(parameter_space.false_points) == 0
+        assert len(parameter_space.true_points()) == 1
+        assert len(parameter_space.false_points()) == 0
 
     def check_parameter_synthesis_success(
         self, parameter_space: ParameterSpace
@@ -200,6 +204,9 @@ class TestAPI(unittest.TestCase):
                                 "label": "any",
                             },
                         ],
+                        "config": {
+                            "substitute_subformulas": True,
+                        },
                     },
                 },
                 headers={"token": f"{TEST_API_TOKEN}"},
@@ -262,10 +269,7 @@ class TestAPI(unittest.TestCase):
                                 "label": "any",
                             },
                         ],
-                        "config": {
-                            "tolerance": 1.0e-8,
-                            "number_of_processes": 1,
-                        },
+                        "config": {"tolerance": 1e-2},
                     },
                 },
                 headers={"token": f"{TEST_API_TOKEN}"},
@@ -330,3 +334,7 @@ class TestAPI(unittest.TestCase):
             assert (
                 data.parameter_space is not None
             ), "FunmanResults has no ParameterSpace"
+
+
+if __name__ == "__main__":
+    unittest.main()

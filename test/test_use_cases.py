@@ -127,7 +127,7 @@ class TestUseCases(unittest.TestCase):
             config=FUNMANConfig(
                 solver="dreal",
                 dreal_mcts=True,
-                tolerance=1e-8,
+                tolerance=1e-3,
                 number_of_processes=1,
                 normalize=False,
                 simplify_query=False,
@@ -190,7 +190,7 @@ class TestUseCases(unittest.TestCase):
             config=FUNMANConfig(
                 # solver="dreal",
                 # dreal_mcts=True,
-                tolerance=1e-6,
+                tolerance=1e-3,
                 number_of_processes=1,
                 normalize=False,
                 simplify_query=False,
@@ -243,11 +243,11 @@ class TestUseCases(unittest.TestCase):
                 use_compartmental_constraints=False,
             ),
         )
-        df = result_sat.dataframe(result_sat.parameter_space.true_points[0])
+        df = result_sat.dataframe(result_sat.parameter_space.true_points()[0])
 
         assert abs(df["I"][2] - 2.0) < 1.0
         beta = result_sat._parameters(
-            result_sat.parameter_space.true_points[0]
+            result_sat.parameter_space.true_points()[0]
         )["beta"]
         assert abs(beta - 0.00005) < 0.001
 

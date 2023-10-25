@@ -3,17 +3,11 @@ from typing import Dict, List, Union
 
 from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
-from pydantic import BaseModel, Field
-
-import funman.utils.math_utils as math_utils
-from funman import to_sympy
-from funman.constants import LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN, Label
+from pydantic import BaseModel
 
 from . import Interval, Point
 from .box import Box
-from .explanation import BoxExplanation
 from .interval import Interval
-from .parameter import ModelParameter
 
 l = logging.getLogger(__name__)
 
@@ -29,12 +23,16 @@ class ParameterSpace(BaseModel):
     num_dimensions: int = None
     true_boxes: List[Box] = []
     false_boxes: List[Box] = []
-    true_points: List[Point] = []
-    false_points: List[Point] = []
     unknown_points: List[Point] = []
 
+    def true_points(self) -> List[Point]:
+        return [pt for b in self.true_boxes for pt in b.true_points()]
+
+    def false_points(self) -> List[Point]:
+        return [pt for b in self.false_boxes for pt in b.false_points()]
+
     def points(self) -> List[Point]:
-        return self.true_points + self.false_points
+        return self.true_points() + self.false_points()
 
     def boxes(self) -> List[Box]:
         return self.true_boxes + self.false_boxes
@@ -170,7 +168,6 @@ class ParameterSpace(BaseModel):
         # remove matplotlib debugging
         logging.getLogger("matplotlib.font_manager").disabled = True
         logging.getLogger("matplotlib.pyplot").disabled = True
-        logging.getLogger("funman.translate.translate").setLevel(logging.DEBUG)
 
         custom_lines = [
             Line2D([0], [0], color="g", lw=4, alpha=alpha),
@@ -242,14 +239,17 @@ class ParameterSpace(BaseModel):
                 if b1.intersects(b2):
                     l.exception(f"Parameter Space Boxes intersect: {b1} {b2}")
                     return False
-        for tp in self.true_points:
+        for tp in self.true_points():
             if not any([b.contains_point(tp) for b in self.true_boxes]):
                 return False
-        for fp in self.false_points:
+        for fp in self.false_points():
             if not any([b.contains_point(fp) for b in self.false_boxes]):
                 return False
 
-        if len(set(self.true_points).intersection(set(self.false_points))) > 0:
+        if (
+            len(set(self.true_points()).intersection(set(self.false_points())))
+            > 0
+        ):
             return False
         return True
 
@@ -257,21 +257,24 @@ class ParameterSpace(BaseModel):
         """
         For every point, update the label based on the box that contains it.
         """
-        points: List[Point] = self.true_points + self.false_points
+        points: List[Point] = list(
+            set(self.true_points() + self.false_points())
+        )
         boxes: List[Box] = self.true_boxes + self.false_boxes
-        for point in points:
-            found_box = False
-            for box in boxes:
+        assigned_points = set([])
+        for box in boxes:
+            box.points = []
+            for point in iter(
+                pt for pt in points if pt not in assigned_points
+            ):
                 if box.contains_point(point):
                     point.label = box.label
-                    found_box = True
-                    break
-            if not found_box:
-                point.label = LABEL_UNKNOWN
+                    box.points.append(point)
+                    assigned_points.add(point)
 
-        self.true_points = [p for p in points if p.label == LABEL_TRUE]
-        self.false_points = [p for p in points if p.label == LABEL_FALSE]
-        self.unknown_points = [p for p in points if p.label == LABEL_UNKNOWN]
+        self.unknown_points = [
+            pt for pt in points if pt not in assigned_points
+        ]
 
     def _compact(self):
         """

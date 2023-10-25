@@ -28,7 +28,6 @@ from .search import Search, SearchEpisode
 
 l = logging.getLogger(__file__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-l.setLevel(logging.INFO)
 
 
 class SMTCheck(Search):
@@ -78,10 +77,9 @@ class SMTCheck(Search):
                     point = Point(
                         values=parameter_values,
                         label=LABEL_TRUE,
-                        timestep=schedule_length - 1,
                         schedule=schedule,
                     )
-                    point.timestep = schedule.time_at_step(
+                    point.values["timestep"] = schedule.time_at_step(
                         len(schedule.timepoints) - 1
                     )
                     if config.normalize:
@@ -89,7 +87,7 @@ class SMTCheck(Search):
                         point = denormalized_point
                     models[point] = result
                     consistent[point] = result_dict
-                    parameter_space.true_points.append(point)
+                    parameter_space.true_boxes.append(Box.from_point(point))
             elif result is not None and isinstance(result, Explanation):
                 box = Box(
                     bounds={
@@ -170,8 +168,10 @@ class SMTCheck(Search):
                 formula,
                 filename=f"dbg_steps.smt2",
             )
+        l.debug(f"Solving: {formula.serialize()}")
         result = self.invoke_solver(s)
         s.pop(1)
+        l.debug(f"Result: {type(result)}")
         return result
 
     def expand(
@@ -243,6 +243,8 @@ class SMTCheck(Search):
                     pass
             else:
                 result = self.solve_formula(s, formula, episode)
+                if isinstance(result, Explanation):
+                    result.check_assumptions(episode, s, options)
 
         return result
 

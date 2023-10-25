@@ -9,7 +9,6 @@ import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
 
 l = logging.Logger(__name__)
-l.setLevel(logging.INFO)
 
 
 class Interval(BaseModel):
@@ -21,6 +20,10 @@ class Interval(BaseModel):
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
     cached_width: Optional[float] = Field(default=None, exclude=True)
+
+    @staticmethod
+    def from_value(v: Union[float, str]):
+        return Interval(lb=v, ub=v, closed_upper_bound=True)
 
     def __hash__(self):
         return int(math_utils.plus(self.lb, self.ub))
@@ -42,6 +45,9 @@ class Interval(BaseModel):
         return math_utils.lte(self.ub, other.lb) or math_utils.gte(
             self.lb, other.ub
         )
+
+    def is_point(self) -> bool:
+        return self.lb == self.ub and self.closed_upper_bound
 
     def width(
         self, normalize: Optional[Union[Decimal, float]] = None

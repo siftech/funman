@@ -5,16 +5,7 @@ analysis.
 import logging
 from typing import Optional, Union
 
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    Field,
-    ValidationInfo,
-    WrapValidator,
-    field_validator,
-    model_validator,
-)
-from typing_extensions import Annotated
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from funman.utils.handlers import (
     NoopResultHandler,
@@ -24,7 +15,6 @@ from funman.utils.handlers import (
 )
 
 l = logging.getLogger(__file__)
-l.setLevel(logging.ERROR)
 
 
 class FUNMANConfig(BaseModel):
@@ -37,7 +27,7 @@ class FUNMANConfig(BaseModel):
         validate_default=True,
     )
 
-    tolerance: float = 1e-8
+    tolerance: float = 1e-3
     """Algorithm-specific tolerance for approximation, used by BoxSearch"""
 
     queue_timeout: int = 1
@@ -76,7 +66,7 @@ class FUNMANConfig(BaseModel):
     """Use MCTS in dreal"""
     dreal_mcts: bool = True
     """Substitute subformulas to simplify overall encoding"""
-    substitute_subformulas: bool = True
+    substitute_subformulas: bool = False
     """Enforce compartmental variable constraints"""
     normalization_constant: Optional[float] = None
     """ Simplify query by propagating substutions """
@@ -91,6 +81,10 @@ class FUNMANConfig(BaseModel):
     profile: bool = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
     taylor_series_order: Optional[int] = None
+    """ Compute Corner points of each box """
+    corner_points: bool = False
+    """ Verbosity (INFO, DEBUG, WARN, ERROR)"""
+    verbosity: int = logging.INFO
 
     @field_validator("solver")
     @classmethod

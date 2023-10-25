@@ -552,6 +552,7 @@ class DRealNative(
         )
         # result = dreal.CheckSatisfiability(self.assertion, 0.001)
         self.model = result
+        l.debug(result)
         return result
 
     def get_unsat_core(self) -> FNode:

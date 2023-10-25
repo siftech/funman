@@ -27,7 +27,6 @@ from pysmt.walkers import IdentityDagWalker
 from sympy import Add, Expr, Rational, exp, series, symbols, sympify
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class SympySerializer(IdentityDagWalker):
