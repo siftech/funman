@@ -169,8 +169,10 @@ class SMTCheck(Search):
                 formula,
                 filename=f"dbg_steps.smt2",
             )
+        l.debug(f"Solving: {formula.serialize()}")
         result = self.invoke_solver(s)
         s.pop(1)
+        l.debug(f"Result: {type(result)}")
         return result
 
     def expand(
@@ -242,6 +244,8 @@ class SMTCheck(Search):
                     pass
             else:
                 result = self.solve_formula(s, formula, episode)
+                if isinstance(result, Explanation):
+                    result.check_assumptions(episode, s, options)
 
         return result
 

@@ -67,5 +67,7 @@
       "label": "all"
     }
   ],
-  "config": {}
+  "config": {
+    "tolerance": 1e-2
+  }
 }
