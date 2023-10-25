@@ -1,4 +1,5 @@
 import json
+import logging
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -9,6 +10,9 @@ from fastapi.testclient import TestClient
 from funman.api.api import app, settings
 from funman.representation import ParameterSpace
 from funman.server.query import FunmanResults, FunmanWorkUnit
+
+l = logging.getLogger(__name__)
+l.setLevel(logging.DEBUG)
 
 FILE_DIRECTORY = Path(__file__).resolve().parent
 API_BASE_PATH = FILE_DIRECTORY / ".."
@@ -200,6 +204,9 @@ class TestAPI(unittest.TestCase):
                                 "label": "any",
                             },
                         ],
+                        "config": {
+                            "substitute_subformulas": True,
+                        },
                     },
                 },
                 headers={"token": f"{TEST_API_TOKEN}"},
@@ -262,10 +269,7 @@ class TestAPI(unittest.TestCase):
                                 "label": "any",
                             },
                         ],
-                        "config": {
-                            "tolerance": 1.0e-8,
-                            "number_of_processes": 1,
-                        },
+                        "config": {"tolerance": 1e-2},
                     },
                 },
                 headers={"token": f"{TEST_API_TOKEN}"},
@@ -330,3 +334,7 @@ class TestAPI(unittest.TestCase):
             assert (
                 data.parameter_space is not None
             ), "FunmanResults has no ParameterSpace"
+
+
+if __name__ == "__main__":
+    unittest.main()

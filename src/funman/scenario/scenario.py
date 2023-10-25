@@ -269,7 +269,7 @@ class AnalysisScenario(ABC, BaseModel):
             )
         else:
             self.normalization_constant = 1.0
-            l.warn("Warning: The scenario is not normalized!")
+            l.warning("Warning: The scenario is not normalized!")
 
 
 class AnalysisScenarioResult(ABC):
