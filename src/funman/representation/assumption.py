@@ -2,21 +2,15 @@ from typing import Union
 
 from pydantic import BaseModel
 
-from .constraint import (
-    ModelConstraint,
-    ParameterConstraint,
-    QueryConstraint,
-    StateVariableConstraint,
-)
+from . import Timepoint
+from .constraint import FunmanConstraint
 
 
 class Assumption(BaseModel):
-    constraint: Union[
-        "ModelConstraint",
-        "ParameterConstraint",
-        "StateVariableConstraint",
-        "QueryConstraint",
-    ]
+    constraint: Union[FunmanConstraint]
+
+    def relevant_at_time(self, timepoint: Timepoint) -> bool:
+        return self.constraint.relevant_at_time(timepoint)
 
     def __str__(self) -> str:
         if hasattr(self.constraint, "name"):

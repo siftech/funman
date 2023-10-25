@@ -1,9 +1,10 @@
 import random
+from collections import Counter
 from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 from matplotlib import pyplot as plt
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationInfo, field_validator
 
 from funman import LABEL_ANY, ModelParameter
 from funman.config import FUNMANConfig
@@ -14,15 +15,18 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import StateVariableConstraint
+from funman.representation.constraint import FunmanConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     LabeledParameter,
     ModelParameter,
+    NumSteps,
     Parameter,
+    Schedules,
+    StepSize,
     StructureParameter,
 )
-from funman.representation.representation import ParameterSpace, Point
+from funman.representation.representation import EncodingSchedule, Point
 from funman.scenario.consistency import (
     ConsistencyScenario,
     ConsistencyScenarioResult,
@@ -33,13 +37,35 @@ from funman.scenario.parameter_synthesis import (
 )
 from funman.scenario.scenario import AnalysisScenario
 
+from ..representation.parameter_space import ParameterSpace
+
 
 class FunmanWorkRequest(BaseModel):
     query: Optional[Union[QueryAnd, QueryLE, QueryFunction, QueryTrue]] = None
-    constraints: Optional[List[Union[StateVariableConstraint]]] = None
-    parameters: Optional[List[LabeledParameter]] = None
+    constraints: Optional[List[FunmanConstraint]] = None
+    parameters: Optional[List[ModelParameter]] = None
     config: Optional[FUNMANConfig] = None
-    structure_parameters: Optional[List[LabeledParameter]] = None
+    structure_parameters: Optional[
+        List[Union[Union[NumSteps, StepSize], Schedules]]
+    ] = None
+
+    @field_validator("constraints")
+    @classmethod
+    def check_unique_names(
+        cls,
+        constraints: Optional[List[FunmanConstraint]],
+        info: ValidationInfo,
+    ) -> Optional[List[FunmanConstraint]]:
+        if constraints is not None and len(constraints) > 0:
+            name_counts = Counter([c.name for c in constraints])
+            dups = {k: v for k, v in name_counts.items() if v > 1}
+            assert (
+                max(name_counts.values()) == 1
+            ), f"Constraint names need to be unique, duplicate counts: {dups}"
+            assert (None not in name_counts) or name_counts[
+                None
+            ] == 0, f"Constraints need names, found {name_counts[None]} constraints without names."
+        return constraints
 
 
 class FunmanProgress(BaseModel):
@@ -86,8 +112,7 @@ class FunmanWorkUnit(BaseModel):
                 parameters.append(
                     ModelParameter(
                         name=data.name,
-                        ub=data.ub,
-                        lb=data.lb,
+                        interval=data.interval,
                         label=data.label,
                     )
                 )
@@ -97,12 +122,13 @@ class FunmanWorkUnit(BaseModel):
         ):
             for data in self.request.structure_parameters:
                 parameters.append(
-                    StructureParameter(
-                        name=data.name,
-                        ub=data.ub,
-                        lb=data.lb,
-                        label=data.label,
-                    )
+                    data
+                    # StructureParameter(
+                    #     name=data.name,
+                    #     ub=data.ub,
+                    #     lb=data.lb,
+                    #     label=data.label,
+                    # )
                 )
 
         if (
@@ -225,7 +251,7 @@ class FunmanResults(BaseModel):
     ) -> Dict[Parameter, float]:
         if scenario is None:
             scenario = self._scenario()
-        parameters = scenario.parameters
+        parameters = scenario.model_parameters()
         return {p: point.values[p.name] for p in parameters}
 
     def dataframe(
@@ -262,7 +288,12 @@ class FunmanResults(BaseModel):
             df["id"] = i
             parameters = self.point_parameters(point=point, scenario=scenario)
             for p, v in parameters.items():
-                df[p.name] = v
+                if (
+                    isinstance(v, int)
+                    or isinstance(v, float)
+                    or isinstance(v, bool)
+                ):
+                    df[p.name] = v
             df["label"] = point.label
             # if max_time:
             # if time_var:

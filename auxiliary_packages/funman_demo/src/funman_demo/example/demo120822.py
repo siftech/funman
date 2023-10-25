@@ -532,7 +532,7 @@ SIR Bilayer (left), Hospitalized Measurement (right)
                 ub = interval["ub"]
                 for i in range(num_points):
                     value = lb + (i * (ub - lb) / num_points)
-                    p = Point.from_dict({"values": {param: value}})
+                    p = Point.model_validate({"values": {param: value}})
                     points.append(p)
             dfs = result.true_point_timeseries(points)
             model_dfs[model_name] = {"points": points, "dataframes": dfs}
@@ -967,7 +967,7 @@ SIR Bilayer (left), Infected Measurement (right)
                 ub = interval["ub"]
                 for i in range(num_points):
                     value = lb + (i * (ub - lb) / num_points)
-                    p = Point.from_dict({"values": {param: value}})
+                    p = Point.model_validate({"values": {param: value}})
                     points.append(p)
             dfs = result.true_point_timeseries(points)
             model_dfs[model_name] = {"points": points, "dataframes": dfs}

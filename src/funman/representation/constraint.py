@@ -1,22 +1,29 @@
-from typing import Optional, Union
+from typing import List, Optional, Union
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationInfo,
+    ValidatorFunctionWrapHandler,
+    WrapValidator,
+    field_validator,
+)
+from typing_extensions import Annotated
 
 from funman.model import Model
 from funman.model.query import Query
 
 from .interval import Interval
-from .parameter import Parameter, StructureParameter
+from .parameter import ModelParameter, StructureParameter
 
 
 class Constraint(BaseModel):
-    _assumable: bool = True
+    assumable: bool = True
     name: str
 
-    model_config = ConfigDict(extra="forbid")
-
-    def assumable(self) -> bool:
-        return self._assumable
+    # model_config = ConfigDict(extra="forbid")
 
     def __hash__(self) -> int:
         return 1
@@ -28,8 +35,18 @@ class Constraint(BaseModel):
         return True
 
 
+class TimedConstraint(Constraint):
+    timepoints: Optional["Interval"] = None
+
+    def contains_time(self, time: Union[float, int]) -> bool:
+        return self.timepoints is None or self.timepoints.contains_value(time)
+
+    def relevant_at_time(self, time: int) -> bool:
+        return self.contains_time(time)
+
+
 class ModelConstraint(Constraint):
-    _assumable: bool = False
+    assumable: bool = False
     model: Model
 
     model_config = ConfigDict(extra="forbid")
@@ -39,8 +56,8 @@ class ModelConstraint(Constraint):
 
 
 class ParameterConstraint(Constraint):
-    _assumable: bool = False
-    parameter: Parameter
+    assumable: bool = False
+    parameter: Union[ModelParameter, StructureParameter]
 
     model_config = ConfigDict(extra="forbid")
 
@@ -55,7 +72,7 @@ class ParameterConstraint(Constraint):
 
 
 class QueryConstraint(Constraint):
-    _assumable: bool = True
+    assumable: bool = True
     query: Query
 
     model_config = ConfigDict(extra="forbid")
@@ -64,18 +81,54 @@ class QueryConstraint(Constraint):
         return 4
 
 
-class StateVariableConstraint(Constraint):
+class StateVariableConstraint(TimedConstraint):
     variable: str
-    bounds: "Interval" = None
-    timepoints: Optional["Interval"] = None
+    interval: "Interval" = None
 
     model_config = ConfigDict(extra="forbid")
 
     def __hash__(self) -> int:
         return 3
 
+
+class LinearConstraint(TimedConstraint):
+    assumable: bool = True
+    additive_bounds: "Interval"
+    variables: List[str]
+    weights: Annotated[
+        Optional[List[Union[int, float]]], Field(validate_default=True)
+    ] = None
+    closed_upper_bound: bool = False
+
+    model_config = ConfigDict(extra="forbid")
+
+    @field_validator("weights")
+    @classmethod
+    def check_weights(
+        cls, weights: Optional[List[Union[int, float]]], info: ValidationInfo
+    ):
+        assert (
+            "variables" in info.data
+        ), "LinearConstraint must have a list of variables."
+
+        if weights is None:
+            weights = [1.0] * len(info.data["variables"])
+        return weights
+
+    def __hash__(self) -> int:
+        return 4
+
     def contains_time(self, time: Union[float, int]) -> bool:
         return self.timepoints is None or self.timepoints.contains_value(time)
 
     def relevant_at_time(self, time: int) -> bool:
         return self.contains_time(time)
+
+
+FunmanConstraint = Union[
+    ModelConstraint,
+    ParameterConstraint,
+    StateVariableConstraint,
+    LinearConstraint,
+    QueryConstraint,
+]

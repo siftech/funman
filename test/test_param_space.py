@@ -11,8 +11,7 @@ from funman.config import FUNMANConfig
 from funman.model import EncodedModel, QueryTrue
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.model import _wrap_with_internal_model
-from funman.representation import ParameterSpace
-from funman.representation.representation import ModelParameter
+from funman.representation import ModelParameter, ParameterSpace
 from funman.scenario.parameter_synthesis import ParameterSynthesisScenario
 from funman.server.query import FunmanWorkUnit
 from funman.translate import EncodedEncoder

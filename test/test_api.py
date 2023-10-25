@@ -7,7 +7,7 @@ from time import sleep
 from fastapi.testclient import TestClient
 
 from funman.api.api import app, settings
-from funman.representation.representation import ParameterSpace
+from funman.representation import ParameterSpace
 from funman.server.query import FunmanResults, FunmanWorkUnit
 
 FILE_DIRECTORY = Path(__file__).resolve().parent
@@ -62,7 +62,9 @@ class TestAPI(unittest.TestCase):
             assert (
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
-            data = FunmanResults.parse_raw(response.content.decode())
+            data = FunmanResults.model_validate(
+                json.loads(response.content.decode())
+            )
             if data.done:
                 return data
             steps -= 1
@@ -119,7 +121,9 @@ class TestAPI(unittest.TestCase):
             assert (
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
-            work_unit = FunmanWorkUnit.parse_raw(response.content.decode())
+            work_unit = FunmanWorkUnit.model_validate(
+                json.loads(response.content.decode())
+            )
             first_id = work_unit.id
             data = self.wait_for_done(client, first_id)
             self.check_consistency_success(data.parameter_space)
@@ -132,7 +136,9 @@ class TestAPI(unittest.TestCase):
             assert (
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
-            got_data = FunmanResults.parse_raw(response.content.decode())
+            got_data = FunmanResults.model_validate(
+                json.loads(response.content.decode())
+            )
             assert first_id == got_data.id
             self.check_consistency_success(data.parameter_space)
 
@@ -185,14 +191,12 @@ class TestAPI(unittest.TestCase):
                         "structure_parameters": [
                             {
                                 "name": "num_steps",
-                                "lb": 3.0,
-                                "ub": 3.0,
+                                "interval": {"lb": 3.0, "ub": 3.0},
                                 "label": "any",
                             },
                             {
                                 "name": "step_size",
-                                "lb": 1.0,
-                                "ub": 1.0,
+                                "interval": {"lb": 1.0, "ub": 1.0},
                                 "label": "any",
                             },
                         ],
@@ -203,7 +207,9 @@ class TestAPI(unittest.TestCase):
             assert (
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
-            work_unit = FunmanWorkUnit.parse_raw(response.content.decode())
+            work_unit = FunmanWorkUnit.model_validate(
+                json.loads(response.content.decode())
+            )
             data = self.wait_for_done(client, work_unit.id)
             self.check_consistency_success(data.parameter_space)
 
@@ -240,22 +246,19 @@ class TestAPI(unittest.TestCase):
                         "parameters": [
                             {
                                 "name": "beta",
-                                "lb": lb,
-                                "ub": ub,
+                                "interval": {"lb": lb, "ub": ub},
                                 "label": "all",
                             }
                         ],
                         "structure_parameters": [
                             {
                                 "name": "num_steps",
-                                "lb": 3.0,
-                                "ub": 3.0,
+                                "interval": {"lb": 3.0, "ub": 3.0},
                                 "label": "any",
                             },
                             {
                                 "name": "step_size",
-                                "lb": 1.0,
-                                "ub": 1.0,
+                                "interval": {"lb": 1.0, "ub": 1.0},
                                 "label": "any",
                             },
                         ],
@@ -270,7 +273,9 @@ class TestAPI(unittest.TestCase):
             assert (
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
-            work_unit = FunmanWorkUnit.parse_raw(response.content.decode())
+            work_unit = FunmanWorkUnit.model_validate(
+                json.loads(response.content.decode())
+            )
             data = self.wait_for_done(client, work_unit.id)
             self.check_parameter_synthesis_success(data.parameter_space)
 
@@ -314,7 +319,9 @@ class TestAPI(unittest.TestCase):
             assert (
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
-            work_unit = FunmanWorkUnit.parse_raw(response.content.decode())
+            work_unit = FunmanWorkUnit.model_validate(
+                json.loads(response.content.decode())
+            )
             data = self.wait_for_done(client, work_unit.id)
             assert data, "No FunmanResults returned"
             assert (

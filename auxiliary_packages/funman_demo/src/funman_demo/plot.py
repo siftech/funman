@@ -6,7 +6,7 @@ from IPython.display import clear_output
 from matplotlib.lines import Line2D
 
 from funman import Box, Point
-from funman.scenario import ParameterSpace
+from funman.representation.parameter_space import ParameterSpace
 
 l = logging.getLogger(__file__)
 l.setLevel(logging.INFO)

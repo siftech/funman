@@ -29,12 +29,12 @@ from funman import (
     QueryGE,
     QueryLE,
     QueryTrue,
-    StateVariableConstraint,
     StructureParameter,
 )
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
+from funman.representation.constraint import FunmanConstraint
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.INFO)
@@ -47,16 +47,7 @@ class AnalysisScenario(ABC, BaseModel):
 
     parameters: List[Parameter]
     normalization_constant: Optional[float] = None
-    constraints: Optional[
-        List[
-            Union[
-                "ModelConstraint",
-                "ParameterConstraint",
-                "StateVariableConstraint",
-                "QueryConstraint",
-            ]
-        ]
-    ] = None
+    constraints: Optional[List[Union[FunmanConstraint]]] = None
     model_config = ConfigDict(extra="forbid")
 
     model: Union[
@@ -75,7 +66,7 @@ class AnalysisScenario(ABC, BaseModel):
     _assumptions: List[Assumption] = []
     _smt_encoder: Optional["Encoder"] = None
     # Encoding for different step sizes (key)
-    _encodings: Optional[Dict[int, "Encoding"]] = {}
+    _encodings: Optional[Dict["Schedule", "Encoding"]] = {}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -95,7 +86,7 @@ class AnalysisScenario(ABC, BaseModel):
         # create assumptions for each constraint that may be assumed.
         if self.constraints is not None:
             for constraint in self.constraints:
-                if constraint.assumable():
+                if constraint.assumable:
                     self._assumptions.append(Assumption(constraint=constraint))
 
     @abstractclassmethod
@@ -118,30 +109,29 @@ class AnalysisScenario(ABC, BaseModel):
 
         self.constraints += [
             ParameterConstraint(name=parameter.name, parameter=parameter)
-            for parameter in self.parameters
+            for parameter in self.model_parameters()
         ]
 
         self._set_normalization(config)
+
+        if config.use_compartmental_constraints:
+            ccs = self.model.compartmental_constraints(
+                self.normalization_constant
+            )
+            if ccs is not None:
+                self.constraints += ccs
+                for cc in ccs:
+                    if cc.assumable:
+                        self._assumptions.append(Assumption(constraint=cc))
+
         self._initialize_encodings(config)
+
         return search
 
     def _initialize_encodings(self, config: "FUNMANConfig"):
         # self._assume_model = Symbol("assume_model")
         self._smt_encoder = self.model.default_encoder(config, self)
         assert self._smt_encoder._timed_model_elements
-
-        times = list(
-            set(
-                [
-                    t
-                    for s in self._smt_encoder._timed_model_elements[
-                        "state_timepoints"
-                    ]
-                    for t in s
-                ]
-            )
-        )
-        times.sort()
 
         # Initialize Assumptions
         # Maintain backward support for query as a single constraint
@@ -150,28 +140,13 @@ class AnalysisScenario(ABC, BaseModel):
             self.constraints += [query_constraint]
             self._assumptions.append(Assumption(constraint=query_constraint))
 
-        # self._assume_query = [Symbol(f"assume_query_{t}") for t in times]
-        for step_size_idx, step_size in enumerate(
-            self._smt_encoder._timed_model_elements["step_sizes"]
-        ):
-            num_steps = max(
-                self._smt_encoder._timed_model_elements["state_timepoints"][
-                    step_size_idx
-                ]
+        for schedule in self._smt_encoder._timed_model_elements[
+            "schedules"
+        ].schedules:
+            encoding = self._smt_encoder.initialize_encodings(
+                self, len(schedule.timepoints)
             )
-            (
-                # model_encoding,
-                # query_encoding,
-                encoding
-            ) = self._smt_encoder.initialize_encodings(self, num_steps)
-            # self._smt_encoder.encode_model_timed(
-            #     self, num_steps, step_size
-            # )
-
-            self._encodings[step_size] = encoding
-
-            # self._model_encoding[step_size] = model_encoding
-            # self._query_encoding[step_size] = query_encoding
+            self._encodings[schedule] = encoding
 
     def num_dimensions(self):
         """
@@ -182,7 +157,7 @@ class AnalysisScenario(ABC, BaseModel):
     def search_space_volume(self) -> Decimal:
         bounds = {}
         for param in self.parameters:
-            bounds[param.name] = Interval(lb=param.lb, ub=param.ub)
+            bounds[param.name] = param.interval
         return Box(bounds=bounds).volume()
 
     def representable_space_volume(self) -> Decimal:
@@ -192,18 +167,22 @@ class AnalysisScenario(ABC, BaseModel):
         return Box(bounds=bounds).volume()
 
     def structure_parameters(self):
-        return [
-            p for p in self.parameters if isinstance(p, StructureParameter)
-        ]
+        return self.parameters_of_type(StructureParameter)
 
     def model_parameters(self):
-        return [p for p in self.parameters if isinstance(p, ModelParameter)]
+        return self.parameters_of_type(ModelParameter)
 
     def synthesized_parameters(self):
         return [p for p in self.parameters if p.is_synthesized()]
 
+    def parameters_of_type(self, parameter_type) -> List[Parameter]:
+        return [p for p in self.parameters if isinstance(p, parameter_type)]
+
     def structure_parameter(self, name: str) -> StructureParameter:
-        return next(p for p in self.parameters if p.name == name)
+        try:
+            return next(p for p in self.parameters if p.name == name)
+        except StopIteration:
+            return None
 
     def _process_parameters(self):
         if len(self.structure_parameters()) == 0:
@@ -211,7 +190,9 @@ class AnalysisScenario(ABC, BaseModel):
             # if wrong type, recover structure parameters
             self.parameters = [
                 (
-                    StructureParameter(name=p.name, lb=p.lb, ub=p.ub)
+                    StructureParameter(
+                        name=p.name, interval=Interval(lb=p.lb, ub=p.ub)
+                    )
                     if (p.name == "num_steps" or p.name == "step_size")
                     else p
                 )
@@ -220,8 +201,12 @@ class AnalysisScenario(ABC, BaseModel):
             if len(self.structure_parameters()) == 0:
                 # Add the structure parameters if still missing
                 self.parameters += [
-                    StructureParameter(name="num_steps", lb=0, ub=0),
-                    StructureParameter(name="step_size", lb=1, ub=1),
+                    StructureParameter(
+                        name="num_steps", interval=Interval(lb=0, ub=0)
+                    ),
+                    StructureParameter(
+                        name="step_size", interval=Interval(lb=1, ub=1)
+                    ),
                 ]
 
         self._extract_non_overriden_parameters()
@@ -255,7 +240,9 @@ class AnalysisScenario(ABC, BaseModel):
             else:
                 bounds = {}
             non_overriden_parameters.append(
-                ModelParameter(name=p, **bounds, label=LABEL_ANY)
+                ModelParameter(
+                    name=p, interval=Interval(**bounds), label=LABEL_ANY
+                )
             )
 
         self.parameters += non_overriden_parameters
