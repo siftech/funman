@@ -17,7 +17,6 @@ from funman.translate import Encoding
 from ..representation.parameter_space import ParameterSpace
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class ConsistencyScenario(AnalysisScenario, BaseModel):

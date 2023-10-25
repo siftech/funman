@@ -9,7 +9,6 @@ import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
 
 l = logging.Logger(__name__)
-l.setLevel(logging.INFO)
 
 
 class Interval(BaseModel):

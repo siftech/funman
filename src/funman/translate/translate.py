@@ -63,7 +63,6 @@ from ..representation.symbol import ModelSymbol
 from .encoding import *
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.DEBUG)
 
 
 StateTimepoints = List[Timepoint]
@@ -745,7 +744,7 @@ class Encoder(ABC, BaseModel):
         if ub is not None:
             ube = (
                 LE(expression, ub)
-                if constraint.closed_upper_bound
+                if constraint.additive_bounds.closed_upper_bound
                 else LT(expression, ub)
             )
         else:

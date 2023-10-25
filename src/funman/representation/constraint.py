@@ -1,13 +1,10 @@
 from typing import List, Optional, Union
 
 from pydantic import (
-    AfterValidator,
     BaseModel,
     ConfigDict,
     Field,
     ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    WrapValidator,
     field_validator,
 )
 from typing_extensions import Annotated
@@ -98,7 +95,6 @@ class LinearConstraint(TimedConstraint):
     weights: Annotated[
         Optional[List[Union[int, float]]], Field(validate_default=True)
     ] = None
-    closed_upper_bound: bool = False
 
     model_config = ConfigDict(extra="forbid")
 

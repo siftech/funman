@@ -7,14 +7,10 @@ import math
 import sys
 from typing import Dict, Literal, Optional
 
-from matplotlib import pyplot as plt
-from matplotlib.lines import Line2D
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-import funman.utils.math_utils as math_utils
 from funman import to_sympy
 from funman.constants import LABEL_UNKNOWN, Label
-from funman.representation import Timestep
 
 l = logging.getLogger(__name__)
 

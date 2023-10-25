@@ -5,7 +5,9 @@ import os
 from funman import Point
 from funman.api.run import Runner
 
-logging.root.setLevel(logging.INFO)
+# logging.root.setLevel(logging.INFO)
+# logging.basicConfig()
+# logging.getLogger().setLevel(logging.DEBUG)
 
 
 def main():
@@ -27,20 +29,20 @@ def main():
             # {
             #     "name": "I_bounds_A",
             #     "variable": "I",
-            #     "interval": {"lb": 1},
-            #     "timepoints": {"lb": 55, "ub": 60, "closed_upper_bound": True},
+            #     "interval": {"lb": 0, "ub": 200},
+            #     "timepoints": {"lb": 0, "ub": 40, "closed_upper_bound": True},
             # },
             # {
             #     "name": "I_bounds_B",
             #     "variable": "I",
-            #     "interval": {"ub": 20},
-            #     "timepoints": {"lb": 0, "ub": 20},
+            #     "interval": {"lb": 10},
+            #     "timepoints": {"lb": 40, "ub": 100, "closed_upper_bound": True},
             # },
         ],
         "parameters": [
             {
                 "name": "beta",
-                "interval": {"lb": 1.0e-3, "ub": 3.0e-3},
+                "interval": {"lb": 1e-8, "ub": 1e-2},
                 "label": "all",
             },
             {
@@ -50,40 +52,43 @@ def main():
             },
             {
                 "name": "S0",
-                "interval": {"lb": 1000, "ub": 1000},
+                "interval": {
+                    "lb": 1000,
+                    "ub": 1000,
+                    "closed_upper_bound": True,
+                },
                 "label": "any",
             },
-            {"name": "I0", "interval": {"lb": 1, "ub": 1}, "label": "any"},
-            {"name": "R0", "interval": {"lb": 0, "ub": 0}, "label": "any"},
+            {
+                "name": "I0",
+                "interval": {"lb": 1, "ub": 1, "closed_upper_bound": True},
+                "label": "any",
+            },
+            {
+                "name": "R0",
+                "interval": {"lb": 0, "ub": 0, "closed_upper_bound": True},
+                "label": "any",
+            },
         ],
         "structure_parameters": [
-            # {
-            #     "name": "num_steps",
-            #     "interval": {"lb": 1, "ub": 2, "closed_upper_bound": True},
-            #     "label": "all",
-            # },
-            # {
-            #     "name": "step_size",
-            #     "interval": {"lb": 1, "ub": 1, "closed_upper_bound": True},
-            #     "label": "all",
-            # },
             {
                 "name": "schedules",
                 "schedules": [
                     {
                         "timepoints": [
                             0,
-                            5,
+                            # 5,
                             10,
-                            15,
+                            # 15,
                             20,
                             30,
-                            35,
+                            # 35,
+                            40,
                             45,
-                            50,
-                            55,
-                            60,
-                            100,
+                            # 50,
+                            # 55,
+                            # 60,
+                            # 100,
                         ]
                     }
                 ],
@@ -91,8 +96,11 @@ def main():
         ],
         "config": {
             "normalization_constant": 1001,
-            "use_compartmental_constraints": True,
             "tolerance": 1e-1,
+            "use_compartmental_constraints": True,
+            "verbosity": logging.DEBUG,
+            "substitute_subformulas": True,
+            # "profile": True
         },
     }
 
