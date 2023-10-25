@@ -1,8 +1,11 @@
 import json
+import logging
 import os
 
 from funman import Point
 from funman.api.run import Runner
+
+logging.root.setLevel(logging.INFO)
 
 
 def main():
@@ -21,18 +24,18 @@ def main():
         #     "ub": 300
         # },
         "constraints": [
-            {
-                "name": "I_bounds_A",
-                "variable": "I",
-                "interval": {"lb": 1},
-                "timepoints": {"lb": 55, "ub": 60, "closed_upper_bound": True},
-            },
-            {
-                "name": "I_bounds_B",
-                "variable": "I",
-                "interval": {"ub": 20},
-                "timepoints": {"lb": 0, "ub": 20},
-            },
+            # {
+            #     "name": "I_bounds_A",
+            #     "variable": "I",
+            #     "interval": {"lb": 1},
+            #     "timepoints": {"lb": 55, "ub": 60, "closed_upper_bound": True},
+            # },
+            # {
+            #     "name": "I_bounds_B",
+            #     "variable": "I",
+            #     "interval": {"ub": 20},
+            #     "timepoints": {"lb": 0, "ub": 20},
+            # },
         ],
         "parameters": [
             {
@@ -89,7 +92,7 @@ def main():
         "config": {
             "normalization_constant": 1001,
             "use_compartmental_constraints": True,
-            "tolerance": 5e-3,
+            "tolerance": 1e-1,
         },
     }
 
@@ -104,7 +107,7 @@ def main():
     boxes = results.parameter_space.boxes()
 
     print(
-        f"{len(points)} Points (+:{len(results.parameter_space.true_points)}, -:{len(results.parameter_space.false_points)}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})"
+        f"{len(points)} Points (+:{len(results.parameter_space.true_points())}, -:{len(results.parameter_space.false_points())}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})"
     )
     if points and len(points) > 0:
         point: Point = points[-1]

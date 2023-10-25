@@ -22,6 +22,10 @@ class Interval(BaseModel):
     closed_upper_bound: bool = False
     cached_width: Optional[float] = Field(default=None, exclude=True)
 
+    @staticmethod
+    def from_value(v: Union[float, str]):
+        return Interval(lb=v, ub=v, closed_upper_bound=True)
+
     def __hash__(self):
         return int(math_utils.plus(self.lb, self.ub))
 

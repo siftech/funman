@@ -77,7 +77,10 @@ class Point(BaseModel):
     def __eq__(self, other):
         if isinstance(other, Point):
             return all(
-                [self.values[p] == other.values[p] for p in self.values.keys()]
+                [
+                    p in other.values and self.values[p] == other.values[p]
+                    for p in self.values.keys()
+                ]
             )
         else:
             return False

@@ -158,14 +158,14 @@ class AbstractPetriNetModel(Model):
                 additive_bounds={"lb": population, "ub": population},
                 variables=vars,
                 closed_upper_bound=True,
-                assumable=False,
+                soft=False,
             )
         ] + [
             LinearConstraint(
                 name=f"compartmental_{v}_nonnegative",
                 additive_bounds={"lb": 0},
                 variables=[v],
-                assumable=False,
+                soft=False,
             )
             for v in vars
         ]

@@ -1,5 +1,6 @@
 import json
 import os
+import signal
 from contextlib import contextmanager
 from time import sleep
 from timeit import default_timer
@@ -117,6 +118,17 @@ models = {GeneratedPetriNet, GeneratedRegnet}
 # ]
 
 
+class GracefulKiller:
+    kill_now = False
+
+    def __init__(self):
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+    def exit_gracefully(self, *args):
+        self.kill_now = True
+
+
 class Runner:
     @contextmanager
     def elapsed_timer(self):
@@ -172,6 +184,7 @@ class Runner:
     def run_instance(
         self, case: Tuple[str, Union[str, Dict], str], out_dir="."
     ):
+        killer = GracefulKiller()
         (model_file, request_file, description) = case
 
         model = self.get_model(model_file)
@@ -190,7 +203,8 @@ class Runner:
             model=model, request=request
         )
         sleep(2)  # need to sleep until worker has a chance to start working
-        while True:
+
+        while not killer.kill_now:
             if self._worker.is_processing_id(work_unit.id):
                 results = self._worker.get_results(work_unit.id)
                 with open(f"{out_dir}/{work_unit.id}.json", "w") as f:
@@ -204,6 +218,9 @@ class Runner:
             else:
                 results = self._worker.get_results(work_unit.id)
                 break
+
+        if killer.kill_now:
+            self._worker.stop()
 
         # ParameterSpacePlotter(results.parameter_space, plot_points=True).plot(
         #     show=False

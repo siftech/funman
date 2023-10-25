@@ -38,9 +38,9 @@ from funman.search.search import SearchStaticsMP, SearchStatistics
 from funman.translate.translate import EncodingOptions, EncodingSchedule
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
 
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 
-l = logging.getLogger(__file__)
+l = logging.getLogger(__name__)
 l.setLevel(LOG_LEVEL)
 
 
@@ -228,6 +228,7 @@ class BoxSearchEpisode(SearchEpisode):
             box.width(
                 parameters=self.problem.model_parameters(),
                 normalize=self.problem._original_parameter_widths,
+                overwrite_cache=True,
             )
             > self.config.tolerance
         ):
@@ -259,14 +260,15 @@ class BoxSearchEpisode(SearchEpisode):
         #     self.statistics.num_false.value += 1
         # self.statistics.iteration_operation.put("f")
 
-    def _add_false_point(self, point: Point, explanation: Explanation = None):
+    def _add_false_point(
+        self, box: Box, point: Point, explanation: Explanation = None
+    ):
         l.info(f"Adding false point: {point}")
         if point in self._true_points:
             l.debug(
                 f"Point: {point} is marked false, but already marked true."
             )
         point.label = LABEL_FALSE
-        self._false_points.add(point)
 
     def _add_true(self, box: Box, explanation: Explanation = None):
         box.label = LABEL_TRUE
@@ -276,14 +278,13 @@ class BoxSearchEpisode(SearchEpisode):
         #     self.statistics.num_true.value += 1
         # self.statistics.iteration_operation.put("t")
 
-    def _add_true_point(self, point: Point):
+    def _add_true_point(self, box: Box, point: Point):
         l.info(f"Adding true point: {point}")
         if point in self._false_points:
             l.debug(
                 f"Point: {point} is marked true, but already marked false."
             )
         point.label = LABEL_TRUE
-        self._true_points.add(point)
 
     def _get_unknown(self):
         box = self._unknown_boxes.get(timeout=self.config.queue_timeout)
@@ -353,13 +354,17 @@ class BoxSearch(Search):
             normalize=normalize, parameters=episode.problem.model_parameters()
         )
         b1w = b1.width(
-            normalize=normalize, parameters=episode.problem.model_parameters()
+            normalize=normalize,
+            parameters=episode.problem.model_parameters(),
+            overwrite_cache=True,
         )
         b2w = b2.width(
-            normalize=normalize, parameters=episode.problem.model_parameters()
+            normalize=normalize,
+            parameters=episode.problem.model_parameters(),
+            overwrite_cache=True,
         )
         l.info(
-            f"Split box with width = {bw} into boxes with widths = {[b1w, b2w]}"
+            f"Split box with width = {bw:.5f} into boxes with widths = [{b1w:.5f}, {b2w:.5f}]"
         )
         return episode._add_unknown([b1, b2])
 
@@ -679,10 +684,9 @@ class BoxSearch(Search):
         options: EncodingOptions,
         _smtlib_save_fn: Callable = None,
     ):
-        points = [p for p in existing_points if box.contains_point(p)]
         explanation = None
 
-        if len(points) == 0:
+        if len(existing_points) == 0:
             # If no cached point, then attempt to generate one
             # print("Checking false query")
             _encoding_fn()
@@ -704,22 +708,23 @@ class BoxSearch(Search):
                 for point in points:
                     if options.normalize:
                         point = point.denormalize(episode.problem)
-                    _point_handler_fn(point)
-                    rval.put(point.model_dump())
-
+                    _point_handler_fn(box, point)
+                    # rval.put(point.model_dump())
+                    if point not in box.points:
+                        box.points.append(point)
             else:  # unsat
                 explanation = result
                 explanation.check_assumptions(episode, my_solver, options)
             episode._formula_stack.pop()
-        return points, explanation
+        return existing_points, explanation
 
     def _get_false_points(
         self, solver, episode, box, rval, options, my_solver
     ) -> Optional[Union[List[Point], Explanation]]:
-        false_points, explanation = self._get_points(
+        points, explanation = self._get_points(
             solver,
             box,
-            episode._false_points,
+            box.false_points(),
             episode,
             rval,
             partial(self._setup_false_query, solver, episode, box, options),
@@ -735,7 +740,7 @@ class BoxSearch(Search):
             else None,
         )
 
-        return false_points, explanation
+        return box.false_points(), explanation
 
     def _point_assumptions(
         self,
@@ -843,10 +848,10 @@ class BoxSearch(Search):
     def _get_true_points(
         self, solver, episode, box, rval, options, my_solver
     ) -> Optional[Union[List[Point], Explanation]]:
-        true_points, explanation = self._get_points(
+        points, explanation = self._get_points(
             solver,
             box,
-            episode._true_points,
+            box.true_points(),
             episode,
             rval,
             partial(self._setup_true_query, solver, episode, box, options),
@@ -857,8 +862,7 @@ class BoxSearch(Search):
             if episode.config.save_smtlib
             else None,
         )
-
-        return true_points, explanation
+        return box.true_points(), explanation
 
     def get_box_corners(
         self, solver, episode, box, rval, options, my_solver
@@ -878,7 +882,7 @@ class BoxSearch(Search):
                 corner_point = episode._extract_point(result, box)
                 box.corner_points.append(corner_point)
                 corner_point.label = box.label
-                rval.put(corner_point.model_dump())
+                # rval.put(corner_point.model_dump())
                 corner_points.append(corner_point)
             episode._formula_stack.pop()
 
@@ -1012,7 +1016,7 @@ class BoxSearch(Search):
                                     if more_work:
                                         with more_work:
                                             more_work.notify_all()
-                                print(f"XXX [{box.width()}] Split({box})")
+                                l.info(f"XXX [{box.width()}] Split({box})")
                             else:
                                 # box does not intersect f, so it is in t (true region)
                                 curr_step_box = box.current_step()
@@ -1021,41 +1025,60 @@ class BoxSearch(Search):
                                     explanation=not_false_explanation,
                                 )
                                 rval.put(curr_step_box.model_dump())
-                                print(
+                                l.info(
                                     f"+++ [{box.width()}] True({curr_step_box})"
                                 )
-                                corner_points: List[
-                                    Point
-                                ] = self.get_box_corners(
-                                    solver,
-                                    episode,
-                                    curr_step_box,
-                                    rval,
-                                    options,
-                                    my_solver,
-                                )
+                                if episode.config.corner_points:
+                                    corner_points: List[
+                                        Point
+                                    ] = self.get_box_corners(
+                                        solver,
+                                        episode,
+                                        curr_step_box,
+                                        rval,
+                                        options,
+                                        my_solver,
+                                    )
 
                                 # Advance a true box to be considered for later timesteps
                                 next_box = box.advance()
                                 if next_box:
                                     episode._add_unknown(next_box)
                         else:
+                            if len(box.points) == 0:
+                                # If we cannot find a true point, the box is false and we may have not computed any false points, so ensure we have at least one.
+                                self._get_false_points(
+                                    solver,
+                                    episode,
+                                    box,
+                                    rval,
+                                    options,
+                                    my_solver,
+                                )
                             # box is a subset of f (intersects f but not t)
                             episode._add_false(
                                 box, explanation=not_true_explanation
                             )  # TODO consider merging lists of boxes
 
-                            print(f"--- [{box.width()}] False({box})")
-                            corner_points: List[Point] = self.get_box_corners(
-                                solver, episode, box, rval, options, my_solver
-                            )
+                            l.info(f"--- [{box.width()}] False({box})")
+                            if episode.config.corner_points:
+                                corner_points: List[
+                                    Point
+                                ] = self.get_box_corners(
+                                    solver,
+                                    episode,
+                                    box,
+                                    rval,
+                                    options,
+                                    my_solver,
+                                )
                             rval.put(box.model_dump())
                         episode._formula_stack.pop()  # Remove box from solver
                         episode._on_iteration()
                         if handler:
                             handler(rval, episode.config, all_results)
                             if "progress" in all_results:
-                                print(all_results["progress"])
+                                l.info(all_results["progress"])
                         l.info(f"{process_name} finished work")
                 self._initialize_encoding(
                     solver, episode, options, None

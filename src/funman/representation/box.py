@@ -35,6 +35,22 @@ class Box(BaseModel):
     cached_width: Optional[float] = Field(default=None, exclude=True)
     schedule: Optional[EncodingSchedule] = None
     corner_points: List[Point] = []
+    points: List[Point] = []
+
+    @staticmethod
+    def from_point(point: Point) -> "Box":
+        box = Box()
+        box.bounds = {
+            p: Interval.from_value(v) for p, v in point.values.items()
+        }
+        box.points.append(point)
+        return box
+
+    def true_points(self) -> List[Point]:
+        return [p for p in self.points if p.label == LABEL_TRUE]
+
+    def false_points(self) -> List[Point]:
+        return [p for p in self.points if p.label == LABEL_FALSE]
 
     def explain(self) -> "BoxExplanation":
         expl = {"box": {k: v.model_dump() for k, v in self.bounds.items()}}
@@ -54,6 +70,8 @@ class Box(BaseModel):
         else:
             box = self.model_copy(deep=True)
             box.timestep().lb += 1
+            # Remove points because they correspond to prior timesteps
+            box.points = []
             return box
 
     def corners(self, parameters: List[Parameter] = None) -> List[Point]:
@@ -216,7 +234,7 @@ class Box(BaseModel):
     def __lt__(self, other):
         if isinstance(other, Box):
             if self.timestep().lb == other.timestep().lb:
-                return self.width() < other.width()
+                return self.width() > other.width()
             else:
                 return self.timestep().lb > other.timestep().lb
         else:
@@ -603,11 +621,13 @@ class Box(BaseModel):
         assert math_utils.lte(b1.bounds[p].lb, mid)
         b1.bounds[p] = Interval(lb=b1.bounds[p].lb, ub=mid)
         b1.width(overwrite_cache=True)
+        b1.points = [pt for pt in b1.points if b1.contains_point(pt)]
 
         # b2 is upper half
         assert math_utils.lte(mid, b2.bounds[p].ub)
         b2.bounds[p] = Interval(lb=mid, ub=b2.bounds[p].ub)
         b2.width(overwrite_cache=True)
+        b2.points = [pt for pt in b2.points if b2.contains_point(pt)]
 
         return [b2, b1]
 

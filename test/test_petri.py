@@ -176,7 +176,7 @@ class TestUseCases(unittest.TestCase):
             ),
         )
         assert result_sat is not None and result_sat.consistent
-        point = result_sat.parameter_space.true_points[0]
+        point = result_sat.parameter_space.true_points()[0]
         df = result_sat.dataframe(point)
 
         result_sat.plot(

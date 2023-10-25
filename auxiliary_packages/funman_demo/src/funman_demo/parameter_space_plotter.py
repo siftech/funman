@@ -35,10 +35,12 @@ class ParameterSpacePlotter:
 
         # TODO this should be easier to access
         values = []
-        if len(self.ps.true_points) > 0:
-            values = self.ps.true_points[0].values
-        elif len(self.ps.false_points) > 0:
-            values = self.ps.false_points[0].values
+        true_points = self.ps.true_points()
+        false_points = self.ps.false_points()
+        if len(true_points) > 0:
+            values = true_points[0].values
+        elif len(false_points) > 0:
+            values = false_points[0].values
 
         self.parameters = [k for k in values if parameters and k in parameters]
         self.dim = len(self.parameters)
@@ -107,9 +109,10 @@ class ParameterSpacePlotter:
         for b in self.ps.true_boxes:
             self.plotNDBox(b, self.color_map[t])
         if self.plot_points:
-            for p in self.ps.false_points:
+            for p in self.ps.false_points():
                 self.plot_add_point(p, self.color_map[f], self.shape_map[f])
-            for p in self.ps.true_points:
+            true_points = self.ps.true_points()
+            for p in true_points:
                 self.plot_add_point(p, self.color_map[t], self.shape_map[t])
         if show:
             plt.show(block=False)
