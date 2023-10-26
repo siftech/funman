@@ -76,7 +76,7 @@ class FUNMANConfig(BaseModel):
     """Normalization constant to use for normalization (attempt to compute if None)"""
     simplify_query: bool = False
     """ Series approximation threshold for dropping series terms """
-    series_approximation_threshold: float = 1e-8
+    series_approximation_threshold: Optional[float] = 1e-8
     """ Generate profiling output"""
     profile: bool = False
     """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """

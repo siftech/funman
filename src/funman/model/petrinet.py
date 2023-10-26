@@ -156,8 +156,8 @@ class AbstractPetriNetModel(Model):
             LinearConstraint(
                 name="compartmental_constraint_population",
                 additive_bounds={
-                    "lb": population,
-                    "ub": population,
+                    "lb": population - 1e-5,
+                    "ub": population + 1e-5,
                     "closed_upper_bound": True,
                 },
                 variables=vars,

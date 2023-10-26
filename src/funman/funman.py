@@ -6,6 +6,8 @@ import logging
 import threading
 from typing import Callable, Optional
 
+from funman.utils.logging import set_level
+
 from .config import FUNMANConfig
 
 l = logging.getLogger(__name__)
@@ -53,9 +55,8 @@ class Funman(object):
         # Setting config here instead of keyword default because otherwise it will be validated prematurely by Pydantic
         if config is None:
             config = FUNMANConfig()
-        handlers = logging.getLogger().handlers
-        for h in handlers:
-            h.setLevel(config.verbosity)
+
+        set_level(config.verbosity)
 
         try:
             if config.profile:

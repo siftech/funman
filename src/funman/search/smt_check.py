@@ -118,16 +118,18 @@ class SMTCheck(Search):
                 encoding._encoder.encode_assumption(a, options)
             )
 
-        for t in schedule.timepoints:
+        for timestep, timepoint in enumerate(schedule.timepoints):
             encoded_constraints = []
             for constraint in episode.problem.constraints:
-                if constraint.encodable() and constraint.relevant_at_time(t):
+                if constraint.encodable() and constraint.relevant_at_time(
+                    timepoint
+                ):
                     encoded_constraints.append(
                         encoding.construct_encoding(
                             episode.problem,
                             constraint,
                             options,
-                            layers=[t],
+                            layers=[timestep],
                             assumptions=episode.problem._assumptions,
                         )
                     )
@@ -168,10 +170,10 @@ class SMTCheck(Search):
                 formula,
                 filename=f"dbg_steps.smt2",
             )
-        l.debug(f"Solving: {formula.serialize()}")
+        l.trace(f"Solving: {formula.serialize()}")
         result = self.invoke_solver(s)
         s.pop(1)
-        l.debug(f"Result: {type(result)}")
+        l.trace(f"Result: {type(result)}")
         return result
 
     def expand(
