@@ -1,4 +1,5 @@
 import datetime
+import logging
 import threading
 from abc import ABC, abstractmethod
 from multiprocessing import Array, Queue, Value
@@ -16,6 +17,8 @@ from funman.translate.translate import EncodingSchedule
 from ..config import FUNMANConfig
 from ..representation.explanation import BoxExplanation
 from ..scenario.scenario import AnalysisScenario
+
+l = logging.getLogger(__name__)
 
 
 class SearchStatistics(BaseModel):
@@ -110,10 +113,13 @@ class Search(ABC):
         pass
 
     def invoke_solver(self, s: Solver) -> Union[pysmtModel, BoxExplanation]:
+        l.debug("Invoking solver ...")
         result = s.solve()
+        l.debug(f"Solver result = {result}")
         if result:
             result = s.get_model()
         else:
             result = BoxExplanation()
             result._expression = s.get_unsat_core()
+
         return result

@@ -6,6 +6,7 @@ from time import sleep
 from timeit import default_timer
 from typing import Dict, Tuple, Union
 
+import funman
 from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
@@ -145,16 +146,7 @@ class Runner:
     def run(
         self, model, request, description="", case_out_dir="."
     ) -> FunmanResults:
-        logging.basicConfig()
-        ch = logging.StreamHandler()
-        # create formatter and add it to the handlers
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        ch.setFormatter(formatter)
-        # add the handlers to the logger
-        logging.getLogger().handlers = [ch]
-
+        funman.utils.logging.setup_logging()
         results = self.run_test_case(
             (model, request, description), case_out_dir
         )
@@ -188,7 +180,8 @@ class Runner:
         for model in models:
             try:
                 with open(model_file, "r") as mf:
-                    m = _wrap_with_internal_model(model(**json.load(mf)))
+                    j = json.load(mf)
+                    m = _wrap_with_internal_model(model(**j))
                 return m
             except Exception as e:
                 pass
