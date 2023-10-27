@@ -15,7 +15,12 @@
         {
           "timepoints": [
             0,
-            1
+            1,
+            10,
+            20,
+            30,
+            40,
+            50
           ]
         }
       ]
@@ -26,10 +31,10 @@
     "normalization_constant": 1.0,
     "tolerance": 1e-2,
     "verbosity": 5,
-    "dreal_mcts": false,
-    "save_smtlib": true,
-    "substitute_subformulas": false,
-    "series_approximation_threshold": 1e-10,
+    "dreal_mcts": true,
+    "save_smtlib": false,
+    "substitute_subformulas": true,
+    "series_approximation_threshold": 1e-8,
     "dreal_log_level": "none"
   }
 }
