@@ -146,7 +146,6 @@ class Runner:
     def run(
         self, model, request, description="", case_out_dir="."
     ) -> FunmanResults:
-        funman.utils.logging.setup_logging()
         results = self.run_test_case(
             (model, request, description), case_out_dir
         )
