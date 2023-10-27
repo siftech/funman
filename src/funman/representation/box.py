@@ -114,7 +114,7 @@ class Box(BaseModel):
 
         Parameters
         ----------
-        vars : Union[List[Parameter], List[str]]
+        vars : Union[List[ModelParameter], List[str]]
             variables to project onto
 
         Returns

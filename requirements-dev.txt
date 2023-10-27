@@ -6,4 +6,5 @@ pycln
 pytest-cov
 twine
 autodoc_pydantic
+myst-parser
 parameterized

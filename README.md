@@ -1,9 +1,24 @@
 # funman
 
-The `funman` package implements multiple simulator model analysis methods.
-Current methods include:
-- Parameter Synthesis
-- Querying a Simulation
+The `funman` package performs Functional Model Analysis by processing a request and model pair that describes an analysis scenario.  Funman supports a number of model formats, which correspond to the classes in `funman.models`:
+
+- [GeneratedPetriNet](#funman.model.generated_models.petrinet.Model): AMR model for petri nets generated 
+- [GeneratedRegNet](#funman.model.generated_models.regnet.Model): AMR model for regulatory networks
+- [RegnetModel](#funman.model.regnet.RegnetModel): MIRA model for regulatory networks
+- [PetrinetModel](#funman.model.petrinet.PetrinetModel): MIRA model for petri nets
+- [BilayerModel](#funman.model.bilayer.BilayerModel): ASKE model for bilayer networks
+
+Requests correspond to the class `funman.server.query.FunmanWorkRequest` and specify the following keys:
+- [query](#funman.model.query): a soft constraint that a model must satisfy (legacy support, deprecated)
+- [constraints](#funman.representation.constraint): a list of hard or soft constraints that a model must satisfy
+- parameters: a list of bounded parameters that funman will either synthesize ("label": "all") or satsify ("label": "any").  Funman will check  "all" values within the parameter bounds or if "any" within the bounds permit the model to satisfy the query and constraints.
+- [config](#funman.config): A dictionary of funman configuration options. 
+ label regions of the parameter space as satisfying the query and constraints, if synthesized, or find any legal value if asked to satsify.  
+- [structure_parameters](#funman.representation.parameter): parameters shaping the way that funman structures its analysis.  Funman requires that either the `num_steps` and `step_size` parameters are specified, or the `schedules` parameter is specified.  If all are omitted, then funman defaults to checking one unit-sized step.
+
+## **Running funman**
+
+There are multiple ways to run Funman on a model and request pair. We recommend running funman in Docker, due to some complex dependencies on dReal (and its dependency on ibex).  Funman has a Makefile that supports building three Docker use cases: 1) run a development container that mounts the source code, 2) run a container with a jupyter server, and 3) run a container with uvicorn serving a REST API. Examples of running each of these cases are illustrated by the tests (`test/test_api.py`, and `test/test_terarium.py`).  It is also possible to pull a pre-generated image that will run the API, as described in `terarium/README.md`.
 
 ## **Use cases**
 ### **Compare Bilayer Model to Simulator**:

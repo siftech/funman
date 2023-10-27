@@ -42,8 +42,8 @@ l = logging.getLogger(__name__)
 
 
 class FormulaStackFrame(BaseModel):
-    formulas: List[FNode] = []
-    simplified_formulas: List[FNode] = []
+    _formulas: List[FNode] = []
+    _simplified_formulas: List[FNode] = []
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -51,9 +51,9 @@ class FormulaStackFrame(BaseModel):
 
     def add_assertion(self, formula, is_simplified=False):
         if is_simplified:
-            self.simplified_formulas.append(formula)
+            self._simplified_formulas.append(formula)
         else:
-            self.formulas.append(formula)
+            self._formulas.append(formula)
 
     # def __str__(self) -> str:
     #     s_formulas = [f.serialize() for f in self.formulas]
@@ -65,8 +65,8 @@ class FormulaStackFrame(BaseModel):
 class FormulaStack(BaseModel):
     formula_stack: List[FormulaStackFrame] = []
     time: int = -2
-    solver: Optional[Solver] = None
-    substitutions: Dict[FNode, FNode] = None
+    _solver: Optional[Solver] = None
+    _substitutions: Dict[FNode, FNode] = None
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -79,7 +79,7 @@ class FormulaStack(BaseModel):
     def pop(self, levels: int = 1, pop_solver: bool = True):
         for i in range(levels):
             if pop_solver:
-                self.solver.pop(1)
+                self._solver.pop(1)
             self.formula_stack.pop()
             self.time -= 1
 
@@ -87,7 +87,7 @@ class FormulaStack(BaseModel):
         for i in range(levels):
             self.formula_stack.append(FormulaStackFrame())
             if push_solver:
-                self.solver.push(1)
+                self._solver.push(1)
             self.time += 1
 
     # def __str__(self)-> str:
@@ -99,24 +99,24 @@ class FormulaStack(BaseModel):
             formula, is_simplified=False
         )
 
-        if self.substitutions is not None:
+        if self._substitutions is not None:
             simplified_formula = formula.substitute(
-                self.substitutions
+                self._substitutions
             ).simplify()
             self.formula_stack[self.time + 1].add_assertion(
                 simplified_formula, is_simplified=True
             )
-            self.solver.add_assertion(simplified_formula)
+            self._solver.add_assertion(simplified_formula)
         else:
-            self.solver.add_assertion(formula)
+            self._solver.add_assertion(formula)
 
     def to_list(self, simplified=False) -> List[FNode]:
         if simplified:
             return [
-                f for sf in self.formula_stack for f in sf.simplified_formulas
+                f for sf in self.formula_stack for f in sf._simplified_formulas
             ]
         else:
-            return [f for sf in self.formula_stack for f in sf.formulas]
+            return [f for sf in self.formula_stack for f in sf._formulas]
 
     def compute_assignment(
         self, episode: SearchEpisode, _smtlib_save_fn: Callable = None
@@ -125,21 +125,21 @@ class FormulaStack(BaseModel):
         original_formulas = [
             formula
             for frame in self.formula_stack
-            for formula in frame.formulas
+            for formula in frame._formulas
         ]
         for formula in original_formulas:
-            self.solver.add_assertion(formula)
+            self._solver.add_assertion(formula)
             self.formula_stack[-1].add_assertion(
                 formula, is_simplified=True
             )  # formula is not simplified but want to layer on top of simplified formulas to compute state variables
         if _smtlib_save_fn:
             _smtlib_save_fn(filename=f"box_search_{episode._iteration}")
 
-        if not self.solver.solve():
+        if not self._solver.solve():
             raise Exception(
                 f"Could not compute Assignment from simplified formulas"
             )
-        result = self.solver.get_model()
+        result = self._solver.get_model()
         self.pop()
         return result
 
@@ -176,7 +176,7 @@ class BoxSearchEpisode(SearchEpisode):
         self._unknown_boxes = QueueSP()
         self.statistics = SearchStatistics()
         if self.config.substitute_subformulas and self.config.simplify_query:
-            self._formula_stack.substitutions = self.problem._encodings[
+            self._formula_stack._substitutions = self.problem._encodings[
                 self.schedule
             ]._encoder.substitutions(self.schedule)
 
@@ -941,7 +941,7 @@ class BoxSearch(Search):
             )
 
             with my_solver() as solver:
-                episode._formula_stack.solver = solver
+                episode._formula_stack._solver = solver
                 l.info(f"{process_name} entering process loop")
                 # print("Starting initializing dynamics of model")
                 # self._initialize_encoding(solver, episode, [0])

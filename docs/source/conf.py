@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "funman"
-copyright = "2022, SIFT"
+copyright = "2023, SIFT"
 author = "SIFT"
 
 from funman import __version__
@@ -23,6 +23,7 @@ extensions = [
     "sphinx.ext.inheritance_diagram",
     "sphinx.ext.napoleon",
     "sphinxcontrib.autodoc_pydantic",
+    "myst_parser",
 ]
 
 autodoc_pydantic_model_show_json = True

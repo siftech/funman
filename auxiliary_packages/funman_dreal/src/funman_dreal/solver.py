@@ -44,7 +44,6 @@ from funman.utils.smtlib_utils import FUNMANSmtPrinter
 
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 # TODO find a better way to determine if solver was successful
@@ -442,6 +441,7 @@ class DRealNative(
         # self.context.config.use_polytope = True
         # self.context.config.use_worklist_fixpoint = True
         self.model = None
+        self.log_level = dreal.LogLevel.OFF
         if "solver_options" in options:
             if "dreal_precision" in options["solver_options"]:
                 self.config.precision = options["solver_options"][
@@ -450,10 +450,13 @@ class DRealNative(
             if "dreal_log_level" in options["solver_options"]:
                 if options["solver_options"]["dreal_log_level"] == "debug":
                     dreal.set_log_level(dreal.LogLevel.DEBUG)
+                    self.log_level = dreal.LogLevel.DEBUG
                 elif options["solver_options"]["dreal_log_level"] == "trace":
                     dreal.set_log_level(dreal.LogLevel.TRACE)
+                    self.log_level = dreal.LogLevel.TRACE
                 elif options["solver_options"]["dreal_log_level"] == "info":
                     dreal.set_log_level(dreal.LogLevel.INFO)
+                    self.log_level = dreal.LogLevel.INFO
 
             if (
                 "dreal_mcts" in options["solver_options"]
@@ -481,13 +484,13 @@ class DRealNative(
             elapser = None
 
     def __del__(self):
-        # print("Exit()")
+        l.trace("Exit()")
         self.context.Exit()  # Exit() only logs within dreal
         self.context = None
 
     @clear_pending_pop
     def add_assertion(self, formula, named=None):
-        # print(f"Assert({formula.serialize()})")
+        l.trace(f"Assert({formula.serialize()})")
 
         f = self.converter.convert(formula)
 
@@ -514,7 +517,7 @@ class DRealNative(
         pass
 
     def cmd_declare_fun(self, cmd):
-        # print(f"DeclareVariable({cmd.args[0]})")
+        l.trace(f"DeclareVariable({cmd.args[0]})")
         if cmd.args[0] in self.converter.symbol_to_decl:
             v = self.converter.symbol_to_decl[cmd.args[0]]
         else:
@@ -529,30 +532,37 @@ class DRealNative(
         self.push(cmd.args[0])
 
     def push(self, levels):
-        # print("Push()")
+        l.trace("Push()")
         self.context.Push(levels)
 
     def cmd_pop(self, cmd):
         self.pop(cmd.args[0])
 
     def pop(self, levels):
-        # print("Pop()")
+        l.trace("Pop()")
         self.context.Pop(levels)
 
     def cmd_check_sat(self, cmd):
         return self.check_sat()
 
     def check_sat(self):
-        # print("CheckSat()")
+        l.trace("CheckSat()")
         with self.elapsed_timer() as t:
+            # FIXME solver is giving wrong results without logging enabled to prime it
+
+            # dreal.set_log_level(dreal.LogLevel.INFO)
+            # self.push(1)
+            # result = self.context.CheckSat()
+            # self.pop(1)
+            dreal.set_log_level(self.log_level)
             result = self.context.CheckSat()
             elapsed_base_dreal = t()
-        l.debug(
+        l.trace(
             f"{('delta-sat' if result else 'unsat' )} took {elapsed_base_dreal}s"
         )
         # result = dreal.CheckSatisfiability(self.assertion, 0.001)
         self.model = result
-        l.debug(result)
+        l.trace(result)
         return result
 
     def get_unsat_core(self) -> FNode:
@@ -590,8 +600,8 @@ class DRealNative(
         return EagerModel(assignment=assignment, environment=self.environment)
 
     def get_value(self, symbol_pair):
-        # print(f"get_value() {item}: {self.model[item]}")
         (symbol, item) = symbol_pair
+        l.trace(f"get_value() {item}: {self.model[item]}")
         if symbol.get_type() == BOOL:
             is_true = self.model[item].lb() == self.model[item].ub() == 1.0
             return Bool(is_true)
