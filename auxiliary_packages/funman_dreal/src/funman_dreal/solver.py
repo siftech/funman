@@ -441,6 +441,7 @@ class DRealNative(
         # self.context.config.use_polytope = True
         # self.context.config.use_worklist_fixpoint = True
         self.model = None
+        self.log_level = dreal.LogLevel.OFF
         if "solver_options" in options:
             if "dreal_precision" in options["solver_options"]:
                 self.config.precision = options["solver_options"][
@@ -449,10 +450,13 @@ class DRealNative(
             if "dreal_log_level" in options["solver_options"]:
                 if options["solver_options"]["dreal_log_level"] == "debug":
                     dreal.set_log_level(dreal.LogLevel.DEBUG)
+                    self.log_level = dreal.LogLevel.DEBUG
                 elif options["solver_options"]["dreal_log_level"] == "trace":
                     dreal.set_log_level(dreal.LogLevel.TRACE)
+                    self.log_level = dreal.LogLevel.TRACE
                 elif options["solver_options"]["dreal_log_level"] == "info":
                     dreal.set_log_level(dreal.LogLevel.INFO)
+                    self.log_level = dreal.LogLevel.INFO
 
             if (
                 "dreal_mcts" in options["solver_options"]
@@ -544,6 +548,13 @@ class DRealNative(
     def check_sat(self):
         l.trace("CheckSat()")
         with self.elapsed_timer() as t:
+            # FIXME solver is giving wrong results without logging enabled to prime it
+
+            # dreal.set_log_level(dreal.LogLevel.INFO)
+            # self.push(1)
+            # result = self.context.CheckSat()
+            # self.pop(1)
+            dreal.set_log_level(self.log_level)
             result = self.context.CheckSat()
             elapsed_base_dreal = t()
         l.trace(
