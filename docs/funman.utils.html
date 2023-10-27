@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>funman.utils package &mdash; funman  documentation</title>
@@ -13,12 +13,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -33,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> funman
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -56,18 +53,22 @@
 <li class="toctree-l3"><a class="reference internal" href="funman.representation.html">funman.representation package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="funman.scenario.html">funman.scenario package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="funman.search.html">funman.search package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="funman.server.html">funman.server package</a></li>
 <li class="toctree-l3"><a class="reference internal" href="funman.translate.html">funman.translate package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">funman.utils package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#funman-utils-handlers-module">funman.utils.handlers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#funman-utils-logging-module">funman.utils.logging module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#funman-utils-math-utils-module">funman.utils.math_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#funman-utils-smtlib-utils-module">funman.utils.smtlib_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#funman-utils-sympy-utils-module">funman.utils.sympy_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-funman.utils">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funman.html#funman-config-module">funman.config module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#funman-constants-module">funman.constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#funman-funman-module">funman.funman module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#module-funman">Module contents</a></li>
@@ -132,7 +133,7 @@
 <span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#funman.utils.handlers.NoopResultHandler.process" title="Permalink to this definition"></a></dt>
 <dd><p>Listener interface for processing data in result.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – data to process</p>
 </dd>
 </dl>
@@ -162,7 +163,7 @@
 <span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#funman.utils.handlers.ResultCombinedHandler.process" title="Permalink to this definition"></a></dt>
 <dd><p>Listener interface for processing data in result.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – data to process</p>
 </dd>
 </dl>
@@ -192,7 +193,7 @@
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#funman.utils.handlers.ResultHandler.process" title="Permalink to this definition"></a></dt>
 <dd><p>Listener interface for processing data in result.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>result</strong> (<em>dict</em>) – data to process</p>
 </dd>
 </dl>
@@ -213,9 +214,37 @@
 </dd></dl>
 
 </section>
+<section id="funman-utils-logging-module">
+<h2>funman.utils.logging module<a class="headerlink" href="#funman-utils-logging-module" title="Permalink to this heading"></a></h2>
+<span class="target" id="module-funman.utils.logging"></span><dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.logging.add_handler">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.logging.</span></span><span class="sig-name descname"><span class="pre">add_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.logging.add_handler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.logging.add_log_level">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.logging.</span></span><span class="sig-name descname"><span class="pre">add_log_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">levelName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">levelNum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.logging.add_log_level" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.logging.set_level">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.logging.</span></span><span class="sig-name descname"><span class="pre">set_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.logging.set_level" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.logging.setup_logging">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.logging.</span></span><span class="sig-name descname"><span class="pre">setup_logging</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.logging.setup_logging" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
 <section id="funman-utils-math-utils-module">
 <h2>funman.utils.math_utils module<a class="headerlink" href="#funman-utils-math-utils-module" title="Permalink to this heading"></a></h2>
 <span class="target" id="module-funman.utils.math_utils"></span><dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.math_utils.div">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denom</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#funman.utils.math_utils.div" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="funman.utils.math_utils.gt">
 <span class="sig-prename descclassname"><span class="pre">funman.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">gt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.math_utils.gt" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -242,7 +271,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.utils.math_utils.plus">
-<span class="sig-prename descclassname"><span class="pre">funman.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">plus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.math_utils.plus" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">plus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">denom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.math_utils.plus" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
@@ -308,6 +337,159 @@ an UnsupportedOperatorError exception is given.</p>
 <dd></dd></dl>
 
 </section>
+<section id="funman-utils-sympy-utils-module">
+<h2>funman.utils.sympy_utils module<a class="headerlink" href="#funman-utils-sympy-utils-module" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><object data="_images/inheritance-7d5d071216faf4105fb3ececb3311d2fe176d374.svg" type="image/svg+xml" class="inheritance graphviz">
+<p class="warning">Inheritance diagram of funman.utils.sympy_utils</p></object></div>
+<span class="target" id="module-funman.utils.sympy_utils"></span><dl class="py class">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.FUNMANFormulaManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">FUNMANFormulaManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.FUNMANFormulaManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FormulaManager</span></code></p>
+<p>FormulaManager is responsible for the creation of all formulae.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.FUNMANFormulaManager.Pow">
+<span class="sig-name descname"><span class="pre">Pow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exponent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.FUNMANFormulaManager.Pow" title="Permalink to this definition"></a></dt>
+<dd><p>Creates the n-th power of the base.</p>
+<p>The exponent must be a constant.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">SympySerializer</span></span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IdentityDagWalker</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.to_sympy">
+<span class="sig-name descname"><span class="pre">to_sympy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FNode</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.to_sympy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_div">
+<span class="sig-name descname"><span class="pre">walk_div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_div" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_minus">
+<span class="sig-name descname"><span class="pre">walk_minus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_minus" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_plus">
+<span class="sig-name descname"><span class="pre">walk_plus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_plus" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_pow">
+<span class="sig-name descname"><span class="pre">walk_pow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_pow" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_real_constant">
+<span class="sig-name descname"><span class="pre">walk_real_constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_real_constant" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_symbol">
+<span class="sig-name descname"><span class="pre">walk_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_symbol" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.SympySerializer.walk_times">
+<span class="sig-name descname"><span class="pre">walk_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.SympySerializer.walk_times" title="Permalink to this definition"></a></dt>
+<dd><p>Default function for a node that is not handled by the Walker.</p>
+<p>This tries to handle the node using the Dynamic Walker
+Function information from the environment. If this fails, then
+an UnsupportedOperatorError exception is given.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.has_reserved">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">has_reserved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.has_reserved" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.rate_expr_to_pysmt">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">rate_expr_to_pysmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.rate_expr_to_pysmt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.replace_reserved">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">replace_reserved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.replace_reserved" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.series_approx">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">series_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Symbol</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.series_approx" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.substitute">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">substitute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.substitute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.sympy_subs">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">sympy_subs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substitution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.sympy_subs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.sympy_to_pysmt">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">sympy_to_pysmt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.sympy_to_pysmt" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.sympy_to_pysmt_op">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">sympy_to_pysmt_op</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.sympy_to_pysmt_op" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.sympy_to_pysmt_pow">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">sympy_to_pysmt_pow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.sympy_to_pysmt_pow" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.sympy_to_pysmt_real">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">sympy_to_pysmt_real</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numerator_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.sympy_to_pysmt_real" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.sympy_to_pysmt_symbol">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">sympy_to_pysmt_symbol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.sympy_to_pysmt_symbol" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.to_sympy">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">to_sympy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FNode</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_symbols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="headerlink" href="#funman.utils.sympy_utils.to_sympy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
 <section id="module-funman.utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-funman.utils" title="Permalink to this heading"></a></h2>
 </section>
@@ -323,7 +505,7 @@ an UnsupportedOperatorError exception is given.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, SIFT.</p>
+    <p>&#169; Copyright 2023, SIFT.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

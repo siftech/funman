@@ -1,0 +1,53 @@
+funman.server package
+=====================
+
+Submodules
+----------
+
+funman.server.exception module
+------------------------------
+.. inheritance-diagram:: funman.server.exception
+   :parts: 1
+
+.. automodule:: funman.server.exception
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.server.query module
+--------------------------
+.. inheritance-diagram:: funman.server.query
+   :parts: 1
+
+.. automodule:: funman.server.query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.server.storage module
+----------------------------
+.. inheritance-diagram:: funman.server.storage
+   :parts: 1
+
+.. automodule:: funman.server.storage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.server.worker module
+---------------------------
+.. inheritance-diagram:: funman.server.worker
+   :parts: 1
+
+.. automodule:: funman.server.worker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: funman.server
+   :members:
+   :undoc-members:
+   :show-inheritance:

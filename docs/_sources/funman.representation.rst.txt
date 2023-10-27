@@ -4,12 +4,102 @@ funman.representation package
 Submodules
 ----------
 
+funman.representation.assumption module
+---------------------------------------
+.. inheritance-diagram:: funman.representation.assumption
+   :parts: 1
+
+.. automodule:: funman.representation.assumption
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.box module
+--------------------------------
+.. inheritance-diagram:: funman.representation.box
+   :parts: 1
+
+.. automodule:: funman.representation.box
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.constraint module
+---------------------------------------
+.. inheritance-diagram:: funman.representation.constraint
+   :parts: 1
+
+.. automodule:: funman.representation.constraint
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.encoding\_schedule module
+-----------------------------------------------
+.. inheritance-diagram:: funman.representation.encoding_schedule
+   :parts: 1
+
+.. automodule:: funman.representation.encoding_schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.explanation module
+----------------------------------------
+.. inheritance-diagram:: funman.representation.explanation
+   :parts: 1
+
+.. automodule:: funman.representation.explanation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.interval module
+-------------------------------------
+.. inheritance-diagram:: funman.representation.interval
+   :parts: 1
+
+.. automodule:: funman.representation.interval
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.parameter module
+--------------------------------------
+.. inheritance-diagram:: funman.representation.parameter
+   :parts: 1
+
+.. automodule:: funman.representation.parameter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.parameter\_space module
+---------------------------------------------
+.. inheritance-diagram:: funman.representation.parameter_space
+   :parts: 1
+
+.. automodule:: funman.representation.parameter_space
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.representation.representation module
 -------------------------------------------
 .. inheritance-diagram:: funman.representation.representation
    :parts: 1
 
 .. automodule:: funman.representation.representation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.representation.symbol module
+-----------------------------------
+.. inheritance-diagram:: funman.representation.symbol
+   :parts: 1
+
+.. automodule:: funman.representation.symbol
    :members:
    :undoc-members:
    :show-inheritance:

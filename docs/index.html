@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to funman’s documentation! &mdash; funman  documentation</title>
@@ -13,12 +13,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -33,7 +30,7 @@
             <a href="#" class="icon icon-home"> funman
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -98,6 +95,7 @@
 <li class="toctree-l1"><a class="reference internal" href="funman.html">funman package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#subpackages">Subpackages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="funman.html#funman-config-module">funman.config module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#funman-constants-module">funman.constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#funman-funman-module">funman.funman module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="funman.html#module-funman">Module contents</a></li>
@@ -105,6 +103,313 @@
 </li>
 </ul>
 </div>
+</section>
+<section id="readme-file">
+<h1>Readme File<a class="headerlink" href="#readme-file" title="Permalink to this heading"></a></h1>
+<section id="funman">
+<h2>funman<a class="headerlink" href="#funman" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">funman</span></code> package performs Functional Model Analysis by processing a request and model pair that describes an analysis scenario.  Funman supports a number of model formats, which correspond to the classes in <code class="docutils literal notranslate"><span class="pre">funman.models</span></code>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.petrinet.Model" title="funman.model.generated_models.petrinet.Model"><span class="xref myst py py-obj">GeneratedPetriNet</span></a>: AMR model for petri nets generated</p></li>
+<li><p><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.regnet.Model" title="funman.model.generated_models.regnet.Model"><span class="xref myst py py-obj">GeneratedRegNet</span></a>: AMR model for regulatory networks</p></li>
+<li><p><a class="reference internal" href="funman.model.html#funman.model.regnet.RegnetModel" title="funman.model.regnet.RegnetModel"><span class="xref myst py py-obj">RegnetModel</span></a>: MIRA model for regulatory networks</p></li>
+<li><p><a class="reference internal" href="funman.model.html#funman.model.petrinet.PetrinetModel" title="funman.model.petrinet.PetrinetModel"><span class="xref myst py py-obj">PetrinetModel</span></a>: MIRA model for petri nets</p></li>
+<li><p><a class="reference internal" href="funman.model.html#funman.model.bilayer.BilayerModel" title="funman.model.bilayer.BilayerModel"><span class="xref myst py py-obj">BilayerModel</span></a>: ASKE model for bilayer networks</p></li>
+</ul>
+<p>Requests correspond to the class <code class="docutils literal notranslate"><span class="pre">funman.server.query.FunmanWorkRequest</span></code> and specify the following keys:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="funman.model.html#module-funman.model.query" title="funman.model.query"><span class="xref myst py py-mod">query</span></a>: a soft constraint that a model must satisfy (legacy support, deprecated)</p></li>
+<li><p><a class="reference internal" href="funman.representation.html#module-funman.representation.constraint" title="funman.representation.constraint"><span class="xref myst py py-mod">constraints</span></a>: a list of hard or soft constraints that a model must satisfy</p></li>
+<li><p>parameters: a list of bounded parameters that funman will either synthesize (“label”: “all”) or satsify (“label”: “any”).  Funman will check  “all” values within the parameter bounds or if “any” within the bounds permit the model to satisfy the query and constraints.</p></li>
+<li><p><a class="reference internal" href="funman.html#module-funman.config" title="funman.config"><span class="xref myst py py-mod">config</span></a>: A dictionary of funman configuration options.
+label regions of the parameter space as satisfying the query and constraints, if synthesized, or find any legal value if asked to satsify.</p></li>
+<li><p><a class="reference internal" href="funman.representation.html#module-funman.representation.parameter" title="funman.representation.parameter"><span class="xref myst py py-mod">structure_parameters</span></a>: parameters shaping the way that funman structures its analysis.  Funman requires that either the <code class="docutils literal notranslate"><span class="pre">num_steps</span></code> and <code class="docutils literal notranslate"><span class="pre">step_size</span></code> parameters are specified, or the <code class="docutils literal notranslate"><span class="pre">schedules</span></code> parameter is specified.  If all are omitted, then funman defaults to checking one unit-sized step.</p></li>
+</ul>
+<section id="running-funman">
+<h3><strong>Running funman</strong><a class="headerlink" href="#running-funman" title="Permalink to this heading"></a></h3>
+<p>There are multiple ways to run Funman on a model and request pair. We recommend running funman in Docker, due to some complex dependencies on dReal (and its dependency on ibex).  Funman has a Makefile that supports building three Docker use cases: 1) run a development container that mounts the source code, 2) run a container with a jupyter server, and 3) run a container with uvicorn serving a REST API. Examples of running each of these cases are illustrated by the tests (<code class="docutils literal notranslate"><span class="pre">test/test_api.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">test/test_terarium.py</span></code>).  It is also possible to pull a pre-generated image that will run the API, as described in <code class="docutils literal notranslate"><span class="pre">terarium/README.md</span></code>.</p>
+</section>
+<section id="use-cases">
+<h3><strong>Use cases</strong><a class="headerlink" href="#use-cases" title="Permalink to this heading"></a></h3>
+<section id="compare-bilayer-model-to-simulator">
+<h4><strong>Compare Bilayer Model to Simulator</strong>:<a class="headerlink" href="#compare-bilayer-model-to-simulator" title="Permalink to this heading"></a></h4>
+<p>This use case involves the simulator and FUNMAN reasoning about the CHIME
+SIR bilayer model.  See test <code class="docutils literal notranslate"><span class="pre">test_use_case_bilayer_consistency</span></code> in <code class="docutils literal notranslate"><span class="pre">test/test_use_cases.py</span></code>.</p>
+<p>It first uses a SimulationScenario to execute the input simulator
+function and evaluate the input query function using the simulation results.
+In the example below this results in the run_CHIME_SIR simulator function and
+evaluating whether or not the number of infected crosses the provided threshold with a custom QueryFunction referencing the <code class="docutils literal notranslate"><span class="pre">does_not_cross_threshold</span></code> function.</p>
+<p>It then constructs an instance of the ConsistencyScenario class to evaluate whether a BilayerModel will satisfy the given query. The query asks whether the
+number of infected at any time point exceeds a specified threshold.</p>
+<p>Once each of these steps is executed the results are compared. The test will
+succeed if the SimulatorScenario and ConsistencyScenario agree on the response to the query.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">compare_against_CHIME_Sim</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bilayer_path</span><span class="p">,</span> <span class="n">init_values</span><span class="p">,</span> <span class="n">infected_threshold</span>
+    <span class="p">):</span>
+        <span class="c1"># query the simulator</span>
+        <span class="k">def</span> <span class="nf">does_not_cross_threshold</span><span class="p">(</span><span class="n">sim_results</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">sim_results</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">i_t</span> <span class="o">&lt;=</span> <span class="n">infected_threshold</span> <span class="k">for</span> <span class="n">i_t</span> <span class="ow">in</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="n">QueryLE</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">infected_threshold</span><span class="p">)</span>
+
+        <span class="n">funman</span> <span class="o">=</span> <span class="n">Funman</span><span class="p">()</span>
+
+        <span class="n">sim_result</span><span class="p">:</span> <span class="n">SimulationScenarioResult</span> <span class="o">=</span> <span class="n">funman</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+            <span class="n">SimulationScenario</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">SimulatorModel</span><span class="p">(</span><span class="n">run_CHIME_SIR</span><span class="p">),</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">QueryFunction</span><span class="p">(</span><span class="n">does_not_cross_threshold</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">consistency_result</span><span class="p">:</span> <span class="n">ConsistencyScenarioResult</span> <span class="o">=</span> <span class="n">funman</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+            <span class="n">ConsistencyScenario</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">BilayerModel</span><span class="p">(</span>
+                    <span class="n">BilayerDynamics</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">bilayer_path</span><span class="p">),</span>
+                    <span class="n">init_values</span><span class="o">=</span><span class="n">init_values</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># assert the both queries returned the same result</span>
+        <span class="k">return</span> <span class="n">sim_result</span><span class="o">.</span><span class="n">query_satisfied</span> <span class="o">==</span> <span class="n">consistency_result</span><span class="o">.</span><span class="n">query_satisfied</span>
+
+    <span class="k">def</span> <span class="nf">test_use_case_bilayer_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This test compares a BilayerModel against a SimulatorModel to</span>
+<span class="sd">        determine whether their response to a query is identical.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bilayer_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">RESOURCES</span><span class="p">,</span> <span class="s2">&quot;bilayer&quot;</span><span class="p">,</span> <span class="s2">&quot;CHIME_SIR_dynamics_BiLayer.json&quot;</span>
+        <span class="p">)</span>
+        <span class="n">infected_threshold</span> <span class="o">=</span> <span class="mi">130</span>
+        <span class="n">init_values</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">9998</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare_against_CHIME_Sim</span><span class="p">(</span>
+            <span class="n">bilayer_path</span><span class="p">,</span> <span class="n">init_values</span><span class="p">,</span> <span class="n">infected_threshold</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="parameter-synthesis">
+<h4><strong>Parameter Synthesis</strong><a class="headerlink" href="#parameter-synthesis" title="Permalink to this heading"></a></h4>
+<p>See tests <code class="docutils literal notranslate"><span class="pre">test_use_case_simple_parameter_synthesis</span></code> and <code class="docutils literal notranslate"><span class="pre">test_use_case_bilayer_parameter_synthesis</span></code> in  <code class="docutils literal notranslate"><span class="pre">test/test_use_cases.py</span></code>.</p>
+<p>The base set of types used during Parameter Synthesis include:</p>
+<ul class="simple">
+<li><p>a list of Parameters representing variables to be assigned</p></li>
+<li><p>a Model to be encoded as an SMTLib formula</p></li>
+<li><p>a Scenario container representing a set of parameters and model</p></li>
+<li><p>a SearchConfig to configure search behavior</p></li>
+<li><p>the Funman interface that runs analysis using scenarios and configuration data</p></li>
+</ul>
+<p>In the following example two parameters, x and y, are constructed. A model is
+also constructed that says 0.0 &lt; x &lt; 5.0 and 10.0 &lt; y &lt; 12.0. These parameters
+and model are used to define a scenario that will use BoxSearch to synthesize
+the parameters. The Funman interface and a search configuration are also
+defined. All that remains is to have Funman solve the scenario using the defined
+configuration.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_use_case_simple_parameter_synthesis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">REAL</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">REAL</span><span class="p">)</span>
+
+        <span class="n">formula</span> <span class="o">=</span> <span class="n">And</span><span class="p">(</span>
+            <span class="n">LE</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Real</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)),</span>
+            <span class="n">GE</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Real</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)),</span>
+            <span class="n">LE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Real</span><span class="p">(</span><span class="mf">12.0</span><span class="p">)),</span>
+            <span class="n">GE</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Real</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+        <span class="n">funman</span> <span class="o">=</span> <span class="n">Funman</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">ParameterSynthesisScenarioResult</span> <span class="o">=</span> <span class="n">funman</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+            <span class="n">ParameterSynthesisScenario</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="n">x</span><span class="p">),</span>
+                    <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="n">y</span><span class="p">),</span>
+                <span class="p">],</span>
+                <span class="n">EncodedModel</span><span class="p">(</span><span class="n">formula</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">result</span>
+</pre></div>
+</div>
+<p>As an additional parameter synthesis example, the following test case
+demonstrates how to perform parameter synthesis for a bilayer model.  The
+configuration differs from the example above by introducing bilayer-specific
+constraints on the initial conditions (<code class="docutils literal notranslate"><span class="pre">init_values</span></code> assignments), parameter
+bounds (<code class="docutils literal notranslate"><span class="pre">parameter_bounds</span></code> intervals) and a model query.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">test_use_case_bilayer_parameter_synthesis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bilayer_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">RESOURCES</span><span class="p">,</span> <span class="s2">&quot;bilayer&quot;</span><span class="p">,</span> <span class="s2">&quot;CHIME_SIR_dynamics_BiLayer.json&quot;</span>
+        <span class="p">)</span>
+        <span class="n">infected_threshold</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">init_values</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="mi">9998</span><span class="p">,</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+        <span class="n">lb</span> <span class="o">=</span> <span class="mf">0.000067</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="mf">0.000067</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">funman</span> <span class="o">=</span> <span class="n">Funman</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">ParameterSynthesisScenarioResult</span> <span class="o">=</span> <span class="n">funman</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+            <span class="n">ParameterSynthesisScenario</span><span class="p">(</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">)],</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">BilayerModel</span><span class="p">(</span>
+                    <span class="n">BilayerDynamics</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">bilayer_path</span><span class="p">),</span>
+                    <span class="n">init_values</span><span class="o">=</span><span class="n">init_values</span><span class="p">,</span>
+                    <span class="n">parameter_bounds</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">],</span>
+                        <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">14.0</span><span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">),</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">QueryLE</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">infected_threshold</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">config</span><span class="o">=</span><span class="n">SearchConfig</span><span class="p">(</span><span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">parameter_space</span><span class="o">.</span><span class="n">true_boxes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">parameter_space</span><span class="o">.</span><span class="n">false_boxes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="development-setup">
+<h3>Development Setup<a class="headerlink" href="#development-setup" title="Permalink to this heading"></a></h3>
+<section id="pre-commit-hooks">
+<h4>Pre-commit hooks<a class="headerlink" href="#pre-commit-hooks" title="Permalink to this heading"></a></h4>
+<p>FUNMAN has a set of pre-commit hooks to help with code uniformity. These hooks
+will share the same rules as any automated testing so it is recommended to
+install the hooks locally to ease the development process.</p>
+<p>To use the pre-commit hooks you with need the tools listed in
+<code class="docutils literal notranslate"><span class="pre">requirements-dev.txt</span></code>. These should be installed in the same environment where
+you git tooling operates.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+</pre></div>
+</div>
+<p>Once install you should be able to run the following from the root of the repo:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install-pre-commit-hooks
+</pre></div>
+</div>
+<p>Once installed you should begin to receive isort/black feedback when
+committing. These should not alter the code during a commit but instead just
+fail and prevent a commit if the code does not conform to the specification.</p>
+<p>To autoformat the entire repo you can use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>format
+</pre></div>
+</div>
+</section>
+<section id="code-coverage">
+<h4>Code coverage<a class="headerlink" href="#code-coverage" title="Permalink to this heading"></a></h4>
+<p>Pytest is configured to generate code coverage, and requires the <code class="docutils literal notranslate"><span class="pre">pytest-cov</span></code>
+package to be installed.  The <code class="docutils literal notranslate"><span class="pre">pytest-cov</span></code> package is included in the
+<code class="docutils literal notranslate"><span class="pre">requirements-dev.txt</span></code> (see above) and will be installed with the other dev
+dependencies.  The code coverage will be displayed in the pytest output (i.e.,
+<code class="docutils literal notranslate"><span class="pre">term</span></code>) and saved to the <code class="docutils literal notranslate"><span class="pre">coverage.xml</span></code> file.  The <code class="docutils literal notranslate"><span class="pre">Coverage</span> <span class="pre">Gutters</span></code> VSCode
+plugin will use the <code class="docutils literal notranslate"><span class="pre">coverage.xml</span></code> to display code coverage highlighting over
+the source files.</p>
+</section>
+<section id="development-setup-docker-dev-container">
+<h4>Development Setup: Docker dev container<a class="headerlink" href="#development-setup-docker-dev-container" title="Permalink to this heading"></a></h4>
+<p>FUNMAN provides tooling to build a Docker image that can be used as a
+development container. The image builds on either arm64 or amd64 architectures.</p>
+<p>The dev container itself is meant to be ephemeral. The <code class="docutils literal notranslate"><span class="pre">launch-dev-container</span></code>
+command will delete the existing dev container if an newer image has been made
+available in the local cache. Any data that is meant to be retained from the
+dev-container must be kept in one of the mounted volumes.</p>
+<p>The dev container supports editing and rebuilding of dreal4 as well. This
+requires that a dreal4 repository is cloned as a sibling to the funman
+directory (../dreal4). So long as that directory is present, the next time the
+funman-dev container is created will also result in a bind mount of the dreal4
+directory to the container.</p>
+</section>
+</section>
+</section>
+<section id="build-the-image">
+<h2>Build the image:<a class="headerlink" href="#build-the-image" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For building with your local arch</span>
+make<span class="w"> </span>build
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># For building to a target arch</span>
+<span class="nv">TARGET_ARCH</span><span class="o">=</span>arm64<span class="w"> </span>make<span class="w"> </span>build
+</pre></div>
+</div>
+</section>
+<section id="launch-the-dev-container">
+<h2>Launch the dev container:<a class="headerlink" href="#launch-the-dev-container" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>launch-dev-container
+</pre></div>
+</div>
+</section>
+<section id="if-building-a-local-dreal4-instead-of-the-built-in-version">
+<h2>If building a local dreal4 instead of the built-in version:<a class="headerlink" href="#if-building-a-local-dreal4-instead-of-the-built-in-version" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># from within the container</span>
+update-dreal
+</pre></div>
+</div>
+<section id="deprecated-development-setup-ubuntu-20-04">
+<h3>(DEPRECATED) Development Setup: Ubuntu 20.04<a class="headerlink" href="#deprecated-development-setup-ubuntu-20-04" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># install python 3.9</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>python3.9<span class="w"> </span>python3.9-dev
+<span class="c1"># install dev dependencies</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>make
+pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>pipenv
+<span class="c1"># install pygraphviz dependencies</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>graphviz<span class="w"> </span>libgraphviz-dev<span class="w"> </span>pkg-config
+<span class="c1"># Initialize development environment</span>
+make<span class="w"> </span>setup-dev-env
+</pre></div>
+</div>
+</section>
+<section id="deprecated-development-setup-osx-m1">
+<h3>(DEPRECATED) Development Setup: OSX M1<a class="headerlink" href="#deprecated-development-setup-osx-m1" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># install python 3.9</span>
+brew<span class="w"> </span>install<span class="w"> </span>python@3.9
+<span class="c1"># install dev dependencies</span>
+brew<span class="w"> </span>install<span class="w"> </span>make
+pip3<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>pipenv
+<span class="c1"># install pygraphviz dependencies</span>
+brew<span class="w"> </span>install<span class="w"> </span>graphviz<span class="w"> </span>pkg-config
+<span class="c1"># install z3</span>
+brew<span class="w"> </span>install<span class="w"> </span>z3
+<span class="c1"># install miniconda</span>
+brew<span class="w"> </span>install<span class="w"> </span>miniforge
+<span class="c1"># Initialize development environment</span>
+make<span class="w"> </span>setup-conda-dev-env
+</pre></div>
+</div>
+<section id="z3-issue">
+<h4><strong>Z3 issue</strong><a class="headerlink" href="#z3-issue" title="Permalink to this heading"></a></h4>
+<p>On the M1, installing with conda gets pysmt with z3 for the wrong architecture. To fix this, if it happens, replace the <code class="docutils literal notranslate"><span class="pre">z3lib.dylib</span></code> in your virtual environment (in my case this was <code class="docutils literal notranslate"><span class="pre">.venv/lib/python3.9/site-packages/z3/lib/libz3.dylib</span></code>) with a symbolic link to the library that you get from your brew install of z3.  For example</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>ln -s /opt/homebrew/Cellar/z3/4.11.0/lib/libz3.dylib ~/projects/askem/funman/.venv/lib/python3.9/site-packages/z3/lib/
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="pipenv-issue-and-conda">
+<h4><strong>Pipenv issue and conda</strong><a class="headerlink" href="#pipenv-issue-and-conda" title="Permalink to this heading"></a></h4>
+<p>When I (rpg) tried to set up the environment with only pipenv (<code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">setup-dev-env</span></code>), it didn’t work because <code class="docutils literal notranslate"><span class="pre">pip</span></code> tried to build the pygraphviz wheel and when it did, it used the Xcode compiler, which did not work with the version of graphviz I had installed with brew.</p>
+<p>Suggest dealing with this by using <code class="docutils literal notranslate"><span class="pre">setup-CONDA-dev-env</span></code> [caps for emphasis] instead.</p>
+</section>
+<hr class="docutils" />
+<section id="error-during-setup-could-not-find-a-version-that-matches">
+<h4><strong>Error during setup: “Could not find a version that matches”</strong><a class="headerlink" href="#error-during-setup-could-not-find-a-version-that-matches" title="Permalink to this heading"></a></h4>
+<p>Try updating pipenv: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pipenv</span> <span class="pre">--upgrade</span></code></p>
+</section>
+</section>
+</section>
+<section id="generating-docs">
+<h2>Generating docs<a class="headerlink" href="#generating-docs" title="Permalink to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pipenv<span class="w"> </span>run<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>sphinx<span class="w"> </span>sphinx_rtd_theme<span class="w"> </span>matplotlib
+
+<span class="c1"># Needed only if the gh-pages branch is not at origin</span>
+make<span class="w"> </span>init-pages
+
+<span class="c1"># Run sphinx and pyreverse on source, generate docs/</span>
+make<span class="w"> </span>docs
+
+<span class="c1"># push docs/ to origin</span>
+make<span class="w"> </span>deploy-pages
+</pre></div>
+</div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
@@ -125,7 +430,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, SIFT.</p>
+    <p>&#169; Copyright 2023, SIFT.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

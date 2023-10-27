@@ -14,6 +14,16 @@ funman.utils.handlers module
    :undoc-members:
    :show-inheritance:
 
+funman.utils.logging module
+---------------------------
+.. inheritance-diagram:: funman.utils.logging
+   :parts: 1
+
+.. automodule:: funman.utils.logging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.utils.math\_utils module
 -------------------------------
 .. inheritance-diagram:: funman.utils.math_utils
@@ -30,6 +40,16 @@ funman.utils.smtlib\_utils module
    :parts: 1
 
 .. automodule:: funman.utils.smtlib_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.utils.sympy\_utils module
+--------------------------------
+.. inheritance-diagram:: funman.utils.sympy_utils
+   :parts: 1
+
+.. automodule:: funman.utils.sympy_utils
    :members:
    :undoc-members:
    :show-inheritance:

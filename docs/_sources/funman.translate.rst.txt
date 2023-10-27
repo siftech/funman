@@ -34,12 +34,62 @@ funman.translate.encoded module
    :undoc-members:
    :show-inheritance:
 
+funman.translate.encoding module
+--------------------------------
+.. inheritance-diagram:: funman.translate.encoding
+   :parts: 1
+
+.. automodule:: funman.translate.encoding
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.translate.ensemble module
+--------------------------------
+.. inheritance-diagram:: funman.translate.ensemble
+   :parts: 1
+
+.. automodule:: funman.translate.ensemble
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.translate.gromet module
 ------------------------------
 .. inheritance-diagram:: funman.translate.gromet
    :parts: 1
 
 .. automodule:: funman.translate.gromet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.translate.petrinet module
+--------------------------------
+.. inheritance-diagram:: funman.translate.petrinet
+   :parts: 1
+
+.. automodule:: funman.translate.petrinet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.translate.regnet module
+------------------------------
+.. inheritance-diagram:: funman.translate.regnet
+   :parts: 1
+
+.. automodule:: funman.translate.regnet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.translate.simplifier module
+----------------------------------
+.. inheritance-diagram:: funman.translate.simplifier
+   :parts: 1
+
+.. automodule:: funman.translate.simplifier
    :members:
    :undoc-members:
    :show-inheritance:

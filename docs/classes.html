@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Diagram &mdash; funman  documentation</title>
@@ -13,12 +13,9 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -34,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> funman
           </a>
               <div class="version">
-                1.5.0
+                1.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -79,13 +76,17 @@
              
   <section id="class-diagram">
 <h1>Class Diagram<a class="headerlink" href="#class-diagram" title="Permalink to this heading"></a></h1>
-<div class="graphviz"><object data="_images/graphviz-cec65968492cd98ce1df9f31e323560069be15c0.svg" type="image/svg+xml" class="graphviz">
+<div class="graphviz"><object data="_images/graphviz-1d53fafaceea9ef267648feb14d7a4bcee1c9189.svg" type="image/svg+xml" class="graphviz">
 <p class="warning">digraph &quot;classes&quot; {
 rankdir=BT
 charset=&quot;utf-8&quot;
+&quot;funman.model.petrinet.AbstractPetriNetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AbstractPetriNetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.regnet.AbstractRegnetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AbstractRegnetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenario&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AnalysisScenario&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenarioResult&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AnalysisScenarioResult&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenarioResultException&quot; [color=&quot;black&quot;, fontcolor=&quot;red&quot;, label=&lt;AnalysisScenarioResultException&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.assumption.Assumption&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Assumption&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.BaseProperties&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BaseProperties&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerDynamics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BilayerDynamics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerEdge&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BilayerEdge&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.bilayer.BilayerEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BilayerEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
@@ -98,79 +99,135 @@ charset=&quot;utf-8&quot;
 &quot;funman.model.bilayer.BilayerNode&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BilayerNode&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerPositiveEdge&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BilayerPositiveEdge&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerStateNode&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BilayerStateNode&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.Box&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Box&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.box.Box&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Box&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.explanation.BoxExplanation&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BoxExplanation&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.box_search.BoxSearch&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BoxSearch&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.box_search.BoxSearchEpisode&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BoxSearchEpisode&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.box_search.BoxSearchEpisodeMP&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;BoxSearchEpisodeMP&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.funman.FUNMANConfig.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerGraph.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerDynamics.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerModel.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.model.encoded.EncodedModel.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.model.model.Model.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.model.query.QueryEncoded.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.scenario.consistency.ConsistencyScenario.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.scenario.consistency.ConsistencyScenarioResult.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenario.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenarioResult.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.search.box_search.BoxSearchEpisode.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.search.box_search.BoxSearchEpisodeMP.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.search.search.SearchStatistics.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.search.search.SearchEpisode.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.translate.bilayer.BilayerEncoder.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.translate.translate.Encoding.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.translate.translate.Encoder.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.Parameter.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.Interval.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.Box.Config&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Config&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.consistency.ConsistencyScenario&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ConsistencyScenario&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.consistency.ConsistencyScenarioResult&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ConsistencyScenarioResult&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.Constraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Constraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.decapode.DecapodeDynamics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;DecapodeDynamics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.decapode.DecapodeEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;DecapodeEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.decapode.DecapodeModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;DecapodeModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.translate.DefaultEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;DefaultEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Distribution&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Distribution&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Distribution&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Distribution&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Edge&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Edge&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.encoded.EncodedEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EncodedEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.encoded.EncodedModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EncodedModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.translate.Encoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Encoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.translate.translate.Encoding&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Encoding&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.translate.translate.EncodingOptions&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EncodingOptions&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.funman.FUNMANConfig&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANConfig&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.encoding.Encoding&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Encoding&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.encoding.EncodingOptions&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EncodingOptions&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.encoding_schedule.EncodingSchedule&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EncodingSchedule&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.ensemble.EnsembleEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EnsembleEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.ensemble.EnsembleModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;EnsembleModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.explanation.Explanation&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Explanation&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.config.FUNMANConfig&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANConfig&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.utils.sympy_utils.FUNMANFormulaManager&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANFormulaManager&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.simplifier.FUNMANSimplifier&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANSimplifier&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.smtlib_utils.FUNMANSmtDagPrinter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANSmtDagPrinter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.smtlib_utils.FUNMANSmtLibScript&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANSmtLibScript&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.smtlib_utils.FUNMANSmtPrinter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FUNMANSmtPrinter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.encoding.FlatEncoding&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FlatEncoding&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.search.box_search.FormulaStack&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FormulaStack&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.search.box_search.FormulaStackFrame&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FormulaStackFrame&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.funman.Funman&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Funman&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.exception.FunmanException&quot; [color=&quot;black&quot;, fontcolor=&quot;red&quot;, label=&lt;FunmanException&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanProgress&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FunmanProgress&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanResults&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FunmanResults&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanWorkRequest&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FunmanWorkRequest&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanWorkUnit&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FunmanWorkUnit&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.worker.FunmanWorker&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;FunmanWorker&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.exception.FunmanWorkerException&quot; [color=&quot;black&quot;, fontcolor=&quot;red&quot;, label=&lt;FunmanWorkerException&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.GeneratedPetriNetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;GeneratedPetriNetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.regnet.GeneratedRegnetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;GeneratedRegnetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.api.run.GracefulKiller&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;GracefulKiller&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.gromet.GrometEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;GrometEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.translate.gromet.GrometEncodingOptions&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;GrometEncodingOptions&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.gromet.GrometModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;GrometModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.Interval&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Interval&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Grounding&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Grounding&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Grounding&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Grounding&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Header&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Header&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Header&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Header&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Initial&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Initial&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.interval.Interval&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Interval&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.LabeledParameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;LabeledParameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.translate.LayeredEncoding&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;LayeredEncoding&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.LinearConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;LinearConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.model.Model&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Model&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Model&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Model&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Model&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Model&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Model1&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Model1&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Model1&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Model1&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.ModelConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ModelConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.ModelParameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ModelParameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.symbol.ModelSymbol&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ModelSymbol&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.handlers.NoopResultHandler&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;NoopResultHandler&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.Parameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Parameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.ParameterSpace&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParameterSpace&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.exception.NotFoundFunmanException&quot; [color=&quot;black&quot;, fontcolor=&quot;red&quot;, label=&lt;NotFoundFunmanException&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.NumSteps&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;NumSteps&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.OdeSemantics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;OdeSemantics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.ParamOrNumber&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParamOrNumber&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.Parameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Parameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Parameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Parameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Parameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Parameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.ParameterConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParameterConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter_space.ParameterSpace&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParameterSpace&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.explanation.ParameterSpaceExplanation&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParameterSpaceExplanation&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenario&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParameterSynthesisScenario&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenarioResult&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ParameterSynthesisScenarioResult&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.PetrinetDynamics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;PetrinetDynamics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.petrinet.PetrinetEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;PetrinetEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.PetrinetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;PetrinetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.representation.representation.Point&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Point&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Properties&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Properties&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.Query&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Query&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryAnd&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryAnd&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.QueryConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryEncoded&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryEncoded&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryEquals&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryEquals&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryFunction&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryFunction&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryGE&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryGE&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryLE&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryLE&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.QueryTrue&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;QueryTrue&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Rate&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Rate&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.regnet.RegnetDynamics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;RegnetDynamics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.regnet.RegnetEncoder&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;RegnetEncoder&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.regnet.RegnetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;RegnetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.handlers.ResultCombinedHandler&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ResultCombinedHandler&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.handlers.ResultHandler&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ResultHandler&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.api.run.Runner&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Runner&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.smt_check.SMTCheck&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SMTCheck&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.Schedules&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Schedules&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.search.Search&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Search&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.search.SearchEpisode&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SearchEpisode&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.search.SearchStaticsMP&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SearchStaticsMP&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.search.search.SearchStatistics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SearchStatistics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Semantics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Semantics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.api.server.Server&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Server&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.api.server.ServerConfig&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;ServerConfig&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.api.settings.Settings&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Settings&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.SignedGraphElement&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SignedGraphElement&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.simulation.SimulationScenario&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SimulationScenario&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.simulation.SimulationScenarioResult&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SimulationScenarioResult&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.simulator.SimulatorModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SimulatorModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.State&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;State&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.StateVariableConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StateVariableConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.States&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;States&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.StepSize&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StepSize&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.storage.Storage&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Storage&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter.StructureParameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StructureParameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.utils.sympy_utils.SympySerializer&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SympySerializer&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.simplifier.SympyToPysmt&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SympyToPysmt&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Time&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Time&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.constraint.TimedConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;TimedConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Transition&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Transition&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Transitions&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Transitions&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.TypingSemantics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;TypingSemantics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Unit&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Unit&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Vertice&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Vertice&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.handlers.WaitAction&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;WaitAction&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.server.worker.WorkerState&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;WorkerState&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerDynamics&quot; -&gt; &quot;funman.model.bilayer.BilayerGraph&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.bilayer.BilayerFluxNode&quot; -&gt; &quot;funman.model.bilayer.BilayerNode&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.bilayer.BilayerMeasurement&quot; -&gt; &quot;funman.model.bilayer.BilayerGraph&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
@@ -180,7 +237,15 @@ charset=&quot;utf-8&quot;
 &quot;funman.model.bilayer.BilayerStateNode&quot; -&gt; &quot;funman.model.bilayer.BilayerNode&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.decapode.DecapodeModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.encoded.EncodedModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.ensemble.EnsembleModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.generated_models.petrinet.Initial&quot; -&gt; &quot;funman.model.generated_models.petrinet.Rate&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.generated_models.regnet.Edge&quot; -&gt; &quot;funman.model.generated_models.regnet.SignedGraphElement&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.generated_models.regnet.Vertice&quot; -&gt; &quot;funman.model.generated_models.regnet.BaseProperties&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.generated_models.regnet.Vertice&quot; -&gt; &quot;funman.model.generated_models.regnet.SignedGraphElement&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.gromet.GrometModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.petrinet.AbstractPetriNetModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.petrinet.GeneratedPetriNetModel&quot; -&gt; &quot;funman.model.petrinet.AbstractPetriNetModel&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.petrinet.PetrinetModel&quot; -&gt; &quot;funman.model.petrinet.AbstractPetriNetModel&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.query.QueryAnd&quot; -&gt; &quot;funman.model.query.Query&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.query.QueryEncoded&quot; -&gt; &quot;funman.model.query.Query&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.query.QueryEquals&quot; -&gt; &quot;funman.model.query.Query&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
@@ -188,7 +253,24 @@ charset=&quot;utf-8&quot;
 &quot;funman.model.query.QueryGE&quot; -&gt; &quot;funman.model.query.Query&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.query.QueryLE&quot; -&gt; &quot;funman.model.query.Query&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.query.QueryTrue&quot; -&gt; &quot;funman.model.query.Query&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.regnet.AbstractRegnetModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.regnet.GeneratedRegnetModel&quot; -&gt; &quot;funman.model.regnet.AbstractRegnetModel&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.model.regnet.RegnetModel&quot; -&gt; &quot;funman.model.regnet.AbstractRegnetModel&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.model.simulator.SimulatorModel&quot; -&gt; &quot;funman.model.model.Model&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint.LinearConstraint&quot; -&gt; &quot;funman.representation.constraint.TimedConstraint&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint.ModelConstraint&quot; -&gt; &quot;funman.representation.constraint.Constraint&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint.ParameterConstraint&quot; -&gt; &quot;funman.representation.constraint.Constraint&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint.QueryConstraint&quot; -&gt; &quot;funman.representation.constraint.Constraint&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint.StateVariableConstraint&quot; -&gt; &quot;funman.representation.constraint.TimedConstraint&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint.TimedConstraint&quot; -&gt; &quot;funman.representation.constraint.Constraint&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.explanation.BoxExplanation&quot; -&gt; &quot;funman.representation.explanation.Explanation&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.explanation.ParameterSpaceExplanation&quot; -&gt; &quot;funman.representation.explanation.Explanation&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter.LabeledParameter&quot; -&gt; &quot;funman.representation.parameter.Parameter&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter.ModelParameter&quot; -&gt; &quot;funman.representation.parameter.LabeledParameter&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter.NumSteps&quot; -&gt; &quot;funman.representation.parameter.StructureParameter&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter.Schedules&quot; -&gt; &quot;funman.representation.parameter.StructureParameter&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter.StepSize&quot; -&gt; &quot;funman.representation.parameter.StructureParameter&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter.StructureParameter&quot; -&gt; &quot;funman.representation.parameter.LabeledParameter&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.scenario.consistency.ConsistencyScenario&quot; -&gt; &quot;funman.scenario.scenario.AnalysisScenario&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.scenario.consistency.ConsistencyScenarioResult&quot; -&gt; &quot;funman.scenario.scenario.AnalysisScenarioResult&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenario&quot; -&gt; &quot;funman.scenario.scenario.AnalysisScenario&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
@@ -201,34 +283,60 @@ charset=&quot;utf-8&quot;
 &quot;funman.search.box_search.BoxSearchEpisodeMP&quot; -&gt; &quot;funman.search.box_search.BoxSearchEpisode&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.search.SearchStaticsMP&quot; -&gt; &quot;funman.search.search.SearchStatistics&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.smt_check.SMTCheck&quot; -&gt; &quot;funman.search.search.Search&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.server.exception.FunmanWorkerException&quot; -&gt; &quot;funman.server.exception.FunmanException&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.server.exception.NotFoundFunmanException&quot; -&gt; &quot;funman.server.exception.FunmanException&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.translate.bilayer.BilayerEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.translate.decapode.DecapodeEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.translate.encoded.EncodedEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.translate.ensemble.EnsembleEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.translate.gromet.GrometEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
-&quot;funman.translate.gromet.GrometEncodingOptions&quot; -&gt; &quot;funman.translate.translate.EncodingOptions&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
-&quot;funman.translate.translate.DefaultEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.translate.gromet.GrometEncodingOptions&quot; -&gt; &quot;funman.translate.encoding.EncodingOptions&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.translate.petrinet.PetrinetEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.translate.regnet.RegnetEncoder&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.utils.handlers.NoopResultHandler&quot; -&gt; &quot;funman.utils.handlers.ResultHandler&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.utils.handlers.ResultCombinedHandler&quot; -&gt; &quot;funman.utils.handlers.ResultHandler&quot; [arrowhead=&quot;empty&quot;, arrowtail=&quot;none&quot;];
-&quot;funman.funman.FUNMANConfig&quot; -&gt; &quot;funman.search.search.SearchEpisode&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;config&quot;, style=&quot;solid&quot;];
-&quot;funman.funman.FUNMANConfig&quot; -&gt; &quot;funman.translate.translate.Encoder&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;config&quot;, style=&quot;solid&quot;];
+&quot;funman.api.settings.Settings&quot; -&gt; &quot;funman.api.run.Runner&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;settings&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerDynamics&quot; -&gt; &quot;funman.model.bilayer.BilayerModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;bilayer&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerEdge&quot; -&gt; &quot;funman.model.bilayer.BilayerDynamics&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_input_edges&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerEdge&quot; -&gt; &quot;funman.model.bilayer.BilayerDynamics&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_output_edges&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerEdge&quot; -&gt; &quot;funman.model.bilayer.BilayerMeasurement&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;input_edges&quot;, style=&quot;solid&quot;];
-&quot;funman.model.bilayer.BilayerEdge&quot; -&gt; &quot;funman.model.bilayer.BilayerMeasurement&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;output_edges&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerNode&quot; -&gt; &quot;funman.model.bilayer.BilayerEdge&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;src&quot;, style=&quot;solid&quot;];
 &quot;funman.model.bilayer.BilayerNode&quot; -&gt; &quot;funman.model.bilayer.BilayerEdge&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;tgt&quot;, style=&quot;solid&quot;];
 &quot;funman.model.decapode.DecapodeDynamics&quot; -&gt; &quot;funman.model.decapode.DecapodeModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;decapode&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Header&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;header&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Model&quot; -&gt; &quot;funman.model.generated_models.petrinet.TypingSemantics&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;system&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Model&quot; -&gt; &quot;funman.model.petrinet.GeneratedPetriNetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;petrinet&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Model1&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.States&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model1&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;states&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.Transitions&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model1&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;transitions&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Header&quot; -&gt; &quot;funman.model.generated_models.regnet.Model&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;header&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Model&quot; -&gt; &quot;funman.model.regnet.GeneratedRegnetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;regnet&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.regnet.Model1&quot; -&gt; &quot;funman.model.generated_models.regnet.Model&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
+&quot;funman.model.model.Model&quot; -&gt; &quot;funman.representation.constraint.ModelConstraint&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.PetrinetDynamics&quot; -&gt; &quot;funman.model.petrinet.PetrinetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;petrinet&quot;, style=&quot;solid&quot;];
+&quot;funman.model.query.Query&quot; -&gt; &quot;funman.representation.constraint.QueryConstraint&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;query&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.Query&quot; -&gt; &quot;funman.scenario.simulation.SimulationScenario&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;query&quot;, style=&quot;solid&quot;];
+&quot;funman.model.regnet.RegnetDynamics&quot; -&gt; &quot;funman.model.regnet.RegnetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;regnet&quot;, style=&quot;solid&quot;];
 &quot;funman.model.simulator.SimulatorModel&quot; -&gt; &quot;funman.scenario.simulation.SimulationScenario&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
-&quot;funman.representation.representation.ParameterSpace&quot; -&gt; &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenarioResult&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;parameter_space&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.encoding_schedule.EncodingSchedule&quot; -&gt; &quot;funman.search.box_search.BoxSearchEpisode&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;schedule&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.encoding_schedule.EncodingSchedule&quot; -&gt; &quot;funman.search.search.SearchEpisode&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;schedule&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.encoding_schedule.EncodingSchedule&quot; -&gt; &quot;funman.translate.encoding.EncodingOptions&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;schedule&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.interval.Interval&quot; -&gt; &quot;funman.representation.parameter.Parameter&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;interval&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter_space.ParameterSpace&quot; -&gt; &quot;funman.scenario.consistency.ConsistencyScenarioResult&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;parameter_space&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter_space.ParameterSpace&quot; -&gt; &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenarioResult&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;parameter_space&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.consistency.ConsistencyScenario&quot; -&gt; &quot;funman.scenario.consistency.ConsistencyScenarioResult&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;scenario&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenario&quot; -&gt; &quot;funman.scenario.parameter_synthesis.ParameterSynthesisScenarioResult&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;scenario&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenario&quot; -&gt; &quot;funman.search.search.SearchEpisode&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;problem&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.simulation.SimulationScenario&quot; -&gt; &quot;funman.scenario.simulation.SimulationScenarioResult&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;scenario&quot;, style=&quot;solid&quot;];
+&quot;funman.search.box_search.FormulaStack&quot; -&gt; &quot;funman.search.box_search.BoxSearchEpisode&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_formula_stack&quot;, style=&quot;solid&quot;];
 &quot;funman.search.search.SearchStaticsMP&quot; -&gt; &quot;funman.search.box_search.BoxSearchEpisodeMP&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;statistics&quot;, style=&quot;solid&quot;];
 &quot;funman.search.search.SearchStatistics&quot; -&gt; &quot;funman.search.box_search.BoxSearchEpisode&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;statistics&quot;, style=&quot;solid&quot;];
-&quot;funman.utils.handlers.ResultHandler&quot; -&gt; &quot;funman.funman.FUNMANConfig&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_handler&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanProgress&quot; -&gt; &quot;funman.server.query.FunmanResults&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;progress&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanProgress&quot; -&gt; &quot;funman.server.query.FunmanWorkUnit&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;progress&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanResults&quot; -&gt; &quot;funman.server.worker.FunmanWorker&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;current_results&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanWorkRequest&quot; -&gt; &quot;funman.server.query.FunmanResults&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;request&quot;, style=&quot;solid&quot;];
+&quot;funman.server.query.FunmanWorkRequest&quot; -&gt; &quot;funman.server.query.FunmanWorkUnit&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;request&quot;, style=&quot;solid&quot;];
+&quot;funman.server.storage.Storage&quot; -&gt; &quot;funman.api.run.Runner&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_storage&quot;, style=&quot;solid&quot;];
+&quot;funman.server.worker.FunmanWorker&quot; -&gt; &quot;funman.api.run.Runner&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_worker&quot;, style=&quot;solid&quot;];
+&quot;funman.representation.parameter_space.ParameterSpace&quot; -&gt; &quot;funman.server.query.FunmanResults&quot; [arrowhead=&quot;odiamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;parameter_space&quot;, style=&quot;solid&quot;];
+&quot;funman.translate.encoded.EncodedEncoder&quot; -&gt; &quot;funman.translate.translate.LayeredEncoding&quot; [arrowhead=&quot;odiamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;_encoder&quot;, style=&quot;solid&quot;];
 }</p></object></div>
 </section>
 
@@ -243,7 +351,7 @@ charset=&quot;utf-8&quot;
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, SIFT.</p>
+    <p>&#169; Copyright 2023, SIFT.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

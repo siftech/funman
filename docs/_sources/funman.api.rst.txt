@@ -24,12 +24,32 @@ funman.api.client module
    :undoc-members:
    :show-inheritance:
 
+funman.api.run module
+---------------------
+.. inheritance-diagram:: funman.api.run
+   :parts: 1
+
+.. automodule:: funman.api.run
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.api.server module
 ------------------------
 .. inheritance-diagram:: funman.api.server
    :parts: 1
 
 .. automodule:: funman.api.server
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.api.settings module
+--------------------------
+.. inheritance-diagram:: funman.api.settings
+   :parts: 1
+
+.. automodule:: funman.api.settings
    :members:
    :undoc-members:
    :show-inheritance:

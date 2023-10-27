@@ -12,11 +12,22 @@ Subpackages
    funman.representation
    funman.scenario
    funman.search
+   funman.server
    funman.translate
    funman.utils
 
 Submodules
 ----------
+
+funman.config module
+--------------------
+.. inheritance-diagram:: funman.config
+   :parts: 1
+
+.. automodule:: funman.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 funman.constants module
 -----------------------

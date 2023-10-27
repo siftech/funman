@@ -1,6 +1,14 @@
 funman.model package
 ====================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   funman.model.generated_models
+
 Submodules
 ----------
 
@@ -34,6 +42,16 @@ funman.model.encoded module
    :undoc-members:
    :show-inheritance:
 
+funman.model.ensemble module
+----------------------------
+.. inheritance-diagram:: funman.model.ensemble
+   :parts: 1
+
+.. automodule:: funman.model.ensemble
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.model.gromet module
 --------------------------
 .. inheritance-diagram:: funman.model.gromet
@@ -54,12 +72,32 @@ funman.model.model module
    :undoc-members:
    :show-inheritance:
 
+funman.model.petrinet module
+----------------------------
+.. inheritance-diagram:: funman.model.petrinet
+   :parts: 1
+
+.. automodule:: funman.model.petrinet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.model.query module
 -------------------------
 .. inheritance-diagram:: funman.model.query
    :parts: 1
 
 .. automodule:: funman.model.query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.model.regnet module
+--------------------------
+.. inheritance-diagram:: funman.model.regnet
+   :parts: 1
+
+.. automodule:: funman.model.regnet
    :members:
    :undoc-members:
    :show-inheritance:

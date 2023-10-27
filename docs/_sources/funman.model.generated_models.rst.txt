@@ -1,0 +1,33 @@
+funman.model.generated\_models package
+======================================
+
+Submodules
+----------
+
+funman.model.generated\_models.petrinet module
+----------------------------------------------
+.. inheritance-diagram:: funman.model.generated_models.petrinet
+   :parts: 1
+
+.. automodule:: funman.model.generated_models.petrinet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.model.generated\_models.regnet module
+--------------------------------------------
+.. inheritance-diagram:: funman.model.generated_models.regnet
+   :parts: 1
+
+.. automodule:: funman.model.generated_models.regnet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: funman.model.generated_models
+   :members:
+   :undoc-members:
+   :show-inheritance:
