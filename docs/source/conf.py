@@ -23,6 +23,7 @@ extensions = [
     "sphinx.ext.inheritance_diagram",
     "sphinx.ext.napoleon",
     "sphinxcontrib.autodoc_pydantic",
+    "myst_parser",
 ]
 
 autodoc_pydantic_model_show_json = True
