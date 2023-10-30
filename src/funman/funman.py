@@ -6,10 +6,12 @@ import logging
 import threading
 from typing import Callable, Optional
 
+from funman.utils.logging import set_level
+
 from .config import FUNMANConfig
 
-l = logging.getLogger(__file__)
-l.setLevel(logging.ERROR)
+l = logging.getLogger(__name__)
+
 
 logging.getLogger("matplotlib.font_manager").disabled = True
 logging.getLogger("matplotlib.pyplot").disabled = True
@@ -53,6 +55,9 @@ class Funman(object):
         # Setting config here instead of keyword default because otherwise it will be validated prematurely by Pydantic
         if config is None:
             config = FUNMANConfig()
+
+        set_level(config.verbosity)
+
         try:
             if config.profile:
                 import cProfile

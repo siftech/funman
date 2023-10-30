@@ -4,18 +4,16 @@ from decimal import ROUND_CEILING, Decimal
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
 
-from matplotlib import pyplot as plt
-from matplotlib.lines import Line2D
+from numpy import nextafter
 from pydantic import BaseModel, Field
 
 import funman.utils.math_utils as math_utils
-from funman import to_sympy
 from funman.constants import LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN, Label
 
-from . import EncodingSchedule, Interval, Point, Timestep
+from . import EncodingSchedule, Interval, Point
 from .explanation import BoxExplanation
 from .interval import Interval
-from .parameter import ModelParameter
+from .parameter import ModelParameter, Parameter
 from .symbol import ModelSymbol
 
 l = logging.getLogger(__name__)
@@ -32,29 +30,83 @@ class Box(BaseModel):
     bounds: Dict[str, Interval] = {}
     explanation: Optional[BoxExplanation] = None
     cached_width: Optional[float] = Field(default=None, exclude=True)
-    timestep: Timestep = 0
     schedule: Optional[EncodingSchedule] = None
+    corner_points: List[Point] = []
+    points: List[Point] = []
+
+    @staticmethod
+    def from_point(point: Point) -> "Box":
+        box = Box()
+        box.bounds = {
+            p: Interval.from_value(v) for p, v in point.values.items()
+        }
+        box.points.append(point)
+        return box
+
+    def true_points(self) -> List[Point]:
+        return [p for p in self.points if p.label == LABEL_TRUE]
+
+    def false_points(self) -> List[Point]:
+        return [p for p in self.points if p.label == LABEL_FALSE]
 
     def explain(self) -> "BoxExplanation":
         expl = {"box": {k: v.model_dump() for k, v in self.bounds.items()}}
         expl.update(self.explanation.explain())
         return expl
 
+    def timestep(self) -> Interval:
+        return self.bounds["timestep"]
+
     def __hash__(self):
         return int(sum([i.__hash__() for _, i in self.bounds.items()]))
 
     def advance(self):
         # Advancing a box means that we move the time step forward until it exhausts the possible number of steps
-        if self.timestep == len(self.schedule.timepoints) - 1:
+        if self.timestep().lb == self.timestep().ub:
             return None
         else:
             box = self.model_copy(deep=True)
-            box.timestep += 1
+            box.timestep().lb += 1
+            # Remove points because they correspond to prior timesteps
+            box.points = []
             return box
+
+    def corners(self, parameters: List[Parameter] = None) -> List[Point]:
+        points: List[Point] = [Point(values={})]
+        parameter_names = (
+            [p.name for p in parameters] if parameters is not None else []
+        )
+        for p, interval in self.bounds.items():
+            if p not in parameter_names:
+                continue
+            if interval.is_point():
+                for pt in points:
+                    pt.values[p] = interval.lb
+            else:
+                lb_points = [pt.model_copy(deep=True) for pt in points]
+                ub_points = [pt.model_copy(deep=True) for pt in points]
+
+                nextbefore_ub = (
+                    interval.ub
+                    if interval.closed_upper_bound
+                    else float(nextafter(interval.ub, interval.lb))
+                )
+
+                for pt in lb_points:
+                    pt.values[p] = interval.lb
+                for pt in ub_points:
+                    pt.values[p] = nextbefore_ub
+                points = lb_points + ub_points
+        return points
 
     def current_step(self) -> "Box":
         # Restrict bounds on num_steps to the lower bound (i.e., the current step)
-        return self
+        curr = self.model_copy(deep=True)
+        timestep = curr.timestep()
+        timestep.closed_upper_bound = True
+        timestep.ub = timestep.lb
+
+        return curr
 
     def project(self, vars: Union[List[ModelParameter], List[str]]) -> "Box":
         """
@@ -62,7 +114,7 @@ class Box(BaseModel):
 
         Parameters
         ----------
-        vars : Union[List[Parameter], List[str]]
+        vars : Union[List[ModelParameter], List[str]]
             variables to project onto
 
         Returns
@@ -140,10 +192,7 @@ class Box(BaseModel):
                     if (
                         sorted[i].bounds[p].meets(self.bounds[p])
                         and sorted[i] not in disqualified_set
-                        and (
-                            sorted[i].timestep == self.timestep
-                            and sorted[i].schedule == self.schedule
-                        )
+                        and sorted[i].schedule == self.schedule
                     ):
                         if sorted[i] in meets_set:
                             # Need exactly one dimension where they meet, so disqualified
@@ -154,10 +203,7 @@ class Box(BaseModel):
                     elif (
                         sorted[i].bounds[p] == self.bounds[p]
                         and sorted[i] not in disqualified_set
-                        and (
-                            sorted[i].timestep == self.timestep
-                            and sorted[i].schedule == self.schedule
-                        )
+                        and sorted[i].schedule == self.schedule
                     ):
                         equals_set.add(sorted[i])
                     else:
@@ -186,10 +232,10 @@ class Box(BaseModel):
 
     def __lt__(self, other):
         if isinstance(other, Box):
-            if self.timestep == other.timestep:
-                return self.width() < other.width()
+            if self.timestep().lb == other.timestep().lb:
+                return self.width() > other.width()
             else:
-                return self.timestep > other.timestep
+                return self.timestep().lb > other.timestep().lb
         else:
             raise Exception(f"Cannot compare __lt__() Box to {type(other)}")
 
@@ -205,7 +251,7 @@ class Box(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Box(t_{self.timestep}={self.schedule.time_at_step(self.timestep)} {self.bounds}), width = {self.width()}"
+        return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
 
     def finite(self) -> bool:
         """
@@ -253,7 +299,7 @@ class Box(BaseModel):
         bool
             the box contains the point
         """
-        return self.timestep == point.timestep and all(
+        return all(
             [
                 interval.contains_value(point.values[p])
                 for p, interval in self.bounds.items()
@@ -391,6 +437,8 @@ class Box(BaseModel):
                 )
                 for p in self.bounds
             }
+        if "timestep" in widths:
+            del widths["timestep"]
         max_width = max(widths, key=widths.get)
 
         return max_width
@@ -463,14 +511,9 @@ class Box(BaseModel):
         # strings 'num_steps' and 'step_size' is brittle.
         num_timepoints = 1
         if self.schedule:
-            if self.label == LABEL_FALSE:
-                # Each false box covers from the self.timestep to the end of the schedule.
-                num_timepoints = Decimal(
-                    len(self.schedule.timepoints[self.timestep :])
-                ).to_integral_exact(rounding=ROUND_CEILING)
-            elif self.label == LABEL_TRUE:
-                # Each true box covers only one timestep, but
-                pass
+            num_timepoints = Decimal(
+                int(self.timestep().ub) + 1 - int(self.timestep().lb)
+            ).to_integral_exact(rounding=ROUND_CEILING)
         elif "num_steps" in widths:
             del widths["num_steps"]
             # TODO this timepoint computation could use more thought
@@ -577,11 +620,13 @@ class Box(BaseModel):
         assert math_utils.lte(b1.bounds[p].lb, mid)
         b1.bounds[p] = Interval(lb=b1.bounds[p].lb, ub=mid)
         b1.width(overwrite_cache=True)
+        b1.points = [pt for pt in b1.points if b1.contains_point(pt)]
 
         # b2 is upper half
         assert math_utils.lte(mid, b2.bounds[p].ub)
         b2.bounds[p] = Interval(lb=mid, ub=b2.bounds[p].ub)
         b2.width(overwrite_cache=True)
+        b2.points = [pt for pt in b2.points if b2.contains_point(pt)]
 
         return [b2, b1]
 

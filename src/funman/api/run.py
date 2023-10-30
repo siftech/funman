@@ -1,15 +1,16 @@
 import json
+import logging
 import os
 from contextlib import contextmanager
 from time import sleep
 from timeit import default_timer
 from typing import Dict, Tuple, Union
 
+import funman
 from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
 from funman.model.model import _wrap_with_internal_model
-from funman.representation.representation import EncodingSchedule
 from funman.server.query import (
     FunmanResults,
     FunmanWorkRequest,
@@ -17,6 +18,8 @@ from funman.server.query import (
 )
 from funman.server.storage import Storage
 from funman.server.worker import FunmanWorker
+
+l = logging.getLogger(__name__)
 
 # import matplotlib.pyplot as plt
 
@@ -117,6 +120,19 @@ models = {GeneratedPetriNet, GeneratedRegnet}
 # ]
 
 
+class GracefulKiller:
+    kill_now = False
+
+    def __init__(self):
+        # signal.signal(signal.SIGINT, self.exit_gracefully)
+        # signal.signal(signal.SIGTERM, self.exit_gracefully)
+        pass
+
+    def exit_gracefully(self, *args):
+        l.info("Requesting FUNMAN to exit because of kill signal ...")
+        self.kill_now = True
+
+
 class Runner:
     @contextmanager
     def elapsed_timer(self):
@@ -163,7 +179,8 @@ class Runner:
         for model in models:
             try:
                 with open(model_file, "r") as mf:
-                    m = _wrap_with_internal_model(model(**json.load(mf)))
+                    j = json.load(mf)
+                    m = _wrap_with_internal_model(model(**j))
                 return m
             except Exception as e:
                 pass
@@ -172,6 +189,7 @@ class Runner:
     def run_instance(
         self, case: Tuple[str, Union[str, Dict], str], out_dir="."
     ):
+        killer = GracefulKiller()
         (model_file, request_file, description) = case
 
         model = self.get_model(model_file)
@@ -189,21 +207,31 @@ class Runner:
         work_unit: FunmanWorkUnit = self._worker.enqueue_work(
             model=model, request=request
         )
+
         sleep(2)  # need to sleep until worker has a chance to start working
-        while True:
+        outfile = f"{out_dir}/{work_unit.id}.json"
+        while not killer.kill_now:
             if self._worker.is_processing_id(work_unit.id):
+                l.info(f"Dumping results to {outfile}")
                 results = self._worker.get_results(work_unit.id)
-                with open(f"{out_dir}/{work_unit.id}.json", "w") as f:
+                with open(outfile, "w") as f:
                     f.write(results.model_dump_json())
                 # ParameterSpacePlotter(
                 #     results.parameter_space, plot_points=True
                 # ).plot(show=False)
                 # plt.savefig(f"{out_dir}/{model.__module__}.png")
                 # plt.close()
-                sleep(2)
+                sleep(5)
             else:
                 results = self._worker.get_results(work_unit.id)
                 break
+
+        if killer.kill_now:
+            l.info(
+                "Requesting that worker stop because received kill signal ..."
+            )
+            self._worker.stop()
+            self._storage.stop()
 
         # ParameterSpacePlotter(results.parameter_space, plot_points=True).plot(
         #     show=False

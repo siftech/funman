@@ -1,13 +1,7 @@
 import logging
 from typing import List, Union
 
-from matplotlib import pyplot as plt
-from matplotlib.lines import Line2D
-from pydantic import BaseModel, Field
-
-import funman.utils.math_utils as math_utils
-from funman import to_sympy
-from funman.constants import LABEL_UNKNOWN, Label
+from pydantic import BaseModel
 
 from . import Timepoint, TimestepSize
 

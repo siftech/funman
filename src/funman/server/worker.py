@@ -20,7 +20,6 @@ from funman.server.query import (
 from ..representation.parameter_space import ParameterSpace
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class WorkerState(Enum):
@@ -105,9 +104,13 @@ class FunmanWorker:
             self.in_state(WorkerState.RUNNING)
             or self.in_state(WorkerState.ERRORED)
         ):
+            l.info(
+                "Worker.stop() called and WorkerState is not RUNNING or ERRORED"
+            )
             raise FunmanWorkerException(
                 f"FunmanWorker be running to stop: {self.get_state()}"
             )
+        l.info("Worker.stop() acquiring state lock ....")
         # Grab the state lock for the entire process of stopping.
         with self._state_lock:
             # The worker is stopping
@@ -127,6 +130,7 @@ class FunmanWorker:
             self._stop_event = None
             # The worker is stopped
             self._state = WorkerState.STOPPED
+            l.info("Worker.stop() completed.")
 
     def is_processing_id(self, id: str):
         if not self.in_state(WorkerState.RUNNING):

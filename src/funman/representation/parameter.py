@@ -20,7 +20,6 @@ from .interval import Interval
 from .symbol import ModelSymbol
 
 l: logging.Logger = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class Parameter(BaseModel):

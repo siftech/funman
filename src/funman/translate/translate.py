@@ -63,7 +63,6 @@ from ..representation.symbol import ModelSymbol
 from .encoding import *
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.DEBUG)
 
 
 StateTimepoints = List[Timepoint]
@@ -279,7 +278,7 @@ class Encoder(ABC, BaseModel):
             encoded_constraint_layer = handler(
                 scenario, constraint, layer_idx, options, assumptions
             )
-            if constraint.assumable:
+            if constraint.soft:
                 encoded_constraint_layer = self.encode_assumed_constraint(
                     encoded_constraint_layer,
                     constraint,
@@ -745,7 +744,7 @@ class Encoder(ABC, BaseModel):
         if ub is not None:
             ube = (
                 LE(expression, ub)
-                if constraint.closed_upper_bound
+                if constraint.additive_bounds.closed_upper_bound
                 else LT(expression, ub)
             )
         else:
@@ -1207,7 +1206,10 @@ class Encoder(ABC, BaseModel):
 
     def point_to_smt(self, pt: Point):
         return And(
-            [Equals(p.symbol(), Real(value)) for p, value in pt.values.items()]
+            [
+                Equals(Symbol(p, REAL), Real(value))
+                for p, value in pt.values.items()
+            ]
         )
 
     def box_to_smt(

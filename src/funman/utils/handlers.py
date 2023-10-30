@@ -9,7 +9,6 @@ from typing import List
 LOG_LEVEL = logging.INFO
 
 l = logging.getLogger(__file__)
-l.setLevel(LOG_LEVEL)
 
 
 class WaitAction(ABC):

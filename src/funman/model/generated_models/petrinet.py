@@ -168,3 +168,4 @@ class TypingSemantics(BaseModel):
 
 
 Semantics.model_rebuild()
+Model.model_rebuild()

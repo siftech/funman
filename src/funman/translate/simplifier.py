@@ -16,7 +16,6 @@ from funman.utils.sympy_utils import (
 from ..representation.parameter import ModelParameter
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class FUNMANSimplifier(pysmt.simplifier.Simplifier):

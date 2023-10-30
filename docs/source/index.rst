@@ -16,6 +16,11 @@ Welcome to funman's documentation!
    packages
    funman
    
+README File
+===========
+
+.. include:: ../../README.md
+   :parser: myst_parser.sphinx_
 
 Indices and tables
 ==================

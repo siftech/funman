@@ -37,7 +37,6 @@ from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 from funman.representation.constraint import FunmanConstraint
 
 l = logging.getLogger(__name__)
-l.setLevel(logging.INFO)
 
 
 class AnalysisScenario(ABC, BaseModel):
@@ -86,7 +85,7 @@ class AnalysisScenario(ABC, BaseModel):
         # create assumptions for each constraint that may be assumed.
         if self.constraints is not None:
             for constraint in self.constraints:
-                if constraint.assumable:
+                if constraint.soft:
                     self._assumptions.append(Assumption(constraint=constraint))
 
     @abstractclassmethod
@@ -121,7 +120,7 @@ class AnalysisScenario(ABC, BaseModel):
             if ccs is not None:
                 self.constraints += ccs
                 for cc in ccs:
-                    if cc.assumable:
+                    if cc.soft:
                         self._assumptions.append(Assumption(constraint=cc))
 
         self._initialize_encodings(config)
@@ -269,7 +268,7 @@ class AnalysisScenario(ABC, BaseModel):
             )
         else:
             self.normalization_constant = 1.0
-            l.warn("Warning: The scenario is not normalized!")
+            l.warning("Warning: The scenario is not normalized!")
 
 
 class AnalysisScenarioResult(ABC):

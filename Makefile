@@ -1,4 +1,4 @@
-.PHONY: test
+.PHONY: test docs
 
 # -----------------------------------------------------------------
 #  Base Image Construction
@@ -293,7 +293,7 @@ deploy-pages:
 	mv docs/build/html www
 	touch www/.nojekyll
 	rm www/.buildinfo || true
-	git checkout --track $(DOCS_REMOTE)/gh-pages
+	git checkout --track $(DOCS_REMOTE)/gh-pages || git checkout $(DOCS_REMOTE)/gh-pages
 	rm -r docs || true
 	mv www docs
 	git add -f docs

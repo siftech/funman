@@ -1,13 +1,10 @@
 from typing import List, Optional, Union
 
 from pydantic import (
-    AfterValidator,
     BaseModel,
     ConfigDict,
     Field,
     ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    WrapValidator,
     field_validator,
 )
 from typing_extensions import Annotated
@@ -20,7 +17,7 @@ from .parameter import ModelParameter, StructureParameter
 
 
 class Constraint(BaseModel):
-    assumable: bool = True
+    soft: bool = True
     name: str
 
     # model_config = ConfigDict(extra="forbid")
@@ -46,7 +43,7 @@ class TimedConstraint(Constraint):
 
 
 class ModelConstraint(Constraint):
-    assumable: bool = False
+    soft: bool = False
     model: Model
 
     model_config = ConfigDict(extra="forbid")
@@ -56,7 +53,7 @@ class ModelConstraint(Constraint):
 
 
 class ParameterConstraint(Constraint):
-    assumable: bool = False
+    soft: bool = False
     parameter: Union[ModelParameter, StructureParameter]
 
     model_config = ConfigDict(extra="forbid")
@@ -72,7 +69,7 @@ class ParameterConstraint(Constraint):
 
 
 class QueryConstraint(Constraint):
-    assumable: bool = True
+    soft: bool = True
     query: Query
 
     model_config = ConfigDict(extra="forbid")
@@ -92,13 +89,12 @@ class StateVariableConstraint(TimedConstraint):
 
 
 class LinearConstraint(TimedConstraint):
-    assumable: bool = True
+    soft: bool = True
     additive_bounds: "Interval"
     variables: List[str]
     weights: Annotated[
         Optional[List[Union[int, float]]], Field(validate_default=True)
     ] = None
-    closed_upper_bound: bool = False
 
     model_config = ConfigDict(extra="forbid")
 

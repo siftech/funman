@@ -21,7 +21,17 @@ You will need two terminals:
 - One to run the API server within a docker container
 - One to run the example scripts
 
-## **First** start the the API server
+## **First** get the funman-api docker image
+Either build a local version using (in the funman base directory):
+```bash
+make build-api
+```
+or ensure you are authenticated with the ghcr.io registry.  The process involves generating a github personal access token with `read:packages` scope, and then running:
+```bash
+echo <YOUR PAT> | docker login ghcr.io -u <YOUR GITHUB USERID> --password-stdin
+```
+
+## **Second** start the the API server
 The `./scripts/run-api-in-docker.sh` script offers a simple method of launching a
 local container running the funman API.
 
@@ -40,7 +50,7 @@ Once the image is pulled the server should start with this output:
 ```
 The server should now be exposed at `127.0.0.1:8190`
 
-## **Second** run one of the examples
+## **Third** run one of the examples
 The `run_example.sh` script in the same directory as this README
 is the entry point for an examples.
 
