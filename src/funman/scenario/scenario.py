@@ -35,6 +35,7 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
 from funman.representation.constraint import FunmanConstraint
+from funman.representation.parameter import NumSteps, Schedules, StepSize
 
 l = logging.getLogger(__name__)
 
@@ -153,17 +154,50 @@ class AnalysisScenario(ABC, BaseModel):
         """
         return len(self.parameters)
 
-    def search_space_volume(self) -> Decimal:
+    def num_timepoints(self) -> int:
+        schedules = self.parameters_of_type(Schedules)
+        if len(schedules) == 1:
+            num_timepoints = sum(
+                len(schedule.timepoints) - 1
+                for schedule in schedules[0].schedules
+            )
+        else:
+            # use num_steps and step_size
+            num_steps = self.parameters_of_type(NumSteps)
+            step_size = self.parameters_of_type(StepSize)
+            num_timepoints = (num_steps.width() + 1) * (step_size.width() + 1)
+        return num_timepoints
+
+    def search_space_volume(self, normalize: bool = False) -> Decimal:
         bounds = {}
-        for param in self.parameters:
+        for param in self.model_parameters():
             bounds[param.name] = param.interval
-        return Box(bounds=bounds).volume()
+        space_box = Box(bounds=bounds)
+
+        # Normalized volume for a timeslice is 1.0, but compute anyway to verify
+        space_time_slice_volume = (
+            space_box.volume(normalize=self._original_parameter_widths)
+            if normalize
+            else space_box.volume()
+        )
+        assert (
+            not normalize or space_time_slice_volume == 1.0
+        ), f"Normalized space volume is not 1.0, computed = {space_time_slice_volume}"
+        space_volume = (
+            space_time_slice_volume
+            if normalize
+            else self.num_timepoints() * space_time_slice_volume
+        )
+        return space_volume
 
     def representable_space_volume(self) -> Decimal:
         bounds = {}
-        for param in self.parameters:
+        for param in self.model_parameters():
             bounds[param.name] = Interval(lb=NEG_INFINITY, ub=POS_INFINITY)
-        return Box(bounds=bounds).volume()
+        space_box = Box(bounds=bounds)
+        space_time_slice_volume = space_box.volume()
+        space_volume = self.num_timepoints() * space_time_slice_volume
+        return space_volume
 
     def structure_parameters(self):
         return self.parameters_of_type(StructureParameter)

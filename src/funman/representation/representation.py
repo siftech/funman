@@ -4,13 +4,12 @@ during the configuration and execution of a search.
 """
 import logging
 import math
-import sys
 from typing import Dict, Literal, Optional
 
 from pydantic import BaseModel
 
 from funman import to_sympy
-from funman.constants import LABEL_UNKNOWN, Label
+from funman.constants import LABEL_UNKNOWN, NEG_INFINITY, POS_INFINITY, Label
 
 l = logging.getLogger(__name__)
 
@@ -58,17 +57,17 @@ class Point(BaseModel):
             return self
 
     def __hash__(self):
-        return int(
-            sum(
-                [
-                    v
-                    for _, v in self.values.items()
-                    if not isinstance(v, EncodingSchedule)
-                    and v != sys.float_info.max
-                    and not math.isinf(v)
-                ]
-            )
+        my_hash = sum(
+            [
+                v
+                for _, v in self.values.items()
+                if not isinstance(v, EncodingSchedule)
+                and v != POS_INFINITY
+                and v != NEG_INFINITY
+            ]
         )
+
+        return int(my_hash) if not math.isinf(my_hash) else 0
 
     def __eq__(self, other):
         if isinstance(other, Point):

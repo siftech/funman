@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import And, Implies, Not, Solver
+from pysmt.shortcuts import And, Implies, Not, Or, Solver
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman import (
@@ -260,9 +260,9 @@ class BoxSearchEpisode(SearchEpisode):
     def _add_false_point(
         self, box: Box, point: Point, explanation: Explanation = None
     ):
-        l.debug(f"Adding false point: {point}")
+        l.trace(f"Adding false point: {point}")
         if point in self._true_points:
-            l.debug(
+            l.trace(
                 f"Point: {point} is marked false, but already marked true."
             )
         point.label = LABEL_FALSE
@@ -276,9 +276,9 @@ class BoxSearchEpisode(SearchEpisode):
         # self.statistics.iteration_operation.put("t")
 
     def _add_true_point(self, box: Box, point: Point):
-        l.debug(f"Adding true point: {point}")
+        l.trace(f"Adding true point: {point}")
         if point in self._false_points:
-            l.debug(
+            l.trace(
                 f"Point: {point} is marked true, but already marked false."
             )
         point.label = LABEL_TRUE
@@ -347,21 +347,17 @@ class BoxSearch(Search):
             parameters=episode.problem.model_parameters(),
         )
         episode.statistics._iteration_operation.put("s")
-        bw = box.width(
+        bw = box.volume(
             normalize=normalize, parameters=episode.problem.model_parameters()
         )
-        b1w = b1.width(
-            normalize=normalize,
-            parameters=episode.problem.model_parameters(),
-            overwrite_cache=True,
+        b1w = b1.volume(
+            normalize=normalize, parameters=episode.problem.model_parameters()
         )
-        b2w = b2.width(
-            normalize=normalize,
-            parameters=episode.problem.model_parameters(),
-            overwrite_cache=True,
+        b2w = b2.volume(
+            normalize=normalize, parameters=episode.problem.model_parameters()
         )
-        l.debug(
-            f"Split box with width = {bw:.5f} into boxes with widths = [{b1w:.5f}, {b2w:.5f}]"
+        l.trace(
+            f"Split box with volume = {bw:.5f} into boxes with volumes = [{b1w:.5f}, {b2w:.5f}]"
         )
         return episode._add_unknown([b1, b2])
 
@@ -555,8 +551,11 @@ class BoxSearch(Search):
             ).items()
             if k.relevant_at_time(timepoint)
         }
+
+        # Not all assumptions hold
         formula = Not(And([v for k, v in assumptions.items()]))
 
+        # An assumption must hold at all times to hold overall
         formula1 = And(
             [
                 Implies(
@@ -569,10 +568,13 @@ class BoxSearch(Search):
                     v,
                 )
                 for k, v in assumptions.items()
+                if k.constraint.time_dependent()
             ]
         )
 
-        formula2 = And(
+        # Each Assumption has held at all times previously, so check that it does not hold currently.
+        # Need at least one to not hold currently.
+        formula2 = Or(
             [
                 And(
                     [
@@ -588,10 +590,16 @@ class BoxSearch(Search):
                     ]
                 )
                 for k, v in assumptions.items()
+                if k.constraint.time_dependent()
+            ]
+            + [
+                Not(encoder.encode_assumption(k, options))
+                for k, v in assumptions.items()
+                if not k.constraint.time_dependent()
             ]
         )
 
-        formulas = And([formula, formula1, formula2])
+        formulas = And([formula, formula1, formula2]).simplify()
 
         episode._formula_stack.add_assertion(formulas)
 
@@ -649,6 +657,7 @@ class BoxSearch(Search):
                     v,
                 )
                 for k, v in assumptions.items()
+                if k.constraint.time_dependent()
             ]
         )
 
@@ -661,10 +670,11 @@ class BoxSearch(Search):
                     ]
                 )
                 for k, v in assumptions.items()
+                if k.constraint.time_dependent()
             ]
         )
 
-        formulas = And([formula, formula1, formula2])
+        formulas = And([formula, formula1, formula2]).simplify()
 
         episode._formula_stack.add_assertion(formulas)
 
@@ -921,8 +931,8 @@ class BoxSearch(Search):
         episode : BoxSearchEpisode
             Shared search data and statistics.
         """
-        process_name = f"Expander_{idx}_p{os.getpid()}"
-        l = self._logger(episode.config, process_name=process_name)
+        process_name = f"Expander_{(idx if idx else 'S')}_p{os.getpid()}"
+        # l = self._logger(episode.config, process_name=process_name)
 
         try:
             if episode.config.solver == "dreal":
@@ -952,7 +962,7 @@ class BoxSearch(Search):
                     try:
                         box: Box = episode._get_unknown()
                         rval.put(box.model_dump())
-                        l.info(f"{process_name} claimed work")
+                        l.trace(f"{process_name} claimed work")
                     except Empty:
                         exit = self._handle_empty_queue(
                             process_name,
@@ -968,6 +978,12 @@ class BoxSearch(Search):
                     else:
                         self._initialize_box(solver, box, episode, options)
 
+                        l.debug(
+                            "\n"
+                            + all_results["parameter_space"].__str__(
+                                dropped_boxes=all_results["dropped_boxes"]
+                            )
+                        )
                         # (point, no_witness_explanation) = self._find_witness_points(
                         #     solver, episode, box, rval, options
                         # )
@@ -1003,7 +1019,7 @@ class BoxSearch(Search):
                                     episode,
                                     points=[true_points, false_points],
                                 ):
-                                    l.info(f"{process_name} produced work")
+                                    l.trace(f"{process_name} produced work")
                                 else:
                                     rval.put(box.model_dump())
                                 if episode.config.number_of_processes > 1:
@@ -1013,7 +1029,8 @@ class BoxSearch(Search):
                                     if more_work:
                                         with more_work:
                                             more_work.notify_all()
-                                l.debug(f"XXX [{box.width()}] Split({box})")
+                                l.debug(f"Split @ {box.timestep().lb}")
+                                l.trace(f"XXX Split:\n{box}")
                             else:
                                 # box does not intersect f, so it is in t (true region)
                                 curr_step_box = box.current_step()
@@ -1022,9 +1039,9 @@ class BoxSearch(Search):
                                     explanation=not_false_explanation,
                                 )
                                 rval.put(curr_step_box.model_dump())
-                                l.debug(
-                                    f"+++ [{box.width()}] True({curr_step_box})"
-                                )
+                                l.debug(f"True @ {box.timestep().lb}")
+                                l.trace(f"+++ True:\n{box}")
+
                                 if episode.config.corner_points:
                                     corner_points: List[
                                         Point
@@ -1057,7 +1074,8 @@ class BoxSearch(Search):
                                 box, explanation=not_true_explanation
                             )  # TODO consider merging lists of boxes
 
-                            l.debug(f"--- [{box.width()}] False({box})")
+                            l.debug(f"False @ {box.timestep().lb}")
+                            l.trace(f"--- False:\n{box}")
                             if episode.config.corner_points:
                                 corner_points: List[
                                     Point
@@ -1076,7 +1094,7 @@ class BoxSearch(Search):
                             handler(rval, episode.config, all_results)
                             if "progress" in all_results:
                                 l.info(all_results["progress"])
-                        l.info(f"{process_name} finished work")
+                        l.trace(f"{process_name} finished work")
                 self._initialize_encoding(
                     solver, episode, options, None
                 )  # Reset solver stack to empty
@@ -1161,7 +1179,9 @@ class BoxSearch(Search):
             # handler.open()
             while True:
                 try:
-                    result: dict = rval.get(timeout=config.queue_timeout)
+                    result = None
+                    if not rval.empty():
+                        result: dict = rval.get(timeout=config.queue_timeout)
                 except Empty:
                     break
                 except KeyboardInterrupt:

@@ -71,6 +71,9 @@ class FunmanProgress(BaseModel):
     coverage_of_search_space: float = 0.0
     coverage_of_representable_space: float = 0.0
 
+    def __str__(self) -> str:
+        return f"progress: {self.progress:.5f}"
+
 
 class FunmanWorkUnit(BaseModel):
     """
@@ -182,9 +185,9 @@ class FunmanResults(BaseModel):
         # TODO handle copy?
         self.parameter_space = results
         # compute volumes
-        labeled_volume = results.labeled_volume()
+        labeled_volume = results.labeled_volume(scenario)
         # TODO precompute and cache?
-        search_volume = scenario.search_space_volume()
+        search_volume = scenario.search_space_volume(normalize=True)
         # TODO precompute and cache?
         repr_volume = scenario.representable_space_volume()
         # compute ratios

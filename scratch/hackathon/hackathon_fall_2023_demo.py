@@ -19,12 +19,204 @@ def main():
         EXAMPLE_DIR, "requests", "BIOMD0000000955_askenet_request.json"
     )
 
+    request_dict = {
+        "parameters": [
+            {
+                "name": "beta",
+                "interval": {
+                    "lb": 0.011,
+                    "ub": 0.011,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.008799999999999999, "ub": 0.0132},
+            },
+            {
+                "name": "gamma",
+                "interval": {
+                    "lb": 0.456,
+                    "ub": 0.456,
+                    "closed_upper_bound": True,
+                }
+                #  "interval": {"lb": 0.3648, "ub": 0.5472}
+            },
+            {
+                "name": "delta",
+                "interval": {
+                    "lb": 0.011,
+                    "ub": 0.011,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.008799999999999999, "ub": 0.0132},
+            },
+            {
+                "name": "alpha",
+                "interval": {
+                    "lb": 0.57,
+                    "ub": 0.57,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {
+                #     "lb": 0.45599999999999996,
+                #     "ub": 0.6839999999999999,
+                # },
+            },
+            {
+                "name": "epsilon",
+                "interval": {"lb": 0.1368, "ub": 0.20520000000000002},
+                "label": "all",
+            },
+            {
+                "name": "zeta",
+                "interval": {
+                    "lb": 0.125,
+                    "ub": 0.125,
+                    "closed_upper_bound": True,
+                }
+                #  "interval": {"lb": 0.1, "ub": 0.15}
+            },
+            {
+                "name": "lambda",
+                "interval": {
+                    "lb": 0.034,
+                    "ub": 0.034,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.027200000000000002, "ub": 0.0408},
+            },
+            {
+                "name": "eta",
+                "interval": {
+                    "lb": 0.125,
+                    "ub": 0.125,
+                    "closed_upper_bound": True,
+                }
+                #  "interval": {"lb": 0.1, "ub": 0.15}
+            },
+            {
+                "name": "rho",
+                "interval": {
+                    "lb": 0.034,
+                    "ub": 0.034,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.027200000000000002, "ub": 0.0408},
+            },
+            {
+                "name": "theta",
+                "interval": {"lb": 0.2968, "ub": 0.4452},
+                "label": "all",
+            },
+            {
+                "name": "kappa",
+                "interval": {
+                    "lb": 0.017,
+                    "ub": 0.017,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
+            },
+            {
+                "name": "mu",
+                "interval": {
+                    "lb": 0.017,
+                    "ub": 0.017,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
+            },
+            {
+                "name": "nu",
+                "interval": {
+                    "lb": 0.027,
+                    "ub": 0.027,
+                    "closed_upper_bound": True,
+                }
+                #   "interval": {"lb": 0.0216, "ub": 0.0324}
+            },
+            {
+                "name": "xi",
+                "interval": {
+                    "lb": 0.017,
+                    "ub": 0.017,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
+            },
+            {
+                "name": "tau",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.01,
+                    "closed_upper_bound": True,
+                }
+                #  "interval": {"lb": 0.008, "ub": 0.012}
+            },
+            {
+                "name": "sigma",
+                "interval": {
+                    "lb": 0.017,
+                    "ub": 0.017,
+                    "closed_upper_bound": True,
+                }
+                # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
+            },
+        ],
+        "constraints": [
+            {
+                "name": "theta_epsilon",
+                "additive_bounds": {"lb": 0},
+                "variables": ["theta", "epsilon"],
+                "weights": [1, -2],
+                # No timepoints, because the variables are parameters
+            },
+            {
+                "name": "infected_maximum1",
+                "variable": "Infected",
+                "interval": {"ub": 0.2},
+                "timepoints": {"lb": 50, "ub": 70, "closed_upper_bound": True},
+            },
+            {
+                "name": "infected_maximum2",
+                "variable": "Infected",
+                "interval": {"ub": 0.1},
+                "timepoints": {"lb": 0, "ub": 50},
+            },
+            {
+                "name": "infected_maximum3",
+                "variable": "Infected",
+                "interval": {"ub": 0.1},
+                "timepoints": {"lb": 71},
+            },
+        ],
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    # {"timepoints": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
+                    {"timepoints": [0, 10]}
+                ],
+            }
+        ],
+        "config": {
+            "use_compartmental_constraints": True,
+            "normalization_constant": 1.0,
+            "tolerance": 1e-1,
+            "verbosity": 10,
+            "dreal_mcts": False,
+            "save_smtlib": False,
+            "substitute_subformulas": False,
+            "series_approximation_threshold": None,
+            "dreal_log_level": "none",
+            "profile": True,
+        },
+    }
+
     # Use request_dict
     results = Runner().run(
         MODEL_PATH,
-        # request_dict,
-        REQUEST_PATH,
-        description="Basic SIR with simple request",
+        request_dict,
+        # REQUEST_PATH,
+        description="SIDARTHE demo",
         case_out_dir="./out",
     )
     points = results.points()
