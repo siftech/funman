@@ -59,8 +59,8 @@ class DRealConverter(Converter, DagWalker):
         # str_formula = str_formula.replace("pow(beta, 2.0)", "beta^2.0")
 
         str_formula = re.sub(
-            r"pow\([a-z]+\, [0-9.]+\)",
-            lambda x: x.group().split(",")[0].split("(")[1]
+            r"pow\([\(\)\-a-z0-9\_ ]+\, [0-9.]+\)",
+            lambda x: x.group().split(",")[0].split("(", 1)[1]
             + "^"
             + x.group().split(",")[1].split(")")[0].strip(),
             str_formula,

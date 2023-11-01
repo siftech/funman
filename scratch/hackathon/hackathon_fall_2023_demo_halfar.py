@@ -11,20 +11,40 @@ def main():
     RESOURCES = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), "../../resources"
     )
-    EXAMPLE_DIR = os.path.join(RESOURCES, "amr", "petrinet", "mira")
-    MODEL_PATH = os.path.join(
-        EXAMPLE_DIR, "models", "BIOMD0000000955_askenet.json"
-    )
-    REQUEST_PATH = os.path.join(
-        EXAMPLE_DIR, "requests", "BIOMD0000000955_askenet_request.json"
-    )
+    EXAMPLE_DIR = os.path.join(RESOURCES, "amr", "halfar")
+    MODEL_PATH = os.path.join(EXAMPLE_DIR, "halfar.json")
+    REQUEST_PATH = os.path.join(EXAMPLE_DIR, "halfar_request.json")
+
+    request_dict = {
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    # {"timepoints": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
+                    {"timepoints": [0, 1]}
+                ],
+            }
+        ],
+        "config": {
+            "use_compartmental_constraints": False,
+            "normalization_constant": 1.0,
+            "tolerance": 1e-1,
+            "verbosity": 5,
+            "dreal_mcts": True,
+            "save_smtlib": True,
+            "substitute_subformulas": False,
+            "series_approximation_threshold": None,
+            "dreal_log_level": "info",
+            "profile": False,
+        },
+    }
 
     # Use request_dict
     results = Runner().run(
         MODEL_PATH,
-        # request_dict,
-        REQUEST_PATH,
-        description="Basic SIR with simple request",
+        request_dict,
+        # REQUEST_PATH,
+        description="SIDARTHE demo",
         case_out_dir="./out",
     )
     points = results.points()

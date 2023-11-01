@@ -113,9 +113,9 @@ class Search(ABC):
         pass
 
     def invoke_solver(self, s: Solver) -> Union[pysmtModel, BoxExplanation]:
-        l.debug("Invoking solver ...")
+        l.trace("Invoking solver ...")
         result = s.solve()
-        l.debug(f"Solver result = {result}")
+        l.trace(f"Solver result = {result}")
         if result:
             result = s.get_model()
         else:

@@ -41,6 +41,7 @@ class Box(BaseModel):
             p: Interval.from_value(v) for p, v in point.values.items()
         }
         box.points.append(point)
+        box.label = point.label
         return box
 
     def true_points(self) -> List[Point]:
@@ -251,7 +252,15 @@ class Box(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
+        bounds_str = "\n".join(
+            [
+                f"{k}:\t{str(v)}\t({v.width():.5f})"
+                for k, v in self.bounds.items()
+            ]
+        )
+        box_str = f"Box(label: {self.label}\nwidth: {self.width()},\ntimepoints: {Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)},\n{bounds_str}\n)"
+        return box_str
+        # return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
 
     def finite(self) -> bool:
         """
@@ -514,6 +523,10 @@ class Box(BaseModel):
             num_timepoints = Decimal(
                 int(self.timestep().ub) + 1 - int(self.timestep().lb)
             ).to_integral_exact(rounding=ROUND_CEILING)
+            if normalize is not None:
+                num_timepoints = num_timepoints / Decimal(
+                    len(self.schedule.timepoints)
+                )
         elif "num_steps" in widths:
             del widths["num_steps"]
             # TODO this timepoint computation could use more thought

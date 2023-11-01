@@ -301,16 +301,23 @@ class Encoder(ABC, BaseModel):
     ) -> EncodedFormula:
         assumption = next(a for a in assumptions if a.constraint == constraint)
         assumption_symbol = self.encode_assumption(assumption, options)
-        timed_assumption_symbol = self.encode_assumption(
-            assumption, options, layer_idx=layer_idx
-        )
 
-        # Assumption is the same at all timepoints and it is equisatisfiable with the encoded_constraint
-        assumed_constraint = And(
-            # Iff(assumption_symbol, timed_assumption_symbol),
-            Implies(assumption_symbol, timed_assumption_symbol),
-            Iff(timed_assumption_symbol, encoded_constraint[0]),
-        )
+        # The assumption is timed if the constraint has a timed variable
+        if constraint.time_dependent():
+            timed_assumption_symbol = self.encode_assumption(
+                assumption, options, layer_idx=layer_idx
+            )
+
+            # Assumption is the same at all timepoints and it is equisatisfiable with the encoded_constraint
+            assumed_constraint = And(
+                # Iff(assumption_symbol, timed_assumption_symbol),
+                Implies(assumption_symbol, timed_assumption_symbol),
+                Iff(timed_assumption_symbol, encoded_constraint[0]),
+            )
+        else:
+            assumed_constraint = And(
+                Iff(assumption_symbol, encoded_constraint[0]),
+            )
         symbols = {k: v for k, v in encoded_constraint[1].items()}
         symbols[str(assumption_symbol)] = assumption_symbol
         return (assumed_constraint, symbols)
@@ -711,11 +718,18 @@ class Encoder(ABC, BaseModel):
         vars: List[str] = constraint.variables
         weights: List[int | float] = constraint.weights
         timestep = options.schedule.time_at_step(layer_idx)
+        parameters = scenario.parameters
+        encoded_vars = [
+            self._encode_state_var(v)
+            if len([p for p in parameters if p.name == v]) > 0
+            else self._encode_state_var(v, time=timestep)
+            for v in vars
+        ]
         expression = Plus(
             [
                 Times(
                     Real(weights[i]),
-                    self._encode_state_var(vars[i], time=timestep),
+                    encoded_vars[i],
                 )
                 for i in range(len(vars))
             ]

@@ -98,7 +98,8 @@ class Interval(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Interval([{self.lb}, {self.ub}))"
+        ub = "]" if self.closed_upper_bound else ")"
+        return f"[{self.lb:.5f}, {self.ub:.5f}{ub}"
 
     def meets(self, other: "Interval") -> bool:
         """

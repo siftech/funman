@@ -16,6 +16,7 @@ from funman.server.query import (
     FunmanWorkRequest,
     FunmanWorkUnit,
 )
+from funman.utils import math_utils
 
 from ..representation.parameter_space import ParameterSpace
 

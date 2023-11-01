@@ -62,7 +62,7 @@ class SMTCheck(Search):
                 parameter_space,
                 schedule,
             )
-
+            timestep = len(schedule.timepoints)
             if result is not None and isinstance(result, pysmtModel):
                 result_dict = result.to_dict() if result else None
                 l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
@@ -79,8 +79,9 @@ class SMTCheck(Search):
                         label=LABEL_TRUE,
                         schedule=schedule,
                     )
-                    point.values["timestep"] = schedule.time_at_step(
-                        len(schedule.timepoints) - 1
+
+                    point.values["timestep"] = Interval(
+                        lb=timestep, ub=timestep, closed_upper_bound=True
                     )
                     if config.normalize:
                         denormalized_point = point.denormalize(problem)
@@ -91,11 +92,14 @@ class SMTCheck(Search):
             elif result is not None and isinstance(result, Explanation):
                 box = Box(
                     bounds={
-                        p.name: Interval(lb=p.interval.lb, ub=p.interval.ub)
+                        p.name: p.interval.model_copy()
                         for p in problem.parameters
                     },
                     label=LABEL_FALSE,
                     explanation=result,
+                )
+                box.bounds["timestep"] = Interval(
+                    lb=timestep, ub=timestep, closed_upper_bound=True
                 )
                 parameter_space.false_boxes.append(box)
             if resultsCallback:

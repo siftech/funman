@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
 from pydantic import BaseModel
 
+from ..constants import LABEL_DROPPED, LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN
 from . import Interval, Point
 from .box import Box
 from .interval import Interval
@@ -24,6 +25,25 @@ class ParameterSpace(BaseModel):
     true_boxes: List[Box] = []
     false_boxes: List[Box] = []
     unknown_points: List[Point] = []
+
+    def __str__(self, dropped_boxes=[]) -> str:
+        box_labels = {
+            LABEL_TRUE: "+",
+            LABEL_FALSE: "-",
+            LABEL_DROPPED: "x",
+            LABEL_UNKNOWN: "?",
+        }
+        boxes = self.boxes()
+        steps = {}
+        for box in boxes + dropped_boxes:
+            label = box_labels[box.label]
+            for step in range(
+                int(box.timestep().lb), int(box.timestep().ub) + 1
+            ):
+                boxes_at_step = steps.get(step, [])
+                boxes_at_step.append(label)
+                steps[step] = boxes_at_step
+        return "\n".join([f"{k}:[{''.join(v)}]" for k, v in steps.items()])
 
     def true_points(self) -> List[Point]:
         return [pt for b in self.true_boxes for pt in b.true_points()]
@@ -283,17 +303,23 @@ class ParameterSpace(BaseModel):
         self.true_boxes = self._box_list_compact(self.true_boxes)
         self.false_boxes = self._box_list_compact(self.false_boxes)
 
-    def labeled_volume(self):
-        self._compact()
+    def labeled_volume(self, scenario: "AnalysisScenario"):
+        # self._compact()
         labeled_vol = 0
         # TODO should actually be able to compact the true and false boxes together, since they are both labeled.
         # TODO can calculate the percentage of the total parameter space.  Is there an efficient way to get the initial PS so we can find the volume of that box? or to access unknown boxes?
         for box in self.true_boxes:
-            true_volume = box.volume()
+            true_volume = box.volume(
+                parameters=scenario.model_parameters(),
+                normalize=scenario._original_parameter_widths,
+            )
             labeled_vol += true_volume
 
         for box in self.false_boxes:
-            false_volume = box.volume()
+            false_volume = box.volume(
+                parameters=scenario.model_parameters(),
+                normalize=scenario._original_parameter_widths,
+            )
             labeled_vol += false_volume
         return labeled_vol
 
