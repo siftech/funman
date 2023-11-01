@@ -429,6 +429,7 @@ class FunmanResults(BaseModel):
         ylabel="Population",
         label_marker={"true": "+", "false": "o"},
         label_color={"true": "g", "false": "r"},
+        legend=None,
         **kwargs,
     ):
         """
@@ -471,7 +472,8 @@ class FunmanResults(BaseModel):
                     **kwargs,
                 )
                 ax = df.plot(label=label, marker=label_marker[label], **kwargs)
-        # plt.legend()
+        if legend:
+            plt.legend(legend)
         if log_y:
             ax.set_yscale("symlog")
             plt.ylim(bottom=0)

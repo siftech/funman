@@ -43,7 +43,7 @@ class ParameterSpace(BaseModel):
                 boxes_at_step = steps.get(step, [])
                 boxes_at_step.append(label)
                 steps[step] = boxes_at_step
-        return "\n".join([f"{k}:[{''.join(v)}]" for k, v in steps.items()])
+        return "\n".join([f"{k}:\t[{''.join(v)}]" for k, v in steps.items()])
 
     def true_points(self) -> List[Point]:
         return [pt for b in self.true_boxes for pt in b.true_points()]

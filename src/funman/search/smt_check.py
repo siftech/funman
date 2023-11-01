@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import sys
 import threading
 from typing import Callable, Optional, Tuple, Union
@@ -27,7 +28,7 @@ from .search import Search, SearchEpisode
 
 
 l = logging.getLogger(__file__)
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+
 
 
 class SMTCheck(Search):
@@ -80,9 +81,8 @@ class SMTCheck(Search):
                         schedule=schedule,
                     )
 
-                    point.values["timestep"] = Interval(
-                        lb=timestep, ub=timestep, closed_upper_bound=True
-                    )
+                    point.values["timestep"] = timestep
+                    
                     if config.normalize:
                         denormalized_point = point.denormalize(problem)
                         point = denormalized_point
@@ -170,6 +170,8 @@ class SMTCheck(Search):
         s.push(1)
         s.add_assertion(formula)
         if episode.config.save_smtlib:
+            filename = os.path.join(os.getcwd(), "dbg_steps.smt2")
+            l.trace(f"Saving smt file: {filename}")
             self.store_smtlib(
                 formula,
                 filename=f"dbg_steps.smt2",

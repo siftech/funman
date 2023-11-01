@@ -20,8 +20,7 @@ def main():
             {
                 "name": "schedules",
                 "schedules": [
-                    # {"timepoints": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
-                    {"timepoints": [0, 1]}
+                    {"timepoints": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
                 ],
             }
         ],
@@ -29,22 +28,22 @@ def main():
             "use_compartmental_constraints": False,
             "normalization_constant": 1.0,
             "tolerance": 1e-1,
-            "verbosity": 5,
+            "verbosity": 10,
             "dreal_mcts": True,
             "save_smtlib": True,
             "substitute_subformulas": False,
             "series_approximation_threshold": None,
-            "dreal_log_level": "info",
+            "dreal_log_level": "none",
             "profile": False,
         },
     }
 
     # Use request_dict
-    results = Runner().run(
+    results: FunmanResults = Runner().run(
         MODEL_PATH,
         request_dict,
         # REQUEST_PATH,
-        description="SIDARTHE demo",
+        description="Halfar demo",
         case_out_dir="./out",
     )
     points = results.points()
