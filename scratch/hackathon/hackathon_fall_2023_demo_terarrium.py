@@ -172,28 +172,42 @@ def main():
             {
                 "name": "infected_maximum1",
                 "variable": "Infected",
-                "interval": {"ub": 0.2},
-                "timepoints": {"lb": 50, "ub": 70, "closed_upper_bound": True},
+                "interval": {"lb": 0.01, "ub": 0.05},
+                "timepoints": {"lb": 50, "ub": 75, "closed_upper_bound": True},
             },
             {
                 "name": "infected_maximum2",
                 "variable": "Infected",
-                "interval": {"ub": 0.1},
+                "interval": {"ub": 0.03},
                 "timepoints": {"lb": 0, "ub": 50},
             },
             {
                 "name": "infected_maximum3",
                 "variable": "Infected",
-                "interval": {"ub": 0.1},
-                "timepoints": {"lb": 71},
+                "interval": {"ub": 0.03},
+                "timepoints": {"lb": 76},
             },
         ],
         "structure_parameters": [
             {
                 "name": "schedules",
                 "schedules": [
-                    # {"timepoints": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
-                    {"timepoints": [0, 10]}
+                    {
+                        "timepoints": [
+                            0,
+                            10,
+                            20,
+                            30,
+                            40,
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            100,
+                        ]
+                    }
+                    # {"timepoints": [0, 10]}
                 ],
             }
         ],
@@ -206,8 +220,8 @@ def main():
             "save_smtlib": False,
             "substitute_subformulas": False,
             "series_approximation_threshold": None,
-            "dreal_log_level": "none",
-            "profile": True,
+            "dreal_log_level": "info",
+            "profile": False,
         },
     }
 

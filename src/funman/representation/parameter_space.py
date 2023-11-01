@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
 from pydantic import BaseModel
 
-from ..constants import LABEL_DROPPED, LABEL_FALSE, LABEL_TRUE
+from ..constants import LABEL_DROPPED, LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN
 from . import Interval, Point
 from .box import Box
 from .interval import Interval
@@ -27,7 +27,12 @@ class ParameterSpace(BaseModel):
     unknown_points: List[Point] = []
 
     def __str__(self, dropped_boxes=[]) -> str:
-        box_labels = {LABEL_TRUE: "+", LABEL_FALSE: "-", LABEL_DROPPED: "x"}
+        box_labels = {
+            LABEL_TRUE: "+",
+            LABEL_FALSE: "-",
+            LABEL_DROPPED: "x",
+            LABEL_UNKNOWN: "?",
+        }
         boxes = self.boxes()
         steps = {}
         for box in boxes + dropped_boxes:

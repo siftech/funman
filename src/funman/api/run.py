@@ -215,7 +215,7 @@ class Runner:
                 l.info(f"Dumping results to {outfile}")
                 results = self._worker.get_results(work_unit.id)
                 with open(outfile, "w") as f:
-                    f.write(results.model_dump_json())
+                    f.write(results.model_dump_json(by_alias=True))
                 # ParameterSpacePlotter(
                 #     results.parameter_space, plot_points=True
                 # ).plot(show=False)

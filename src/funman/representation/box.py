@@ -41,6 +41,7 @@ class Box(BaseModel):
             p: Interval.from_value(v) for p, v in point.values.items()
         }
         box.points.append(point)
+        box.label = point.label
         return box
 
     def true_points(self) -> List[Point]:

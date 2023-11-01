@@ -424,6 +424,9 @@ class FunmanResults(BaseModel):
         variables=None,
         log_y=False,
         max_time=None,
+        title="Point Trajectories",
+        xlabel="Time",
+        ylabel="Population",
         label_marker={"true": "+", "false": "o"},
         label_color={"true": "g", "false": "r"},
         **kwargs,
@@ -473,6 +476,9 @@ class FunmanResults(BaseModel):
             ax.set_yscale("symlog")
             plt.ylim(bottom=0)
         # plt.show(block=False)
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         return ax
 
     def explain(self) -> Explanation:

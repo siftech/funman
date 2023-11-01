@@ -7,6 +7,7 @@ from pysmt.shortcuts import REAL, Div, Real, Symbol
 
 from funman.utils.sympy_utils import substitute, to_sympy
 
+from ..representation.interval import Interval
 from .generated_models.petrinet import Model as GeneratedPetrinet
 from .generated_models.petrinet import State, Transition
 from .model import Model
@@ -161,6 +162,7 @@ class AbstractPetriNetModel(Model):
                     "closed_upper_bound": True,
                 },
                 variables=vars,
+                timepoints=Interval(lb=0.0),
                 soft=False,
             )
         ] + [
@@ -168,6 +170,7 @@ class AbstractPetriNetModel(Model):
                 name=f"compartmental_{v}_nonnegative",
                 additive_bounds={"lb": 0},
                 variables=[v],
+                timepoints=Interval(lb=0.0),
                 soft=False,
             )
             for v in vars

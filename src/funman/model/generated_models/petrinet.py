@@ -10,7 +10,7 @@ from pydantic import AnyUrl, BaseModel, ConfigDict, Field, RootModel
 
 
 class Header(BaseModel):
-    model_config = ConfigDict(protected_namespaces=())
+    model_config = ConfigDict(protected_namespaces=(), populate_by_name=True)
     name: str
     schema_: AnyUrl = Field(..., alias="schema")
     schema_name: Optional[str] = None
