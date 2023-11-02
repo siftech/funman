@@ -193,7 +193,7 @@ class AnalysisScenario(ABC, BaseModel):
         else:
             space_time_slice_volume = Decimal(1.0)
         assert (
-            self.empty_volume_ok or not normalize or abs(space_time_slice_volume -1.0)<=Decimal(1e-8)
+            self.empty_volume_ok or not normalize or abs(space_time_slice_volume -Decimal(1.0))<=Decimal(1e-8)
         ), f"Normalized space volume is not 1.0, computed = {space_time_slice_volume}"
         space_volume = (
             space_time_slice_volume
