@@ -169,24 +169,33 @@ def main():
                 "weights": [1, -2],
                 # No timepoints, because the variables are parameters
             },
+            # {
+            #     "name": "infected_maximum1",
+            #     "variable": "Infected",
+            #     "interval": {"lb": 0.1, "ub": 0.4},
+            #     "timepoints": {"lb": 60, "ub": 80, "closed_upper_bound": True},
+            # },
             {
                 "name": "infected_maximum1",
                 "variable": "Infected",
-                "interval": {"lb": 0.0, "ub": 0.05},
-                "timepoints": {"lb": 50, "ub": 75, "closed_upper_bound": True},
+                "interval": {"lb": 0.0, "ub": 0.5},
+                "timepoints": {"lb": 60, "ub": 80, "closed_upper_bound": True},
             },
+
+
+            
             {
                 "name": "infected_maximum2",
                 "variable": "Infected",
-                "interval": {"ub": 0.01},
+                "interval": {"ub": 0.1},
                 "timepoints": {"lb": 0, "ub": 50},
             },
-            {
-                "name": "infected_maximum3",
-                "variable": "Infected",
-                "interval": {"ub": 0.01},
-                "timepoints": {"lb": 76},
-            },
+            # {
+            #     "name": "infected_maximum3",
+            #     "variable": "Infected",
+            #     "interval": {"ub": 0.01},
+            #     "timepoints": {"lb": 76},
+            # },
         ],
         "structure_parameters": [
             {
@@ -221,10 +230,10 @@ def main():
             "tolerance": 1e-2,
             "verbosity": 10,
             "dreal_mcts": True,
-            "save_smtlib": False,
+            # "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
             "substitute_subformulas": False,
             "series_approximation_threshold": None,
-            "dreal_log_level": "info",
+            "dreal_log_level": "none",
             "profile": False,
         },
     }

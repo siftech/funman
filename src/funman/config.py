@@ -56,9 +56,9 @@ class FUNMANConfig(BaseModel):
     """Number of initial boxes for BoxSearch"""
     initial_state_tolerance: float = 0.0
     """Factor used to relax initial state values bounds"""
-    save_smtlib: bool = False
+    save_smtlib: Optional[str] = None
     """Whether to save each smt invocation as an SMTLib file"""
-    dreal_precision: float = 1e-3
+    dreal_precision: float = 1e-1
     """Precision delta for dreal solver"""
     dreal_log_level: str = "off"
     """Constraint noise term to relax constraints"""

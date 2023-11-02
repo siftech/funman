@@ -63,7 +63,7 @@ class SMTCheck(Search):
                 parameter_space,
                 schedule,
             )
-            timestep = len(schedule.timepoints)
+            timestep = len(schedule.timepoints)-1
             if result is not None and isinstance(result, pysmtModel):
                 result_dict = result.to_dict() if result else None
                 l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
@@ -101,6 +101,7 @@ class SMTCheck(Search):
                 box.bounds["timestep"] = Interval(
                     lb=timestep, ub=timestep, closed_upper_bound=True
                 )
+                box.schedule = schedule
                 parameter_space.false_boxes.append(box)
             if resultsCallback:
                 resultsCallback(parameter_space)
@@ -170,7 +171,7 @@ class SMTCheck(Search):
         s.push(1)
         s.add_assertion(formula)
         if episode.config.save_smtlib:
-            filename = os.path.join(os.getcwd(), "dbg_steps.smt2")
+            filename = os.path.join(episode.config.save_smtlib, "dbg_steps.smt2")
             l.trace(f"Saving smt file: {filename}")
             self.store_smtlib(
                 formula,

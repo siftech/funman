@@ -827,7 +827,7 @@ class BoxSearch(Search):
             # Generate a witness
             if episode.config.save_smtlib:
                 self.store_smtlib(
-                    episode, box, filename=f"wp_{episode._iteration}.smt2"
+                    episode, box, filename=os.path.join(episode.config.save_smtlib, f"wp_{episode._iteration}.smt2")
                 )
             result = self.invoke_solver(solver)
             if result is not None and isinstance(result, pysmtModel):

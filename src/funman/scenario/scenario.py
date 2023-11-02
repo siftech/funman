@@ -34,7 +34,7 @@ from funman import (
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import FunmanConstraint
+from funman.representation.constraint import FunmanUserConstraint
 from funman.representation.parameter import NumSteps, Schedules, StepSize
 from funman.utils import math_utils
 
@@ -48,7 +48,9 @@ class AnalysisScenario(ABC, BaseModel):
 
     parameters: List[Parameter]
     normalization_constant: Optional[float] = None
-    constraints: Optional[List[Union[FunmanConstraint]]] = None
+    constraints: Optional[List[Union[FunmanUserConstraint]]] = None
+    """True if its okay when the volume of the search space is empty (e.g., when it is a point)"""
+    empty_volume_ok: bool = False
     model_config = ConfigDict(extra="forbid")
 
     model: Union[
@@ -143,7 +145,7 @@ class AnalysisScenario(ABC, BaseModel):
         # Initialize Assumptions
         # Maintain backward support for query as a single constraint
         if self.query is not None and not isinstance(self.query, QueryTrue):
-            query_constraint = QueryConstraint(name="query", query=self.query)
+            query_constraint = QueryConstraint(name="query", query=self.query, timepoints=Interval(lb=0))
             self.constraints += [query_constraint]
             self._assumptions.append(Assumption(constraint=query_constraint))
 
@@ -172,7 +174,7 @@ class AnalysisScenario(ABC, BaseModel):
             # use num_steps and step_size
             num_steps = self.parameters_of_type(NumSteps)
             step_size = self.parameters_of_type(StepSize)
-            num_timepoints = (num_steps.width() + 1) * (step_size.width() + 1)
+            num_timepoints = (num_steps[0].width() + 1) * (step_size[0].width() + 1)
         return num_timepoints
 
     def search_space_volume(self, normalize: bool = False) -> Decimal:
@@ -191,7 +193,7 @@ class AnalysisScenario(ABC, BaseModel):
         else:
             space_time_slice_volume = Decimal(1.0)
         assert (
-            not normalize or space_time_slice_volume == 1.0
+            self.empty_volume_ok or not normalize or abs(space_time_slice_volume -1.0)<=Decimal(1e-8)
         ), f"Normalized space volume is not 1.0, computed = {space_time_slice_volume}"
         space_volume = (
             space_time_slice_volume
@@ -233,10 +235,19 @@ class AnalysisScenario(ABC, BaseModel):
             # if wrong type, recover structure parameters
             self.parameters = [
                 (
-                    StructureParameter(
+                    NumSteps(
                         name=p.name, interval=Interval(lb=p.lb, ub=p.ub)
                     )
-                    if (p.name == "num_steps" or p.name == "step_size")
+                    if (p.name == "num_steps")
+                    else p
+                )
+                for p in self.parameters
+            ] +            [
+                (
+                    StepSize(
+                        name=p.name, interval=Interval(lb=p.lb, ub=p.ub)
+                    )
+                    if (p.name == "step_size")
                     else p
                 )
                 for p in self.parameters
@@ -244,10 +255,10 @@ class AnalysisScenario(ABC, BaseModel):
             if len(self.structure_parameters()) == 0:
                 # Add the structure parameters if still missing
                 self.parameters += [
-                    StructureParameter(
+                    NumSteps(
                         name="num_steps", interval=Interval(lb=0, ub=0)
                     ),
-                    StructureParameter(
+                    StepSize(
                         name="step_size", interval=Interval(lb=1, ub=1)
                     ),
                 ]

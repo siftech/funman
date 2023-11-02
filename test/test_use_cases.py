@@ -25,9 +25,9 @@ from funman import (
     ResultCombinedHandler,
     SimulationScenario,
     SimulationScenarioResult,
-    SimulatorModel,
-    StructureParameter,
+    SimulatorModel
 )
+from funman.representation.parameter import StepSize, NumSteps
 
 RESOURCES = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "../resources"
@@ -65,10 +65,10 @@ class TestUseCases(unittest.TestCase):
                 ),
                 query=query,
                 parameters=[
-                    StructureParameter(
+                    NumSteps(
                         name="num_steps", interval=Interval(lb=3, ub=3)
                     ),
-                    StructureParameter(
+                    StepSize(
                         name="step_size", interval=Interval(lb=1, ub=1)
                     ),
                 ],
@@ -169,10 +169,10 @@ class TestUseCases(unittest.TestCase):
         scenario = ParameterSynthesisScenario(
             parameters=[
                 ModelParameter(name="beta", interval=Interval(lb=lb, ub=ub)),
-                StructureParameter(
+                NumSteps(
                     name="num_steps", interval=Interval(lb=3, ub=3)
                 ),
-                StructureParameter(
+                StepSize(
                     name="step_size", interval=Interval(lb=1, ub=1)
                 ),
             ],
@@ -190,11 +190,14 @@ class TestUseCases(unittest.TestCase):
             config=FUNMANConfig(
                 # solver="dreal",
                 # dreal_mcts=True,
+                save_smtlib="dlp.smt2",
+                dreal_log_level="info",
                 tolerance=1e-3,
                 number_of_processes=1,
                 normalize=False,
                 simplify_query=False,
                 use_compartmental_constraints=False,
+                verbosity=5,
                 _handler=ResultCombinedHandler(
                     [
                         ResultCacheWriter(f"box_search.json"),
@@ -218,10 +221,10 @@ class TestUseCases(unittest.TestCase):
             model=model,
             query=query,
             parameters=[
-                StructureParameter(
+                NumSteps(
                     name="num_steps", interval=Interval(lb=3, ub=3)
                 ),
-                StructureParameter(
+                StepSize(
                     name="step_size", interval=Interval(lb=1, ub=1)
                 ),
             ],

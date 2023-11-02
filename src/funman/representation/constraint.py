@@ -76,7 +76,7 @@ class ParameterConstraint(Constraint):
         return time == 0
 
 
-class QueryConstraint(Constraint):
+class QueryConstraint(TimedConstraint):
     soft: bool = True
     query: Query
 
@@ -129,4 +129,10 @@ FunmanConstraint = Union[
     StateVariableConstraint,
     LinearConstraint,
     QueryConstraint,
+]
+
+
+FunmanUserConstraint = Union[
+    StateVariableConstraint,
+    LinearConstraint
 ]
