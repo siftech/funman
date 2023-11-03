@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import os
@@ -242,12 +243,36 @@ class Runner:
         return results
 
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "model",
+        type=str,
+        help=f"model json file",
+    )
+    parser.add_argument(
+        "request",
+        type=str,
+        help=f"request json file",
+    )
+    parser.add_argument(
+        "-o",
+        "--outdir",
+        type=str,
+        default="out",
+        help=f"Output directory",
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = get_args()
+    if not os.path.exists(args.outdir):
+        os.mkdir(args.outdir)
+
+    results = Runner().run(args.model, args.request, case_out_dir=args.outdir)
+    print(results.model_dump_json(indent=4))
+
+
 if __name__ == "__main__":
-    model = args[1]
-    request = args[2]
-    out_dir = args[3]
-
-    if not os.path.exists(out_dir):
-        os.mkdir(out_dir)
-
-    Runner().run(model, request, case_out_dir=out_dir)
+    main()

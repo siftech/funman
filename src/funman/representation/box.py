@@ -41,6 +41,7 @@ class Box(BaseModel):
             p: Interval.from_value(v) for p, v in point.values.items()
         }
         box.points.append(point)
+        box.schedule = point.schedule
         box.label = point.label
         return box
 

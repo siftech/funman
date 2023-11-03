@@ -218,15 +218,15 @@
         },
         {
           "target": "h_1",
-          "expression": "10.0"
+          "expression": "0.5"
         },
         {
           "target": "h_2",
-          "expression": "10.0"
+          "expression": "1.0"
         },
         {
           "target": "h_3",
-          "expression": "10.0"
+          "expression": "0.5"
         },
         {
           "target": "h_4",

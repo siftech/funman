@@ -35,4 +35,9 @@ setup(
     extras_require={"dreal": ["funman_dreal"]},
     tests_require=["unittest"],
     zip_safe=False,
+    entry_points={
+        "console_scripts": [
+            "funman=funman.api.run:main",
+        ],
+    },
 )

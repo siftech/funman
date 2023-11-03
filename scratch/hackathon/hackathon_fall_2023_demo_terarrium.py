@@ -169,44 +169,36 @@ def main():
                 "weights": [1, -2],
                 # No timepoints, because the variables are parameters
             },
-            {
-                "name": "infected_maximum1",
-                "variable": "Infected",
-                "interval": {"lb": 0.01, "ub": 0.05},
-                "timepoints": {"lb": 50, "ub": 75, "closed_upper_bound": True},
-            },
-            {
-                "name": "infected_maximum2",
-                "variable": "Infected",
-                "interval": {"ub": 0.03},
-                "timepoints": {"lb": 0, "ub": 50},
-            },
-            {
-                "name": "infected_maximum3",
-                "variable": "Infected",
-                "interval": {"ub": 0.03},
-                "timepoints": {"lb": 76},
-            },
+            # {
+            #     "name": "infected_maximum3",
+            #     "variable": "Infected",
+            #     "interval": { "ub": 0.7},
+            #     "timepoints": {"lb": 130},
+            # },
+            # {
+            #     "name": "infected_maximum1",
+            #     "variable": "Infected",
+            #     "interval": {  "ub": 0.4},
+            #     "timepoints": {"lb": 70, "ub": 75, "closed_upper_bound": True},
+            # },
+            # {
+            #     "name": "infected_maximum2",
+            #     "variable": "Infected",
+            #     "interval": {"ub": 0.2},
+            #     "timepoints": { "ub": 75},
+            # },
+            # {
+            #     "name": "infected_maximum3",
+            #     "variable": "Infected",
+            #     "interval": {"ub": 0.01},
+            #     "timepoints": {"lb": 76},
+            # },
         ],
         "structure_parameters": [
             {
                 "name": "schedules",
                 "schedules": [
-                    {
-                        "timepoints": [
-                            0,
-                            10,
-                            20,
-                            30,
-                            40,
-                            50,
-                            60,
-                            70,
-                            80,
-                            90,
-                            100,
-                        ]
-                    }
+                    {"timepoints": [0, 10, 30, 50, 70, 90, 110, 130, 150]}
                     # {"timepoints": [0, 10]}
                 ],
             }
@@ -214,13 +206,13 @@ def main():
         "config": {
             "use_compartmental_constraints": True,
             "normalization_constant": 1.0,
-            "tolerance": 1e-1,
+            "tolerance": 1e-5,
             "verbosity": 10,
-            "dreal_mcts": False,
-            "save_smtlib": False,
+            "dreal_mcts": True,
+            # "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
             "substitute_subformulas": False,
             "series_approximation_threshold": None,
-            "dreal_log_level": "info",
+            "dreal_log_level": "none",
             "profile": False,
         },
     }
