@@ -170,26 +170,23 @@ def main():
                 # No timepoints, because the variables are parameters
             },
             # {
+            #     "name": "infected_maximum3",
+            #     "variable": "Infected",
+            #     "interval": { "ub": 0.7},
+            #     "timepoints": {"lb": 130},
+            # },
+            # {
             #     "name": "infected_maximum1",
             #     "variable": "Infected",
-            #     "interval": {"lb": 0.1, "ub": 0.4},
-            #     "timepoints": {"lb": 60, "ub": 80, "closed_upper_bound": True},
+            #     "interval": {  "ub": 0.4},
+            #     "timepoints": {"lb": 70, "ub": 75, "closed_upper_bound": True},
             # },
-            {
-                "name": "infected_maximum1",
-                "variable": "Infected",
-                "interval": {"lb": 0.0, "ub": 0.5},
-                "timepoints": {"lb": 60, "ub": 80, "closed_upper_bound": True},
-            },
-
-
-            
-            {
-                "name": "infected_maximum2",
-                "variable": "Infected",
-                "interval": {"ub": 0.1},
-                "timepoints": {"lb": 0, "ub": 50},
-            },
+            # {
+            #     "name": "infected_maximum2",
+            #     "variable": "Infected",
+            #     "interval": {"ub": 0.2},
+            #     "timepoints": { "ub": 75},
+            # },
             # {
             #     "name": "infected_maximum3",
             #     "variable": "Infected",
@@ -201,25 +198,7 @@ def main():
             {
                 "name": "schedules",
                 "schedules": [
-                    {
-                        "timepoints": [
-                            0,
-                            10,
-                            20,
-                            30,
-                            40,
-                            50,
-                            55,
-                            56,
-                            57,
-                            60,
-                            65,
-                            70,
-                            80,
-                            90,
-                            100,
-                        ]
-                    }
+                    {"timepoints": [0, 10, 30, 50, 70, 90, 110, 130, 150]}
                     # {"timepoints": [0, 10]}
                 ],
             }
@@ -227,7 +206,7 @@ def main():
         "config": {
             "use_compartmental_constraints": True,
             "normalization_constant": 1.0,
-            "tolerance": 1e-2,
+            "tolerance": 1e-5,
             "verbosity": 10,
             "dreal_mcts": True,
             # "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
