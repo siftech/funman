@@ -25,9 +25,9 @@ from funman import (
     ResultCombinedHandler,
     SimulationScenario,
     SimulationScenarioResult,
-    SimulatorModel
+    SimulatorModel,
 )
-from funman.representation.parameter import StepSize, NumSteps
+from funman.representation.parameter import NumSteps, StepSize
 
 RESOURCES = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "../resources"
@@ -65,12 +65,8 @@ class TestUseCases(unittest.TestCase):
                 ),
                 query=query,
                 parameters=[
-                    NumSteps(
-                        name="num_steps", interval=Interval(lb=3, ub=3)
-                    ),
-                    StepSize(
-                        name="step_size", interval=Interval(lb=1, ub=1)
-                    ),
+                    NumSteps(name="num_steps", interval=Interval(lb=3, ub=3)),
+                    StepSize(name="step_size", interval=Interval(lb=1, ub=1)),
                 ],
                 config=FUNMANConfig(
                     solver="dreal",
@@ -169,12 +165,8 @@ class TestUseCases(unittest.TestCase):
         scenario = ParameterSynthesisScenario(
             parameters=[
                 ModelParameter(name="beta", interval=Interval(lb=lb, ub=ub)),
-                NumSteps(
-                    name="num_steps", interval=Interval(lb=3, ub=3)
-                ),
-                StepSize(
-                    name="step_size", interval=Interval(lb=1, ub=1)
-                ),
+                NumSteps(name="num_steps", interval=Interval(lb=3, ub=3)),
+                StepSize(name="step_size", interval=Interval(lb=1, ub=1)),
             ],
             model=model,
             query=query,
@@ -221,12 +213,8 @@ class TestUseCases(unittest.TestCase):
             model=model,
             query=query,
             parameters=[
-                NumSteps(
-                    name="num_steps", interval=Interval(lb=3, ub=3)
-                ),
-                StepSize(
-                    name="step_size", interval=Interval(lb=1, ub=1)
-                ),
+                NumSteps(name="num_steps", interval=Interval(lb=3, ub=3)),
+                StepSize(name="step_size", interval=Interval(lb=1, ub=1)),
             ],
         )
         return scenario

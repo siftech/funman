@@ -35,22 +35,27 @@ class ParameterSpace(BaseModel):
         }
         boxes = self.boxes()
         steps = {}
-        step_timepoints= {}
+        step_timepoints = {}
         for box in boxes + dropped_boxes:
             label = box_labels[box.label]
             for step in range(
                 int(box.timestep().lb), int(box.timestep().ub) + 1
             ):
                 # Boxes may correspond to different schedules, so we combine the steps (and not the timepoints)
-                time_at_step= box.schedule.time_at_step(step)
+                time_at_step = box.schedule.time_at_step(step)
                 step_times = step_timepoints.get(step, set({}))
                 step_times.add(time_at_step)
-                step_timepoints[step] = step_times 
+                step_timepoints[step] = step_times
 
                 boxes_at_step = steps.get(step, [])
                 boxes_at_step.append(label)
                 steps[step] = boxes_at_step
-        return "\n".join([f"{k}{step_timepoints[k]}:\t[{''.join(v)}]" for k, v in steps.items()])
+        return "\n".join(
+            [
+                f"{k}{step_timepoints[k]}:\t[{''.join(v)}]"
+                for k, v in steps.items()
+            ]
+        )
 
     def true_points(self) -> List[Point]:
         return [pt for b in self.true_boxes for pt in b.true_points()]
@@ -321,7 +326,7 @@ class ParameterSpace(BaseModel):
                     parameters=scenario.model_parameters(),
                     normalize=scenario._original_parameter_widths,
                 )
-            else: 
+            else:
                 true_volume = box.volume()
             labeled_vol += true_volume
 

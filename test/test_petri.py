@@ -25,11 +25,17 @@ RESOURCES = os.path.join(
 
 ensemble_files = [
     os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),"../resources/miranet/ensemble/BIOMD0000000955_miranet.json"),
+        os.path.dirname(os.path.abspath(__file__)),
+        "../resources/miranet/ensemble/BIOMD0000000955_miranet.json",
+    ),
     os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),"../resources/miranet/ensemble/BIOMD0000000960_miranet.json"),
+        os.path.dirname(os.path.abspath(__file__)),
+        "../resources/miranet/ensemble/BIOMD0000000960_miranet.json",
+    ),
     os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),"../resources/miranet/ensemble/BIOMD0000000983_miranet.json"),
+        os.path.dirname(os.path.abspath(__file__)),
+        "../resources/miranet/ensemble/BIOMD0000000983_miranet.json",
+    ),
 ]
 
 
