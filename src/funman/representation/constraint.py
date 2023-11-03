@@ -132,7 +132,4 @@ FunmanConstraint = Union[
 ]
 
 
-FunmanUserConstraint = Union[
-    StateVariableConstraint,
-    LinearConstraint
-]
+FunmanUserConstraint = Union[StateVariableConstraint, LinearConstraint]

@@ -15,7 +15,7 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import  FunmanUserConstraint
+from funman.representation.constraint import FunmanUserConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     ModelParameter,
@@ -331,7 +331,7 @@ class FunmanResults(BaseModel):
         a_series = {}  # timeseries as array/list
         timestep = point.timestep()
         max_t = point.schedule.timepoints[timestep]
-        
+
         a_series["index"] = list(range(0, max_t + 1))
         for var, tps in series.items():
             vals = [None] * (int(max_t) + 1)
