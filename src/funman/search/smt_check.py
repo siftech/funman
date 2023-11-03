@@ -175,7 +175,7 @@ class SMTCheck(Search):
             l.trace(f"Saving smt file: {filename}")
             self.store_smtlib(
                 formula,
-                filename=f"dbg_steps.smt2",
+                filename=filename,
             )
         l.trace(f"Solving: {formula.serialize()}")
         result = self.invoke_solver(s)

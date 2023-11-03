@@ -21,6 +21,7 @@
     ],
     "config": {
         "substitute_subformulas": false,
-        "use_compartmental_constraints": false
+        "use_compartmental_constraints": false,
+        "dreal_log_level": "info"
     }
 }
