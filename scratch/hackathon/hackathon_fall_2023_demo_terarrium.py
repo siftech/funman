@@ -62,10 +62,11 @@ def main():
             },
             {
                 "name": "epsilon",
-                "interval": {"lb": 0.1368, 
-                            #  "ub": 0.20520000000000002
-                            "ub": 0.18
-                             },
+                "interval": {
+                    "lb": 0.1368,
+                    #  "ub": 0.20520000000000002
+                    "ub": 0.18,
+                },
                 "label": "all",
             },
             {
@@ -106,10 +107,11 @@ def main():
             },
             {
                 "name": "theta",
-                "interval": {"lb": 0.2968, 
-                            #  "ub": 0.4452
-                            "ub":0.4
-                             },
+                "interval": {
+                    "lb": 0.2968,
+                    #  "ub": 0.4452
+                    "ub": 0.4,
+                },
                 "label": "all",
             },
             {
@@ -175,12 +177,11 @@ def main():
                 "weights": [1, -2],
                 # No timepoints, because the variables are parameters
             },
-             {
+            {
                 "name": "infected_maximum1",
                 "variable": "Infected",
-                "interval": { "lb": 1e-5, "ub": 0.4},
-                "timepoints": {"lb": 50, "ub": 125}
-                
+                "interval": {"lb": 10},
+                "timepoints": {"lb": 10, "ub": 10, "closed_upper_bound": True},
             },
             # {
             #     "name": "infected_maximum3",
@@ -188,7 +189,6 @@ def main():
             #     "interval": { "ub": 0.7},
             #     "timepoints": {"lb": 130},
             # },
-           
             # {
             #     "name": "infected_maximum2",
             #     "variable": "Infected",
@@ -206,7 +206,22 @@ def main():
             {
                 "name": "schedules",
                 "schedules": [
-                    {"timepoints": [0, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210]}
+                    {
+                        "timepoints": [
+                            0,
+                            10,
+                            30,
+                            50,
+                            70,
+                            90,
+                            110,
+                            130,
+                            150,
+                            170,
+                            190,
+                            210,
+                        ]
+                    }
                     # {"timepoints": [0, 10]}
                 ],
             }
@@ -214,7 +229,7 @@ def main():
         "config": {
             "use_compartmental_constraints": True,
             "normalization_constant": 1.0,
-            "tolerance": 1e-2,
+            "tolerance": 0.01,
             "verbosity": 10,
             "dreal_mcts": True,
             # "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
@@ -235,8 +250,13 @@ def main():
         case_out_dir="./out",
         dump_plot=False,
         parameters_to_plot=["theta", "epsilon", "timestep"],
-        point_plot_config = {"variables":["Infected"], "label_marker":{"true":",", "false": ","},  "xlabel":"Time", "ylabel":"Infected"},
-        num_points=50
+        point_plot_config={
+            "variables": ["Infected"],
+            "label_marker": {"true": ",", "false": ","},
+            "xlabel": "Time",
+            "ylabel": "Infected",
+        },
+        num_points=50,
     )
     points = results.points()
     boxes = results.parameter_space.boxes()
@@ -249,7 +269,7 @@ def main():
         parameters: Dict[Parameter, float] = results.point_parameters(point)
         print(parameters)
         print(results.dataframe([point]))
-    else:
+    elif len(boxes) > 0:
         # if there are no points, then we have a box that we found without needing points
 
         box = boxes[0]

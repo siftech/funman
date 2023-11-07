@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import And, Implies, Not, Or, Solver
+from pysmt.shortcuts import BOOL, And, Implies, Not, Or, Solver, Symbol
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman import (
@@ -173,12 +173,18 @@ class BoxSearchEpisode(SearchEpisode):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._unknown_boxes = QueueSP()
+        self._unknown_boxes = PQueueSP()
         self.statistics = SearchStatistics()
         if self.config.substitute_subformulas and self.config.simplify_query:
             self._formula_stack._substitutions = self.problem._encodings[
                 self.schedule
             ]._encoder.substitutions(self.schedule)
+
+    def get_candiate_point(self, box: Box) -> Point:
+        return None
+
+    def get_candidate_boxes_for_point(self, point: Point) -> List[Box]:
+        return []
 
     def _initialize_boxes(self, expander_count, schedule: EncodingSchedule):
         # initial_box = self._initial_box()
@@ -187,7 +193,10 @@ class BoxSearchEpisode(SearchEpisode):
         #         f"Did not add an initial box (of width {initial_box.width()}), try reducing config.tolerance, currently {self.config.tolerance}"
         #     )
         initial_boxes = QueueSP()
-        initial_boxes.put(self._initial_box(schedule))
+        initial_box = self._initial_box(schedule)
+
+        initial_boxes.put(initial_box)
+
         num_boxes = 1
         while num_boxes < expander_count:
             b1, b2 = initial_boxes.get().split()
@@ -424,7 +433,7 @@ class BoxSearch(Search):
         ]._encoder.substitutions(options.step_size)
         return formula.substitute(substitutions).simplify()
 
-    def _initialize_encoding(
+    def _initialize_model_encoding(
         self,
         solver: Solver,
         episode: BoxSearchEpisode,
@@ -454,12 +463,13 @@ class BoxSearch(Search):
         else:
             time_difference = box.timestep().lb - episode._formula_stack.time
 
-        if time_difference < 0:
-            # Prepare the formula stack by popping irrelevant layers
-            for i in range(abs(int(time_difference - 1))):
-                episode._formula_stack.pop()
+        # if time_difference < 0:
+        #     # Prepare the formula stack by popping irrelevant layers
+        #     for i in range(abs(int(time_difference - 1))):
+        #         episode._formula_stack.pop()
 
-        elif time_difference > 0:
+        # el
+        if time_difference > 0:
             # Prepare the formulas for each added layer
             layer_formulas = []
             encoding = episode.problem._encodings[box.schedule]
@@ -490,24 +500,36 @@ class BoxSearch(Search):
                                 assumptions=episode.problem._assumptions,
                             )
                         )
-                formula = And(encoded_constraints)
+                formula = Implies(
+                    self._solve_at_step_symbol(t), And(encoded_constraints)
+                )
                 layer_formulas.append(formula)
 
             for layer, formula in enumerate(layer_formulas):
                 episode._formula_stack.push(1)
                 episode._formula_stack.add_assertion(formula)
 
-    def _initialize_box(
+    def _solve_at_step_symbol(self, t: int) -> FNode:
+        return Symbol(f"solve_step_{t}", BOOL)
+
+    def _initialize_model_for_box(
         self,
         solver,
         box: Box,
         episode: BoxSearchEpisode,
         options: EncodingOptions,
     ):
-        self._initialize_encoding(solver, episode, options, box)
+        # Setup the model transitions to evaluate the box
+        self._initialize_model_encoding(solver, episode, options, box)
 
+        formula = self._initialize_box_encoding(box, episode, options)
         episode._formula_stack.push(1)
+        episode._formula_stack.add_assertion(formula)
 
+    def _initialize_box_encoding(
+        self, box: Box, episode: SearchEpisode, options: EncodingOptions
+    ) -> FNode:
+        # Add constraints for boundaries of the box
         projected_box = box.project(
             episode.problem.model_parameters()
         ).project(episode.problem.model_parameters())
@@ -527,7 +549,7 @@ class BoxSearch(Search):
                 )[0]
             )
         formula = And(parameter_formulas)
-        episode._formula_stack.add_assertion(formula)
+        return formula
 
     def _setup_false_query(self, solver, episode, box, options):
         """
@@ -598,10 +620,25 @@ class BoxSearch(Search):
                 if not k.constraint.time_dependent()
             ]
         )
-
-        formulas = And([formula, formula1, formula2]).simplify()
+        activate_steps = self.encoding_step_activation_formula(box)
+        formulas = And(
+            [formula, formula1, formula2, activate_steps]
+        ).simplify()
 
         episode._formula_stack.add_assertion(formulas)
+
+    def encoding_step_activation_formula(self, box: Box) -> FNode:
+        # Activate all steps up to and inclusive of box.timestep.lb
+        # Deactivate all steps from box.timestep.lb + 1 to box.timestep.ub
+        t = int(box.timestep().lb)
+        tmax = len(box.schedule.timepoints) - 1  # int(box.timestep().ub)
+        return And(
+            [self._solve_at_step_symbol(step) for step in range(t + 1)]
+            + [
+                Not(self._solve_at_step_symbol(step))
+                for step in range(t + 1, tmax + 1)
+            ]
+        )
 
     def store_smtlib(self, episode, box, filename="dbg"):
         tmp_name = filename + "_0"
@@ -673,8 +710,10 @@ class BoxSearch(Search):
                 if k.constraint.time_dependent()
             ]
         )
-
-        formulas = And([formula, formula1, formula2]).simplify()
+        activate_steps = self.encoding_step_activation_formula(box)
+        formulas = And(
+            [formula, formula1, formula2, activate_steps]
+        ).simplify()
 
         episode._formula_stack.add_assertion(formulas)
 
@@ -860,20 +899,54 @@ class BoxSearch(Search):
     def _get_true_points(
         self, solver, episode, box, rval, options, my_solver
     ) -> Optional[Union[List[Point], Explanation]]:
-        points, explanation = self._get_points(
-            solver,
-            box,
-            box.true_points(),
-            episode,
-            rval,
-            partial(self._setup_true_query, solver, episode, box, options),
-            episode._add_true_point,
-            my_solver,
-            options,
-            _smtlib_save_fn=partial(self.store_smtlib, episode, box)
-            if episode.config.save_smtlib
-            else None,
-        )
+        # At start, the episode._formula_stack will have model constraints up to box.timestep.lb and box constraints
+        # Each call to self._get_points() will add the "true" assumptions and tries to find a point
+        #
+        # While able to find a point, pop the box constraints and add to the model constraints.
+        original_box_timestep_lb = box.timestep().lb
+        found_point = True
+        explanation = None
+        last_true_point = None
+        while (
+            found_point
+            and box.timestep().lb <= box.timestep().ub
+            and len(box.true_points()) == 0
+        ):
+            points, explanation = self._get_points(
+                solver,
+                box,
+                box.true_points(),
+                episode,
+                rval,
+                partial(self._setup_true_query, solver, episode, box, options),
+                episode._add_true_point,
+                my_solver,
+                options,
+                _smtlib_save_fn=partial(self.store_smtlib, episode, box)
+                if episode.config.save_smtlib
+                else None,
+            )
+            if len(box.points) == 0:
+                # if couldn't find a point, then remove all points from box
+                found_point = False
+                box.points = []
+                box.timestep().ub = last_true_point.timestep()
+            elif box.timestep().lb < box.timestep().ub:
+                episode._formula_stack.pop()  # pop the box constraints
+                last_true_point = box.true_points()[0]
+                box.points = []
+                box.timestep().lb += 1
+                self._initialize_model_for_box(solver, box, episode, options)
+
+        # At end, we should either have a true point that goes through the last step,
+        # or have a true point that ends at an earlier time.
+        if (
+            last_true_point
+            and last_true_point not in box.points
+            and box.timestep().contains_value(last_true_point.timestep())
+        ):
+            box.points.append(last_true_point)
+        box.timestep().lb = original_box_timestep_lb
         return box.true_points(), explanation
 
     def get_box_corners(
@@ -981,7 +1054,11 @@ class BoxSearch(Search):
                         else:
                             continue
                     else:
-                        self._initialize_box(solver, box, episode, options)
+                        l.debug(f"Expanding box: {box}")
+                        # Setup the model constraints up to the box.timestep.lb and add box constraints
+                        self._initialize_model_for_box(
+                            solver, box, episode, options
+                        )
 
                         l.debug(
                             "\n"
@@ -1093,14 +1170,14 @@ class BoxSearch(Search):
                                     my_solver,
                                 )
                             rval.put(box.model_dump())
-                        episode._formula_stack.pop()  # Remove box from solver
+                        episode._formula_stack.pop()  # Remove box constraints from solver
                         episode._on_iteration()
                         if handler:
                             handler(rval, episode.config, all_results)
                             if "progress" in all_results:
                                 l.info(all_results["progress"])
                         l.trace(f"{process_name} finished work")
-                self._initialize_encoding(
+                self._initialize_model_encoding(
                     solver, episode, options, None
                 )  # Reset solver stack to empty
         except KeyboardInterrupt:

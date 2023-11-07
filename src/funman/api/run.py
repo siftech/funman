@@ -2,8 +2,8 @@ import argparse
 import json
 import logging
 import os
-from contextlib import contextmanager
 import random
+from contextlib import contextmanager
 from time import sleep
 from timeit import default_timer
 from typing import Dict, Tuple, Union
@@ -149,10 +149,23 @@ class Runner:
             elapser = None
 
     def run(
-        self, model, request, description="", case_out_dir=".", dump_plot=False, parameters_to_plot=None, point_plot_config={}, num_points=None
+        self,
+        model,
+        request,
+        description="",
+        case_out_dir=".",
+        dump_plot=False,
+        parameters_to_plot=None,
+        point_plot_config={},
+        num_points=None,
     ) -> FunmanResults:
         results = self.run_test_case(
-            (model, request, description), case_out_dir, dump_plot=dump_plot,parameters_to_plot=parameters_to_plot, point_plot_config=point_plot_config, num_points=num_points
+            (model, request, description),
+            case_out_dir,
+            dump_plot=dump_plot,
+            parameters_to_plot=parameters_to_plot,
+            point_plot_config=point_plot_config,
+            num_points=num_points,
         )
         return results
         # ParameterSpacePlotter(
@@ -162,7 +175,15 @@ class Runner:
         # ).plot(show=False)
         # plt.savefig(f"{case_out_dir}/scenario1_base_ps_beta_space.png")
 
-    def run_test_case(self, case, case_out_dir, dump_plot=False,parameters_to_plot=None,point_plot_config={}, num_points=None):
+    def run_test_case(
+        self,
+        case,
+        case_out_dir,
+        dump_plot=False,
+        parameters_to_plot=None,
+        point_plot_config={},
+        num_points=None,
+    ):
         if not os.path.exists(case_out_dir):
             os.mkdir(case_out_dir)
 
@@ -173,7 +194,14 @@ class Runner:
         self._storage.start(self.settings.data_path)
         self._worker.start()
 
-        results = self.run_instance(case, out_dir=case_out_dir, dump_plot=dump_plot, parameters_to_plot=parameters_to_plot, point_plot_config=point_plot_config, num_points=num_points)
+        results = self.run_instance(
+            case,
+            out_dir=case_out_dir,
+            dump_plot=dump_plot,
+            parameters_to_plot=parameters_to_plot,
+            point_plot_config=point_plot_config,
+            num_points=num_points,
+        )
 
         self._worker.stop()
         self._storage.stop()
@@ -192,7 +220,13 @@ class Runner:
         raise Exception(f"Could not determine the Model type of {model_file}")
 
     def run_instance(
-        self, case: Tuple[str, Union[str, Dict], str], out_dir=".", dump_plot=False, parameters_to_plot=None, point_plot_config={}, num_points=None
+        self,
+        case: Tuple[str, Union[str, Dict], str],
+        out_dir=".",
+        dump_plot=False,
+        parameters_to_plot=None,
+        point_plot_config={},
+        num_points=None,
     ):
         killer = GracefulKiller()
         (model_file, request_file, description) = case
@@ -222,19 +256,37 @@ class Runner:
                 with open(outfile, "w") as f:
                     f.write(results.model_dump_json(by_alias=True))
                 if dump_plot:
-                    point_plot_filename = f"{out_dir}/{work_unit.id}_points.png"
-                    l.info(f"Creating plot of point trajectories: {point_plot_filename}")
+                    point_plot_filename = (
+                        f"{out_dir}/{work_unit.id}_points.png"
+                    )
+                    l.info(
+                        f"Creating plot of point trajectories: {point_plot_filename}"
+                    )
                     points = results.parameter_space.points()
-                    if len(points)>0:
-                        points_to_plot = random.choices(points, k=min(len(points),num_points)) if num_points else results.parameter_space.points()
-                        results.plot(points=points_to_plot, **point_plot_config)
+                    if len(points) > 0:
+                        points_to_plot = (
+                            random.choices(
+                                points, k=min(len(points), num_points)
+                            )
+                            if num_points
+                            else results.parameter_space.points()
+                        )
+                        results.plot(
+                            points=points_to_plot, **point_plot_config
+                        )
                         plt.savefig(point_plot_filename)
                         plt.close()
-                    
-                    space_plot_filename = f"{out_dir}/{work_unit.id}_parameter_space.png"
-                    l.info(f"Creating plot of parameter space: {space_plot_filename}")
+
+                    space_plot_filename = (
+                        f"{out_dir}/{work_unit.id}_parameter_space.png"
+                    )
+                    l.info(
+                        f"Creating plot of parameter space: {space_plot_filename}"
+                    )
                     ParameterSpacePlotter(
-                        results.parameter_space, plot_points=False, parameters=parameters_to_plot
+                        results.parameter_space,
+                        plot_points=False,
+                        parameters=parameters_to_plot,
                     ).plot(show=True)
                     plt.savefig(space_plot_filename)
                     plt.close()
