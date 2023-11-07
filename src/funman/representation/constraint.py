@@ -40,7 +40,7 @@ class TimedConstraint(Constraint):
         return (
             self.timepoints.contains_value(time)
             if self.time_dependent()
-            else time == 0
+            else True
         )
 
     def relevant_at_time(self, time: int) -> bool:
@@ -73,7 +73,7 @@ class ParameterConstraint(Constraint):
         return not isinstance(self.parameter, StructureParameter)
 
     def relevant_at_time(self, time: int) -> bool:
-        return time == 0
+        return True  # time == 0
 
 
 class QueryConstraint(TimedConstraint):

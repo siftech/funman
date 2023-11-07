@@ -67,10 +67,14 @@ class Box(BaseModel):
         if self.timestep().lb == self.timestep().ub:
             return None
         else:
-            box = self.model_copy(deep=True)
+            box: Box = self.model_copy(deep=True)
             box.timestep().lb += 1
             # Remove points because they correspond to prior timesteps
-            box.points = []
+            box.points = [
+                pt
+                for pt in self.points
+                if box.timestep().contains_value(pt.timestep())
+            ]
             return box
 
     def corners(self, parameters: List[Parameter] = None) -> List[Point]:
@@ -234,10 +238,18 @@ class Box(BaseModel):
 
     def __lt__(self, other):
         if isinstance(other, Box):
-            if self.timestep().lb == other.timestep().lb:
-                return self.width() > other.width()
+            # prefer boxes with true points
+            # prefer boxes later in time
+            # prefer boxes with smaller width
+            s_t = len(self.true_points())
+            o_t = len(other.true_points())
+            if s_t == o_t:
+                if self.timestep().lb == other.timestep().lb:
+                    return self.width() > other.width()
+                else:
+                    return self.timestep().lb > other.timestep().lb
             else:
-                return self.timestep().lb > other.timestep().lb
+                return s_t > o_t
         else:
             raise Exception(f"Cannot compare __lt__() Box to {type(other)}")
 
@@ -259,7 +271,7 @@ class Box(BaseModel):
                 for k, v in self.bounds.items()
             ]
         )
-        box_str = f"Box(label: {self.label}\nwidth: {self.width()},\ntimepoints: {Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)},\n{bounds_str}\n)"
+        box_str = f"Box(\n|+pts|: {len(self.true_points())}\n|-pts|: {len(self.false_points())}\nlabel: {self.label}\nwidth: {self.width()},\ntimepoints: {Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)},\n{bounds_str}\n)"
         return box_str
         # return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
 
@@ -376,7 +388,9 @@ class Box(BaseModel):
             ]
         )
 
-    def _get_max_width_point_Parameter(self, points: List[List[Point]]):
+    def _get_max_width_point_Parameter(
+        self, points: List[List[Point]], parameters: List[Parameter]
+    ):
         """
         Get the parameter that has the maximum average distance from the center point for each parameter and the value for the parameter assigned by each point.
 
@@ -390,10 +404,11 @@ class Box(BaseModel):
         Parameter
             parameter (dimension of box) where points are most distant from the center of the box.
         """
-        #
+        parameter_names = [p.name for p in parameters]
         group_centers = {
             p: [average([pt.values[p] for pt in grp]) for grp in points]
             for p in self.bounds
+            if p in parameter_names
         }
         centers = {p: average(grp) for p, grp in group_centers.items()}
         # print(points)
@@ -408,7 +423,9 @@ class Box(BaseModel):
             for pt in grp
         ]
         parameter_widths = {
-            p: average([pt[p] for pt in point_distances]) for p in self.bounds
+            p: average([pt[p] for pt in point_distances])
+            for p in self.bounds
+            if p in parameter_names
         }
         # normalized_parameter_widths = {
         #     p: average([pt[p] for pt in point_distances])
@@ -611,14 +628,16 @@ class Box(BaseModel):
         """
         p = None
         if points:
-            p = self._get_max_width_point_Parameter(points)
+            p = self._get_max_width_point_Parameter(
+                points, parameters=parameters
+            )
             if p is not None:
                 mid = self.bounds[p].midpoint(
                     points=[[pt.values[p] for pt in grp] for grp in points]
                 )
                 if mid == self.bounds[p].lb or mid == self.bounds[p].ub:
                     # Fall back to box midpoint if point-based mid is degenerate
-                    p = self._get_max_width_Parameter()
+                    p = self._get_max_width_Parameter(parameter=parameters)
                     mid = self.bounds[p].midpoint()
         if p is None:
             p = self._get_max_width_Parameter(
