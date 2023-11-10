@@ -64,8 +64,8 @@ def main():
                 "name": "epsilon",
                 "interval": {
                     "lb": 0.1368,
-                    #  "ub": 0.20520000000000002
-                    "ub": 0.18,
+                    "ub": 0.20520000000000002
+                    # "ub": 0.18,
                 },
                 "label": "all",
             },
@@ -109,8 +109,8 @@ def main():
                 "name": "theta",
                 "interval": {
                     "lb": 0.2968,
-                    #  "ub": 0.4452
-                    "ub": 0.4,
+                    "ub": 0.4452
+                    # "ub": 0.4,
                 },
                 "label": "all",
             },
@@ -177,12 +177,12 @@ def main():
                 "weights": [1, -2],
                 # No timepoints, because the variables are parameters
             },
-            {
-                "name": "infected_maximum1",
-                "variable": "Infected",
-                "interval": {"lb": 10},
-                "timepoints": {"lb": 10, "ub": 10, "closed_upper_bound": True},
-            },
+            # {
+            #     "name": "infected_maximum1",
+            #     "variable": "Infected",
+            #     "interval": {"lb": 1e-5},
+            #     "timepoints": {"lb": 10, "ub": 10, "closed_upper_bound": True},
+            # },
             # {
             #     "name": "infected_maximum3",
             #     "variable": "Infected",
@@ -222,21 +222,21 @@ def main():
                             210,
                         ]
                     }
-                    # {"timepoints": [0, 10]}
+                    # {"timepoints": [0, 10, 20]}
                 ],
             }
         ],
         "config": {
             "use_compartmental_constraints": True,
             "normalization_constant": 1.0,
-            "tolerance": 0.01,
+            "tolerance": 0.2,
             "verbosity": 10,
             "dreal_mcts": True,
-            # "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
+            "save_smtlib": os.path.join(os.path.dirname(__file__), "./out"),
             "substitute_subformulas": False,
             "series_approximation_threshold": None,
-            "dreal_log_level": "info",
-            "dreal_precision": 1,
+            "dreal_log_level": "none",
+            "dreal_precision": 1e-1,
             "profile": False,
         },
     }
@@ -247,8 +247,8 @@ def main():
         request_dict,
         # REQUEST_PATH,
         description="SIDARTHE demo",
-        case_out_dir="./out",
-        dump_plot=False,
+        case_out_dir=os.path.join(os.path.dirname(__file__), "./out"),
+        dump_plot=True,
         parameters_to_plot=["theta", "epsilon", "timestep"],
         point_plot_config={
             "variables": ["Infected"],

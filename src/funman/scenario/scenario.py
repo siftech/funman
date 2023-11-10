@@ -131,8 +131,7 @@ class AnalysisScenario(ABC, BaseModel):
         self._initialize_encodings(config)
 
         self._original_parameter_widths = {
-            p.name: Decimal(math_utils.minus(p.interval.ub, p.interval.lb))
-            for p in self.model_parameters()
+            p.name: p.interval.original_width for p in self.model_parameters()
         }
 
         return search

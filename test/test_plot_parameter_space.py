@@ -23,12 +23,13 @@ class TestPlotParameterSpace(unittest.TestCase):
     def test_plot(self):
         for job in jobs:
             results_file = os.path.join(RESOURCES, "cached", f"{job}.json")
-            results: FunmanResults = FunmanResults.parse_file(results_file)
-            ParameterSpacePlotter(
-                results.parameter_space, plot_points=True
-            ).plot(show=False)
-            plt.savefig(f"{out_dir}/{results.id}.png")
-            plt.close()
+            with open(results_file, "r") as f:
+                results: FunmanResults = FunmanResults.model_validate(f)
+                ParameterSpacePlotter(
+                    results.parameter_space, plot_points=True
+                ).plot(show=False)
+                plt.savefig(f"{out_dir}/{results.id}.png")
+                plt.close()
 
 
 if __name__ == "__main__":

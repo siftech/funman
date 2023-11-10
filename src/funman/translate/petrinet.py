@@ -195,12 +195,14 @@ class PetrinetEncoder(Encoder):
 
         # If any variables depend upon time, then time updates need to be encoded.
         if time_var is not None:
-            time_increment = (
-                Plus(current_time_var, Real(step_size))
-                .substitute(substitutions)
-                .simplify()
-            )
-            time_update = Equals(next_time_var, time_increment)
+            # time_increment = (
+            #     Plus(current_time_var, Real(step_size))
+            #     .substitute(substitutions)
+            #     .simplify()
+            # )
+            next_time = Real(next_step)
+            # time_update = Equals(next_time_var, time_increment)
+            time_update = Equals(next_time_var, next_time)
             if self.config.substitute_subformulas:
                 substitutions[next_time_var] = time_increment
         else:
