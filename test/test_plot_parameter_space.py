@@ -1,3 +1,4 @@
+import json
 import os
 import unittest
 
@@ -24,7 +25,9 @@ class TestPlotParameterSpace(unittest.TestCase):
         for job in jobs:
             results_file = os.path.join(RESOURCES, "cached", f"{job}.json")
             with open(results_file, "r") as f:
-                results: FunmanResults = FunmanResults.model_validate(f)
+                results: FunmanResults = FunmanResults.model_validate(
+                    json.load(f)
+                )
                 ParameterSpacePlotter(
                     results.parameter_space, plot_points=True
                 ).plot(show=False)
