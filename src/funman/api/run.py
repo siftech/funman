@@ -259,11 +259,12 @@ class Runner:
                     point_plot_filename = (
                         f"{out_dir}/{work_unit.id}_points.png"
                     )
-                    l.info(
-                        f"Creating plot of point trajectories: {point_plot_filename}"
-                    )
+                    
                     points = results.parameter_space.points()
                     if len(points) > 0:
+                        l.info(
+                        f"Creating plot of point trajectories: {point_plot_filename}"
+                        )
                         points_to_plot = (
                             random.choices(
                                 points, k=min(len(points), num_points)

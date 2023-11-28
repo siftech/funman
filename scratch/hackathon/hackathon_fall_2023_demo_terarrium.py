@@ -177,12 +177,12 @@ def main():
                 "weights": [1, -2],
                 # No timepoints, because the variables are parameters
             },
-            {
-                "name": "infected_maximum1",
-                "variable": "Infected",
-                "interval": {"lb": 10},
-                "timepoints": {"lb": 10, "ub": 10, "closed_upper_bound": True},
-            },
+            # {
+            #     "name": "infected_maximum1",
+            #     "variable": "Infected",
+            #     "interval": {"lb": 0.0, "ub":0.1},
+            #     "timepoints": {"lb": 10, "ub": 10, "closed_upper_bound": True},
+            # },
             # {
             #     "name": "infected_maximum3",
             #     "variable": "Infected",
@@ -207,6 +207,20 @@ def main():
                 "name": "schedules",
                 "schedules": [
                     {
+                        # "timepoints": [
+                        #     0,
+                        #     10,
+                        #     30,
+                        #     50,
+                        #     70,
+                        #     90,
+                        #     110,
+                        #     130,
+                        #     150,
+                        #     170,
+                        #     190,
+                        #     210,
+                        # ]
                         "timepoints": [
                             0,
                             10,
@@ -229,10 +243,10 @@ def main():
         "config": {
             "use_compartmental_constraints": True,
             "normalization_constant": 1.0,
-            "tolerance": 0.01,
+            "tolerance": 0.1,
             "verbosity": 10,
             "dreal_mcts": True,
-            # "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
+            "save_smtlib": os.path.join(os.path.realpath(__file__), "./out"),
             "substitute_subformulas": False,
             "series_approximation_threshold": None,
             "dreal_log_level": "info",
@@ -248,7 +262,7 @@ def main():
         # REQUEST_PATH,
         description="SIDARTHE demo",
         case_out_dir="./out",
-        dump_plot=False,
+        dump_plot=True,
         parameters_to_plot=["theta", "epsilon", "timestep"],
         point_plot_config={
             "variables": ["Infected"],

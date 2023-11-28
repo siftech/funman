@@ -926,12 +926,13 @@ class BoxSearch(Search):
                 if episode.config.save_smtlib
                 else None,
             )
-            if len(box.points) == 0:
+            if len(box.true_points()) == 0:
                 # if couldn't find a point, then remove all points from box
                 found_point = False
                 box.points = []
-                box.timestep().ub = last_true_point.timestep()
+                box.timestep().ub = last_true_point.timestep() if last_true_point else box.timestep().lb
             elif box.timestep().lb < box.timestep().ub:
+                # found a true point and look forward in time
                 episode._formula_stack.pop()  # pop the box constraints
                 last_true_point = box.true_points()[0]
                 box.points = []
