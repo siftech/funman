@@ -258,7 +258,12 @@ def sympy_to_pysmt_real(expr, numerator_digits=6):
 
 
 def sympy_to_pysmt_symbol(op, expr, op_type=None):
-    return op(str(expr), op_type) if op_type else op(str(expr))
+    s_expr = str(expr)
+    reserved = [s for s in reserved_words if s in s_expr]
+    if len(reserved) > 0:
+        for r in reserved:
+            s_expr = s_expr.replace(f"funman_{r}", r)
+    return op(s_expr, op_type) if op_type else op(str(expr))
 
 
 if __name__ == "__main__":

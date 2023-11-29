@@ -256,15 +256,15 @@ class Runner:
                 with open(outfile, "w") as f:
                     f.write(results.model_dump_json(by_alias=True))
                 if dump_plot:
-                    point_plot_filename = (
-                        f"{out_dir}/{work_unit.id}_points.png"
-                    )
-                    
                     points = results.parameter_space.points()
                     if len(points) > 0:
-                        l.info(
-                        f"Creating plot of point trajectories: {point_plot_filename}"
+                        point_plot_filename = (
+                            f"{out_dir}/{work_unit.id}_points.png"
                         )
+                        l.info(
+                            f"Creating plot of point trajectories: {point_plot_filename}"
+                        )
+
                         points_to_plot = (
                             random.choices(
                                 points, k=min(len(points), num_points)
@@ -278,19 +278,21 @@ class Runner:
                         plt.savefig(point_plot_filename)
                         plt.close()
 
-                    space_plot_filename = (
-                        f"{out_dir}/{work_unit.id}_parameter_space.png"
-                    )
-                    l.info(
-                        f"Creating plot of parameter space: {space_plot_filename}"
-                    )
-                    ParameterSpacePlotter(
-                        results.parameter_space,
-                        plot_points=False,
-                        parameters=parameters_to_plot,
-                    ).plot(show=True)
-                    plt.savefig(space_plot_filename)
-                    plt.close()
+                    boxes = results.parameter_space.boxes()
+                    if len(boxes) > 0:
+                        space_plot_filename = (
+                            f"{out_dir}/{work_unit.id}_parameter_space.png"
+                        )
+                        l.info(
+                            f"Creating plot of parameter space: {space_plot_filename}"
+                        )
+                        ParameterSpacePlotter(
+                            results.parameter_space,
+                            plot_points=False,
+                            parameters=parameters_to_plot,
+                        ).plot(show=False)
+                        plt.savefig(space_plot_filename)
+                        plt.close()
                 sleep(10)
             else:
                 results = self._worker.get_results(work_unit.id)

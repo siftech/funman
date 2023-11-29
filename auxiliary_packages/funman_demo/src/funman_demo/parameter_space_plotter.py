@@ -26,6 +26,7 @@ class ParameterSpacePlotter:
         alpha=0.2,
         plot_points=False,
         parameters=None,
+        dpi=100,
     ):
         if isinstance(parameter_space, ParameterSpace):
             self.ps = parameter_space
@@ -55,6 +56,7 @@ class ParameterSpacePlotter:
             Line2D([0], [0], color="g", lw=4, alpha=alpha),
             Line2D([0], [0], color="r", lw=4, alpha=alpha),
         ]
+        self.dpi = dpi
 
     def computeBounds(self, interval: Interval = Interval(lb=-2000, ub=2000)):
         box = Box(bounds={p: interval for p in self.parameters})
@@ -68,7 +70,7 @@ class ParameterSpacePlotter:
             self.dim,
             self.dim,
             squeeze=False,
-            dpi=600,
+            dpi=self.dpi,
             figsize=(10, 10),
         )
         self.fig = fig

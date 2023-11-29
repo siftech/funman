@@ -2,6 +2,7 @@
 This module defines the BoxSearch class and supporting classes.
 
 """
+import glob
 import logging
 import multiprocessing as mp
 import os
@@ -19,7 +20,19 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import BOOL, And, Implies, Not, Or, Solver, Symbol
+from pysmt.shortcuts import (
+    BOOL,
+    REAL,
+    And,
+    Bool,
+    Equals,
+    Implies,
+    Not,
+    Or,
+    Real,
+    Solver,
+    Symbol,
+)
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman import (
@@ -207,7 +220,7 @@ class BoxSearchEpisode(SearchEpisode):
             b = initial_boxes.get()
             if not self._add_unknown(b):
                 l.exception(
-                    f"Did not find add an initial box (of width {b.width()}), try reducing config.tolerance, currently {self.config.tolerance}"
+                    f"Did not find add an initial box (box had width {b.normalized_width()}), try reducing config.tolerance, currently {self.config.tolerance}"
                 )
             # l.debug(f"Initial box: {b}")
 
@@ -232,9 +245,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _add_unknown_box(self, box: Box) -> bool:
         if (
             box.width(
-                parameters=self.problem.model_parameters(),
-                normalize=self.problem._original_parameter_widths,
-                overwrite_cache=True,
+                parameters=self.problem.model_parameters(), normalize=True
             )
             > self.config.tolerance
         ):
@@ -298,11 +309,11 @@ class BoxSearchEpisode(SearchEpisode):
             self.statistics._num_unknown.value = (
                 self.statistics._num_unknown.value - 1
             )
-            self.statistics._current_residual.value = box.width()
+            self.statistics._current_residual.value = box.normalized_width()
         else:
             self.statistics._num_unknown += 1
-            self.statistics._current_residual = box.width()
-        self.statistics._residuals.put(box.width())
+            self.statistics._current_residual = box.normalized_width()
+        self.statistics._residuals.put(box.normalized_width())
         this_time = datetime.now()
         # FIXME self.statistics.iteration_time.put(this_time - self.statistics.last_time.value)
         # FIXME self.statistics.last_time[:] = str(this_time)
@@ -500,10 +511,26 @@ class BoxSearch(Search):
                                 assumptions=episode.problem._assumptions,
                             )
                         )
+                formula_encoded_constraints = And(encoded_constraints)
                 formula = Implies(
-                    self._solve_at_step_symbol(t), And(encoded_constraints)
+                    self._solve_at_step_symbol(t), formula_encoded_constraints
                 )
-                layer_formulas.append(formula)
+
+                symbols = formula_encoded_constraints.get_free_variables()
+                neg_formula = Implies(
+                    Not(self._solve_at_step_symbol(t)),
+                    And(
+                        [
+                            Equals(s, Real(0.0))
+                            for s in symbols
+                            if s.symbol_type() == REAL
+                            and str(s)
+                            not in episode.problem.model._parameter_names()
+                        ]  # + [Not(s) for s in symbols if s.symbol_type() == BOOL]
+                    ),
+                )
+
+                layer_formulas.append(And(formula, neg_formula))
 
             for layer, formula in enumerate(layer_formulas):
                 episode._formula_stack.push(1)
@@ -641,14 +668,27 @@ class BoxSearch(Search):
         )
 
     def store_smtlib(self, episode, box, filename="dbg"):
-        tmp_name = filename + "_0"
-        if os.path.exists(tmp_name + ".smt2"):
-            filename, count = tmp_name.rsplit("_", 1)
-            count = int(count) + 1
-            filename = f"{filename}_{count}"
-        else:
-            filename = tmp_name
-        filename = filename + ".smt2"
+        iteration_files = glob.glob(filename + "*")
+        last_index = (
+            max(
+                [
+                    int(f.rsplit("_", 1)[1].split(".")[0])
+                    for f in iteration_files
+                ]
+            )
+            + 1
+            if len(iteration_files) > 0
+            else "0"
+        )
+        filename = f"{filename}_{last_index}.smt2"
+
+        # if os.path.exists(tmp_name + ".smt2"):
+        #     filename, count = tmp_name.rsplit("_", 1)
+        #     count = int(count) + 1
+        #     filename = f"{filename}_{count}"
+        # else:
+        #     filename = tmp_name
+        # filename = filename + ".smt2"
         with open(filename, "w") as f:
             print(f"Saving smtlib file: {filename}")
             smtlibscript_from_formula_list(
@@ -737,7 +777,12 @@ class BoxSearch(Search):
             # print("Checking false query")
             _encoding_fn()
             if _smtlib_save_fn:
-                _smtlib_save_fn(filename=f"box_search_{episode._iteration}")
+                _smtlib_save_fn(
+                    filename=os.path.join(
+                        episode.config.save_smtlib,
+                        f"box_search_{episode._iteration}",
+                    )
+                )
             result = self.invoke_solver(solver)
             if result is not None and isinstance(result, pysmtModel):
                 # If substituted formulas are on the stack, then add the original formulas to compute the values of all variables
@@ -756,8 +801,7 @@ class BoxSearch(Search):
                         point = point.denormalize(episode.problem)
                     _point_handler_fn(box, point)
                     # rval.put(point.model_dump())
-                    if point not in box.points:
-                        box.points.append(point)
+                    box.add_point(point)
             else:  # unsat
                 explanation = result
                 explanation.check_assumptions(episode, my_solver, options)
@@ -770,7 +814,7 @@ class BoxSearch(Search):
         points, explanation = self._get_points(
             solver,
             box,
-            box.false_points(),
+            box.false_points(step=box.timestep().lb),
             episode,
             rval,
             partial(self._setup_false_query, solver, episode, box, options),
@@ -786,7 +830,7 @@ class BoxSearch(Search):
             else None,
         )
 
-        return box.false_points(), explanation
+        return box.false_points(step=box.timestep().lb), explanation
 
     def _point_assumptions(
         self,
@@ -906,16 +950,12 @@ class BoxSearch(Search):
         original_box_timestep_lb = box.timestep().lb
         found_point = True
         explanation = None
-        last_true_point = None
-        while (
-            found_point
-            and box.timestep().lb <= box.timestep().ub
-            and len(box.true_points()) == 0
-        ):
+
+        while found_point and box.timestep().lb <= box.timestep().ub:
             points, explanation = self._get_points(
                 solver,
                 box,
-                box.true_points(),
+                box.true_points(step=box.timestep().lb),
                 episode,
                 rval,
                 partial(self._setup_true_query, solver, episode, box, options),
@@ -926,29 +966,28 @@ class BoxSearch(Search):
                 if episode.config.save_smtlib
                 else None,
             )
-            if len(box.true_points()) == 0:
+            if len(box.true_points(step=box.timestep().lb)) == 0:
+                # Could not find a point at the current step, so there won't be any at subsequent steps
+                # fall out of loop, after setting the upper bound on the box timestep
                 # if couldn't find a point, then remove all points from box
                 found_point = False
-                box.points = []
-                box.timestep().ub = last_true_point.timestep() if last_true_point else box.timestep().lb
+
+                # Cannot find a point at this time, so box.timestep().ub is previous step
+                # box.timestep().ub = max(box.timestep().lb - 1, 0)
             elif box.timestep().lb < box.timestep().ub:
-                # found a true point and look forward in time
+                # Found a true point, and there are more steps to consider
                 episode._formula_stack.pop()  # pop the box constraints
-                last_true_point = box.true_points()[0]
-                box.points = []
                 box.timestep().lb += 1
                 self._initialize_model_for_box(solver, box, episode, options)
+                explanation = None
+            else:
+                # lb == ub and have a point, so break
+                break
 
-        # At end, we should either have a true point that goes through the last step,
-        # or have a true point that ends at an earlier time.
-        if (
-            last_true_point
-            and last_true_point not in box.points
-            and box.timestep().contains_value(last_true_point.timestep())
-        ):
-            box.points.append(last_true_point)
+        # reinstate the original lower bound on timestep so that we will check
+        # whether no false points exist in the main loop of the box search
         box.timestep().lb = original_box_timestep_lb
-        return box.true_points(), explanation
+        return box.true_points(step=box.timestep().lb), explanation
 
     def get_box_corners(
         self, solver, episode, box, rval, options, my_solver
@@ -1112,7 +1151,9 @@ class BoxSearch(Search):
                                     if more_work:
                                         with more_work:
                                             more_work.notify_all()
-                                l.debug(f"Split @ {box.timestep().lb}")
+                                l.debug(
+                                    f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
+                                )
                                 l.trace(f"XXX Split:\n{box}")
                             else:
                                 # box does not intersect f, so it is in t (true region)
