@@ -315,3 +315,4 @@ gmon.out
 unsat.core
 .gitignore
 core.dimacs
+notebooks/saved-results/out

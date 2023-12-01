@@ -1,12 +1,25 @@
 import functools
+import logging
 import re
 from fractions import Fraction
 from typing import List
 
 import dreal
 from pysmt.decorators import catch_conversion_error
+from pysmt.exceptions import UndefinedSymbolError
 from pysmt.formula import FNode
-from pysmt.shortcuts import Symbol
+from pysmt.parsing import (
+    ClosePar,
+    Constant,
+    GrammarSymbol,
+    HRLexer,
+    Identifier,
+    InfixOpAdapter,
+    PrattParser,
+    Rule,
+    UnaryOpAdapter,
+)
+from pysmt.shortcuts import FALSE, Symbol
 from pysmt.smtlib.parser import SmtLibParser, Tokenizer
 from pysmt.solvers.solver import (
     Converter,
@@ -17,9 +30,81 @@ from pysmt.solvers.solver import (
 )
 from pysmt.walkers import DagWalker
 
+l = logging.getLogger(__name__)
+
+
+def CoreParser(env=None):
+    return PrattParser(CoreLexer)
+
+
+class BinaryLiteralExpr(GrammarSymbol):
+    """Adapter for unary operator."""
+
+    def __init__(self, operator, lbp):
+        GrammarSymbol.__init__(self)
+        self.operator = operator
+        self.lbp = lbp
+
+    def nud(self, parser):
+        # parser.advance()  # OpenPar
+        parser.advance()  # OpenPar
+        if type(parser.token) != ClosePar:
+            r = parser.expression()
+        if type(parser.token) != ClosePar:
+            raise SyntaxError("Expected ')'")
+        parser.advance()  # ClosePar
+        if type(parser.token) != ClosePar:
+            raise SyntaxError("Expected ')'")
+        parser.advance()  # ClosePar
+        return r
+
+    def __repr__(self):
+        return repr(self.operator)
+
+
+class CoreLexer(HRLexer):
+    def __init__(self, env=None):
+        super().__init__(env=env)
+
+        self.identifier_map = {"and": "&", "or": "|", "==": "="}
+
+        self.rules = [
+            Rule(r"(pow)", InfixOpAdapter(self.mgr.Pow, 80), False),  # pow
+            Rule(
+                r"(and)", InfixOpAdapter(self.AndOrBVAnd, 40), False
+            ),  # conjunction
+            Rule(
+                r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
+            ),  # disjunction
+            Rule(
+                r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
+            ),  # b()
+            Rule(r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False),  # eq
+            Rule(
+                r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
+            ),  # decimals scientific
+        ] + self.rules
+        self.compile()
+
+    def BinaryLiteral(self, x):
+        return x
+
+    def int_constant(self, read):
+        return Constant(self.mgr.Real(int(read)))
+
+    def identifier(self, read):
+        r = self.identifier_map.get(read, read)
+        try:
+            return Identifier(r, env=self.env)
+        except UndefinedSymbolError as e:
+            l.exception(
+                f"Could not resolve parsed identifier: {r}, because:\n{e}"
+            )
+
 
 class DRealConverter(Converter, DagWalker):
     def __init__(self, environment):
+        # self.__setattr__("walk_abs", walk_abs)
         DagWalker.__init__(self, environment)
         self.backconversion = {}
         self.mgr = environment.formula_manager
@@ -59,10 +144,14 @@ class DRealConverter(Converter, DagWalker):
         # str_formula = str_formula.replace("pow(beta, 2.0)", "beta^2.0")
 
         str_formula = re.sub(
-            r"pow\([a-z]+\, [0-9.]+\)",
-            lambda x: x.group().split(",")[0].split("(")[1]
+            r"pow\([\(\)\-a-z0-9\_\+\*\.\^ ]+\, [\-0-9a-z.]+\)",
+            lambda x: "("
+            + x.group().split(",")[0].split("(", 1)[1]
+            + ")"
             + "^"
-            + x.group().split(",")[1].split(")")[0].strip(),
+            + "("
+            + x.group().split(",")[1].split(")")[0].strip()
+            + ")",
             str_formula,
         )
 
@@ -77,12 +166,13 @@ class DRealConverter(Converter, DagWalker):
         return symbols
 
     def back(self, dreal_formula: dreal.Formula) -> FNode:
-        from pysmt.parsing import parse
-
         try:
-            rewritten_formula = self.rewrite_dreal_formula(dreal_formula)
-            new_symbols = self.create_dreal_symbols(rewritten_formula)
-            formula = parse(rewritten_formula)
+            # rewritten_formula = self.rewrite_dreal_formula(dreal_formula)
+            l.debug(
+                f"Extracting dreal unsat core expression: {str(dreal_formula)}"
+            )
+            new_symbols = self.create_dreal_symbols(str(dreal_formula))
+            formula = CoreParser().parse(str(dreal_formula))
         except Exception as e:
             raise e
         return formula
@@ -157,6 +247,10 @@ class DRealConverter(Converter, DagWalker):
     def walk_pow(self, formula, args, **kwargs):
         exponent = float(args[1]) if isinstance(args[1], Fraction) else args[1]
         res = dreal.pow(args[0], exponent)
+        return res
+
+    def walk_abs(self, formula, args, **kwargs):
+        res = abs(args[0])
         return res
 
     def bool_to_formula(self, value):

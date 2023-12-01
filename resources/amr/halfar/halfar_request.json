@@ -1,0 +1,36 @@
+{
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "use_compartmental_constraints": false,
+        "normalization_constant": 1.0,
+        "tolerance": 1e-1,
+        "verbosity": 20,
+        "dreal_mcts": true,
+        "save_smtlib": "./out",
+        "substitute_subformulas": false,
+        "series_approximation_threshold": null,
+        "dreal_log_level": "none",
+        "profile": false
+    }
+}

@@ -361,7 +361,6 @@
             "num_steps": 2,
             "step_size": 1,
             "num_initial_boxes": 1,
-            "save_smtlib": true,
             "dreal_precision": 0.001,
             "dreal_log_level": "off",
             "constraint_noise": 0.0,

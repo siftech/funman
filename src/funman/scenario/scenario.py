@@ -34,7 +34,9 @@ from funman import (
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import FunmanConstraint
+from funman.representation.constraint import FunmanUserConstraint
+from funman.representation.parameter import NumSteps, Schedules, StepSize
+from funman.utils import math_utils
 
 l = logging.getLogger(__name__)
 
@@ -46,7 +48,9 @@ class AnalysisScenario(ABC, BaseModel):
 
     parameters: List[Parameter]
     normalization_constant: Optional[float] = None
-    constraints: Optional[List[Union[FunmanConstraint]]] = None
+    constraints: Optional[List[Union[FunmanUserConstraint]]] = None
+    """True if its okay when the volume of the search space is empty (e.g., when it is a point)"""
+    empty_volume_ok: bool = False
     model_config = ConfigDict(extra="forbid")
 
     model: Union[
@@ -66,6 +70,7 @@ class AnalysisScenario(ABC, BaseModel):
     _smt_encoder: Optional["Encoder"] = None
     # Encoding for different step sizes (key)
     _encodings: Optional[Dict["Schedule", "Encoding"]] = {}
+    _original_parameter_widths: Dict[str, Decimal] = {}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -125,6 +130,10 @@ class AnalysisScenario(ABC, BaseModel):
 
         self._initialize_encodings(config)
 
+        self._original_parameter_widths = {
+            p.name: p.interval.original_width for p in self.model_parameters()
+        }
+
         return search
 
     def _initialize_encodings(self, config: "FUNMANConfig"):
@@ -135,7 +144,9 @@ class AnalysisScenario(ABC, BaseModel):
         # Initialize Assumptions
         # Maintain backward support for query as a single constraint
         if self.query is not None and not isinstance(self.query, QueryTrue):
-            query_constraint = QueryConstraint(name="query", query=self.query)
+            query_constraint = QueryConstraint(
+                name="query", query=self.query, timepoints=Interval(lb=0)
+            )
             self.constraints += [query_constraint]
             self._assumptions.append(Assumption(constraint=query_constraint))
 
@@ -153,17 +164,57 @@ class AnalysisScenario(ABC, BaseModel):
         """
         return len(self.parameters)
 
-    def search_space_volume(self) -> Decimal:
+    def num_timepoints(self) -> int:
+        schedules = self.parameters_of_type(Schedules)
+        if len(schedules) == 1:
+            num_timepoints = sum(
+                len(schedule.timepoints) - 1
+                for schedule in schedules[0].schedules
+            )
+        else:
+            # use num_steps and step_size
+            num_steps = self.parameters_of_type(NumSteps)
+            step_size = self.parameters_of_type(StepSize)
+            num_timepoints = (num_steps[0].width() + 1) * (
+                step_size[0].width() + 1
+            )
+        return num_timepoints
+
+    def search_space_volume(self, normalize: bool = False) -> Decimal:
         bounds = {}
-        for param in self.parameters:
+        for param in self.model_parameters():
             bounds[param.name] = param.interval
-        return Box(bounds=bounds).volume()
+        space_box = Box(bounds=bounds)
+
+        if len(bounds) > 0:
+            # Normalized volume for a timeslice is 1.0, but compute anyway to verify
+            space_time_slice_volume = (
+                space_box.volume(normalize=self._original_parameter_widths)
+                if normalize
+                else space_box.volume()
+            )
+        else:
+            space_time_slice_volume = Decimal(1.0)
+        assert (
+            self.empty_volume_ok
+            or not normalize
+            or abs(space_time_slice_volume - Decimal(1.0)) <= Decimal(1e-8)
+        ), f"Normalized space volume is not 1.0, computed = {space_time_slice_volume}"
+        space_volume = (
+            space_time_slice_volume
+            if normalize
+            else self.num_timepoints() * space_time_slice_volume
+        )
+        return space_volume
 
     def representable_space_volume(self) -> Decimal:
         bounds = {}
-        for param in self.parameters:
+        for param in self.model_parameters():
             bounds[param.name] = Interval(lb=NEG_INFINITY, ub=POS_INFINITY)
-        return Box(bounds=bounds).volume()
+        space_box = Box(bounds=bounds)
+        space_time_slice_volume = space_box.volume()
+        space_volume = self.num_timepoints() * space_time_slice_volume
+        return space_volume
 
     def structure_parameters(self):
         return self.parameters_of_type(StructureParameter)
@@ -189,10 +240,15 @@ class AnalysisScenario(ABC, BaseModel):
             # if wrong type, recover structure parameters
             self.parameters = [
                 (
-                    StructureParameter(
-                        name=p.name, interval=Interval(lb=p.lb, ub=p.ub)
-                    )
-                    if (p.name == "num_steps" or p.name == "step_size")
+                    NumSteps(name=p.name, interval=Interval(lb=p.lb, ub=p.ub))
+                    if (p.name == "num_steps")
+                    else p
+                )
+                for p in self.parameters
+            ] + [
+                (
+                    StepSize(name=p.name, interval=Interval(lb=p.lb, ub=p.ub))
+                    if (p.name == "step_size")
                     else p
                 )
                 for p in self.parameters
@@ -200,12 +256,8 @@ class AnalysisScenario(ABC, BaseModel):
             if len(self.structure_parameters()) == 0:
                 # Add the structure parameters if still missing
                 self.parameters += [
-                    StructureParameter(
-                        name="num_steps", interval=Interval(lb=0, ub=0)
-                    ),
-                    StructureParameter(
-                        name="step_size", interval=Interval(lb=1, ub=1)
-                    ),
+                    NumSteps(name="num_steps", interval=Interval(lb=0, ub=0)),
+                    StepSize(name="step_size", interval=Interval(lb=1, ub=1)),
                 ]
 
         self._extract_non_overriden_parameters()

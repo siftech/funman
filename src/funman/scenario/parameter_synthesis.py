@@ -2,12 +2,12 @@
 This module defines the Parameter Synthesis scenario.
 """
 import threading
-from decimal import Decimal
-from typing import Callable, Dict, List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 from pandas import DataFrame
 from pydantic import BaseModel, ConfigDict
 
+from funman.representation.parameter import Schedules
 from funman.representation.representation import Point
 from funman.scenario import (
     AnalysisScenario,
@@ -32,7 +32,6 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
 
     # _assume_model: Optional[FNode] = None
     # _assume_query: Optional[FNode] = None
-    _original_parameter_widths: Dict[str, Decimal] = {}
 
     @classmethod
     def get_kind(cls) -> str:
@@ -70,10 +69,10 @@ class ParameterSynthesisScenario(AnalysisScenario, BaseModel):
         """
         search = self.initialize(config)
 
-        self._original_parameter_widths = {
-            p.name: Decimal(minus(p.interval.ub, p.interval.lb))
-            for p in self.parameters
-        }
+        # schedules = self.parameters_of_type(Schedules)
+        # assert len(schedules) <= 1, "Cannot have more than one Schedules parameter."
+        # if len(schedules) == 1:
+        #     self._original_parameter_widths[schedules[0]] = [len(s.timepoints) for s in schedules[0].schedules]
 
         parameter_space: ParameterSpace = search.search(
             self,

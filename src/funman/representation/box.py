@@ -1,6 +1,7 @@
 import copy
 import logging
 from decimal import ROUND_CEILING, Decimal
+from pickle import FALSE
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
 
@@ -10,7 +11,7 @@ from pydantic import BaseModel, Field
 import funman.utils.math_utils as math_utils
 from funman.constants import LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN, Label
 
-from . import EncodingSchedule, Interval, Point
+from . import EncodingSchedule, Interval, Point, Timestep
 from .explanation import BoxExplanation
 from .interval import Interval
 from .parameter import ModelParameter, Parameter
@@ -29,10 +30,10 @@ class Box(BaseModel):
     label: Label = LABEL_UNKNOWN
     bounds: Dict[str, Interval] = {}
     explanation: Optional[BoxExplanation] = None
-    cached_width: Optional[float] = Field(default=None, exclude=True)
     schedule: Optional[EncodingSchedule] = None
     corner_points: List[Point] = []
     points: List[Point] = []
+    _points_at_step: Dict[Timestep, List[Point]] = {}
 
     @staticmethod
     def from_point(point: Point) -> "Box":
@@ -41,13 +42,32 @@ class Box(BaseModel):
             p: Interval.from_value(v) for p, v in point.values.items()
         }
         box.points.append(point)
+        box.schedule = point.schedule
+        box.label = point.label
         return box
 
-    def true_points(self) -> List[Point]:
-        return [p for p in self.points if p.label == LABEL_TRUE]
+    def add_point(self, point: Point) -> None:
+        if point not in self.points:
+            timestep = point.timestep()
+            step_points = self._points_at_step.get(timestep, [])
+            step_points.append(point)
+            self._points_at_step[timestep] = step_points
+            self.points.append(point)
 
-    def false_points(self) -> List[Point]:
-        return [p for p in self.points if p.label == LABEL_FALSE]
+    def true_points(self, step=None) -> List[Point]:
+        return [
+            p
+            for p in self.points
+            if p.label == LABEL_TRUE and (step is None or p.timestep() == step)
+        ]
+
+    def false_points(self, step=None) -> List[Point]:
+        return [
+            p
+            for p in self.points
+            if p.label == LABEL_FALSE
+            and (step is None or p.timestep() == step)
+        ]
 
     def explain(self) -> "BoxExplanation":
         expl = {"box": {k: v.model_dump() for k, v in self.bounds.items()}}
@@ -65,10 +85,18 @@ class Box(BaseModel):
         if self.timestep().lb == self.timestep().ub:
             return None
         else:
-            box = self.model_copy(deep=True)
+            box: Box = self.model_copy(deep=True)
             box.timestep().lb += 1
             # Remove points because they correspond to prior timesteps
-            box.points = []
+            box.points = [
+                pt
+                for pt in self.points
+                if box.timestep().contains_value(pt.timestep())
+            ]
+            box._points_at_step = {
+                step: [p for p in pts if p in box.points]
+                for step, pts in box._points_at_step.items()
+            }
             return box
 
     def corners(self, parameters: List[Parameter] = None) -> List[Point]:
@@ -232,10 +260,18 @@ class Box(BaseModel):
 
     def __lt__(self, other):
         if isinstance(other, Box):
-            if self.timestep().lb == other.timestep().lb:
-                return self.width() > other.width()
+            # prefer boxes with true points
+            # prefer boxes later in time
+            # prefer boxes with smaller width
+            s_t = len(self.true_points())
+            o_t = len(other.true_points())
+            if s_t == o_t:
+                if self.timestep().lb == other.timestep().lb:
+                    return self.normalized_width() > other.normalized_width()
+                else:
+                    return self.timestep().lb > other.timestep().lb
             else:
-                return self.timestep().lb > other.timestep().lb
+                return s_t > o_t
         else:
             raise Exception(f"Cannot compare __lt__() Box to {type(other)}")
 
@@ -251,7 +287,15 @@ class Box(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
+        bounds_str = "\n".join(
+            [
+                f"{k}:\t{str(v)}\t({v.normalized_width():.5f})"
+                for k, v in self.bounds.items()
+            ]
+        )
+        box_str = f"Box(\n|+pts|: {len(self.true_points())}\n|-pts|: {len(self.false_points())}\nlabel: {self.label}\nwidth: {self.width()},\ntimepoints: {Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)},\n{bounds_str}\n)"
+        return box_str
+        # return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
 
     def finite(self) -> bool:
         """
@@ -366,7 +410,9 @@ class Box(BaseModel):
             ]
         )
 
-    def _get_max_width_point_Parameter(self, points: List[List[Point]]):
+    def _get_max_width_point_Parameter(
+        self, points: List[List[Point]], parameters: List[Parameter]
+    ):
         """
         Get the parameter that has the maximum average distance from the center point for each parameter and the value for the parameter assigned by each point.
 
@@ -380,26 +426,39 @@ class Box(BaseModel):
         Parameter
             parameter (dimension of box) where points are most distant from the center of the box.
         """
-        #
+        parameter_names = [p.name for p in parameters]
         group_centers = {
             p: [average([pt.values[p] for pt in grp]) for grp in points]
             for p in self.bounds
+            if p in parameter_names
         }
         centers = {p: average(grp) for p, grp in group_centers.items()}
         # print(points)
         # print(centers)
         point_distances = [
             {
-                p: abs(pt.values[p] - centers[p])
+                p: Decimal(abs(pt.values[p] - centers[p]))
                 for p in pt.values
                 if p in centers
             }
             for grp in points
             for pt in grp
         ]
+
         parameter_widths = {
-            p: average([pt[p] for pt in point_distances]) for p in self.bounds
+            p: average([pt[p] for pt in point_distances])
+            for p in self.bounds
+            if p in parameter_names
         }
+        parameter_widths = {
+            p: (
+                v / self.bounds[p].original_width
+                if self.bounds[p].original_width > 0.0
+                else 0.0
+            )
+            for p, v in parameter_widths.items()
+        }
+
         # normalized_parameter_widths = {
         #     p: average([pt[p] for pt in point_distances])
         #     / (self.bounds[p].width())
@@ -415,26 +474,18 @@ class Box(BaseModel):
             return max_width_parameter
 
     def _get_max_width_Parameter(
-        self, normalize={}, parameters: List[ModelParameter] = None
+        self, normalize=False, parameters: List[ModelParameter] = None
     ) -> Union[str, ModelSymbol]:
         if parameters:
             widths = {
                 parameter.name: (
-                    self.bounds[parameter.name].width(
-                        normalize=normalize[parameter.name]
-                    )
-                    if parameter.name in normalize
-                    else self.bounds[parameter.name].width()
+                    self.bounds[parameter.name].width(normalize=normalize)
                 )
                 for parameter in parameters
             }
         else:
             widths = {
-                p: (
-                    self.bounds[p].width(normalize=normalize[p])
-                    if p in normalize
-                    else self.bounds[p].width()
-                )
+                p: self.bounds[p].width(normalize=normalize)
                 for p in self.bounds
             }
         if "timestep" in widths:
@@ -444,26 +495,18 @@ class Box(BaseModel):
         return max_width
 
     def _get_min_width_Parameter(
-        self, normalize={}, parameters: List[ModelParameter] = None
+        self, normalize=FALSE, parameters: List[ModelParameter] = None
     ) -> Union[str, ModelSymbol]:
         if parameters:
             widths = {
                 parameter.name: (
-                    self.bounds[parameter.name].width(
-                        normalize=normalize[parameter.name]
-                    )
-                    if parameter.name in normalize
-                    else self.bounds[parameter.name].width()
+                    self.bounds[parameter.name].width(normalize=normalize)
                 )
                 for parameter in parameters
             }
         else:
             widths = {
-                p: (
-                    self.bounds[p].width(normalize=normalize[p])
-                    if p in normalize
-                    else self.bounds[p].width()
-                )
+                p: (self.bounds[p].width(normalize=normalize))
                 for p in self.bounds
             }
         min_width = min(widths, key=widths.get)
@@ -472,7 +515,7 @@ class Box(BaseModel):
 
     def volume(
         self,
-        normalize=None,
+        normalize=False,
         parameters: List[ModelParameter] = None,
         *,
         ignore_zero_width_dimensions=True,
@@ -492,16 +535,9 @@ class Box(BaseModel):
         if len(pnames) <= 0:
             return Decimal("nan")
 
-        # if no parameters are normalized then default to an empty dict
-        if normalize is None:
-            normalize = {}
-
         # get a mapping of parameters to widths
         # use normalize.get(p.name, None) to select between default behavior and normalization
-        widths = {
-            p: self.bounds[p].width(normalize=normalize.get(p, None))
-            for p in pnames
-        }
+        widths = {p: self.bounds[p].width(normalize=normalize) for p in pnames}
         if ignore_zero_width_dimensions:
             # filter widths of zero from the
             widths = {p: w for p, w in widths.items() if w != 0.0}
@@ -514,6 +550,10 @@ class Box(BaseModel):
             num_timepoints = Decimal(
                 int(self.timestep().ub) + 1 - int(self.timestep().lb)
             ).to_integral_exact(rounding=ROUND_CEILING)
+            if normalize is not None:
+                num_timepoints = num_timepoints / Decimal(
+                    len(self.schedule.timepoints)
+                )
         elif "num_steps" in widths:
             del widths["num_steps"]
             # TODO this timepoint computation could use more thought
@@ -541,10 +581,16 @@ class Box(BaseModel):
         product *= num_timepoints
         return product
 
+    def normalized_width(self, parameters: List[ModelParameter] = None):
+        p = self._get_max_width_Parameter(
+            normalize=True, parameters=parameters
+        )
+        norm_width = self.bounds[p].normalized_width()
+        return norm_width
+
     def width(
         self,
-        normalize={},
-        overwrite_cache=False,
+        normalize=False,
         parameters: List[ModelParameter] = None,
     ) -> float:
         """
@@ -555,14 +601,13 @@ class Box(BaseModel):
         float
             Max{p: parameter}(p.ub-p.lb)
         """
-        if self.cached_width is None or overwrite_cache:
+        if normalize:
+            return self.normalized_width(parameters=parameters)
+        else:
             p = self._get_max_width_Parameter(
                 normalize=normalize, parameters=parameters
             )
-            self.cached_width = self.bounds[p].width(
-                normalize=normalize.get(p, None)
-            )
-        return self.cached_width
+            return self.bounds[p].width(normalize=normalize)
 
     def variance(self, overwrite_cache=False) -> float:
         """
@@ -597,37 +642,60 @@ class Box(BaseModel):
         """
         p = None
         if points:
-            p = self._get_max_width_point_Parameter(points)
+            p = self._get_max_width_point_Parameter(
+                points, parameters=parameters
+            )
+            if (
+                p is not None
+                and self.bounds[p].normalized_width()
+                < Decimal(0.5) * self.normalized_width()
+            ):
+                # Discard selected parameter if its width is much smaller than box width
+                p = None
             if p is not None:
                 mid = self.bounds[p].midpoint(
                     points=[[pt.values[p] for pt in grp] for grp in points]
                 )
                 if mid == self.bounds[p].lb or mid == self.bounds[p].ub:
                     # Fall back to box midpoint if point-based mid is degenerate
-                    p = self._get_max_width_Parameter()
+                    p = self._get_max_width_Parameter(parameter=parameters)
                     mid = self.bounds[p].midpoint()
+
         if p is None:
             p = self._get_max_width_Parameter(
                 normalize=normalize, parameters=parameters
             )
             mid = self.bounds[p].midpoint()
 
-        # print(f"Split({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])")
         b1 = self.model_copy(deep=True)
         b2 = self.model_copy(deep=True)
 
         # b1 is lower half
         assert math_utils.lte(b1.bounds[p].lb, mid)
         b1.bounds[p] = Interval(lb=b1.bounds[p].lb, ub=mid)
-        b1.width(overwrite_cache=True)
+        b1.bounds[p].original_width = self.bounds[p].original_width
         b1.points = [pt for pt in b1.points if b1.contains_point(pt)]
+        b1._points_at_step = {
+            step: [p for p in pts if p in b1.points]
+            for step, pts in b1._points_at_step.items()
+        }
 
         # b2 is upper half
         assert math_utils.lte(mid, b2.bounds[p].ub)
         b2.bounds[p] = Interval(lb=mid, ub=b2.bounds[p].ub)
-        b2.width(overwrite_cache=True)
+        b2.bounds[p].original_width = self.bounds[p].original_width
         b2.points = [pt for pt in b2.points if b2.contains_point(pt)]
+        b2._points_at_step = {
+            step: [p for p in pts if p in b2.points]
+            for step, pts in b2._points_at_step.items()
+        }
 
+        l.info(
+            f"Split({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])"
+        )
+        l.info(
+            f"widths: {self.width():.5f} -> {b1.width():.5f} {b2.width():.5f} (raw), {self.normalized_width():.5f} -> {b1.normalized_width():.5f} {b2.normalized_width():.5f} (norm)"
+        )
         return [b2, b1]
 
     def intersect(self, b2: "Box", param_list: List[str] = None):

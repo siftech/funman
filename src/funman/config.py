@@ -3,6 +3,7 @@ This module defines the Funman class, the primary entry point for FUNMAN
 analysis.
 """
 import logging
+import os
 from typing import Optional, Union
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
@@ -56,9 +57,9 @@ class FUNMANConfig(BaseModel):
     """Number of initial boxes for BoxSearch"""
     initial_state_tolerance: float = 0.0
     """Factor used to relax initial state values bounds"""
-    save_smtlib: bool = False
+    save_smtlib: Optional[str] = None
     """Whether to save each smt invocation as an SMTLib file"""
-    dreal_precision: float = 1e-3
+    dreal_precision: float = 1e-1
     """Precision delta for dreal solver"""
     dreal_log_level: str = "off"
     """Constraint noise term to relax constraints"""
@@ -106,4 +107,10 @@ class FUNMANConfig(BaseModel):
             assert (
                 self.normalization_constant
             ), "Need to set normalization_constant in configuration to enforce compartmental constraints.  The normalization_constant provides the population size used in the constraint upper bound."
+
+        if self.save_smtlib:
+            assert os.path.exists(
+                os.path.dirname(self.save_smtlib)
+            ), "save_smtlib option must be an existing path"
+
         return self

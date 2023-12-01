@@ -1,6 +1,6 @@
 import json
 import logging
-import sys
+import os
 import threading
 from typing import Callable, Optional, Tuple, Union
 
@@ -27,7 +27,6 @@ from .search import Search, SearchEpisode
 
 
 l = logging.getLogger(__file__)
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class SMTCheck(Search):
@@ -62,7 +61,7 @@ class SMTCheck(Search):
                 parameter_space,
                 schedule,
             )
-
+            timestep = len(schedule.timepoints) - 1
             if result is not None and isinstance(result, pysmtModel):
                 result_dict = result.to_dict() if result else None
                 l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
@@ -79,9 +78,9 @@ class SMTCheck(Search):
                         label=LABEL_TRUE,
                         schedule=schedule,
                     )
-                    point.values["timestep"] = schedule.time_at_step(
-                        len(schedule.timepoints) - 1
-                    )
+
+                    point.values["timestep"] = timestep
+
                     if config.normalize:
                         denormalized_point = point.denormalize(problem)
                         point = denormalized_point
@@ -91,12 +90,16 @@ class SMTCheck(Search):
             elif result is not None and isinstance(result, Explanation):
                 box = Box(
                     bounds={
-                        p.name: Interval(lb=p.interval.lb, ub=p.interval.ub)
+                        p.name: p.interval.model_copy()
                         for p in problem.parameters
                     },
                     label=LABEL_FALSE,
                     explanation=result,
                 )
+                box.bounds["timestep"] = Interval(
+                    lb=timestep, ub=timestep, closed_upper_bound=True
+                )
+                box.schedule = schedule
                 parameter_space.false_boxes.append(box)
             if resultsCallback:
                 resultsCallback(parameter_space)
@@ -166,9 +169,13 @@ class SMTCheck(Search):
         s.push(1)
         s.add_assertion(formula)
         if episode.config.save_smtlib:
+            filename = os.path.join(
+                episode.config.save_smtlib, "dbg_steps.smt2"
+            )
+            l.trace(f"Saving smt file: {filename}")
             self.store_smtlib(
                 formula,
-                filename=f"dbg_steps.smt2",
+                filename=filename,
             )
         l.trace(f"Solving: {formula.serialize()}")
         result = self.invoke_solver(s)

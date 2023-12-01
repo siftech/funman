@@ -33,6 +33,8 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
         method to encode the scenario, by default None
     """
 
+    """True if its okay when the volume of the search space is empty (e.g., when it is a point)"""
+    empty_volume_ok: bool = True
     _box: Optional[Encoding] = None
 
     @classmethod
