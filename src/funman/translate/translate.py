@@ -319,7 +319,7 @@ class Encoder(ABC, BaseModel):
                 Iff(assumption_symbol, encoded_constraint[0]),
             )
         symbols = {k: v for k, v in encoded_constraint[1].items()}
-        symbols[str(assumption_symbol)] = assumption_symbol
+        symbols[assumption_symbol.symbol_name()] = assumption_symbol
         return (assumed_constraint, symbols)
 
     def encode_assumption(
@@ -409,7 +409,7 @@ class Encoder(ABC, BaseModel):
         initial_state = self._timed_model_elements["init"]
         initial_symbols = initial_state.get_free_variables()
 
-        return (initial_state, {str(s): s for s in initial_symbols})
+        return (initial_state, {s.symbol_name(): s for s in initial_symbols})
 
     def encode_transition_layer(
         self,
@@ -702,7 +702,10 @@ class Encoder(ABC, BaseModel):
                 closed_upper_bound=False,
                 infinity_constraints=False,
             )
-            return (formula, {str(s): s for s in formula.get_free_variables()})
+            return (
+                formula,
+                {s.symbol_name(): s for s in formula.get_free_variables()},
+            )
         else:
             return None
 
@@ -1061,7 +1064,10 @@ class Encoder(ABC, BaseModel):
         else:
             formula = TRUE()
 
-        return (formula, {str(v): v for v in formula.get_free_variables()})
+        return (
+            formula,
+            {v.symbol_name(): v for v in formula.get_free_variables()},
+        )
 
     def _encode_query_le(
         self,

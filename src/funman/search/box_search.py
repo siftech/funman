@@ -524,7 +524,7 @@ class BoxSearch(Search):
                             Equals(s, Real(0.0))
                             for s in symbols
                             if s.symbol_type() == REAL
-                            and str(s)
+                            and s.symbol_name()
                             not in episode.problem.model._parameter_names()
                         ]  # + [Not(s) for s in symbols if s.symbol_type() == BOOL]
                     ),

@@ -7,12 +7,9 @@ import pysmt.operators as op
 import pysmt.typing as types
 import sympy
 from pysmt.formula import FNode, FormulaManager
+from pysmt.shortcuts import GE, GT, LE, LT, REAL
+from pysmt.shortcuts import Abs as pysmt_Abs
 from pysmt.shortcuts import (
-    GE,
-    GT,
-    LE,
-    LT,
-    REAL,
     And,
     Div,
     Equals,
@@ -226,9 +223,7 @@ def sympy_to_pysmt_op(op, expr, explode=False):
 
 def sympy_to_pysmt_abs(expr):
     p_expr = sympy_to_pysmt(expr.args[0])
-    return Pow(
-        Pow(p_expr, Real(2.0)), Real(0.5)
-    )  # Ite(GE(p_expr, Real(0.0)), p_expr, Times(Real(-1.0), p_expr))
+    return pysmt_Abs(p_expr)
 
 
 def sympy_to_pysmt_pow(expr):
