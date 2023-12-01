@@ -1070,7 +1070,7 @@ class BoxSearch(Search):
 
             with my_solver() as solver:
                 episode._formula_stack._solver = solver
-                l.info(f"{process_name} entering process loop")
+                l.debug(f"{process_name} entering process loop")
                 # print("Starting initializing dynamics of model")
                 # self._initialize_encoding(solver, episode, [0])
                 # print("Initialized dynamics of model")
