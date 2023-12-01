@@ -249,54 +249,39 @@ class Runner:
 
         sleep(2)  # need to sleep until worker has a chance to start working
         outfile = f"{out_dir}/{work_unit.id}.json"
+        plotted = False
         while not killer.kill_now:
             if self._worker.is_processing_id(work_unit.id):
                 l.info(f"Dumping results to {outfile}")
                 results = self._worker.get_results(work_unit.id)
                 with open(outfile, "w") as f:
                     f.write(results.model_dump_json(by_alias=True))
-                if dump_plot:
-                    points = results.parameter_space.points()
-                    if len(points) > 0:
-                        point_plot_filename = (
-                            f"{out_dir}/{work_unit.id}_points.png"
-                        )
-                        l.info(
-                            f"Creating plot of point trajectories: {point_plot_filename}"
-                        )
-
-                        points_to_plot = (
-                            random.choices(
-                                points, k=min(len(points), num_points)
-                            )
-                            if num_points
-                            else results.parameter_space.points()
-                        )
-                        results.plot(
-                            points=points_to_plot, **point_plot_config
-                        )
-                        plt.savefig(point_plot_filename)
-                        plt.close()
-
-                    boxes = results.parameter_space.boxes()
-                    if len(boxes) > 0:
-                        space_plot_filename = (
-                            f"{out_dir}/{work_unit.id}_parameter_space.png"
-                        )
-                        l.info(
-                            f"Creating plot of parameter space: {space_plot_filename}"
-                        )
-                        ParameterSpacePlotter(
-                            results.parameter_space,
-                            plot_points=False,
-                            parameters=parameters_to_plot,
-                        ).plot(show=False)
-                        plt.savefig(space_plot_filename)
-                        plt.close()
+                points = results.parameter_space.points()
+                boxes = results.parameter_space.boxes()
+                if dump_plot and (len(points) > 0 or len(boxes) > 0):
+                    plotted = True
+                    self.create_plots(
+                        results,
+                        out_dir,
+                        work_unit,
+                        num_points,
+                        point_plot_config,
+                        parameters_to_plot,
+                    )
                 sleep(10)
             else:
                 results = self._worker.get_results(work_unit.id)
                 break
+
+        if not plotted and dump_plot:
+            self.create_plots(
+                results,
+                out_dir,
+                work_unit,
+                num_points,
+                point_plot_config,
+                parameters_to_plot,
+            )
 
         if killer.kill_now:
             l.info(
@@ -312,6 +297,59 @@ class Runner:
         # plt.close()
 
         return results
+
+    def create_plots(
+        self,
+        results,
+        out_dir,
+        work_unit,
+        num_points,
+        point_plot_config,
+        parameters_to_plot,
+    ):
+        points = results.parameter_space.points()
+        if len(points) > 0:
+            point_plot_filename = f"{out_dir}/{work_unit.id}_points.png"
+            l.info(
+                f"Creating plot of point trajectories: {point_plot_filename}"
+            )
+
+            points_to_plot = (
+                random.choices(
+                    points,
+                    k=min(
+                        len(points),
+                        (
+                            num_points
+                            if num_points is not None
+                            else len(points)
+                        ),
+                    ),
+                )
+                if num_points
+                else results.parameter_space.points()
+            )
+            results.plot(points=points_to_plot, **point_plot_config)
+            plt.show()
+            plt.savefig(point_plot_filename)
+            plt.close()
+
+        boxes = results.parameter_space.boxes()
+        assert (
+            len(parameters_to_plot) > 1
+        ), "Cannot plot a parameter space for one parameter"
+        if len(boxes) > 0 and len(parameters_to_plot) > 1:
+            space_plot_filename = (
+                f"{out_dir}/{work_unit.id}_parameter_space.png"
+            )
+            l.info(f"Creating plot of parameter space: {space_plot_filename}")
+            ParameterSpacePlotter(
+                results.parameter_space,
+                plot_points=False,
+                parameters=parameters_to_plot,
+            ).plot(show=True)
+            plt.savefig(space_plot_filename)
+        plt.close()
 
 
 def get_args():

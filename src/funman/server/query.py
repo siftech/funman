@@ -427,6 +427,7 @@ class FunmanResults(BaseModel):
         label_marker={"true": "+", "false": "o"},
         label_color={"true": "g", "false": "r"},
         legend=None,
+        dpi=100,
         **kwargs,
     ):
         """
@@ -448,7 +449,7 @@ class FunmanResults(BaseModel):
             points = self.points()
 
         df = self.dataframe(points, max_time=max_time)
-        fig, ax = plt.subplots(figsize=(8, 6))
+        fig, ax = plt.subplots(figsize=(8, 6), dpi=dpi)
         groups = df.groupby("label")
         for label, group in groups:
             if variables is not None:
