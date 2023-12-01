@@ -62,13 +62,22 @@ class ParameterSpacePlotter:
         box = Box(bounds={p: interval for p in self.parameters})
         return box
 
-    def initialize_figure(self):
+    def map_param_idx_to_plot_loc(self, i, j, plot_diagonal):
+        if plot_diagonal:
+            return i, j
+        elif i == 0 or j == self.dim - 1:
+            return None, None
+        else:
+            return i - 1, j
+
+    def initialize_figure(self, plot_diagonal):
         if self.dim == 0:
             return
 
+        dim_to_plot = self.dim if plot_diagonal else self.dim - 1
         fig, axs = plt.subplots(
-            self.dim,
-            self.dim,
+            dim_to_plot,
+            dim_to_plot,
             squeeze=False,
             dpi=self.dpi,
             figsize=(10, 10),
@@ -91,43 +100,74 @@ class ParameterSpacePlotter:
 
         self.fig.tight_layout(pad=3.0)
         self.data = [[None] * self.dim] * self.dim
+
         for i in range(self.dim):
             for j in range(self.dim):
-                if j > i:
-                    axs[i, j].axis("off")
+                i_coord, j_coord = self.map_param_idx_to_plot_loc(
+                    i, j, plot_diagonal
+                )
+                if i_coord is None or j_coord is None:
+                    continue
+
+                if j_coord > i_coord:
+                    axs[i_coord, j_coord].axis("off")
                 else:
-                    (self.data[i][j],) = self.axs[i, j].plot([], [])
-                    axs[i, j].set_xlabel(f"{self.parameters[i]}")
-                    axs[i, j].set_ylabel(f"{self.parameters[j]}")
+                    (self.data[i][j],) = self.axs[i_coord, j_coord].plot(
+                        [], []
+                    )
+                    axs[i_coord, j_coord].set_xlabel(f"{self.parameters[i]}")
+                    axs[i_coord, j_coord].set_ylabel(f"{self.parameters[j]}")
         self.fig.suptitle(self.title)
         plt.legend(self.custom_lines, ["true", "false"])
 
-    def plot(self, show=False):
-        self.initialize_figure()
+    def plot(self, show=False, plot_diagonal=False):
+        self.initialize_figure(plot_diagonal)
         t = "true"
         f = "false"
         for b in self.ps.false_boxes:
-            self.plotNDBox(b, self.color_map[f])
+            self.plotNDBox(b, self.color_map[f], plot_diagonal=plot_diagonal)
         for b in self.ps.true_boxes:
-            self.plotNDBox(b, self.color_map[t])
+            self.plotNDBox(b, self.color_map[t], plot_diagonal=plot_diagonal)
         if self.plot_points:
             for p in self.ps.false_points():
-                self.plot_add_point(p, self.color_map[f], self.shape_map[f])
+                self.plot_add_point(
+                    p,
+                    self.color_map[f],
+                    self.shape_map[f],
+                    plot_diagonal=plot_diagonal,
+                )
             true_points = self.ps.true_points()
             for p in true_points:
-                self.plot_add_point(p, self.color_map[t], self.shape_map[t])
+                self.plot_add_point(
+                    p,
+                    self.color_map[t],
+                    self.shape_map[t],
+                    plot_diagonal=plot_diagonal,
+                )
         if show:
             plt.show(block=False)
 
-    def plot_add_point(self, point: Point, color="r", shape="x", alpha=0.9):
+    def plot_add_point(
+        self,
+        point: Point,
+        color="r",
+        shape="x",
+        alpha=0.9,
+        plot_diagonal=False,
+    ):
         for i in range(self.dim):
             for j in range(self.dim):
-                if i < j:
+                i_coord, j_coord = self.map_param_idx_to_plot_loc(
+                    i, j, plot_diagonal
+                )
+                if i_coord is None or j_coord is None:
+                    continue
+                if j_coord > i_coord:
                     continue
                 yval = (
                     point.values[self.parameters[j]] if self.dim > 1 else 0.0
                 )
-                self.axs[i, j].scatter(
+                self.axs[i_coord, j_coord].scatter(
                     point.values[self.parameters[i]],
                     yval,
                     color=color,
@@ -138,17 +178,23 @@ class ParameterSpacePlotter:
                 # self.fig.canvas.draw()
                 # self.fig.canvas.flush_events()
 
-    def plotNDBox(self, box, color="g", alpha=0.2):
+    def plotNDBox(self, box, color="g", alpha=0.2, plot_diagonal=False):
         for i in range(self.dim):
             for j in range(self.dim):
-                if i < j:
+                i_coord, j_coord = self.map_param_idx_to_plot_loc(
+                    i, j, plot_diagonal
+                )
+                if i_coord is None or j_coord is None:
                     continue
+                if j_coord > i_coord:
+                    continue
+
                 x_limits = box.bounds[self.parameters[i]]
                 y_limits = box.bounds[self.parameters[j]]
 
                 if i == j:
                     # Plot a line segment
-                    self.axs[i, j].plot(
+                    self.axs[i_coord, j_coord].plot(
                         [x_limits.lb, x_limits.ub],
                         [x_limits.lb, x_limits.ub],
                         color=color,
@@ -164,7 +210,7 @@ class ParameterSpacePlotter:
                         x = np.linspace(
                             float(x_limits.lb), float(x_limits.ub), 1000
                         )
-                        self.axs[i, j].fill_between(
+                        self.axs[i_coord, j_coord].fill_between(
                             x,
                             y_limits.lb,
                             y_limits.ub,
