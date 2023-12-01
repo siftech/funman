@@ -6,7 +6,7 @@ from typing import List
 import dreal
 from pysmt.decorators import catch_conversion_error
 from pysmt.formula import FNode
-from pysmt.shortcuts import Symbol
+from pysmt.shortcuts import FALSE, Symbol
 from pysmt.smtlib.parser import SmtLibParser, Tokenizer
 from pysmt.solvers.solver import (
     Converter,
@@ -59,10 +59,14 @@ class DRealConverter(Converter, DagWalker):
         # str_formula = str_formula.replace("pow(beta, 2.0)", "beta^2.0")
 
         str_formula = re.sub(
-            r"pow\([\(\)\-a-z0-9\_ ]+\, [0-9.]+\)",
-            lambda x: x.group().split(",")[0].split("(", 1)[1]
+            r"pow\([\(\)\-a-z0-9\_\+\*\.\^ ]+\, [\-0-9a-z.]+\)",
+            lambda x: "("
+            + x.group().split(",")[0].split("(", 1)[1]
+            + ")"
             + "^"
-            + x.group().split(",")[1].split(")")[0].strip(),
+            + "("
+            + x.group().split(",")[1].split(")")[0].strip()
+            + ")",
             str_formula,
         )
 
