@@ -16,6 +16,7 @@ from pysmt.shortcuts import (
     And,
     Div,
     Equals,
+    Ite,
     Plus,
     Pow,
     Real,
@@ -24,7 +25,7 @@ from pysmt.shortcuts import (
     get_env,
 )
 from pysmt.walkers import IdentityDagWalker
-from sympy import Add, Expr, Rational, exp, series, symbols, sympify
+from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
 
 l = logging.getLogger(__name__)
 
@@ -191,6 +192,8 @@ def sympy_to_pysmt(expr):
         return sympy_to_pysmt_op(Times, expr)
     elif func.is_Add:
         return sympy_to_pysmt_op(Plus, expr)
+    elif isinstance(expr, Abs):
+        return sympy_to_pysmt_abs(expr)
     elif func.is_Symbol:
         return sympy_to_pysmt_symbol(Symbol, expr, op_type=REAL)
     elif func.is_Pow:
@@ -219,6 +222,13 @@ def sympy_to_pysmt(expr):
 def sympy_to_pysmt_op(op, expr, explode=False):
     terms = [sympy_to_pysmt(arg) for arg in expr.args]
     return op(*terms) if explode else op(terms)
+
+
+def sympy_to_pysmt_abs(expr):
+    p_expr = sympy_to_pysmt(expr.args[0])
+    return Pow(
+        Pow(p_expr, Real(2.0)), Real(0.5)
+    )  # Ite(GE(p_expr, Real(0.0)), p_expr, Times(Real(-1.0), p_expr))
 
 
 def sympy_to_pysmt_pow(expr):
