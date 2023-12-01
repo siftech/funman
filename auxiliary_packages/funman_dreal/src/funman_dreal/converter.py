@@ -1,10 +1,12 @@
 import functools
+import logging
 import re
 from fractions import Fraction
 from typing import List
 
 import dreal
 from pysmt.decorators import catch_conversion_error
+from pysmt.exceptions import UndefinedSymbolError
 from pysmt.formula import FNode
 from pysmt.parsing import (
     ClosePar,
@@ -28,6 +30,8 @@ from pysmt.solvers.solver import (
 )
 from pysmt.walkers import DagWalker
 
+l = logging.getLogger(__name__)
+
 
 def CoreParser(env=None):
     return PrattParser(CoreLexer)
@@ -42,7 +46,7 @@ class BinaryLiteralExpr(GrammarSymbol):
         self.lbp = lbp
 
     def nud(self, parser):
-        parser.advance()  # OpenPar
+        # parser.advance()  # OpenPar
         parser.advance()  # OpenPar
         if type(parser.token) != ClosePar:
             r = parser.expression()
@@ -73,9 +77,12 @@ class CoreLexer(HRLexer):
                 r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
             ),  # disjunction
             Rule(
-                r"(b)", BinaryLiteralExpr(self.BinaryLiteral, 50), False
+                r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
             ),  # b()
             Rule(r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False),  # eq
+            Rule(
+                r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
+            ),  # decimals scientific
         ] + self.rules
         self.compile()
 
@@ -87,7 +94,12 @@ class CoreLexer(HRLexer):
 
     def identifier(self, read):
         r = self.identifier_map.get(read, read)
-        return Identifier(r, env=self.env)
+        try:
+            return Identifier(r, env=self.env)
+        except UndefinedSymbolError as e:
+            l.exception(
+                f"Could not resolve parsed identifier: {r}, because:\n{e}"
+            )
 
 
 class DRealConverter(Converter, DagWalker):
@@ -156,6 +168,9 @@ class DRealConverter(Converter, DagWalker):
     def back(self, dreal_formula: dreal.Formula) -> FNode:
         try:
             # rewritten_formula = self.rewrite_dreal_formula(dreal_formula)
+            l.debug(
+                f"Extracting dreal unsat core expression: {str(dreal_formula)}"
+            )
             new_symbols = self.create_dreal_symbols(str(dreal_formula))
             formula = CoreParser().parse(str(dreal_formula))
         except Exception as e:
