@@ -325,7 +325,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _extract_point(self, model, box: Box):
         point = Point(
             values={
-                str(p[0]): (
+                p[0].symbol_name(): (
                     float(p[1].constant_value())
                     if p[1].is_real_constant()
                     else p[1].constant_value()
