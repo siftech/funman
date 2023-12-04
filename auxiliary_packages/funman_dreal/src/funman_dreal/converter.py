@@ -81,6 +81,9 @@ class CoreLexer(HRLexer):
             ),  # b()
             Rule(r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False),  # eq
             Rule(
+                r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
+            ),  # decimals scientific
+            Rule(
                 r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
             ),  # decimals scientific
         ] + self.rules
