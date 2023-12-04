@@ -91,7 +91,7 @@ target "funman-dreal4" {
   args = {
     SIFT_REGISTRY_ROOT = compose_registry("${DOCKER_REGISTRY}","${DOCKER_ORG}")
     IBEX_TAG = "${VERSION}-${IBEX_BRANCH}"
-    BAZEL_VERSION = "${BAZEL_VERSION}" 
+    BAZEL_VERSION = "${BAZEL_VERSION}"
     DREAL_REPO_URL = "${DREAL_REPO_URL}"
     DREAL_COMMIT_TAG = "${DREAL_COMMIT_TAG}"
   }
@@ -142,7 +142,7 @@ target "funman-git" {
 target "funman-api" {
   context = "./docker/api"
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-git:${VERSION}" = "target:funman-git"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-git:${VERSION}-git" = "target:funman-git"
   }
   args = {
     SIFT_REGISTRY_ROOT = "${DOCKER_REGISTRY}/${DOCKER_ORG}/"
