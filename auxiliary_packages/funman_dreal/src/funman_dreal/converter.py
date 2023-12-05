@@ -61,7 +61,25 @@ class BinaryLiteralExpr(GrammarSymbol):
     def __repr__(self):
         return repr(self.operator)
 
+class PowOpAdapter(GrammarSymbol):
+    """Adapter for infix operator."""
 
+    def __init__(self, operator, lbp):
+        GrammarSymbol.__init__(self)
+        self.operator = operator
+        self.lbp = lbp
+
+    def nud(self, parser):
+        parser.advance()  # OpenPar
+        left = parser.expression() # base
+        parser.advance() # ExprComma
+        right = parser.expression() # exponent
+        parser.advance()  # ClosePar
+        return self.operator(left, right)
+
+    def __repr__(self):
+        return repr(self.operator)
+    
 class CoreLexer(HRLexer):
     def __init__(self, env=None):
         super().__init__(env=env)
@@ -69,13 +87,15 @@ class CoreLexer(HRLexer):
         self.identifier_map = {"and": "&", "or": "|", "==": "="}
 
         self.rules = [
-            Rule(r"(pow)", InfixOpAdapter(self.mgr.Pow, 80), False),  # pow
+            Rule(r"(pow)", PowOpAdapter(self.mgr.Pow, 80), False),  # pow
             Rule(
                 r"(and)", InfixOpAdapter(self.AndOrBVAnd, 40), False
             ),  # conjunction
             Rule(
                 r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
             ),  # disjunction
+            Rule(
+                r"(abs)", UnaryOpAdapter(self.mgr.Abs, 50), False), # absolute value
             Rule(
                 r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
             ),  # b()
