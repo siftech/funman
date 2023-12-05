@@ -2,7 +2,7 @@ import logging
 from decimal import Decimal
 from typing import List, Optional, Union
 
-from numpy import average
+from numpy import average, nextafter
 from pydantic import BaseModel, Field, model_validator
 
 import funman.utils.math_utils as math_utils
@@ -117,7 +117,18 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        return self.ub == other.lb or self.lb == other.ub
+        return (
+            (self.ub == other.lb and not self.closed_upper_bound)
+            or (
+                nextafter(self.ub, POS_INFINITY) == other.lb
+                and self.closed_upper_bound
+            )
+            or (self.lb == other.ub and not other.closed_upper_bound)
+            or (
+                self.ub == nextafter(other.lb, POS_INFINITY)
+                and other.closed_upper_bound
+            )
+        )
 
     def finite(self) -> bool:
         """
