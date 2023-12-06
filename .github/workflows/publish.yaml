@@ -7,10 +7,10 @@ name: Build Docker Images
 on:
   workflow_dispatch:
   push:
-    branches: ['main','develop','demo_*','hackathon_*']
+    branches: ['develop','demo_*','hackathon_*']
     tags: ['*']
   pull_request:
-    branches: ['main','develop']
+    branches: ['develop']
 
 permissions:
   contents: read
@@ -19,7 +19,7 @@ permissions:
 jobs:
   # Call the Tag Generator to generate an image tag to use
   tag-generator:
-    uses: darpa-askem/.github/.github/workflows/tag-generator.yaml@main
+    uses: darpa-askem/.github/.github/workflows/tag-generator.yaml@develop
 
   publish:
     name: sequence-build-deploy
