@@ -20,7 +20,8 @@ jobs:
   # Call the Tag Generator to generate an image tag to use
   tag-generator:
     uses: darpa-askem/.github/.github/workflows/tag-generator.yaml@main
-    branch: 'develop'
+    with:
+      branch: 'develop'
 
   publish:
     name: sequence-build-deploy
