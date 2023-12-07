@@ -7,7 +7,7 @@ import os
 from decimal import Decimal
 from typing import Dict, List, Tuple
 
-from pydantic import AnyUrl, BaseModel
+from pydantic import AnyUrl, BaseModel, Field
 
 from funman.model.generated_models.petrinet import (
     Distribution,
@@ -43,8 +43,8 @@ class Coordinate(BaseModel):
     """
 
     vector: List[float]
-    id: str
-    neighbors: Dict[str, "Coordinate"] = {}
+    id: List[int]
+    neighbors: List[Dict[str, "Coordinate"]] = []
 
 
 class HalfarGenerator:
@@ -62,16 +62,42 @@ class HalfarGenerator:
         step_size = value = self.range.width() / Decimal(
             int(args.num_discretization_points) - 1
         )
-        for i in range(args.num_discretization_points):
-            value = self.range.lb + float(step_size * i)
-            coords.append(Coordinate(vector=[value], id=str(i)))
-        for i, coord in enumerate(coords):
-            coord.neighbors[Direction.Negative] = (
-                coords[i - 1] if i > 0 else None
-            )
-            coord.neighbors[Direction.Positive] = (
-                coords[i + 1] if i < len(coords) - 1 else None
-            )
+
+        # Discretize each dimension 
+        axes = [
+            [self.range.lb + float(step_size * i) for i in range(args.num_discretization_points)] 
+                for d in range(args.dimensions)
+                ]
+        
+        # Build all points as the cross product of axes
+        points = [[]]
+        ids = [[]]
+        for axis in axes:
+            next_points = []
+            next_ids = []
+            for (id, point) in zip(ids, points):
+                for did, value in enumerate(axis):
+                    next_point = point.copy() + [value] 
+                    next_id = id + [did]
+                    next_points.append(next_point)
+                    next_ids.append(next_id)
+            points = next_points
+            ids = next_ids
+
+
+        coords = {tuple(id): Coordinate(vector=point, id=id) for (id, point) in zip(ids, points)}
+
+        for id, coord in coords.items():
+            for dim in range(args.dimensions):
+                coord.neighbors.append({})
+                prev_id = tuple([(i if d != dim else i-1) for d, i in enumerate(id)])
+                coord.neighbors[dim][Direction.Negative] = (
+                    coords[prev_id] if prev_id[dim] >= 0 else None
+                )
+                next_id = tuple([(i if d != dim else i+1) for d, i in enumerate(id)])
+                coord.neighbors[dim][Direction.Positive] = (
+                    coords[next_id] if next_id[dim] < int(args.num_discretization_points) else None
+                )
         return coords
 
     def transition_expression(
@@ -152,6 +178,13 @@ class HalfarGenerator:
 
         rates = [tpr, tnr]
         return transitions, rates
+    
+    def states(self, args) -> List[State]:
+        # Create a height variable at each coordinate
+        states = [
+            State(id=f"h_{i}", name=f"h_{i}", description=f"height at {i}")
+            for i in range(len(coordinates))
+        ]
 
     def model(self, args) -> Tuple[Model1, Semantics]:
         """
@@ -160,10 +193,7 @@ class HalfarGenerator:
         coordinates = self.coordinates(args)
 
         # Create a height variable at each coordinate
-        states = [
-            State(id=f"h_{i}", name=f"h_{i}", description=f"height at {i}")
-            for i in range(len(coordinates))
-        ]
+        states = self.states(args, coordinates)
 
         transitions = []
         rates = []
@@ -238,13 +268,22 @@ class HalfarGenerator:
 
 def get_args():
     parser = argparse.ArgumentParser()
-    # parser.add_argument(
-    #     "-d",
-    #     "--dimensions",
-    #     default=1,
-    #     type=int,
-    #     help=f"Number of spatial dimensions",
-    # )
+    parser.add_argument(
+        "-d",
+        "--dimensions",
+        default=2,
+        type=int,
+        help=f"Number of spatial dimensions",
+    )
+    parser.add_argument(
+        "-t",
+        "--discretization-type",
+        default=1,
+        type=int,
+        choices=["centered"],
+        help=f"Number of spatial dimensions",
+    )
+
     parser.add_argument(
         "-p",
         "--num-discretization-points",
