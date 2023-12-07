@@ -44,7 +44,10 @@ class Coordinate(BaseModel):
 
     vector: List[float]
     id: List[int]
-    neighbors: List[Dict[str, "Coordinate"]] = []
+    neighbors: List[Dict[str, List[int]]] = []
+
+    def id_str(self):
+        return "_".join([str(i) for i in self.id])
 
 
 class HalfarGenerator:
@@ -63,128 +66,140 @@ class HalfarGenerator:
             int(args.num_discretization_points) - 1
         )
 
-        # Discretize each dimension 
+        # Discretize each dimension
         axes = [
-            [self.range.lb + float(step_size * i) for i in range(args.num_discretization_points)] 
-                for d in range(args.dimensions)
-                ]
-        
+            [
+                self.range.lb + float(step_size * i)
+                for i in range(args.num_discretization_points)
+            ]
+            for d in range(args.dimensions)
+        ]
+
         # Build all points as the cross product of axes
         points = [[]]
         ids = [[]]
         for axis in axes:
             next_points = []
             next_ids = []
-            for (id, point) in zip(ids, points):
+            for id, point in zip(ids, points):
                 for did, value in enumerate(axis):
-                    next_point = point.copy() + [value] 
+                    next_point = point.copy() + [value]
                     next_id = id + [did]
                     next_points.append(next_point)
                     next_ids.append(next_id)
             points = next_points
             ids = next_ids
 
-
-        coords = {tuple(id): Coordinate(vector=point, id=id) for (id, point) in zip(ids, points)}
+        coords = {
+            tuple(id): Coordinate(vector=point, id=id)
+            for (id, point) in zip(ids, points)
+        }
 
         for id, coord in coords.items():
             for dim in range(args.dimensions):
                 coord.neighbors.append({})
-                prev_id = tuple([(i if d != dim else i-1) for d, i in enumerate(id)])
-                coord.neighbors[dim][Direction.Negative] = (
-                    coords[prev_id] if prev_id[dim] >= 0 else None
+                prev_id = tuple(
+                    [(i if d != dim else i - 1) for d, i in enumerate(id)]
                 )
-                next_id = tuple([(i if d != dim else i+1) for d, i in enumerate(id)])
+                coord.neighbors[dim][Direction.Negative] = (
+                    prev_id if prev_id[dim] >= 0 else None
+                )
+                next_id = tuple(
+                    [(i if d != dim else i + 1) for d, i in enumerate(id)]
+                )
                 coord.neighbors[dim][Direction.Positive] = (
-                    coords[next_id] if next_id[dim] < int(args.num_discretization_points) else None
+                    next_id
+                    if next_id[dim] < int(args.num_discretization_points)
+                    else None
                 )
         return coords
 
-    def transition_expression(
-        self, n1_name: str, n2_name: str, negative=False
+    def transition_rate(
+        self,
+        coordinate: Coordinate,
+        dimension: int,
+        coordinates: Dict[Tuple, Coordinate],
     ) -> str:
         """
         Custom rate change
         """
-        prefix = "-1*" if negative else ""
-        gamma = "(2/(n+2))*A*(rho*g)**n"
-        return f"{prefix}{gamma}*(({n2_name}-{n1_name})**3)*({n1_name}**5)"
+        next_coord_id = coordinate.neighbors[dimension][Direction.Positive]
+        prev_coord_id = coordinate.neighbors[dimension][Direction.Negative]
 
-    def neighbor_gradient(
-        self, coordinate: Coordinate, coordinates: List[Coordinate]
-    ) -> Tuple[List[Transition], List[Rate]]:
-        """
-        Find a triple of coordinates (n0, n1, n2) that are ordered so that dx = n2-n1 and dx = n1-n0 is positive
-        """
-        if (
-            coordinate.neighbors[Direction.Positive]
-            and coordinate.neighbors[Direction.Negative]
-        ):
-            n0 = coordinate.neighbors[Direction.Negative]
-        elif (
-            coordinate.neighbors[Direction.Positive]
-            and not coordinate.neighbors[Direction.Negative]
-        ):
-            n0 = coordinate
-        elif (
-            not coordinate.neighbors[Direction.Positive]
-            and coordinate.neighbors[Direction.Negative]
-        ):
-            n0 = coordinate.neighbors[Direction.Negative].neighbors[
-                Direction.Negative
-            ]
+        next_coord = coordinates.get(next_coord_id, None)
+        prev_coord = coordinates.get(prev_coord_id, None)
+
+        coord_str = f"h_{coordinate.id_str()}"
+        next_str = f"h_{next_coord.id_str()}" if next_coord else ""
+        prev_str = f"-h_{prev_coord.id_str()}" if prev_coord else ""
+
+        gamma = "283701998652.8*A"
+
+        coord_x = coordinate.vector[dimension]
+        next_x_dx = (
+            next_coord.vector[dimension] - coord_x if next_coord else None
+        )
+        prev_x_dx = (
+            coord_x - prev_coord.vector[dimension] if prev_coord else None
+        )
+
+        if next_x_dx is not None and prev_x_dx is not None:
+            dx = next_x_dx + prev_x_dx
+        elif next_x_dx is not None:
+            dx = 2 * next_x_dx
+        elif prev_x_dx is not None:
+            dx = 2 * prev_x_dx
         else:
             raise Exception(
-                "Cannot determine the gradient of a coordinate with no neighbors"
+                "dx is undefined because coordinate has no neighbors"
             )
-        n1 = n0.neighbors[Direction.Positive]
-        n2 = n1.neighbors[Direction.Positive]
 
-        w_p_name = f"w_p_{coordinate.id}"
-        w_n_name = f"w_n_{coordinate.id}"
-        n0_name = f"h_{n0.id}"
-        n1_name = f"h_{n1.id}"
-        n2_name = f"h_{n2.id}"
-        h_name = f"h_{coordinate.id}"
+        return f"({gamma}/{dx})*((abs(({next_str}{prev_str})*0.5)**2)*(({next_str}{prev_str})*0.5)*({coord_str}**5))"
 
-        # tp is the gradient wrt. n2, n1
-        tp = Transition(
-            id=w_p_name,
-            input=[n2_name, n1_name],
-            output=[h_name],
-            properties=Properties(name=w_p_name),
-        )
+    def centered_difference(self, coordinate: Coordinate, coordinates):
+        transitions = []
+        rates = []
+        # Get transition in each dimension
+        for dimension, value in enumerate(coordinate.vector):
+            # Transition for coordinate is: next_coord -- rate --> prev_coord
+            rate = self.transition_rate(coordinate, dimension, coordinates)
+            rates.append(
+                Rate(
+                    target=f"r_{dimension}_{coordinate.id_str()}",
+                    expression=rate,
+                )
+            )
+            next_coord_id = coordinate.neighbors[dimension][Direction.Positive]
 
-        # tn is the gradient wrt. n1, n0
-        tn = Transition(
-            id=w_n_name,
-            input=[n1_name, n0_name],
-            output=[h_name],
-            properties=Properties(name=w_n_name),
-        )
+            prev_coord_id = coordinate.neighbors[dimension][Direction.Negative]
+            next_coord = coordinates.get(next_coord_id, None)
+            prev_coord = coordinates.get(prev_coord_id, None)
 
-        transitions = [tp, tn]
+            input_states = [f"h_{next_coord.id_str()}"] if next_coord else []
+            output_states = [f"h_{prev_coord.id_str()}"] if prev_coord else []
 
-        tpr = Rate(
-            target=w_p_name,
-            expression=self.transition_expression(n1_name, n2_name),
-        )
-        tnr = Rate(
-            target=w_n_name,
-            expression=self.transition_expression(
-                n0_name, n1_name, negative=True
-            ),
-        )
+            transition_name = f"r_{dimension}_{coordinate.id_str()}"
+            transition = Transition(
+                id=transition_name,
+                input=input_states,
+                output=output_states,
+                properties=Properties(name=transition_name),
+            )
+            transitions.append(transition)
 
-        rates = [tpr, tnr]
         return transitions, rates
-    
-    def states(self, args) -> List[State]:
+
+    def states(self, args, coordinates) -> List[State]:
         # Create a height variable at each coordinate
         states = [
-            State(id=f"h_{i}", name=f"h_{i}", description=f"height at {i}")
-            for i in range(len(coordinates))
+            State(
+                id=f"h_{coord.id_str()}",
+                name=f"h_{coord.id_str()}",
+                description=f"height at {coord.vector}",
+            )
+            for id, coord in coordinates.items()
         ]
+        return states
 
     def model(self, args) -> Tuple[Model1, Semantics]:
         """
@@ -197,8 +212,8 @@ class HalfarGenerator:
 
         transitions = []
         rates = []
-        for coordinate in coordinates[1:-1]:
-            coord_transitions, trans_rates = self.neighbor_gradient(
+        for id, coordinate in coordinates.items():
+            coord_transitions, trans_rates = self.centered_difference(
                 coordinate, coordinates
             )
             transitions += coord_transitions
@@ -211,41 +226,49 @@ class HalfarGenerator:
 
         initials = [
             Initial(
-                target=f"h_{c.id}",
+                target=f"h_{c.id_str()}",
                 expression=(
                     "0.0"
-                    if (c == coordinates[0] or c == coordinates[-1])
-                    else f"{1.0/(1.0+abs(c.vector[0]))}"
+                    if any(
+                        [
+                            (
+                                id == 0
+                                or id == args.num_discretization_points - 1
+                            )
+                            for id in c.id
+                        ]
+                    )
+                    else f"{1.0/(1.0+max([abs(v) for v in c.vector]))}"
                 ),
             )
-            for c in coordinates
+            for id, c in coordinates.items()
         ]
 
         parameters = [
-            Parameter(
-                id="n",
-                value=3.0,
-                distribution=Distribution(
-                    type="StandardUniform1",
-                    parameters={"minimum": 3.0, "maximum": 3.0},
-                ),
-            ),
-            Parameter(
-                id="rho",
-                value=910.0,
-                distribution=Distribution(
-                    type="StandardUniform1",
-                    parameters={"minimum": 910.0, "maximum": 910.0},
-                ),
-            ),
-            Parameter(
-                id="g",
-                value=9.8,
-                distribution=Distribution(
-                    type="StandardUniform1",
-                    parameters={"minimum": 9.8, "maximum": 9.8},
-                ),
-            ),
+            # Parameter(
+            #     id="n",
+            #     value=3.0,
+            #     distribution=Distribution(
+            #         type="StandardUniform1",
+            #         parameters={"minimum": 3.0, "maximum": 3.0},
+            #     ),
+            # ),
+            # Parameter(
+            #     id="rho",
+            #     value=910.0,
+            #     distribution=Distribution(
+            #         type="StandardUniform1",
+            #         parameters={"minimum": 910.0, "maximum": 910.0},
+            #     ),
+            # ),
+            # Parameter(
+            #     id="g",
+            #     value=9.8,
+            #     distribution=Distribution(
+            #         type="StandardUniform1",
+            #         parameters={"minimum": 9.8, "maximum": 9.8},
+            #     ),
+            # ),
             Parameter(
                 id="A",
                 value=1e-16,
