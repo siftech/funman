@@ -119,6 +119,7 @@ class HalfarGenerator:
         coordinate: Coordinate,
         dimension: int,
         coordinates: Dict[Tuple, Coordinate],
+        args,
     ) -> str:
         """
         Custom rate change
@@ -130,8 +131,16 @@ class HalfarGenerator:
         prev_coord = coordinates.get(prev_coord_id, None)
 
         coord_str = f"h_{coordinate.id_str()}"
-        next_str = f"h_{next_coord.id_str()}" if next_coord else ""
-        prev_str = f"-h_{prev_coord.id_str()}" if prev_coord else ""
+        next_str = (
+            f"h_{next_coord.id_str()}"
+            if next_coord
+            else f"({args.boundary_slope}*t)"
+        )
+        prev_str = (
+            f"-h_{prev_coord.id_str()}"
+            if prev_coord
+            else f"-({args.boundary_slope}*t)"
+        )
 
         gamma = "283701998652.8*A"
 
@@ -156,13 +165,15 @@ class HalfarGenerator:
 
         return f"({gamma}/{dx})*((abs(({next_str}{prev_str})*0.5)**2)*(({next_str}{prev_str})*0.5)*({coord_str}**5))"
 
-    def centered_difference(self, coordinate: Coordinate, coordinates):
+    def centered_difference(self, coordinate: Coordinate, coordinates, args):
         transitions = []
         rates = []
         # Get transition in each dimension
         for dimension, value in enumerate(coordinate.vector):
             # Transition for coordinate is: next_coord -- rate --> prev_coord
-            rate = self.transition_rate(coordinate, dimension, coordinates)
+            rate = self.transition_rate(
+                coordinate, dimension, coordinates, args
+            )
             rates.append(
                 Rate(
                     target=f"r_{dimension}_{coordinate.id_str()}",
@@ -214,7 +225,7 @@ class HalfarGenerator:
         rates = []
         for id, coordinate in coordinates.items():
             coord_transitions, trans_rates = self.centered_difference(
-                coordinate, coordinates
+                coordinate, coordinates, args
             )
             transitions += coord_transitions
             rates += trans_rates
@@ -228,17 +239,18 @@ class HalfarGenerator:
             Initial(
                 target=f"h_{c.id_str()}",
                 expression=(
-                    "0.0"
-                    if any(
-                        [
-                            (
-                                id == 0
-                                or id == args.num_discretization_points - 1
-                            )
-                            for id in c.id
-                        ]
-                    )
-                    else f"{1.0/(1.0+max([abs(v) for v in c.vector]))}"
+                    # "0.0"
+                    # if any(
+                    #     [
+                    #         (
+                    #             id == 0
+                    #             or id == args.num_discretization_points - 1
+                    #         )
+                    #         for id in c.id
+                    #     ]
+                    # )
+                    # else
+                    f"{1.0/(1.0+max([abs(v) for v in c.vector]))}"
                 ),
             )
             for id, c in coordinates.items()
@@ -306,11 +318,18 @@ def get_args():
         choices=["centered"],
         help=f"Number of spatial dimensions",
     )
+    parser.add_argument(
+        "-b",
+        "--boundary-slope",
+        default=0.1,
+        type=float,
+        help=f"Time-dependent boundary function parameter f(t) = bt",
+    )
 
     parser.add_argument(
         "-p",
         "--num-discretization-points",
-        default=5,
+        default=3,
         type=int,
         help=f"Number of discretization points",
     )

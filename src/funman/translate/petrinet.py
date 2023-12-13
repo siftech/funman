@@ -147,10 +147,10 @@ class PetrinetEncoder(Encoder):
                 state_var_id = scenario.model._state_var_id(var)
 
                 transition_id = scenario.model._transition_id(transition)
-                outflow = scenario.model._num_flow_from_state_to_transition(
+                outflow = scenario.model._num_flow_from_transition_to_state(
                     state_var_id, transition_id
                 )
-                inflow = scenario.model._flow_into_state_via_transition(
+                inflow = scenario.model._num_flow_from_state_to_transition(
                     state_var_id, transition_id
                 )
                 net_flow = inflow - outflow
