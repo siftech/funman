@@ -1,14 +1,19 @@
 import logging
 from decimal import Decimal
 from typing import List, Optional, Union
+from typing_extensions import Annotated
 
 from numpy import average, nextafter
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_serializer, model_validator, SerializerFunctionWrapHandler
+from pydantic.functional_serializers import WrapSerializer
+
 
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
 
 l = logging.Logger(__name__)
+
+
 
 
 class Interval(BaseModel):
@@ -20,6 +25,12 @@ class Interval(BaseModel):
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
     original_width: Optional[Decimal] = None
+
+    @field_serializer("original_width")
+    def ser_wrap(self, v: Decimal, _info) -> float:
+        return float(v)
+
+
 
     @staticmethod
     def from_value(v: Union[float, str]):

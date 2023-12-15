@@ -54,7 +54,7 @@ class SMTCheck(Search):
             options = EncodingOptions(schedule=schedule)
 
             # self._initialize_encoding(solver, episode, box_timepoint, box)
-            result = self.expand(
+            model_result, explanation_result = self.expand(
                 problem,
                 episode,
                 options,
@@ -62,8 +62,8 @@ class SMTCheck(Search):
                 schedule,
             )
             timestep = len(schedule.timepoints) - 1
-            if result is not None and isinstance(result, pysmtModel):
-                result_dict = result.to_dict() if result else None
+            if model_result is not None and isinstance(model_result, pysmtModel):
+                result_dict = result.to_dict() if model_result else None
                 l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
                 if result_dict is not None:
                     parameter_values = {
@@ -84,17 +84,18 @@ class SMTCheck(Search):
                     if config.normalize:
                         denormalized_point = point.denormalize(problem)
                         point = denormalized_point
-                    models[point] = result
+                    models[point] = model_result
                     consistent[point] = result_dict
                     parameter_space.true_boxes.append(Box.from_point(point))
-            elif result is not None and isinstance(result, Explanation):
+            if explanation_result is not None and isinstance(explanation_result, Explanation):
                 box = Box(
                     bounds={
                         p.name: p.interval.model_copy()
                         for p in problem.parameters
                     },
                     label=LABEL_FALSE,
-                    explanation=result,
+                    points = [point] if point is not None else [],
+                    explanation=explanation_result,
                 )
                 box.bounds["timestep"] = Interval(
                     lb=timestep, ub=timestep, closed_upper_bound=True
@@ -150,9 +151,13 @@ class SMTCheck(Search):
                     for x in layer_formulas
                 ]
 
+        model_formula = And([f for f in layer_formulas])
+
         all_layers_formula = And(
-            And(assumption_formulas), And([f for f in layer_formulas])
+            And(assumption_formulas), model_formula
         )
+        
+
         all_simplified_layers_formula = (
             And(
                 And(assumption_formulas),
@@ -161,7 +166,7 @@ class SMTCheck(Search):
             if len(simplified_layer_formulas) > 0
             else None
         )
-        return all_layers_formula, all_simplified_layers_formula
+        return all_layers_formula, all_simplified_layers_formula, model_formula
 
     def solve_formula(
         self, s: Solver, formula: FNode, episode
@@ -191,6 +196,8 @@ class SMTCheck(Search):
         parameter_space,
         schedule: EncodingSchedule,
     ):
+        model_result = None
+        explanation_result = None
         if episode.config.solver == "dreal":
             opts = {
                 "dreal_precision": episode.config.dreal_precision,
@@ -209,7 +216,7 @@ class SMTCheck(Search):
             logic=QF_NRA,
             solver_options=opts,
         ) as s:
-            formula, simplified_formula = self.build_formula(
+            formula, simplified_formula, model_formula = self.build_formula(
                 episode, schedule, options
             )
 
@@ -217,7 +224,8 @@ class SMTCheck(Search):
                 # If using a simplified formula, we need to solve it and use its values in the original formula to get the values of all variables
                 result = self.solve_formula(s, simplified_formula, episode)
                 if result is not None and isinstance(result, pysmtModel):
-                    assigned_vars = result.to_dict()
+                    model_result = result
+                    assigned_vars = model_result.to_dict()
                     substitution = {
                         Symbol(p, (REAL if isinstance(v, float) else BOOL)): (
                             Real(v) if isinstance(v, float) else Bool(v)
@@ -246,16 +254,21 @@ class SMTCheck(Search):
                     formula_w_params = And(
                         formula.substitute(substitution), result_assignment
                     )
-                    result = self.solve_formula(s, formula_w_params, episode)
+                    model_result = self.solve_formula(s, formula_w_params, episode)
                 elif result is not None and isinstance(result, str):
+                    explanation_result = result
                     # Unsat core
                     pass
             else:
                 result = self.solve_formula(s, formula, episode)
                 if isinstance(result, Explanation):
+                    explanation_result = result
                     result.check_assumptions(episode, s, options)
 
-        return result
+                    # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.  
+                    model_result = self.solve_formula(s, model_formula, episode)
+
+        return model_result, explanation_result
 
     def store_smtlib(self, formula, filename="dbg.smt2"):
         with open(filename, "w") as f:
