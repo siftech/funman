@@ -61,9 +61,10 @@ class SMTCheck(Search):
                 parameter_space,
                 schedule,
             )
+            point = None
             timestep = len(schedule.timepoints) - 1
             if model_result is not None and isinstance(model_result, pysmtModel):
-                result_dict = result.to_dict() if model_result else None
+                result_dict = model_result.to_dict() if model_result else None
                 l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
                 if result_dict is not None:
                     parameter_values = {
@@ -260,10 +261,10 @@ class SMTCheck(Search):
                     # Unsat core
                     pass
             else:
-                result = self.solve_formula(s, formula, episode)
-                if isinstance(result, Explanation):
-                    explanation_result = result
-                    result.check_assumptions(episode, s, options)
+                model_result = self.solve_formula(s, formula, episode)
+                if isinstance(model_result, Explanation):
+                    explanation_result = model_result
+                    model_result.check_assumptions(episode, s, options)
 
                     # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.  
                     model_result = self.solve_formula(s, model_formula, episode)
