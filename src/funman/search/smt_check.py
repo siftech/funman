@@ -61,6 +61,7 @@ class SMTCheck(Search):
                 parameter_space,
                 schedule,
             )
+            point = None
             timestep = len(schedule.timepoints) - 1
             if model_result is not None and isinstance(
                 model_result, pysmtModel
@@ -265,8 +266,8 @@ class SMTCheck(Search):
             else:
                 model_result = self.solve_formula(s, formula, episode)
                 if isinstance(model_result, Explanation):
-                    explanation_result = result
-                    result.check_assumptions(episode, s, options)
+                    explanation_result = model_result
+                    model_result.check_assumptions(episode, s, options)
 
                     # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.
                     model_result = self.solve_formula(
