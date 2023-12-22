@@ -72,7 +72,7 @@ class TestUseCases(unittest.TestCase):
             "structure_parameters": [
                 {
                     "name": "schedules",
-                    "schedules": [{"timepoints": range(0, 30, 1)}],
+                    "schedules": [{"timepoints": range(0, 10, 1)}],
                 },
             ],
             "parameters": [
@@ -86,25 +86,26 @@ class TestUseCases(unittest.TestCase):
                     "name": "a",
                     "label": "any",
                     #  "interval": {"lb":1e-18, "ub":1e-14}}
-                    "interval": {"lb": -1, "ub": 1},
+                    "interval": {"lb": -1, "ub": 0},
                 },
             ],
             "constraints": height_bounds
             + [
                 # 0 <= dx - a
                 # a <= dx
-                # {"name": "dx_gte_a",
-                #     "variables": ["dx", "a"],
-                #     "weights": [1, -1],
-                #     "additive_bounds": {"lb": 0},
-                #     # "timepoints": {"lb": 0}
-                # },
                 {
-                    "name": "preserve_magnitude",
-                    "variable": "u_4",
-                    "interval": {"lb": 0.2},
-                    "timepoints": {"lb": 10},
-                }
+                    "name": "dx_gte_a",
+                    "variables": ["dx", "a"],
+                    "weights": [1, -1],
+                    "additive_bounds": {"lb": 0},
+                    # "timepoints": {"lb": 0}
+                },
+                # {
+                #     "name": "preserve_magnitude",
+                #     "variable": "u_0",
+                #     "interval": {"lb": 0.2},
+                #     "timepoints": {"lb": 9},
+                # }
             ],
             "config": {
                 "use_compartmental_constraints": False,
