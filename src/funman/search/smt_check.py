@@ -63,7 +63,9 @@ class SMTCheck(Search):
             )
             point = None
             timestep = len(schedule.timepoints) - 1
-            if model_result is not None and isinstance(model_result, pysmtModel):
+            if model_result is not None and isinstance(
+                model_result, pysmtModel
+            ):
                 result_dict = model_result.to_dict() if model_result else None
                 l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
                 if result_dict is not None:
@@ -88,14 +90,16 @@ class SMTCheck(Search):
                     models[point] = model_result
                     consistent[point] = result_dict
                     parameter_space.true_boxes.append(Box.from_point(point))
-            if explanation_result is not None and isinstance(explanation_result, Explanation):
+            if explanation_result is not None and isinstance(
+                explanation_result, Explanation
+            ):
                 box = Box(
                     bounds={
                         p.name: p.interval.model_copy()
                         for p in problem.parameters
                     },
                     label=LABEL_FALSE,
-                    points = [point] if point is not None else [],
+                    points=[point] if point is not None else [],
                     explanation=explanation_result,
                 )
                 box.bounds["timestep"] = Interval(
@@ -154,10 +158,7 @@ class SMTCheck(Search):
 
         model_formula = And([f for f in layer_formulas])
 
-        all_layers_formula = And(
-            And(assumption_formulas), model_formula
-        )
-        
+        all_layers_formula = And(And(assumption_formulas), model_formula)
 
         all_simplified_layers_formula = (
             And(
@@ -255,7 +256,9 @@ class SMTCheck(Search):
                     formula_w_params = And(
                         formula.substitute(substitution), result_assignment
                     )
-                    model_result = self.solve_formula(s, formula_w_params, episode)
+                    model_result = self.solve_formula(
+                        s, formula_w_params, episode
+                    )
                 elif result is not None and isinstance(result, str):
                     explanation_result = result
                     # Unsat core
@@ -266,8 +269,10 @@ class SMTCheck(Search):
                     explanation_result = model_result
                     model_result.check_assumptions(episode, s, options)
 
-                    # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.  
-                    model_result = self.solve_formula(s, model_formula, episode)
+                    # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.
+                    model_result = self.solve_formula(
+                        s, model_formula, episode
+                    )
 
         return model_result, explanation_result
 

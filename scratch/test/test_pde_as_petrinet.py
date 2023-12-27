@@ -1,20 +1,18 @@
 # This notebook illustrates the halfar ice model
 
 # Import funman related code
-import os
 import json
+import os
 import unittest
-from funman import Point, Box, Parameter
-from typing import List, Dict
+from typing import Dict
+
+from funman import Box, Parameter, Point
 from funman.api.run import Runner
 
-RESOURCES = os.path.join(
-   os.getcwd(), "../../resources"
-)
+RESOURCES = os.path.join(os.getcwd(), "../../resources")
 EXAMPLE_DIR = os.path.join(RESOURCES, "amr", "halfar")
 MODEL_PATH = os.path.join(EXAMPLE_DIR, "halfar.json")
 REQUEST_PATH = os.path.join(EXAMPLE_DIR, "halfar_request.json")
-
 
 
 class TestUseCases(unittest.TestCase):
@@ -27,9 +25,18 @@ class TestUseCases(unittest.TestCase):
         )
         if points and len(points) > 0:
             point: Point = points[-1]
-            parameters: Dict[Parameter, float] = results.point_parameters(point)
-            results.plot(variables=variables, label_marker={"true":",", "false": ","},  xlabel="Time", ylabel="Height", legend=variables,label_color={"true": "g", "false":"r"})
-            parameter_values = { p:point.values[p.name] for p in parameters}
+            parameters: Dict[Parameter, float] = results.point_parameters(
+                point
+            )
+            results.plot(
+                variables=variables,
+                label_marker={"true": ",", "false": ","},
+                xlabel="Time",
+                ylabel="Height",
+                legend=variables,
+                label_color={"true": "g", "false": "r"},
+            )
+            parameter_values = {p: point.values[p.name] for p in parameters}
             print(f"Parameters = {parameter_values}")
             print(parameters)
             print(results.dataframe([point]))
@@ -39,21 +46,25 @@ class TestUseCases(unittest.TestCase):
             box = boxes[0]
             print(json.dumps(box.explain(), indent=4))
 
-
     def test_advection(self):
         # Advection Model
 
         num_disc = 5
 
-        MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../..", f"resources/amr/advection_1d/advection_1d_forward.json")
+        MODEL_PATH = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../..",
+            f"resources/amr/advection_1d/advection_1d_forward.json",
+        )
         # MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../..", f"resources/amr/advection_1d/advection_1d_backward.json")
         # MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../..", f"resources/amr/advection_1d/advection_1d_centered.json")
 
         height_bounds = [
-                    {"name": f"pos_u_{i}",
+            {
+                "name": f"pos_u_{i}",
                 "variable": f"u_{i}",
-                "interval": {"lb": 0, "ub": 1.2}
-                }
+                "interval": {"lb": 0, "ub": 1.2},
+            }
             for i in range(num_disc)
         ]
 
@@ -61,41 +72,41 @@ class TestUseCases(unittest.TestCase):
             "structure_parameters": [
                 {
                     "name": "schedules",
-                    "schedules": [
-                        {"timepoints": range(0, 30, 1)}
-                    ],
+                    "schedules": [{"timepoints": range(0, 10, 1)}],
                 },
-                
             ],
-            "parameters":[
-                {"name": "dx",
-                "label":"any",
-                #  "interval": {"lb":1e-18, "ub":1e-14}}
-                "interval": {"lb":1e-1, "ub":1}},
-                {"name": "a",
-                "label":"any",
-                #  "interval": {"lb":1e-18, "ub":1e-14}}
-                "interval": {"lb":-1, "ub":1}}
+            "parameters": [
+                {
+                    "name": "dx",
+                    "label": "any",
+                    #  "interval": {"lb":1e-18, "ub":1e-14}}
+                    "interval": {"lb": 1e-1, "ub": 1},
+                },
+                {
+                    "name": "a",
+                    "label": "any",
+                    #  "interval": {"lb":1e-18, "ub":1e-14}}
+                    "interval": {"lb": -1, "ub": 0},
+                },
             ],
-            "constraints": 
-            height_bounds + 
-            [
-
+            "constraints": height_bounds
+            + [
                 # 0 <= dx - a
                 # a <= dx
-                # {"name": "dx_gte_a",
-                #     "variables": ["dx", "a"],
-                #     "weights": [1, -1],
-                #     "additive_bounds": {"lb": 0},
-                #     # "timepoints": {"lb": 0}
-                # }, 
                 {
-                    "name" : "preserve_magnitude",
-                    "variable": "u_4",
-                    "interval": {"lb": 0.2},
-                    "timepoints": {"lb": 10}
-                }
-                ],
+                    "name": "dx_gte_a",
+                    "variables": ["dx", "a"],
+                    "weights": [1, -1],
+                    "additive_bounds": {"lb": 0},
+                    # "timepoints": {"lb": 0}
+                },
+                # {
+                #     "name": "preserve_magnitude",
+                #     "variable": "u_0",
+                #     "interval": {"lb": 0.2},
+                #     "timepoints": {"lb": 9},
+                # }
+            ],
             "config": {
                 "use_compartmental_constraints": False,
                 "normalization_constant": 1.0,
@@ -121,15 +132,18 @@ class TestUseCases(unittest.TestCase):
             case_out_dir="./out",
             dump_plot=True,
             parameters_to_plot=["a", "dx", "timestep"],
-            point_plot_config={"variables":variables, "label_marker":{"true":",", "false": ","},  "xlabel":"Time", "ylabel":"Height", "legend":variables
-            #,"label_color":{"true": "g", "false":"r"}
+            point_plot_config={
+                "variables": variables,
+                "label_marker": {"true": ",", "false": ","},
+                "xlabel": "Time",
+                "ylabel": "Height",
+                "legend": variables
+                # ,"label_color":{"true": "g", "false":"r"}
             },
-            num_points=None
+            num_points=None,
         )
 
         self.summarize_results(variables, results)
-
-
 
 
 if __name__ == "__main__":
