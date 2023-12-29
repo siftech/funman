@@ -163,7 +163,7 @@ class HalfarGenerator:
                 "dx is undefined because coordinate has no neighbors"
             )
 
-        return f"({gamma}/{dx})*((abs(({next_str}{prev_str})*0.5)**2)*(({next_str}{prev_str})*0.5)*({coord_str}**5))"
+        return f"({gamma}/{dx})*((abs(({next_str}{prev_str})*0.5)**2)*(({next_str}{prev_str})*0.5)*({coord_str}**5))*dt"
 
     def centered_difference(self, coordinate: Coordinate, coordinates, args):
         transitions = []
@@ -287,6 +287,14 @@ class HalfarGenerator:
                 distribution=Distribution(
                     type="StandardUniform1",
                     parameters={"minimum": 1e-20, "maximum": 1e-12},
+                ),
+            ),
+            Parameter(
+                id="dt",
+                value=1,
+                distribution=Distribution(
+                    type="StandardUniform1",
+                    parameters={"minimum": 1e-1, "maximum": 1e1},
                 ),
             ),
         ]
