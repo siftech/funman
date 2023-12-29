@@ -452,24 +452,25 @@ class FunmanResults(BaseModel):
         fig, ax = plt.subplots(figsize=(8, 6), dpi=dpi)
         groups = df.groupby("label")
         for label, group in groups:
-            if variables is not None:
-                for id, g in group.groupby("id"):
-                    plt.plot(
-                        g[variables],
+            for id, g in group.groupby("id"):
+                state_vars = g[self.model._state_var_names()]
+                if variables is not None:
+                    ax = plt.plot(
+                        state_vars[variables],
                         label=label,
                         marker=label_marker[label],
                         c=label_color[label],
                         **kwargs,
                     )
-            else:
-                plt.plot(
-                    group,
-                    label=label,
-                    marker=label_marker[label],
-                    c=label_color[label],
-                    **kwargs,
-                )
-                ax = df.plot(label=label, marker=label_marker[label], **kwargs)
+                else:
+                    ax = plt.plot(
+                        state_vars,
+                        label=label,
+                        marker=label_marker[label],
+                        c=label_color[label],
+                        **kwargs,
+                    )
+            # ax = df.plot(label=label, marker=label_marker[label], **kwargs)
         if legend:
             plt.legend(legend)
         if log_y:
