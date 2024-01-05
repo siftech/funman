@@ -11,9 +11,9 @@ class Direction:
 
 
 class Derivative:
-    CENTERED: str = "CENTERED"
-    FORWARD: str = "FORWARD"
-    BACKWARD: str = "BACKWARD"
+    CENTERED: str = "centered"
+    FORWARD: str = "forward"
+    BACKWARD: str = "backward"
 
 
 class Boundary(BaseModel):
@@ -51,7 +51,7 @@ class Coordinate(BaseModel):
         return id
 
 
-def get_args():
+def get_args(args):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-g",
@@ -68,19 +68,11 @@ def get_args():
         help=f"Number of spatial dimensions",
     )
     parser.add_argument(
-        "-t",
-        "--discretization-type",
-        default=1,
-        type=int,
-        choices=["centered"],
-        help=f"Number of spatial dimensions",
-    )
-    parser.add_argument(
         "-b",
         "--boundary-slope",
-        default=0.1,
+        default=0.0,
         type=float,
-        help=f"Time-dependent boundary function parameter f(t) = bt",
+        help=f"Time-dependent boundary function parameter db/dt = bt",
     )
 
     parser.add_argument(
@@ -96,7 +88,7 @@ def get_args():
         default="model.json",
         help=f"Output filename",
     )
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
 def main(args, generator, model):

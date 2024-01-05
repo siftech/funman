@@ -88,15 +88,15 @@ class AdvectionGenerator(Generator):
         )
 
 
-def main():
-    args = get_args()
-    args.num_discretization_points = 5
+def main(in_args):
+    args = get_args(in_args)
+    # args.num_discretization_points = 5
     # args.derivative = Derivative.FORWARD
-    args.derivative = Derivative.BACKWARD
+    # args.derivative = Derivative.BACKWARD
     # args.derivative = Derivative.CENTERED
-    args.boundary_slope = 0.0
+    # args.boundary_slope = 0.0
     common_main(args, AdvectionGenerator, AdvectionModel)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

@@ -130,11 +130,11 @@ class HalfarGenerator(Generator):
         )
 
 
-def main():
-    args = get_args()
+def main(args):
+    args = get_args(args)
     # args.num_discretization_points = 5
     common_main(args, HalfarGenerator, HalfarModel)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
