@@ -12,8 +12,8 @@ models = {"advection": advection_main, "halfar": halfar_main}
 configuration_options = {
     "derivative": {"flag": "-g", "options": [Derivative.CENTERED, Derivative.FORWARD, Derivative.BACKWARD]},
     "dimensions": {"flag": "-d", "options": [1, 2, 3]},
-    "boundary": {"flag": "-b", "options": [-0.1, -0.01, 0.0, 0.01, 0.1]},
-    "points": {"flag": "-p", "options": [3, 5, 10, 20]},
+    "boundary": {"flag": "-b", "options": [0.0, 0.01, 0.1, 0.2]},
+    "points": {"flag": "-p", "options": [3, 5, 10]},
 }
 
 def outfile_for_option(path, model, options):

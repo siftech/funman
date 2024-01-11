@@ -25,8 +25,9 @@ from funman.representation.interval import Interval
 
 
 class Generator(ABC):
-    range: Interval = Interval(lb=-2.0, ub=2.0)
+    range: Interval = Interval(lb=-3.0, ub=3.0)
     variables: List[str] = []
+    dx: float = 1.0
 
     @abstractmethod
     def transition_rate(
@@ -72,14 +73,14 @@ class Generator(ABC):
         Generate coordinates for the range.
         """
         coords = []
-        step_size = value = self.range.width() / Decimal(
-            int(args.num_discretization_points) - 1
+        self.dx = value = self.range.width() / Decimal(
+            int(args.num_discretization_points) - 1 + 2
         )
 
         # Discretize each dimension
         axes = [
             [
-                self.range.lb + float(step_size * i)
+                self.range.lb + float(self.dx * (i+1))
                 for i in range(args.num_discretization_points)
             ]
             for d in range(args.dimensions)
@@ -125,6 +126,35 @@ class Generator(ABC):
                 )
         return coords
 
+    def get_dx(self, dimension, coordinate, source, target, width=1):
+        # coord_x = coordinate.vector[dimension]
+        # source_x_dx = (
+        #     source.vector[dimension] - coord_x
+        #     if not isinstance(source, Boundary)
+        #     else None
+        # )
+        # target_x_dx = (
+        #     coord_x - target.vector[dimension]
+        #     if not isinstance(target, Boundary)
+        #     else None
+        # )
+
+        # if source_x_dx is not None and target_x_dx is not None:
+        #     dx = source_x_dx + target_x_dx
+        # elif source_x_dx is not None:
+        #     dx = width * source_x_dx
+        # elif target_x_dx is not None:
+        #     dx = width * target_x_dx
+        # else:
+        #     raise Exception(
+        #         "dx is undefined because coordinate has no neighbors"
+        #     )
+        
+        # if dx == 0.0:
+        #     dx = width
+            
+        return self.dx*width
+
     def states(self, args, coordinates) -> List[State]:
         # Create a variable at each coordinate
         boundary = Boundary()
@@ -149,7 +179,7 @@ class Generator(ABC):
         return str(args.boundary_slope)
 
     def boundary_expression(self, args):
-        return f"{self.boundary_derivative(args)}*t"
+        return f"({self.boundary_derivative(args)}*t)"
 
     def make_rate(
         self,
@@ -161,12 +191,12 @@ class Generator(ABC):
         coordinates,
         args,
     ):
-        if not isinstance(coordinate, Boundary):
-            rate = self.transition_rate(
+        # if not isinstance(coordinate, Boundary):
+        rate = self.transition_rate(
                 variable, coordinate, dimension, coordinates, args
             )
-        else:
-            rate = self.boundary_expression(args)
+        # else:
+        #     rate = self.boundary_expression(args)
         return rate
 
     def make_transition(
@@ -211,11 +241,6 @@ class Generator(ABC):
         rates = []
         # Get transition in each dimension
         for dimension, value in enumerate(coordinate.vector):
-            # next_coord_id = coordinate.neighbors[dimension][Direction.Positive]
-            # prev_coord_id = coordinate.neighbors[dimension][Direction.Negative]
-            # next_coord = coordinates.get(next_coord_id, None) if not isinstance(next_coord_id, Boundary) else boundary
-            # # Handle transitions to boundaries as if there is no update to the boundary
-            # prev_coord = coordinates.get(prev_coord_id, None) if not isinstance(prev_coord_id, Boundary) else boundary
 
             source = coordinate.positive_neighbor(
                 dimension, coordinates=coordinates
@@ -243,7 +268,7 @@ class Generator(ABC):
                     coordinate,
                     target,
                     dimension,
-                    coordinate,
+                    target,
                     coordinates,
                     args,
                 )
@@ -422,6 +447,7 @@ class Generator(ABC):
                 dimension, coordinates=coordinates
             )
             if isinstance(lower_boundary, Boundary):
+                # Need to subtract rate of coordinate 
                 rate, transition = self.make_transition(
                     variable,
                     coordinate,

@@ -5,6 +5,7 @@ This script will generate instances of the Halfar ice model as Petrinet AMR mode
 from typing import Dict, List, Tuple
 
 from funman_demo.generators.common import (
+    Boundary,
     Coordinate,
     Derivative,
     Direction,
@@ -21,6 +22,7 @@ from funman.model.generated_models.petrinet import (
     Model,
     Parameter,
 )
+import sys
 
 
 class AdvectionModel(Model):
@@ -32,7 +34,7 @@ class AdvectionGenerator(Generator):
     This generator class constructs the AMR instance.  The coordinates are equally spaced across the range.
     """
 
-    variables: List[str] = ["u"]
+    variables: List[str] = ["a"]
 
     def transition_rate(
         self,
@@ -45,13 +47,17 @@ class AdvectionGenerator(Generator):
         """
         Custom rate change
         """
-        coord_str = f"{variable}_{coordinate.id_str()}"
-        return f"(-a/dx)*({coord_str})"
+        if not isinstance(coordinate, Boundary):
+            coord_str = f"{variable}_{coordinate.id_str()}"
+            rate = f"(-u/dx)*({coord_str})"
+        else:
+            rate = self.boundary_expression(args)
+        return rate
 
     def parameters(self) -> List[Parameter]:
         return [
             Parameter(
-                id="a",
+                id="u",
                 value=1.0,
                 distribution=Distribution(
                     type="StandardUniform1",
