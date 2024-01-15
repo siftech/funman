@@ -36,7 +36,6 @@ class HalfarGenerator(Generator):
 
     variables: List[str] = ["h"]
 
-
     def transition_rate(
         self,
         variable: str,
@@ -63,15 +62,17 @@ class HalfarGenerator(Generator):
             )
 
     def get_expression(self, variable, coordinate, args):
-        return f"{variable}_{coordinate.id_str()}" if not isinstance(coordinate, Boundary) else self.boundary_expression(args)
+        return (
+            f"{variable}_{coordinate.id_str()}"
+            if not isinstance(coordinate, Boundary)
+            else self.boundary_expression(args)
+        )
 
-
-    
     def rate_expression(self, variable, source, target, coordinate, args):
         gamma = "283701998652.8*A"
         coord_str = self.get_expression(variable, coordinate, args)
-        source_str = self.get_expression(variable, source, args) 
-        target_str = "-"+ self.get_expression(variable, target, args) 
+        source_str = self.get_expression(variable, source, args)
+        target_str = "-" + self.get_expression(variable, target, args)
         return f"({gamma}/dx)*((abs(({source_str}{target_str})/dx)**2)*(({source_str}{target_str})/dx)*({coord_str}**5))"
 
     def inner_centered_difference(
@@ -80,31 +81,36 @@ class HalfarGenerator(Generator):
         coordinate: Coordinate,
         dimension: int,
         coordinates: Dict[Tuple, Coordinate],
-        args
+        args,
     ) -> str:
-
-        source = coordinate.positive_neighbor(
-                dimension, coordinates=coordinates
-            ) if not isinstance(coordinate, Boundary) else coordinate
-        target = coordinate.negative_neighbor(
-                dimension, coordinates=coordinates
-            ) if not isinstance(coordinate, Boundary) else coordinate
+        source = (
+            coordinate.positive_neighbor(dimension, coordinates=coordinates)
+            if not isinstance(coordinate, Boundary)
+            else coordinate
+        )
+        target = (
+            coordinate.negative_neighbor(dimension, coordinates=coordinates)
+            if not isinstance(coordinate, Boundary)
+            else coordinate
+        )
 
         # dx = self.get_dx(dimension, coordinate, source, target, width=2)
         return self.rate_expression(variable, source, target, coordinate, args)
-    
+
     def inner_forward_difference(
         self,
         variable: str,
         coordinate: Coordinate,
         dimension: int,
         coordinates: Dict[Tuple, Coordinate],
-        args
+        args,
     ) -> str:
-        source = coordinate.positive_neighbor(
-                dimension, coordinates=coordinates
-            ) if not isinstance(coordinate, Boundary) else coordinate
-        target= coordinate
+        source = (
+            coordinate.positive_neighbor(dimension, coordinates=coordinates)
+            if not isinstance(coordinate, Boundary)
+            else coordinate
+        )
+        target = coordinate
 
         # dx = self.get_dx(dimension, coordinate, source, target, width=1)
         return self.rate_expression(variable, source, target, coordinate, args)
@@ -115,11 +121,14 @@ class HalfarGenerator(Generator):
         coordinate: Coordinate,
         dimension: int,
         coordinates: Dict[Tuple, Coordinate],
-        args
+        args,
     ) -> str:
         source = coordinate
-        target= coordinate.negative_neighbor(
-                dimension, coordinates=coordinates) if not isinstance(coordinate, Boundary) else coordinate
+        target = (
+            coordinate.negative_neighbor(dimension, coordinates=coordinates)
+            if not isinstance(coordinate, Boundary)
+            else coordinate
+        )
 
         # dx = self.get_dx(dimension, coordinate, source, target, width=1)
         return self.rate_expression(variable, source, target, coordinate, args)
@@ -170,7 +179,7 @@ def main(args):
     # args.derivative = Derivative.FORWARD
     args.derivative = Derivative.CENTERED
     # args.num_discretization_points = 5
-    args.boundary_slope  = -0.1
+    args.boundary_slope = -0.1
     common_main(args, HalfarGenerator, HalfarModel)
 
 

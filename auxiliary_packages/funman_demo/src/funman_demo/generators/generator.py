@@ -80,7 +80,7 @@ class Generator(ABC):
         # Discretize each dimension
         axes = [
             [
-                self.range.lb + float(self.dx * (i+1))
+                self.range.lb + float(self.dx * (i + 1))
                 for i in range(args.num_discretization_points)
             ]
             for d in range(args.dimensions)
@@ -149,11 +149,11 @@ class Generator(ABC):
         #     raise Exception(
         #         "dx is undefined because coordinate has no neighbors"
         #     )
-        
+
         # if dx == 0.0:
         #     dx = width
-            
-        return self.dx*width
+
+        return self.dx * width
 
     def states(self, args, coordinates) -> List[State]:
         # Create a variable at each coordinate
@@ -193,8 +193,8 @@ class Generator(ABC):
     ):
         # if not isinstance(coordinate, Boundary):
         rate = self.transition_rate(
-                variable, coordinate, dimension, coordinates, args
-            )
+            variable, coordinate, dimension, coordinates, args
+        )
         # else:
         #     rate = self.boundary_expression(args)
         return rate
@@ -241,7 +241,6 @@ class Generator(ABC):
         rates = []
         # Get transition in each dimension
         for dimension, value in enumerate(coordinate.vector):
-
             source = coordinate.positive_neighbor(
                 dimension, coordinates=coordinates
             )
@@ -447,7 +446,7 @@ class Generator(ABC):
                 dimension, coordinates=coordinates
             )
             if isinstance(lower_boundary, Boundary):
-                # Need to subtract rate of coordinate 
+                # Need to subtract rate of coordinate
                 rate, transition = self.make_transition(
                     variable,
                     coordinate,

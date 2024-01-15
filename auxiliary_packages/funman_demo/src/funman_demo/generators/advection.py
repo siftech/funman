@@ -2,6 +2,7 @@
 This script will generate instances of the Halfar ice model as Petrinet AMR models.  The options control the number of discretization points.
 """
 
+import sys
 from typing import Dict, List, Tuple
 
 from funman_demo.generators.common import (
@@ -22,7 +23,6 @@ from funman.model.generated_models.petrinet import (
     Model,
     Parameter,
 )
-import sys
 
 
 class AdvectionModel(Model):
