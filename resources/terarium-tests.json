@@ -1,6 +1,11 @@
 {
     "tests": [
         {
+            "name": "petrinet-boxes",
+            "model-path": "amr/petrinet/terrarium-tests/sir.json",
+            "request-path": "amr/petrinet/terrarium-tests/sir_request.json"
+        },
+        {
             "name": "petrinet-query-default",
             "model-path": "amr/petrinet/mira/models/scenario1_a.json",
             "request-path": null
