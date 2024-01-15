@@ -196,6 +196,7 @@ class FunmanResults(BaseModel):
             coverage_of_search_space = 0.0
         else:
             coverage_of_search_space = float(labeled_volume / search_volume)
+            coverage_of_search_space = round(coverage_of_search_space, 15)
 
         if repr_volume == 0.0:
             # TODO handle point volume?
