@@ -328,7 +328,7 @@ class Runner:
 
     def create_plots(
         self,
-        results,
+        results: FunmanResults,
         out_dir,
         work_unit,
         num_points,
@@ -363,6 +363,10 @@ class Runner:
             plt.close()
 
         boxes = results.parameter_space.boxes()
+        if parameters_to_plot is None:
+            parameters_to_plot = results.model._parameter_names() + [
+                "timestep"
+            ]
         assert (
             len(parameters_to_plot) > 1
         ), "Cannot plot a parameter space for one parameter"
@@ -399,6 +403,14 @@ def get_args():
         default="out",
         help=f"Output directory",
     )
+    parser.add_argument(
+        "-p",
+        "--plot",
+        action="store_true",
+        default=False,
+        help=f"Write plots in outdir.",
+    )
+    parser.set_defaults(plot=False)
     return parser.parse_args()
 
 
@@ -407,7 +419,9 @@ def main() -> int:
     if not os.path.exists(args.outdir):
         os.mkdir(args.outdir)
 
-    results = Runner().run(args.model, args.request, case_out_dir=args.outdir)
+    results = Runner().run(
+        args.model, args.request, case_out_dir=args.outdir, dump_plot=args.plot
+    )
     print(results.model_dump_json(indent=4))
 
 
