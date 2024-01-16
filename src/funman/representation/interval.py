@@ -2,8 +2,16 @@ import logging
 from decimal import Decimal
 from typing import List, Optional, Union
 
-from numpy import average
-from pydantic import BaseModel, Field, model_validator
+from numpy import average, nextafter
+from pydantic import (
+    BaseModel,
+    Field,
+    SerializerFunctionWrapHandler,
+    field_serializer,
+    model_validator,
+)
+from pydantic.functional_serializers import WrapSerializer
+from typing_extensions import Annotated
 
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
@@ -20,6 +28,10 @@ class Interval(BaseModel):
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
     original_width: Optional[Decimal] = None
+
+    @field_serializer("original_width")
+    def ser_wrap(self, v: Decimal, _info) -> float:
+        return float(v)
 
     @staticmethod
     def from_value(v: Union[float, str]):
@@ -117,7 +129,18 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        return self.ub == other.lb or self.lb == other.ub
+        return (
+            (self.ub == other.lb and not self.closed_upper_bound)
+            or (
+                nextafter(self.ub, POS_INFINITY) == other.lb
+                and self.closed_upper_bound
+            )
+            or (self.lb == other.ub and not other.closed_upper_bound)
+            or (
+                self.ub == nextafter(other.lb, POS_INFINITY)
+                and other.closed_upper_bound
+            )
+        )
 
     def finite(self) -> bool:
         """

@@ -6,7 +6,7 @@ import random
 from contextlib import contextmanager
 from time import sleep
 from timeit import default_timer
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from funman_demo.parameter_space_plotter import ParameterSpacePlotter
 from matplotlib import pyplot as plt
@@ -15,7 +15,7 @@ import funman
 from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
-from funman.model.model import _wrap_with_internal_model
+from funman.model.model import Model, _wrap_with_internal_model
 from funman.server.query import (
     FunmanResults,
     FunmanWorkRequest,
@@ -150,15 +150,43 @@ class Runner:
 
     def run(
         self,
-        model,
-        request,
-        description="",
-        case_out_dir=".",
-        dump_plot=False,
-        parameters_to_plot=None,
-        point_plot_config={},
-        num_points=None,
+        model: Union[str, Model, Dict],
+        request: Union[str, FunmanWorkRequest, Dict],
+        description: str = "",
+        case_out_dir: str = ".",
+        dump_plot: bool = False,
+        parameters_to_plot: Optional[List[str]] = None,
+        point_plot_config: Dict = {},
+        num_points: Optional[int] = None,
     ) -> FunmanResults:
+        """
+        Run a FUNMAN scenario.
+
+        Parameters
+        ----------
+        model : Union[str, Model, Dict]
+            Model to analyze
+        request : Union[str, FunmanWorkRequest, Dict]
+            Request to configure analysis
+        description : str, optional
+            Description of the run
+        case_out_dir : str, optional
+            Directory to store output, by default "."
+        dump_plot : bool, optional
+            Generate trace and parameter space plots in the case_out_dir, by default False
+        parameters_to_plot : Optional[List[str]], optional
+            Parameters/Variables to include in parameter space plot, by default None
+        point_plot_config : Dict, optional
+            Matplotlib flags and special key "variables" to select variables to plot , by default {}
+        num_points : Optional[int], optional
+            The number of points to plot in the trace plot, by default None
+
+        Returns
+        -------
+        FunmanResults
+            Analysis results
+        """
+
         results = self.run_test_case(
             (model, request, description),
             case_out_dir,
@@ -300,7 +328,7 @@ class Runner:
 
     def create_plots(
         self,
-        results,
+        results: FunmanResults,
         out_dir,
         work_unit,
         num_points,
@@ -335,6 +363,10 @@ class Runner:
             plt.close()
 
         boxes = results.parameter_space.boxes()
+        if parameters_to_plot is None:
+            parameters_to_plot = results.model._parameter_names() + [
+                "timestep"
+            ]
         assert (
             len(parameters_to_plot) > 1
         ), "Cannot plot a parameter space for one parameter"
@@ -371,6 +403,14 @@ def get_args():
         default="out",
         help=f"Output directory",
     )
+    parser.add_argument(
+        "-p",
+        "--plot",
+        action="store_true",
+        default=False,
+        help=f"Write plots in outdir.",
+    )
+    parser.set_defaults(plot=False)
     return parser.parse_args()
 
 
@@ -379,7 +419,9 @@ def main() -> int:
     if not os.path.exists(args.outdir):
         os.mkdir(args.outdir)
 
-    results = Runner().run(args.model, args.request, case_out_dir=args.outdir)
+    results = Runner().run(
+        args.model, args.request, case_out_dir=args.outdir, dump_plot=args.plot
+    )
     print(results.model_dump_json(indent=4))
 
 

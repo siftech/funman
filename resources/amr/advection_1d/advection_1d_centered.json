@@ -38,11 +38,9 @@
       {
         "id": "t_0",
         "input": [
-          "u_0"
-        ],
-        "output": [
           "u_1"
         ],
+        "output": [],
         "properties": {
           "name": "t_0"
         }
@@ -50,10 +48,10 @@
       {
         "id": "t_1",
         "input": [
-          "u_1"
+          "u_2"
         ],
         "output": [
-          "u_2"
+          "u_0"
         ],
         "properties": {
           "name": "t_1"
@@ -62,10 +60,10 @@
       {
         "id": "t_2",
         "input": [
-          "u_2"
+          "u_3"
         ],
         "output": [
-          "u_3"
+          "u_1"
         ],
         "properties": {
           "name": "t_2"
@@ -74,13 +72,23 @@
       {
         "id": "t_3",
         "input": [
-          "u_3"
+          "u_4"
         ],
         "output": [
-          "u_4"
+          "u_2"
         ],
         "properties": {
           "name": "t_3"
+        }
+      },
+      {
+        "id": "t_4",
+        "input": [],
+        "output": [
+          "u_3"
+        ],
+        "properties": {
+          "name": "t_4"
         }
       }
     ]
@@ -90,19 +98,23 @@
       "rates": [
         {
           "target": "t_0",
-          "expression": "(a/dx)*(u_1-u_0)"
+          "expression": "(-a/dx)*((u_0)/2)"
         },
         {
           "target": "t_1",
-          "expression": "(a/dx)*(u_2-u_1)"
+          "expression": "(-a/dx)*((u_1)/2)"
         },
         {
           "target": "t_2",
-          "expression": "(a/dx)*(u_3-u_2)"
+          "expression": "(-a/dx)*((u_2)/2)"
         },
         {
           "target": "t_3",
-          "expression": "(a/dx)*(u_4-u_3)"
+          "expression": "(-a/dx)*((u_3)/2)"
+        },
+        {
+          "target": "t_4",
+          "expression": "(-a/dx)*((u_4)/2)"
         }
       ],
       "initials": [

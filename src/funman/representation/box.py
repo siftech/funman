@@ -191,7 +191,9 @@ class Box(BaseModel):
                 )
             else:
                 bounds[p] = Interval(
-                    lb=self.bounds[p].lb, ub=self.bounds[p].ub
+                    lb=self.bounds[p].lb,
+                    ub=self.bounds[p].ub,
+                    closed_upper_bound=self.bounds[p].closed_upper_bound,
                 )
 
         merged = self.model_copy(deep=True)
