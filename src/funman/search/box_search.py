@@ -336,6 +336,9 @@ class BoxSearchEpisode(SearchEpisode):
         )
         # Timestep is not in the model (implicit)
         point.values["timestep"] = box.timestep().lb
+        point.remove_irrelevant_steps(
+            self.problem._smt_encoder._untimed_symbols
+        )
         return point
 
 
