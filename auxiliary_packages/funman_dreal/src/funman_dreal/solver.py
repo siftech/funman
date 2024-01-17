@@ -610,8 +610,13 @@ class DRealNative(
             lb = self.model[item].lb()
             mid = (ub - lb) / 2.0
             mid = mid + lb
-            if not mid.is_integer() and (ub.is_integer() or lb.is_integer()):
-                return Real(lb) if lb.is_integer() else Real(ub)
+            if not isinstance(mid, int) and (
+                isinstance(ub, int) or isinstance(lb, int)
+            ):
+                return Real(lb) if isinstance(lb, int) else Real(ub)
+            elif mid == lb or mid == ub:
+                # Midpoint is not representable
+                return Real(lb) if ub == 0.0 else Real(ub)
             elif not math.isinf(mid):
                 return Real(mid)
             else:

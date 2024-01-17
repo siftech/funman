@@ -1,0 +1,86 @@
+{
+    "constraints": [
+        {
+            "name": "S",
+            "variable": "S",
+            "interval": {
+                "lb": 0.95,
+                "ub": 1.0
+            },
+            "timepoints": {
+                "lb": 60,
+                "ub": 100,
+                "closed_upper_bound": false
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.06
+            },
+            "label": "all"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.02,
+                "ub": 0.05
+            },
+            "label": "all"
+        },
+        {
+            "name": "S0",
+            "interval": {
+                "lb": 0.99,
+                "ub": 0.99
+            },
+            "label": "all"
+        },
+        {
+            "name": "I0",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.01
+            },
+            "label": "all"
+        },
+        {
+            "name": "R0",
+            "interval": {
+                "lb": 0,
+                "ub": 0
+            },
+            "label": "all"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10,
+                        20,
+                        30,
+                        40,
+                        50,
+                        60,
+                        70,
+                        80,
+                        90,
+                        100
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "use_compartmental_constraints": true,
+        "normalization_constant": 1,
+        "tolerance": 0.05
+    }
+}

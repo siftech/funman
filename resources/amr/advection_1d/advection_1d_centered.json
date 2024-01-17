@@ -114,7 +114,7 @@
         },
         {
           "target": "t_4",
-          "expression": "(-a/dx)*((u_u)/2)"
+          "expression": "(-a/dx)*((u_4)/2)"
         }
       ],
       "initials": [

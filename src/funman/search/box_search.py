@@ -516,16 +516,18 @@ class BoxSearch(Search):
                     self._solve_at_step_symbol(t), formula_encoded_constraints
                 )
 
-                symbols = formula_encoded_constraints.get_free_variables()
+                # symbols = formula_encoded_constraints.get_free_variables()
                 neg_formula = Implies(
                     Not(self._solve_at_step_symbol(t)),
                     And(
                         [
-                            Equals(s, Real(0.0))
-                            for s in symbols
-                            if s.symbol_type() == REAL
-                            and s.symbol_name()
-                            not in episode.problem.model._parameter_names()
+                            Equals(
+                                encoding._encoder._encode_state_var(
+                                    s, time=timepoint
+                                ),
+                                Real(0.0),
+                            )
+                            for s in episode.problem.model._state_var_names()
                         ]  # + [Not(s) for s in symbols if s.symbol_type() == BOOL]
                     ),
                 )

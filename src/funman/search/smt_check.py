@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import threading
@@ -61,51 +60,66 @@ class SMTCheck(Search):
                 parameter_space,
                 schedule,
             )
+            point = None
             timestep = len(schedule.timepoints) - 1
             if model_result is not None and isinstance(
                 model_result, pysmtModel
             ):
-                result_dict = result.to_dict() if model_result else None
-                l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
-                if result_dict is not None:
-                    parameter_values = {
-                        k: v
-                        for k, v in result_dict.items()
-                        # if k in [p.name for p in problem.parameters]
-                    }
-                    # for k, v in structural_configuration.items():
-                    #     parameter_values[k] = v
-                    point = Point(
-                        values=parameter_values,
-                        label=LABEL_TRUE,
-                        schedule=schedule,
-                    )
+                # result_dict = model_result.to_dict() if model_result else None
+                # l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
+                # if result_dict is not None:
+                #     parameter_values = {
+                #         k: v
+                #         for k, v in result_dict.items()
+                #         # if k in [p.name for p in problem.parameters]
+                #     }
+                #     # for k, v in structural_configuration.items():
+                #     #     parameter_values[k] = v
+                point_label = (
+                    LABEL_TRUE if explanation_result is None else LABEL_FALSE
+                )
+                results_dict = model_result.to_dict()
+                point = Point(
+                    values=results_dict,
+                    label=point_label,
+                    schedule=schedule,
+                )
+                point.values["timestep"] = timestep
 
-                    point.values["timestep"] = timestep
+                if config.normalize:
+                    denormalized_point = point.denormalize(problem)
+                    point = denormalized_point
 
-                    if config.normalize:
-                        denormalized_point = point.denormalize(problem)
-                        point = denormalized_point
+                if point_label == LABEL_TRUE:
                     models[point] = model_result
-                    consistent[point] = result_dict
-                    parameter_space.true_boxes.append(Box.from_point(point))
-            if explanation_result is not None and isinstance(
-                explanation_result, Explanation
-            ):
+                    consistent[point] = results_dict
+
+                box = Box.from_point(point)
+                # parameter_space.true_boxes.append(Box.from_point(point))
+            else:
                 box = Box(
                     bounds={
                         p.name: p.interval.model_copy()
                         for p in problem.parameters
                     },
-                    label=LABEL_FALSE,
-                    points=[point] if point is not None else [],
-                    explanation=explanation_result,
+                    label=LABEL_FALSE,  # lack of a point means this must be a false box
+                    points=[],
                 )
                 box.bounds["timestep"] = Interval(
                     lb=timestep, ub=timestep, closed_upper_bound=True
                 )
-                box.schedule = schedule
+            box.schedule = schedule
+
+            if explanation_result is not None and isinstance(
+                explanation_result, Explanation
+            ):
+                box.explanation = explanation_result
+
+            if box.label == LABEL_TRUE:
+                parameter_space.true_boxes.append(box)
+            else:
                 parameter_space.false_boxes.append(box)
+
             if resultsCallback:
                 resultsCallback(parameter_space)
 
@@ -261,12 +275,11 @@ class SMTCheck(Search):
                 elif result is not None and isinstance(result, str):
                     explanation_result = result
                     # Unsat core
-                    pass
             else:
-                result = self.solve_formula(s, formula, episode)
-                if isinstance(result, Explanation):
-                    explanation_result = result
-                    result.check_assumptions(episode, s, options)
+                model_result = self.solve_formula(s, formula, episode)
+                if isinstance(model_result, Explanation):
+                    explanation_result = model_result
+                    model_result.check_assumptions(episode, s, options)
 
                     # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.
                     model_result = self.solve_formula(

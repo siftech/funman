@@ -213,7 +213,7 @@ class DRealConverter(Converter, DagWalker):
         return res
 
     def walk_iff(self, formula, args, **kwargs):
-        res = dreal.Iff(args[0], args[1])
+        res = args[0] == args[1]  # dreal.Equals(args[0], args[1])
         # self._check_term_result(res)
         return res
 

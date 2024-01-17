@@ -1,897 +1,1047 @@
 {
     "header": {
-        "name": "Halfar Model",
+        "name": "Advection Model",
         "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json",
         "schema_name": "petrinet",
-        "description": "Halfar as Petrinet model created by Dan Bryce and Drisana Mosiphir",
+        "description": "Advection as Petrinet model created by Dan Bryce and Drisana Mosiphir",
         "model_version": "0.1"
     },
     "properties": null,
     "model": {
         "states": [
             {
-                "id": "h_0_0",
-                "name": "h_0_0",
-                "description": "height at [-2.0, -2.0]",
+                "id": "u_0_0",
+                "name": "u_0_0",
+                "description": "u at [-2.0, -2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_0_1",
-                "name": "h_0_1",
-                "description": "height at [-2.0, -1.0]",
+                "id": "u_0_1",
+                "name": "u_0_1",
+                "description": "u at [-2.0, -1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_0_2",
-                "name": "h_0_2",
-                "description": "height at [-2.0, 0.0]",
+                "id": "u_0_2",
+                "name": "u_0_2",
+                "description": "u at [-2.0, 0.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_0_3",
-                "name": "h_0_3",
-                "description": "height at [-2.0, 1.0]",
+                "id": "u_0_3",
+                "name": "u_0_3",
+                "description": "u at [-2.0, 1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_0_4",
-                "name": "h_0_4",
-                "description": "height at [-2.0, 2.0]",
+                "id": "u_0_4",
+                "name": "u_0_4",
+                "description": "u at [-2.0, 2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_1_0",
-                "name": "h_1_0",
-                "description": "height at [-1.0, -2.0]",
+                "id": "u_1_0",
+                "name": "u_1_0",
+                "description": "u at [-1.0, -2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_1_1",
-                "name": "h_1_1",
-                "description": "height at [-1.0, -1.0]",
+                "id": "u_1_1",
+                "name": "u_1_1",
+                "description": "u at [-1.0, -1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_1_2",
-                "name": "h_1_2",
-                "description": "height at [-1.0, 0.0]",
+                "id": "u_1_2",
+                "name": "u_1_2",
+                "description": "u at [-1.0, 0.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_1_3",
-                "name": "h_1_3",
-                "description": "height at [-1.0, 1.0]",
+                "id": "u_1_3",
+                "name": "u_1_3",
+                "description": "u at [-1.0, 1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_1_4",
-                "name": "h_1_4",
-                "description": "height at [-1.0, 2.0]",
+                "id": "u_1_4",
+                "name": "u_1_4",
+                "description": "u at [-1.0, 2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_2_0",
-                "name": "h_2_0",
-                "description": "height at [0.0, -2.0]",
+                "id": "u_2_0",
+                "name": "u_2_0",
+                "description": "u at [0.0, -2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_2_1",
-                "name": "h_2_1",
-                "description": "height at [0.0, -1.0]",
+                "id": "u_2_1",
+                "name": "u_2_1",
+                "description": "u at [0.0, -1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_2_2",
-                "name": "h_2_2",
-                "description": "height at [0.0, 0.0]",
+                "id": "u_2_2",
+                "name": "u_2_2",
+                "description": "u at [0.0, 0.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_2_3",
-                "name": "h_2_3",
-                "description": "height at [0.0, 1.0]",
+                "id": "u_2_3",
+                "name": "u_2_3",
+                "description": "u at [0.0, 1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_2_4",
-                "name": "h_2_4",
-                "description": "height at [0.0, 2.0]",
+                "id": "u_2_4",
+                "name": "u_2_4",
+                "description": "u at [0.0, 2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_3_0",
-                "name": "h_3_0",
-                "description": "height at [1.0, -2.0]",
+                "id": "u_3_0",
+                "name": "u_3_0",
+                "description": "u at [1.0, -2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_3_1",
-                "name": "h_3_1",
-                "description": "height at [1.0, -1.0]",
+                "id": "u_3_1",
+                "name": "u_3_1",
+                "description": "u at [1.0, -1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_3_2",
-                "name": "h_3_2",
-                "description": "height at [1.0, 0.0]",
+                "id": "u_3_2",
+                "name": "u_3_2",
+                "description": "u at [1.0, 0.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_3_3",
-                "name": "h_3_3",
-                "description": "height at [1.0, 1.0]",
+                "id": "u_3_3",
+                "name": "u_3_3",
+                "description": "u at [1.0, 1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_3_4",
-                "name": "h_3_4",
-                "description": "height at [1.0, 2.0]",
+                "id": "u_3_4",
+                "name": "u_3_4",
+                "description": "u at [1.0, 2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_4_0",
-                "name": "h_4_0",
-                "description": "height at [2.0, -2.0]",
+                "id": "u_4_0",
+                "name": "u_4_0",
+                "description": "u at [2.0, -2.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_4_1",
-                "name": "h_4_1",
-                "description": "height at [2.0, -1.0]",
+                "id": "u_4_1",
+                "name": "u_4_1",
+                "description": "u at [2.0, -1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_4_2",
-                "name": "h_4_2",
-                "description": "height at [2.0, 0.0]",
+                "id": "u_4_2",
+                "name": "u_4_2",
+                "description": "u at [2.0, 0.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_4_3",
-                "name": "h_4_3",
-                "description": "height at [2.0, 1.0]",
+                "id": "u_4_3",
+                "name": "u_4_3",
+                "description": "u at [2.0, 1.0]",
                 "grounding": null,
                 "units": null
             },
             {
-                "id": "h_4_4",
-                "name": "h_4_4",
-                "description": "height at [2.0, 2.0]",
+                "id": "u_4_4",
+                "name": "u_4_4",
+                "description": "u at [2.0, 2.0]",
                 "grounding": null,
                 "units": null
             }
         ],
         "transitions": [
             {
-                "id": "r_0_0_0",
+                "id": "r_u_0_1_0_0_0",
                 "input": [
-                    "h_1_0"
+                    "u_1_0"
+                ],
+                "output": [
+                    "u_0_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_0_1_0_0_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_0_0_0_boundary",
+                "input": [
+                    "u_0_0"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_0_0",
+                    "name": "r_u_0_0_0_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_0_0",
+                "id": "r_u_1_0_1_0_0",
                 "input": [
-                    "h_0_1"
+                    "u_0_1"
+                ],
+                "output": [
+                    "u_0_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_1_0_1_0_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_1_0_0_boundary",
+                "input": [
+                    "u_0_0"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_0_0",
+                    "name": "r_u_1_0_0_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_0_1",
+                "id": "r_u_0_1_1_0_1",
                 "input": [
-                    "h_1_1"
+                    "u_1_1"
+                ],
+                "output": [
+                    "u_0_1"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_0_1_1_0_1",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_0_0_1_boundary",
+                "input": [
+                    "u_0_1"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_0_1",
+                    "name": "r_u_0_0_1_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_0_1",
+                "id": "r_u_1_0_2_0_1",
                 "input": [
-                    "h_0_2"
+                    "u_0_2"
                 ],
                 "output": [
-                    "h_0_0"
+                    "u_0_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_0_1",
+                    "name": "r_u_1_0_2_0_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_0_2",
+                "id": "r_u_0_1_2_0_2",
                 "input": [
-                    "h_1_2"
+                    "u_1_2"
+                ],
+                "output": [
+                    "u_0_2"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_0_1_2_0_2",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_0_0_2_boundary",
+                "input": [
+                    "u_0_2"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_0_2",
+                    "name": "r_u_0_0_2_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_0_2",
+                "id": "r_u_1_0_3_0_2",
                 "input": [
-                    "h_0_3"
+                    "u_0_3"
                 ],
                 "output": [
-                    "h_0_1"
+                    "u_0_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_0_2",
+                    "name": "r_u_1_0_3_0_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_0_3",
+                "id": "r_u_0_1_3_0_3",
                 "input": [
-                    "h_1_3"
+                    "u_1_3"
+                ],
+                "output": [
+                    "u_0_3"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_0_1_3_0_3",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_0_0_3_boundary",
+                "input": [
+                    "u_0_3"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_0_3",
+                    "name": "r_u_0_0_3_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_0_3",
+                "id": "r_u_1_0_4_0_3",
                 "input": [
-                    "h_0_4"
+                    "u_0_4"
                 ],
                 "output": [
-                    "h_0_2"
+                    "u_0_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_0_3",
+                    "name": "r_u_1_0_4_0_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_0_4",
+                "id": "r_u_0_1_4_0_4",
                 "input": [
-                    "h_1_4"
+                    "u_1_4"
+                ],
+                "output": [
+                    "u_0_4"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_0_1_4_0_4",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_0_0_4_boundary",
+                "input": [
+                    "u_0_4"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_0_4",
+                    "name": "r_u_0_0_4_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_0_4",
+                "id": "r_u_1_boundary_0_4",
                 "input": [],
                 "output": [
-                    "h_0_3"
+                    "u_0_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_0_4",
+                    "name": "r_u_1_boundary_0_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_1_0",
+                "id": "r_u_0_2_0_1_0",
                 "input": [
-                    "h_2_0"
+                    "u_2_0"
                 ],
                 "output": [
-                    "h_0_0"
+                    "u_1_0"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_1_0",
+                    "name": "r_u_0_2_0_1_0",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_1_0",
+                "id": "r_u_1_1_1_1_0",
                 "input": [
-                    "h_1_1"
+                    "u_1_1"
+                ],
+                "output": [
+                    "u_1_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_1_1_1_1_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_1_1_0_boundary",
+                "input": [
+                    "u_1_0"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_1_0",
+                    "name": "r_u_1_1_0_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_1_1",
+                "id": "r_u_0_2_1_1_1",
                 "input": [
-                    "h_2_1"
+                    "u_2_1"
                 ],
                 "output": [
-                    "h_0_1"
+                    "u_1_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_1_1",
+                    "name": "r_u_0_2_1_1_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_1_1",
+                "id": "r_u_1_1_2_1_1",
                 "input": [
-                    "h_1_2"
+                    "u_1_2"
                 ],
                 "output": [
-                    "h_1_0"
+                    "u_1_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_1_1",
+                    "name": "r_u_1_1_2_1_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_1_2",
+                "id": "r_u_0_2_2_1_2",
                 "input": [
-                    "h_2_2"
+                    "u_2_2"
                 ],
                 "output": [
-                    "h_0_2"
+                    "u_1_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_1_2",
+                    "name": "r_u_0_2_2_1_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_1_2",
+                "id": "r_u_1_1_3_1_2",
                 "input": [
-                    "h_1_3"
+                    "u_1_3"
                 ],
                 "output": [
-                    "h_1_1"
+                    "u_1_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_1_2",
+                    "name": "r_u_1_1_3_1_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_1_3",
+                "id": "r_u_0_2_3_1_3",
                 "input": [
-                    "h_2_3"
+                    "u_2_3"
                 ],
                 "output": [
-                    "h_0_3"
+                    "u_1_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_1_3",
+                    "name": "r_u_0_2_3_1_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_1_3",
+                "id": "r_u_1_1_4_1_3",
                 "input": [
-                    "h_1_4"
+                    "u_1_4"
                 ],
                 "output": [
-                    "h_1_2"
+                    "u_1_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_1_3",
+                    "name": "r_u_1_1_4_1_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_1_4",
+                "id": "r_u_0_2_4_1_4",
                 "input": [
-                    "h_2_4"
+                    "u_2_4"
                 ],
                 "output": [
-                    "h_0_4"
+                    "u_1_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_1_4",
+                    "name": "r_u_0_2_4_1_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_1_4",
+                "id": "r_u_1_boundary_1_4",
                 "input": [],
                 "output": [
-                    "h_1_3"
+                    "u_1_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_1_4",
+                    "name": "r_u_1_boundary_1_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_2_0",
+                "id": "r_u_0_3_0_2_0",
                 "input": [
-                    "h_3_0"
+                    "u_3_0"
                 ],
                 "output": [
-                    "h_1_0"
+                    "u_2_0"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_2_0",
+                    "name": "r_u_0_3_0_2_0",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_2_0",
+                "id": "r_u_1_2_1_2_0",
                 "input": [
-                    "h_2_1"
+                    "u_2_1"
+                ],
+                "output": [
+                    "u_2_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_1_2_1_2_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_1_2_0_boundary",
+                "input": [
+                    "u_2_0"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_2_0",
+                    "name": "r_u_1_2_0_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_2_1",
+                "id": "r_u_0_3_1_2_1",
                 "input": [
-                    "h_3_1"
+                    "u_3_1"
                 ],
                 "output": [
-                    "h_1_1"
+                    "u_2_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_2_1",
+                    "name": "r_u_0_3_1_2_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_2_1",
+                "id": "r_u_1_2_2_2_1",
                 "input": [
-                    "h_2_2"
+                    "u_2_2"
                 ],
                 "output": [
-                    "h_2_0"
+                    "u_2_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_2_1",
+                    "name": "r_u_1_2_2_2_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_2_2",
+                "id": "r_u_0_3_2_2_2",
                 "input": [
-                    "h_3_2"
+                    "u_3_2"
                 ],
                 "output": [
-                    "h_1_2"
+                    "u_2_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_2_2",
+                    "name": "r_u_0_3_2_2_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_2_2",
+                "id": "r_u_1_2_3_2_2",
                 "input": [
-                    "h_2_3"
+                    "u_2_3"
                 ],
                 "output": [
-                    "h_2_1"
+                    "u_2_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_2_2",
+                    "name": "r_u_1_2_3_2_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_2_3",
+                "id": "r_u_0_3_3_2_3",
                 "input": [
-                    "h_3_3"
+                    "u_3_3"
                 ],
                 "output": [
-                    "h_1_3"
+                    "u_2_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_2_3",
+                    "name": "r_u_0_3_3_2_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_2_3",
+                "id": "r_u_1_2_4_2_3",
                 "input": [
-                    "h_2_4"
+                    "u_2_4"
                 ],
                 "output": [
-                    "h_2_2"
+                    "u_2_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_2_3",
+                    "name": "r_u_1_2_4_2_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_2_4",
+                "id": "r_u_0_3_4_2_4",
                 "input": [
-                    "h_3_4"
+                    "u_3_4"
                 ],
                 "output": [
-                    "h_1_4"
+                    "u_2_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_2_4",
+                    "name": "r_u_0_3_4_2_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_2_4",
+                "id": "r_u_1_boundary_2_4",
                 "input": [],
                 "output": [
-                    "h_2_3"
+                    "u_2_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_2_4",
+                    "name": "r_u_1_boundary_2_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_3_0",
+                "id": "r_u_0_4_0_3_0",
                 "input": [
-                    "h_4_0"
+                    "u_4_0"
                 ],
                 "output": [
-                    "h_2_0"
+                    "u_3_0"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_3_0",
+                    "name": "r_u_0_4_0_3_0",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_3_0",
+                "id": "r_u_1_3_1_3_0",
                 "input": [
-                    "h_3_1"
+                    "u_3_1"
+                ],
+                "output": [
+                    "u_3_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_1_3_1_3_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_1_3_0_boundary",
+                "input": [
+                    "u_3_0"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_3_0",
+                    "name": "r_u_1_3_0_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_3_1",
+                "id": "r_u_0_4_1_3_1",
                 "input": [
-                    "h_4_1"
+                    "u_4_1"
                 ],
                 "output": [
-                    "h_2_1"
+                    "u_3_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_3_1",
+                    "name": "r_u_0_4_1_3_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_3_1",
+                "id": "r_u_1_3_2_3_1",
                 "input": [
-                    "h_3_2"
+                    "u_3_2"
                 ],
                 "output": [
-                    "h_3_0"
+                    "u_3_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_3_1",
+                    "name": "r_u_1_3_2_3_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_3_2",
+                "id": "r_u_0_4_2_3_2",
                 "input": [
-                    "h_4_2"
+                    "u_4_2"
                 ],
                 "output": [
-                    "h_2_2"
+                    "u_3_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_3_2",
+                    "name": "r_u_0_4_2_3_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_3_2",
+                "id": "r_u_1_3_3_3_2",
                 "input": [
-                    "h_3_3"
+                    "u_3_3"
                 ],
                 "output": [
-                    "h_3_1"
+                    "u_3_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_3_2",
+                    "name": "r_u_1_3_3_3_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_3_3",
+                "id": "r_u_0_4_3_3_3",
                 "input": [
-                    "h_4_3"
+                    "u_4_3"
                 ],
                 "output": [
-                    "h_2_3"
+                    "u_3_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_3_3",
+                    "name": "r_u_0_4_3_3_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_3_3",
+                "id": "r_u_1_3_4_3_3",
                 "input": [
-                    "h_3_4"
+                    "u_3_4"
                 ],
                 "output": [
-                    "h_3_2"
+                    "u_3_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_3_3",
+                    "name": "r_u_1_3_4_3_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_3_4",
+                "id": "r_u_0_4_4_3_4",
                 "input": [
-                    "h_4_4"
+                    "u_4_4"
                 ],
                 "output": [
-                    "h_2_4"
+                    "u_3_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_3_4",
+                    "name": "r_u_0_4_4_3_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_3_4",
+                "id": "r_u_1_boundary_3_4",
                 "input": [],
                 "output": [
-                    "h_3_3"
+                    "u_3_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_3_4",
+                    "name": "r_u_1_boundary_3_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_4_0",
+                "id": "r_u_0_boundary_4_0",
                 "input": [],
                 "output": [
-                    "h_3_0"
+                    "u_4_0"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_4_0",
+                    "name": "r_u_0_boundary_4_0",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_4_0",
+                "id": "r_u_1_4_1_4_0",
                 "input": [
-                    "h_4_1"
+                    "u_4_1"
+                ],
+                "output": [
+                    "u_4_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_u_1_4_1_4_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_u_1_4_0_boundary",
+                "input": [
+                    "u_4_0"
                 ],
                 "output": [],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_4_0",
+                    "name": "r_u_1_4_0_boundary",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_4_1",
+                "id": "r_u_0_boundary_4_1",
                 "input": [],
                 "output": [
-                    "h_3_1"
+                    "u_4_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_4_1",
+                    "name": "r_u_0_boundary_4_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_4_1",
+                "id": "r_u_1_4_2_4_1",
                 "input": [
-                    "h_4_2"
+                    "u_4_2"
                 ],
                 "output": [
-                    "h_4_0"
+                    "u_4_1"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_4_1",
+                    "name": "r_u_1_4_2_4_1",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_4_2",
+                "id": "r_u_0_boundary_4_2",
                 "input": [],
                 "output": [
-                    "h_3_2"
+                    "u_4_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_4_2",
+                    "name": "r_u_0_boundary_4_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_4_2",
+                "id": "r_u_1_4_3_4_2",
                 "input": [
-                    "h_4_3"
+                    "u_4_3"
                 ],
                 "output": [
-                    "h_4_1"
+                    "u_4_2"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_4_2",
+                    "name": "r_u_1_4_3_4_2",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_4_3",
+                "id": "r_u_0_boundary_4_3",
                 "input": [],
                 "output": [
-                    "h_3_3"
+                    "u_4_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_4_3",
+                    "name": "r_u_0_boundary_4_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_4_3",
+                "id": "r_u_1_4_4_4_3",
                 "input": [
-                    "h_4_4"
+                    "u_4_4"
                 ],
                 "output": [
-                    "h_4_2"
+                    "u_4_3"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_4_3",
+                    "name": "r_u_1_4_4_4_3",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_0_4_4",
+                "id": "r_u_0_boundary_4_4",
                 "input": [],
                 "output": [
-                    "h_3_4"
+                    "u_4_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_0_4_4",
+                    "name": "r_u_0_boundary_4_4",
                     "description": null,
                     "grounding": null
                 }
             },
             {
-                "id": "r_1_4_4",
+                "id": "r_u_1_boundary_4_4",
                 "input": [],
                 "output": [
-                    "h_4_3"
+                    "u_4_4"
                 ],
                 "grounding": null,
                 "properties": {
-                    "name": "r_1_4_4",
+                    "name": "r_u_1_boundary_4_4",
                     "description": null,
                     "grounding": null
                 }
@@ -902,401 +1052,436 @@
         "ode": {
             "rates": [
                 {
-                    "target": "r_0_0_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_0-(0.0*t))*0.5)**2)*((h_1_0-(0.0*t))*0.5)*(h_0_0**5))*dt",
+                    "target": "r_u_0_1_0_0_0",
+                    "expression": "(-a/dx)*(u_1_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_0_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_0_1-(0.0*t))*0.5)**2)*((h_0_1-(0.0*t))*0.5)*(h_0_0**5))*dt",
+                    "target": "r_u_0_0_0_boundary",
+                    "expression": "(-a/dx)*(u_0_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_0_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_1-(0.0*t))*0.5)**2)*((h_1_1-(0.0*t))*0.5)*(h_0_1**5))*dt",
+                    "target": "r_u_1_0_1_0_0",
+                    "expression": "(-a/dx)*(u_0_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_0_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_0_2-h_0_0)*0.5)**2)*((h_0_2-h_0_0)*0.5)*(h_0_1**5))*dt",
+                    "target": "r_u_1_0_0_boundary",
+                    "expression": "(-a/dx)*(u_0_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_0_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_2-(0.0*t))*0.5)**2)*((h_1_2-(0.0*t))*0.5)*(h_0_2**5))*dt",
+                    "target": "r_u_0_1_1_0_1",
+                    "expression": "(-a/dx)*(u_1_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_0_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_0_3-h_0_1)*0.5)**2)*((h_0_3-h_0_1)*0.5)*(h_0_2**5))*dt",
+                    "target": "r_u_0_0_1_boundary",
+                    "expression": "(-a/dx)*(u_0_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_0_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_3-(0.0*t))*0.5)**2)*((h_1_3-(0.0*t))*0.5)*(h_0_3**5))*dt",
+                    "target": "r_u_1_0_2_0_1",
+                    "expression": "(-a/dx)*(u_0_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_0_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_0_4-h_0_2)*0.5)**2)*((h_0_4-h_0_2)*0.5)*(h_0_3**5))*dt",
+                    "target": "r_u_0_1_2_0_2",
+                    "expression": "(-a/dx)*(u_1_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_0_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_4-(0.0*t))*0.5)**2)*((h_1_4-(0.0*t))*0.5)*(h_0_4**5))*dt",
+                    "target": "r_u_0_0_2_boundary",
+                    "expression": "(-a/dx)*(u_0_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_0_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_0_3)*0.5)**2)*(((0.0*t)-h_0_3)*0.5)*(h_0_4**5))*dt",
+                    "target": "r_u_1_0_3_0_2",
+                    "expression": "(-a/dx)*(u_0_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_1_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_0-h_0_0)*0.5)**2)*((h_2_0-h_0_0)*0.5)*(h_1_0**5))*dt",
+                    "target": "r_u_0_1_3_0_3",
+                    "expression": "(-a/dx)*(u_1_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_1_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_1-(0.0*t))*0.5)**2)*((h_1_1-(0.0*t))*0.5)*(h_1_0**5))*dt",
+                    "target": "r_u_0_0_3_boundary",
+                    "expression": "(-a/dx)*(u_0_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_1_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_1-h_0_1)*0.5)**2)*((h_2_1-h_0_1)*0.5)*(h_1_1**5))*dt",
+                    "target": "r_u_1_0_4_0_3",
+                    "expression": "(-a/dx)*(u_0_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_1_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_2-h_1_0)*0.5)**2)*((h_1_2-h_1_0)*0.5)*(h_1_1**5))*dt",
+                    "target": "r_u_0_1_4_0_4",
+                    "expression": "(-a/dx)*(u_1_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_1_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_2-h_0_2)*0.5)**2)*((h_2_2-h_0_2)*0.5)*(h_1_2**5))*dt",
+                    "target": "r_u_0_0_4_boundary",
+                    "expression": "(-a/dx)*(u_0_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_1_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_3-h_1_1)*0.5)**2)*((h_1_3-h_1_1)*0.5)*(h_1_2**5))*dt",
+                    "target": "r_u_1_boundary_0_4",
+                    "expression": "0.0*t",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_1_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_3-h_0_3)*0.5)**2)*((h_2_3-h_0_3)*0.5)*(h_1_3**5))*dt",
+                    "target": "r_u_0_2_0_1_0",
+                    "expression": "(-a/dx)*(u_2_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_1_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_1_4-h_1_2)*0.5)**2)*((h_1_4-h_1_2)*0.5)*(h_1_3**5))*dt",
+                    "target": "r_u_1_1_1_1_0",
+                    "expression": "(-a/dx)*(u_1_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_1_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_4-h_0_4)*0.5)**2)*((h_2_4-h_0_4)*0.5)*(h_1_4**5))*dt",
+                    "target": "r_u_1_1_0_boundary",
+                    "expression": "(-a/dx)*(u_1_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_1_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_1_3)*0.5)**2)*(((0.0*t)-h_1_3)*0.5)*(h_1_4**5))*dt",
+                    "target": "r_u_0_2_1_1_1",
+                    "expression": "(-a/dx)*(u_2_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_2_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_0-h_1_0)*0.5)**2)*((h_3_0-h_1_0)*0.5)*(h_2_0**5))*dt",
+                    "target": "r_u_1_1_2_1_1",
+                    "expression": "(-a/dx)*(u_1_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_2_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_1-(0.0*t))*0.5)**2)*((h_2_1-(0.0*t))*0.5)*(h_2_0**5))*dt",
+                    "target": "r_u_0_2_2_1_2",
+                    "expression": "(-a/dx)*(u_2_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_2_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_1-h_1_1)*0.5)**2)*((h_3_1-h_1_1)*0.5)*(h_2_1**5))*dt",
+                    "target": "r_u_1_1_3_1_2",
+                    "expression": "(-a/dx)*(u_1_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_2_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_2-h_2_0)*0.5)**2)*((h_2_2-h_2_0)*0.5)*(h_2_1**5))*dt",
+                    "target": "r_u_0_2_3_1_3",
+                    "expression": "(-a/dx)*(u_2_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_2_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_2-h_1_2)*0.5)**2)*((h_3_2-h_1_2)*0.5)*(h_2_2**5))*dt",
+                    "target": "r_u_1_1_4_1_3",
+                    "expression": "(-a/dx)*(u_1_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_2_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_3-h_2_1)*0.5)**2)*((h_2_3-h_2_1)*0.5)*(h_2_2**5))*dt",
+                    "target": "r_u_0_2_4_1_4",
+                    "expression": "(-a/dx)*(u_2_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_2_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_3-h_1_3)*0.5)**2)*((h_3_3-h_1_3)*0.5)*(h_2_3**5))*dt",
+                    "target": "r_u_1_boundary_1_4",
+                    "expression": "0.0*t",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_2_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_2_4-h_2_2)*0.5)**2)*((h_2_4-h_2_2)*0.5)*(h_2_3**5))*dt",
+                    "target": "r_u_0_3_0_2_0",
+                    "expression": "(-a/dx)*(u_3_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_2_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_4-h_1_4)*0.5)**2)*((h_3_4-h_1_4)*0.5)*(h_2_4**5))*dt",
+                    "target": "r_u_1_2_1_2_0",
+                    "expression": "(-a/dx)*(u_2_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_2_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_2_3)*0.5)**2)*(((0.0*t)-h_2_3)*0.5)*(h_2_4**5))*dt",
+                    "target": "r_u_1_2_0_boundary",
+                    "expression": "(-a/dx)*(u_2_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_3_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_0-h_2_0)*0.5)**2)*((h_4_0-h_2_0)*0.5)*(h_3_0**5))*dt",
+                    "target": "r_u_0_3_1_2_1",
+                    "expression": "(-a/dx)*(u_3_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_3_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_1-(0.0*t))*0.5)**2)*((h_3_1-(0.0*t))*0.5)*(h_3_0**5))*dt",
+                    "target": "r_u_1_2_2_2_1",
+                    "expression": "(-a/dx)*(u_2_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_3_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_1-h_2_1)*0.5)**2)*((h_4_1-h_2_1)*0.5)*(h_3_1**5))*dt",
+                    "target": "r_u_0_3_2_2_2",
+                    "expression": "(-a/dx)*(u_3_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_3_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_2-h_3_0)*0.5)**2)*((h_3_2-h_3_0)*0.5)*(h_3_1**5))*dt",
+                    "target": "r_u_1_2_3_2_2",
+                    "expression": "(-a/dx)*(u_2_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_3_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_2-h_2_2)*0.5)**2)*((h_4_2-h_2_2)*0.5)*(h_3_2**5))*dt",
+                    "target": "r_u_0_3_3_2_3",
+                    "expression": "(-a/dx)*(u_3_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_3_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_3-h_3_1)*0.5)**2)*((h_3_3-h_3_1)*0.5)*(h_3_2**5))*dt",
+                    "target": "r_u_1_2_4_2_3",
+                    "expression": "(-a/dx)*(u_2_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_3_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_3-h_2_3)*0.5)**2)*((h_4_3-h_2_3)*0.5)*(h_3_3**5))*dt",
+                    "target": "r_u_0_3_4_2_4",
+                    "expression": "(-a/dx)*(u_3_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_3_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_3_4-h_3_2)*0.5)**2)*((h_3_4-h_3_2)*0.5)*(h_3_3**5))*dt",
+                    "target": "r_u_1_boundary_2_4",
+                    "expression": "0.0*t",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_3_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_4-h_2_4)*0.5)**2)*((h_4_4-h_2_4)*0.5)*(h_3_4**5))*dt",
+                    "target": "r_u_0_4_0_3_0",
+                    "expression": "(-a/dx)*(u_4_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_3_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3_3)*0.5)**2)*(((0.0*t)-h_3_3)*0.5)*(h_3_4**5))*dt",
+                    "target": "r_u_1_3_1_3_0",
+                    "expression": "(-a/dx)*(u_3_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_4_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3_0)*0.5)**2)*(((0.0*t)-h_3_0)*0.5)*(h_4_0**5))*dt",
+                    "target": "r_u_1_3_0_boundary",
+                    "expression": "(-a/dx)*(u_3_0)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_4_0",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_1-(0.0*t))*0.5)**2)*((h_4_1-(0.0*t))*0.5)*(h_4_0**5))*dt",
+                    "target": "r_u_0_4_1_3_1",
+                    "expression": "(-a/dx)*(u_4_1)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_4_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3_1)*0.5)**2)*(((0.0*t)-h_3_1)*0.5)*(h_4_1**5))*dt",
+                    "target": "r_u_1_3_2_3_1",
+                    "expression": "(-a/dx)*(u_3_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_4_1",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_2-h_4_0)*0.5)**2)*((h_4_2-h_4_0)*0.5)*(h_4_1**5))*dt",
+                    "target": "r_u_0_4_2_3_2",
+                    "expression": "(-a/dx)*(u_4_2)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_4_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3_2)*0.5)**2)*(((0.0*t)-h_3_2)*0.5)*(h_4_2**5))*dt",
+                    "target": "r_u_1_3_3_3_2",
+                    "expression": "(-a/dx)*(u_3_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_4_2",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_3-h_4_1)*0.5)**2)*((h_4_3-h_4_1)*0.5)*(h_4_2**5))*dt",
+                    "target": "r_u_0_4_3_3_3",
+                    "expression": "(-a/dx)*(u_4_3)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_4_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3_3)*0.5)**2)*(((0.0*t)-h_3_3)*0.5)*(h_4_3**5))*dt",
+                    "target": "r_u_1_3_4_3_3",
+                    "expression": "(-a/dx)*(u_3_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_4_3",
-                    "expression": "(283701998652.8*A/2.0)*((abs((h_4_4-h_4_2)*0.5)**2)*((h_4_4-h_4_2)*0.5)*(h_4_3**5))*dt",
+                    "target": "r_u_0_4_4_3_4",
+                    "expression": "(-a/dx)*(u_4_4)",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_0_4_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3_4)*0.5)**2)*(((0.0*t)-h_3_4)*0.5)*(h_4_4**5))*dt",
+                    "target": "r_u_1_boundary_3_4",
+                    "expression": "0.0*t",
                     "expression_mathml": null
                 },
                 {
-                    "target": "r_1_4_4",
-                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_4_3)*0.5)**2)*(((0.0*t)-h_4_3)*0.5)*(h_4_4**5))*dt",
+                    "target": "r_u_0_boundary_4_0",
+                    "expression": "0.0*t",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_1_4_1_4_0",
+                    "expression": "(-a/dx)*(u_4_1)",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_1_4_0_boundary",
+                    "expression": "(-a/dx)*(u_4_0)",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_0_boundary_4_1",
+                    "expression": "0.0*t",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_1_4_2_4_1",
+                    "expression": "(-a/dx)*(u_4_2)",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_0_boundary_4_2",
+                    "expression": "0.0*t",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_1_4_3_4_2",
+                    "expression": "(-a/dx)*(u_4_3)",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_0_boundary_4_3",
+                    "expression": "0.0*t",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_1_4_4_4_3",
+                    "expression": "(-a/dx)*(u_4_4)",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_0_boundary_4_4",
+                    "expression": "0.0*t",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_u_1_boundary_4_4",
+                    "expression": "0.0*t",
                     "expression_mathml": null
                 }
             ],
             "initials": [
                 {
-                    "target": "h_0_0",
+                    "target": "u_0_0",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_0_1",
+                    "target": "u_0_1",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_0_2",
+                    "target": "u_0_2",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_0_3",
+                    "target": "u_0_3",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_0_4",
+                    "target": "u_0_4",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_1_0",
+                    "target": "u_1_0",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_1_1",
+                    "target": "u_1_1",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_1_2",
+                    "target": "u_1_2",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_1_3",
+                    "target": "u_1_3",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_1_4",
+                    "target": "u_1_4",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_2_0",
+                    "target": "u_2_0",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_2_1",
+                    "target": "u_2_1",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_2_2",
+                    "target": "u_2_2",
                     "expression": "1.0",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_2_3",
+                    "target": "u_2_3",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_2_4",
+                    "target": "u_2_4",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_3_0",
+                    "target": "u_3_0",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_3_1",
+                    "target": "u_3_1",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_3_2",
+                    "target": "u_3_2",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_3_3",
+                    "target": "u_3_3",
                     "expression": "0.5",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_3_4",
+                    "target": "u_3_4",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_4_0",
+                    "target": "u_4_0",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_4_1",
+                    "target": "u_4_1",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_4_2",
+                    "target": "u_4_2",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_4_3",
+                    "target": "u_4_3",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 },
                 {
-                    "target": "h_4_4",
+                    "target": "u_4_4",
                     "expression": "0.3333333333333333",
                     "expression_mathml": null
                 }
             ],
             "parameters": [
                 {
-                    "id": "A",
-                    "name": null,
-                    "description": null,
-                    "value": 1e-16,
-                    "grounding": null,
-                    "distribution": {
-                        "type": "StandardUniform1",
-                        "parameters": {
-                            "minimum": 1e-20,
-                            "maximum": 1e-12
-                        }
-                    },
-                    "units": null
-                },
-                {
-                    "id": "dt",
+                    "id": "a",
                     "name": null,
                     "description": null,
                     "value": 1.0,
@@ -1304,8 +1489,23 @@
                     "distribution": {
                         "type": "StandardUniform1",
                         "parameters": {
-                            "minimum": 0.1,
-                            "maximum": 10.0
+                            "minimum": 0.0,
+                            "maximum": 1.0
+                        }
+                    },
+                    "units": null
+                },
+                {
+                    "id": "dx",
+                    "name": null,
+                    "description": null,
+                    "value": 1.0,
+                    "grounding": null,
+                    "distribution": {
+                        "type": "StandardUniform1",
+                        "parameters": {
+                            "minimum": 0,
+                            "maximum": 1
                         }
                     },
                     "units": null

@@ -153,7 +153,7 @@ class PetrinetEncoder(Encoder):
                 inflow = scenario.model._num_flow_from_state_to_transition(
                     state_var_id, transition_id
                 )
-                net_flow = inflow - outflow
+                net_flow = outflow - inflow
 
                 if net_flow != 0:
                     state_var_flows.append(
