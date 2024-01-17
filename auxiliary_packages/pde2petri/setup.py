@@ -22,7 +22,7 @@ setup(
     license="MIT",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    install_requires=["sympy"],
+    install_requires=["sympy", "pydantic"],
     extras_require={},
     tests_require=["unittest"],
     zip_safe=False,

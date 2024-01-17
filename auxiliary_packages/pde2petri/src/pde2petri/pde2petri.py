@@ -1,5 +1,15 @@
+from typing import List
+
 import sympy
 from pde2petri.petrinet import *
+from pydantic import BaseModel
+
+
+class SymbolicPetri(BaseModel):
+    symbols: List[str]
+    boundary: str
+    initial: str
+    state_update: str
 
 
 class PDE2Petri(object):
@@ -24,7 +34,7 @@ class PDE2Petri(object):
             ]
             new_expr = expr.func(*new_args)
             finite_difference = new_expr.as_finite_difference(
-                [expr.args[1][0] + 1, expr.args[1][0] - 1]
+                [expr.args[1][0] + 1, expr.args[1][0]]
             )
             return finite_difference
         elif isinstance(expr, sympy.core.containers.Tuple) or isinstance(
