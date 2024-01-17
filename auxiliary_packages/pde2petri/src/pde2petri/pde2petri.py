@@ -1,5 +1,5 @@
-import pde2petri.petrinet
 import sympy
+from pde2petri.petrinet import *
 
 
 class PDE2Petri(object):
@@ -72,5 +72,22 @@ class PDE2Petri(object):
             step_updates[next_state] = step_update
         return step_updates
 
-    def to_amr(self):
+    def instantiate(self, points):
         pass
+
+    def to_amr(self):
+        model = Model(
+            header=Header(
+                name="name",
+                schema_=AnyUrl(
+                    "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json"
+                ),
+                description="Petrinet model created by Dan Bryce and Drisana Mosiphir",
+                model_version="0.1",
+            ),
+            model=Model1(
+                states=States(root=[]), transitions=Transitions(root=[])
+            ),
+            semantics=Semantics(ode=OdeSemantics()),
+        )
+        return model

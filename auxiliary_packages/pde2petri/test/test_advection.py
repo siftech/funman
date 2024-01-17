@@ -18,6 +18,11 @@ class TestAdvection(unittest.TestCase):
             sympy_expression
         ), "Could not generate sympy expression for discretization"
 
+    def test_advection_to_amr(self):
+        converter = pde2petri.PDE2Petri()
+        amr = converter.to_amr()
+        assert amr, "Could not create an AMR model."
+
 
 if __name__ == "__main__":
     unittest.main()
