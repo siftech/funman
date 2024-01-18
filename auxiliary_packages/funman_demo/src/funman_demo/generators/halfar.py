@@ -14,15 +14,15 @@ from funman_demo.generators.common import (
 )
 from funman_demo.generators.common import main as common_main
 from funman_demo.generators.generator import Generator
-from pydantic import AnyUrl
-
-from funman.model.generated_models.petrinet import (
+from funman_demo.generators.model.petrinet import (
     Distribution,
+    Grounding,
     Header,
     Initial,
     Model,
     Parameter,
 )
+from pydantic import AnyUrl
 
 
 class HalfarModel(Model):
@@ -138,6 +138,7 @@ class HalfarGenerator(Generator):
             Parameter(
                 id="A",
                 value=1e-16,
+                grounding=Grounding(identifiers={}),
                 distribution=Distribution(
                     type="StandardUniform1",
                     parameters={"minimum": 1e-20, "maximum": 1e-12},
@@ -154,6 +155,7 @@ class HalfarGenerator(Generator):
             Parameter(
                 id="dx",
                 value=1,
+                grounding=Grounding(identifiers={}),
                 distribution=Distribution(
                     type="StandardUniform1",
                     parameters={"minimum": 1e-1, "maximum": 1e1},
@@ -164,12 +166,12 @@ class HalfarGenerator(Generator):
     def header(self):
         return Header(
             name="Halfar Model",
-            schema_=AnyUrl(
+            schema=AnyUrl(
                 "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json"
             ),
             schema_name="petrinet",
-            description="Halfar as Petrinet model created by Dan Bryce and Drisana Mosiphir",
-            model_version="0.1",
+            description="Halfar as Petrinet model created by Dan Bryce and Drisana Iverson (Mosaphir)",
+            model_version="0.2",
         )
 
 
