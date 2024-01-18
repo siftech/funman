@@ -14,15 +14,15 @@ from funman_demo.generators.common import (
 )
 from funman_demo.generators.common import main as common_main
 from funman_demo.generators.generator import Generator
-from pydantic import AnyUrl
-
-from funman.model.generated_models.petrinet import (
+from funman_demo.generators.model.petrinet import (
     Distribution,
+    Grounding,
     Header,
     Initial,
     Model,
     Parameter,
 )
+from pydantic import AnyUrl
 
 
 class AdvectionModel(Model):
@@ -85,12 +85,12 @@ class AdvectionGenerator(Generator):
     def header(self):
         return Header(
             name="Advection Model",
-            schema_=AnyUrl(
+            schema=AnyUrl(
                 "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json"
             ),
             schema_name="petrinet",
-            description="Advection as Petrinet model created by Dan Bryce and Drisana Mosiphir",
-            model_version="0.1",
+            description="Advection as Petrinet model created by Dan Bryce and Drisana Iverson (Mosaphir)",
+            model_version="0.2",
         )
 
 

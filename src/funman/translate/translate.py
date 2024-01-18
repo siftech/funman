@@ -533,7 +533,7 @@ class Encoder(ABC, BaseModel):
         pass
 
     def _get_untimed_symbols(self, model: Model) -> Set[str]:
-        untimed_symbols = set([])
+        untimed_symbols = set(["timestep"])
         # All flux nodes correspond to untimed symbols
         for var_name in model._parameter_names():
             untimed_symbols.add(var_name)
