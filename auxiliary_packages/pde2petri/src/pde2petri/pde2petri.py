@@ -1,8 +1,9 @@
 from typing import List
 
 import sympy
-from pde2petri.petrinet import *
 from pydantic import BaseModel
+
+from .model.petrinet import *
 
 
 class SymbolicPetri(BaseModel):

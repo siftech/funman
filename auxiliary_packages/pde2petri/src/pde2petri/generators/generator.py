@@ -2,13 +2,13 @@ from abc import ABC, abstractmethod
 from decimal import Decimal
 from typing import Dict, List, Tuple
 
-from funman_demo.generators.common import (
+from pde2petri.generators.common import (
     Boundary,
     Coordinate,
     Derivative,
     Direction,
 )
-from funman_demo.generators.model.petrinet import (
+from pde2petri.model.petrinet import (
     Grounding,
     Initial,
     Model1,

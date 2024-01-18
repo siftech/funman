@@ -5,16 +5,16 @@ This script will generate instances of the Halfar ice model as Petrinet AMR mode
 import sys
 from typing import Dict, List, Tuple
 
-from funman_demo.generators.common import (
+from pde2petri.generators.common import (
     Boundary,
     Coordinate,
     Derivative,
     Direction,
     get_args,
 )
-from funman_demo.generators.common import main as common_main
-from funman_demo.generators.generator import Generator
-from funman_demo.generators.model.petrinet import (
+from pde2petri.generators.common import main as common_main
+from pde2petri.generators.generator import Generator
+from pde2petri.model.petrinet import (
     Distribution,
     Grounding,
     Header,

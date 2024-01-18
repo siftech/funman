@@ -2,9 +2,9 @@ import itertools
 import os
 from sys import argv
 
-from funman_demo.generators.advection import main as advection_main
-from funman_demo.generators.common import Derivative
-from funman_demo.generators.halfar import main as halfar_main
+from pde2petri.generators.advection import main as advection_main
+from pde2petri.generators.common import Derivative
+from pde2petri.generators.halfar import main as halfar_main
 
 models = {"advection": advection_main, "halfar": halfar_main}
 

@@ -2,7 +2,7 @@ import argparse
 import os
 from typing import Dict, List, Union
 
-from funman_demo.generators.model.petrinet import Grounding, Properties
+from pde2petri.model.petrinet import Grounding, Properties
 from pydantic import BaseModel
 
 
