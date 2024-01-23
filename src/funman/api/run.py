@@ -150,7 +150,7 @@ class Runner:
 
     def run(
         self,
-        model: Union[str, Model, Dict],
+        model: Union[str, funman.Model, Dict],
         request: Union[str, FunmanWorkRequest, Dict],
         description: str = "",
         case_out_dir: str = ".",

@@ -1,5 +1,20 @@
 # funman
 
+<!-- Outline:
+- Introduction (problem solved, major packages, prerequisites)
+- Quickstart (get docker container, use commmand line or Jupyter)
+- Model Examples (focus on Petrinet)
+- Request structure and examples (input, plotting) (constraints, parameters, flags)
+- Show how to run examples with: command line, API, code
+- Dev Setup (needs cleanup)
+    - Code layout
+    - Obtain pre-built container 
+    - Building Dev container
+    - Run dev container with vscode
+ -->
+
+![Funman synthesizes parameters for ODE and PDE systems](http://https://github.com/siftech/funman/blob/v1.8.0-rc/fig/funman-diagram.png?raw=true)
+
 The `funman` package performs Functional Model Analysis by processing a request and model pair that describes an analysis scenario.  Funman supports a number of model formats, which correspond to the classes in `funman.models`:
 
 - [GeneratedPetriNet](#funman.model.generated_models.petrinet.Model): AMR model for petri nets generated 
