@@ -4,7 +4,7 @@ during the configuration and execution of a search.
 """
 import logging
 import math
-from typing import Dict, Literal, Optional
+from typing import Dict, Literal, Optional, Set
 
 from pydantic import BaseModel
 
@@ -36,6 +36,23 @@ class Point(BaseModel):
 
     def __repr__(self) -> str:
         return str(self.model_dump())
+
+    def relevant_timesteps(self) -> Set[int]:
+        steps = {
+            int(k.rsplit("_", 1)[-1])
+            for k, v in self.values.items()
+            if k.startswith("solve_step") and v == 1.0
+        }
+        return steps
+
+    def remove_irrelevant_steps(self, untimed_symbols: Set[str]):
+        relevant = self.relevant_timesteps()
+        self.values = {
+            k: v
+            for step in relevant
+            for k, v in self.values.items()
+            if (k.endswith(f"_{step}") or k in untimed_symbols)
+        }
 
     def denormalize(self, scenario):
         if scenario.normalization_constant:
