@@ -3,7 +3,16 @@ from typing import List
 
 import sympy
 from pde2petri import *
-from pydantic import BaseModel
+from pde2petri.model.petrinet import (
+    Header,
+    Model,
+    Model1,
+    OdeSemantics,
+    Semantics,
+    States,
+    Transitions,
+)
+from pydantic import AnyUrl, BaseModel
 
 l = logging.getLogger(__name__)
 
@@ -130,7 +139,7 @@ class PDE2Petri(object):
                 schema_=AnyUrl(
                     "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json"
                 ),
-                description="Petrinet model created by Dan Bryce and Drisana Mosiphir",
+                description="Petrinet model created by Dan Bryce and Drisana Mosaphir",
                 model_version="0.1",
             ),
             model=Model1(
