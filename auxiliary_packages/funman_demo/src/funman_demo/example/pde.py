@@ -69,4 +69,4 @@ def plot_spatial_timeseries(
     anim_dh = animate_heat_map(dh, steps)
     hdh = HTML(anim_dh.to_jshtml())
 
-    return hh, hdh
+    return hh, hdh, anim_h, anim_dh

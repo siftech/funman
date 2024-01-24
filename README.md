@@ -13,7 +13,7 @@
     - Run dev container with vscode
  -->
 
-![Funman synthesizes parameters for ODE and PDE systems](http://https://github.com/siftech/funman/blob/v1.8.0-rc/fig/funman-diagram.png?raw=true)
+![Funman synthesizes parameters for ODE and PDE systems](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/funman-diagram.png?raw=true)
 
 The `funman` package performs Functional Model Analysis by processing a request and model pair that describes an analysis scenario.  Funman supports a number of model formats, which correspond to the classes in `funman.models`:
 
