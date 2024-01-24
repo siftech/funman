@@ -13,8 +13,8 @@ from funman.server.query import FunmanResults
 
 
 def animate_heat_map(my_df, frames):
-    fig = plt.figure()
-
+    # fig = plt.figure()
+    fig, ax = plt.subplots()
     data = my_df.loc[0, :]
     vmin = my_df.min().min()
     vmax = my_df.max().max()
@@ -28,6 +28,7 @@ def animate_heat_map(my_df, frames):
         plt.clf()
         data = my_df.loc[i, :]
         ax = sns.heatmap(data, vmin=vmin, vmax=vmax, cmap="crest")
+        return ax
 
     anim = animation.FuncAnimation(
         fig, animate, interval=1000, frames=frames  # init_func=init,
