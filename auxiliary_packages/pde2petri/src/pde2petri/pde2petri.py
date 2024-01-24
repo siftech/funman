@@ -2,9 +2,8 @@ import logging
 from typing import List
 
 import sympy
+from pde2petri import *
 from pydantic import BaseModel
-
-from .model.petrinet import *
 
 l = logging.getLogger(__name__)
 
