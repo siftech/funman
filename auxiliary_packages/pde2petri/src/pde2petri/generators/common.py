@@ -2,6 +2,7 @@ import argparse
 import os
 from typing import Dict, List, Union
 
+from pde2petri.model.petrinet import Grounding, Properties
 from pydantic import BaseModel
 
 
@@ -103,7 +104,7 @@ def main(args, generator, model):
         model=mod,
         semantics=semantics,
     )
-    j = amr_model.model_dump_json(indent=4)
+    j = amr_model.model_dump_json(indent=4, by_alias=True, exclude_unset=True)
 
     with open(args.outfile, "w") as f:
         print(f"Writing {os.path.join(os.getcwd(), args.outfile)}")
