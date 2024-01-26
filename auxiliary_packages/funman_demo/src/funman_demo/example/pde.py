@@ -53,7 +53,10 @@ def animate_heat_map(my_df, frames):
 
 
 def plot_spatial_timeseries(
-    results: FunmanResults, variables: Optional[List[str]] = None, outdir=None
+    results: FunmanResults,
+    variables: Optional[List[str]] = None,
+    outdir=None,
+    fps=1,
 ):
     logging.getLogger("matplotlib.animation").setLevel(logging.ERROR)
     logging.getLogger("matplotlib.colorbar").setLevel(logging.ERROR)
@@ -83,7 +86,8 @@ def plot_spatial_timeseries(
     anim_h = animate_heat_map(df, steps)
     if outdir:
         anim_h.save(
-            os.path.join(outdir, "h.gif"), writer=animation.PillowWriter(fps=1)
+            os.path.join(outdir, "h.gif"),
+            writer=animation.PillowWriter(fps=fps),
         )
     hh = HTML(anim_h.to_jshtml())
     dh = df.unstack().diff().fillna(0).stack([1]).rename(columns={"h": "dh"})
@@ -91,7 +95,7 @@ def plot_spatial_timeseries(
     if outdir:
         anim_dh.save(
             os.path.join(outdir, "dh.gif"),
-            writer=animation.PillowWriter(fps=1),
+            writer=animation.PillowWriter(fps=fps),
         )
     hdh = HTML(anim_dh.to_jshtml())
 
