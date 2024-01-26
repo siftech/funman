@@ -1,10 +1,10 @@
 .DEFAULT_GOAL := all
 
 num_constraint_test.o: src/num_constraint_test.cc
-	g++ -c src/num_constraint_test.cc -I/usr/include/ibex -libex
+	g++ -c -g src/num_constraint_test.cc -I/usr/include/ibex -libex
 
 num_constraint_test: num_constraint_test.o
-	g++ num_constraint_test.o -libex -o num_constraint_test
+	g++ -g num_constraint_test.o -libex -o num_constraint_test
 
 test: num_constraint_test
 
