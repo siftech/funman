@@ -2,8 +2,16 @@ import logging
 from decimal import Decimal
 from typing import List, Optional, Union
 
-from numpy import average
-from pydantic import BaseModel, Field, model_validator
+from numpy import average, nextafter
+from pydantic import (
+    BaseModel,
+    Field,
+    SerializerFunctionWrapHandler,
+    field_serializer,
+    model_validator,
+)
+from pydantic.functional_serializers import WrapSerializer
+from typing_extensions import Annotated
 
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
@@ -19,7 +27,11 @@ class Interval(BaseModel):
     lb: Optional[Union[float, str]] = NEG_INFINITY
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
-    cached_width: Optional[float] = Field(default=None, exclude=True)
+    original_width: Optional[Decimal] = None
+
+    @field_serializer("original_width")
+    def ser_wrap(self, v: Decimal, _info) -> float:
+        return float(v)
 
     @staticmethod
     def from_value(v: Union[float, str]):
@@ -49,9 +61,17 @@ class Interval(BaseModel):
     def is_point(self) -> bool:
         return self.lb == self.ub and self.closed_upper_bound
 
-    def width(
-        self, normalize: Optional[Union[Decimal, float]] = None
-    ) -> Decimal:
+    def normalized_width(self) -> Decimal:
+        assert (
+            self.original_width is not None
+        ), f"{self} cannot be normalized without knowing the original width."
+        return (
+            self.width() / self.original_width
+            if self.original_width > 0.0
+            else 0.0
+        )
+
+    def width(self, normalize=False) -> Decimal:
         """
         The width of an interval is ub - lb.
 
@@ -60,16 +80,10 @@ class Interval(BaseModel):
         float
             ub - lb
         """
-        if self.cached_width is None:
-            self.cached_width = Decimal(self.ub) - Decimal(self.lb)
-        if normalize is not None:
-            return (
-                self.cached_width / normalize
-                if normalize > 0
-                else Decimal(0.0)
-            )
+        if normalize:
+            return self.normalized_width()
         else:
-            return self.cached_width
+            return Decimal(self.ub) - Decimal(self.lb)
 
     def is_unbound(self) -> bool:
         return self.lb == NEG_INFINITY and self.ub == POS_INFINITY
@@ -98,7 +112,8 @@ class Interval(BaseModel):
         return str(self.model_dump())
 
     def __str__(self):
-        return f"Interval([{self.lb}, {self.ub}))"
+        ub = "]" if self.closed_upper_bound else ")"
+        return f"[{self.lb:.5f}, {self.ub:.5f}{ub}"
 
     def meets(self, other: "Interval") -> bool:
         """
@@ -114,7 +129,18 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        return self.ub == other.lb or self.lb == other.ub
+        return (
+            (self.ub == other.lb and not self.closed_upper_bound)
+            or (
+                nextafter(self.ub, POS_INFINITY) == other.lb
+                and self.closed_upper_bound
+            )
+            or (self.lb == other.ub and not other.closed_upper_bound)
+            or (
+                self.ub == nextafter(other.lb, POS_INFINITY)
+                and other.closed_upper_bound
+            )
+        )
 
     def finite(self) -> bool:
         """
@@ -329,5 +355,7 @@ class Interval(BaseModel):
                 f"{self} has equal lower and upper bounds, so assuming the upper bound is closed.  (I.e., [lb, ub) is actually [lb, ub])"
             )
             self.closed_upper_bound = True
+        if self.original_width is None:
+            self.original_width = self.width()
 
         return self

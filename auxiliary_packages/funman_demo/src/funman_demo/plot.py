@@ -1,11 +1,12 @@
 import json
 import logging
+from typing import Dict
 
 import matplotlib.pyplot as plt
 from IPython.display import clear_output
 from matplotlib.lines import Line2D
 
-from funman import Box, Point
+from funman import Box, Parameter, Point
 from funman.representation.parameter_space import ParameterSpace
 
 l = logging.getLogger(__file__)
@@ -65,3 +66,37 @@ def plot_cached_search(search_path, alpha: float = 0.2):
         ParameterSpace(true_boxes, false_boxes, true_points, false_points),
         alpha=alpha,
     )
+
+
+def summarize_results(variables, results, ylabel="Height"):
+    points = results.points()
+    boxes = results.parameter_space.boxes()
+
+    l.info("*" * 80)
+    l.info("*" * 80)
+    l.info("* Analysis Summary ")
+    l.info("*" * 80)
+    l.info(
+        f"{len(points)} Points (+:{len(results.parameter_space.true_points())}, -:{len(results.parameter_space.false_points())}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})"
+    )
+    if points and len(points) > 0:
+        point: Point = points[-1]
+        parameters: Dict[Parameter, float] = results.point_parameters(point)
+        results.plot(
+            variables=variables,
+            label_marker={"true": ",", "false": ","},
+            xlabel="Time",
+            ylabel=ylabel,
+            legend=variables,
+            label_color={"true": "g", "false": "r"},
+        )
+        parameter_values = {p: point.values[p.name] for p in parameters}
+        l.info(f"Parameters = {parameter_values}")
+        l.info(parameters)
+        l.info(results.dataframe([point]))
+    else:
+        # if there are no points, then we have a box that we found without needing points
+        l.info(f"Found box with no points")
+        box = boxes[0]
+        l.info(json.dumps(box.explain(), indent=4))
+    l.info("*" * 80)

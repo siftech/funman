@@ -207,7 +207,7 @@ class TestCompilation(unittest.TestCase):
             model=model,
             query=QueryTrue(),
         )
-
+        scenario.initialize(config=FUNMANConfig())
         assert (
             scenario.search_space_volume()
             == scenario.representable_space_volume()

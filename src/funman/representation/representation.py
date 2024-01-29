@@ -4,13 +4,12 @@ during the configuration and execution of a search.
 """
 import logging
 import math
-import sys
-from typing import Dict, Literal, Optional
+from typing import Dict, Literal, Optional, Set
 
 from pydantic import BaseModel
 
 from funman import to_sympy
-from funman.constants import LABEL_UNKNOWN, Label
+from funman.constants import LABEL_UNKNOWN, NEG_INFINITY, POS_INFINITY, Label
 
 l = logging.getLogger(__name__)
 
@@ -38,6 +37,26 @@ class Point(BaseModel):
     def __repr__(self) -> str:
         return str(self.model_dump())
 
+    def relevant_timesteps(self) -> Set[int]:
+        steps = {
+            int(k.rsplit("_", 1)[-1])
+            for k, v in self.values.items()
+            if k.startswith("solve_step") and v == 1.0
+        }
+        return steps
+
+    def remove_irrelevant_steps(self, untimed_symbols: Set[str]):
+        relevant = self.relevant_timesteps()
+        relevant_timepoints = [
+            self.schedule.time_at_step(ts) for ts in relevant
+        ]
+        self.values = {
+            k: v
+            for step in relevant_timepoints
+            for k, v in self.values.items()
+            if (k.endswith(f"_{step}") or k in untimed_symbols)
+        }
+
     def denormalize(self, scenario):
         if scenario.normalization_constant:
             norm = to_sympy(
@@ -58,17 +77,17 @@ class Point(BaseModel):
             return self
 
     def __hash__(self):
-        return int(
-            sum(
-                [
-                    v
-                    for _, v in self.values.items()
-                    if not isinstance(v, EncodingSchedule)
-                    and v != sys.float_info.max
-                    and not math.isinf(v)
-                ]
-            )
+        my_hash = sum(
+            [
+                v
+                for _, v in self.values.items()
+                if not isinstance(v, EncodingSchedule)
+                and v != POS_INFINITY
+                and v != NEG_INFINITY
+            ]
         )
+
+        return int(my_hash) if not math.isinf(my_hash) else 0
 
     def __eq__(self, other):
         if isinstance(other, Point):

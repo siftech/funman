@@ -1,7 +1,7 @@
 fastapi
 multiprocess
 openapi-python-client
-pysmt
+git+https://github.com/danbryce/pysmt@add-abs-value#egg=pysmt
 uvicorn
 
 -e ./

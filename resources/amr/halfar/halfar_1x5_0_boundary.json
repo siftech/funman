@@ -1,0 +1,222 @@
+{
+    "header": {
+        "name": "Halfar Model",
+        "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "Halfar as Petrinet model created by Dan Bryce and Drisana Mosiphir",
+        "model_version": "0.1"
+    },
+    "properties": null,
+    "model": {
+        "states": [
+            {
+                "id": "h_0",
+                "name": "h_0",
+                "description": "height at [-2.0]",
+                "grounding": null,
+                "units": null
+            },
+            {
+                "id": "h_1",
+                "name": "h_1",
+                "description": "height at [-1.0]",
+                "grounding": null,
+                "units": null
+            },
+            {
+                "id": "h_2",
+                "name": "h_2",
+                "description": "height at [0.0]",
+                "grounding": null,
+                "units": null
+            },
+            {
+                "id": "h_3",
+                "name": "h_3",
+                "description": "height at [1.0]",
+                "grounding": null,
+                "units": null
+            },
+            {
+                "id": "h_4",
+                "name": "h_4",
+                "description": "height at [2.0]",
+                "grounding": null,
+                "units": null
+            }
+        ],
+        "transitions": [
+            {
+                "id": "r_0_0",
+                "input": [
+                    "h_1"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "r_0_0",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_0_1",
+                "input": [
+                    "h_2"
+                ],
+                "output": [
+                    "h_0"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_0_1",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_0_2",
+                "input": [
+                    "h_3"
+                ],
+                "output": [
+                    "h_1"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_0_2",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_0_3",
+                "input": [
+                    "h_4"
+                ],
+                "output": [
+                    "h_2"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_0_3",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "r_0_4",
+                "input": [],
+                "output": [
+                    "h_3"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "r_0_4",
+                    "description": null,
+                    "grounding": null
+                }
+            }
+        ]
+    },
+    "semantics": {
+        "ode": {
+            "rates": [
+                {
+                    "target": "r_0_0",
+                    "expression": "(283701998652.8*A/2.0)*((abs((h_1-(0.0*t))*0.5)**2)*((h_1-(0.0*t))*0.5)*(h_0**5))*dt",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_0_1",
+                    "expression": "(283701998652.8*A/2.0)*((abs((h_2-h_0)*0.5)**2)*((h_2-h_0)*0.5)*(h_1**5))*dt",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_0_2",
+                    "expression": "(283701998652.8*A/2.0)*((abs((h_3-h_1)*0.5)**2)*((h_3-h_1)*0.5)*(h_2**5))*dt",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_0_3",
+                    "expression": "(283701998652.8*A/2.0)*((abs((h_4-h_2)*0.5)**2)*((h_4-h_2)*0.5)*(h_3**5))*dt",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "r_0_4",
+                    "expression": "(283701998652.8*A/2.0)*((abs(((0.0*t)-h_3)*0.5)**2)*(((0.0*t)-h_3)*0.5)*(h_4**5))*dt",
+                    "expression_mathml": null
+                }
+            ],
+            "initials": [
+                {
+                    "target": "h_0",
+                    "expression": "0.3333333333333333",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "h_1",
+                    "expression": "0.5",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "h_2",
+                    "expression": "1.0",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "h_3",
+                    "expression": "0.5",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "h_4",
+                    "expression": "0.3333333333333333",
+                    "expression_mathml": null
+                }
+            ],
+            "parameters": [
+                {
+                    "id": "A",
+                    "name": null,
+                    "description": null,
+                    "value": 1e-16,
+                    "grounding": null,
+                    "distribution": {
+                        "type": "StandardUniform1",
+                        "parameters": {
+                            "minimum": 1e-20,
+                            "maximum": 1e-12
+                        }
+                    },
+                    "units": null
+                },
+                {
+                    "id": "dt",
+                    "name": null,
+                    "description": null,
+                    "value": 1.0,
+                    "grounding": null,
+                    "distribution": {
+                        "type": "StandardUniform1",
+                        "parameters": {
+                            "minimum": 0.1,
+                            "maximum": 10.0
+                        }
+                    },
+                    "units": null
+                }
+            ],
+            "time": {
+                "id": "t",
+                "units": {
+                    "expression": "day",
+                    "expression_mathml": "<ci>day</ci>"
+                }
+            }
+        },
+        "typing": null,
+        "span": null
+    },
+    "metadata": null
+}

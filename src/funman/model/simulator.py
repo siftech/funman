@@ -3,10 +3,10 @@ This module defines classes that wrap a simulator to function as a Model.
 """
 
 
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 
 
-class SimulatorModel(Model):
+class SimulatorModel(FunmanModel):
     main_fn: str = ""
 
     def default_encoder(self) -> "Encoder":

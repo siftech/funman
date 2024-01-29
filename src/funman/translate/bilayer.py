@@ -31,7 +31,7 @@ from funman.model.bilayer import (
     BilayerNode,
     BilayerStateNode,
 )
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.translate import Encoder, Encoding
 from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils.sympy_utils import to_sympy
@@ -113,20 +113,22 @@ class BilayerEncoder(Encoder):
             And(untimed_constraints).simplify(), super_untimed_constraints
         )
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         timed_symbols = set([])
         # All state nodes correspond to timed symbols
         for idx, node in model.bilayer._state.items():
             timed_symbols.add(node.parameter)
         return timed_symbols
 
-    def encode_model(self, model: Model, time_dependent_parameters=False):
+    def encode_model(
+        self, model: FunmanModel, time_dependent_parameters=False
+    ):
         """
         Encode the model as an SMTLib formula.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns

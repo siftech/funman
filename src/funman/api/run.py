@@ -1,16 +1,21 @@
+import argparse
 import json
 import logging
 import os
+import random
 from contextlib import contextmanager
 from time import sleep
 from timeit import default_timer
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
+
+from funman_demo.parameter_space_plotter import ParameterSpacePlotter
+from matplotlib import pyplot as plt
 
 import funman
 from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
-from funman.model.model import _wrap_with_internal_model
+from funman.model.model import FunmanModel, _wrap_with_internal_model
 from funman.server.query import (
     FunmanResults,
     FunmanWorkRequest,
@@ -144,10 +149,51 @@ class Runner:
             elapser = None
 
     def run(
-        self, model, request, description="", case_out_dir="."
+        self,
+        model: Union[str, funman.FunmanModel, Dict],
+        request: Union[str, FunmanWorkRequest, Dict],
+        description: str = "",
+        case_out_dir: str = ".",
+        dump_plot: bool = False,
+        parameters_to_plot: Optional[List[str]] = None,
+        point_plot_config: Dict = {},
+        num_points: Optional[int] = None,
     ) -> FunmanResults:
+        """
+        Run a FUNMAN scenario.
+
+        Parameters
+        ----------
+        model : Union[str, GeneratedPetriNet, GeneratedRegNet, Dict]
+            Model to analyze
+        request : Union[str, FunmanWorkRequest, Dict]
+            Request to configure analysis
+        description : str, optional
+            Description of the run
+        case_out_dir : str, optional
+            Directory to store output, by default "."
+        dump_plot : bool, optional
+            Generate trace and parameter space plots in the case_out_dir, by default False
+        parameters_to_plot : Optional[List[str]], optional
+            Parameters/Variables to include in parameter space plot, by default None
+        point_plot_config : Dict, optional
+            Matplotlib flags and special key "variables" to select variables to plot , by default {}
+        num_points : Optional[int], optional
+            The number of points to plot in the trace plot, by default None
+
+        Returns
+        -------
+        FunmanResults
+            Analysis results
+        """
+
         results = self.run_test_case(
-            (model, request, description), case_out_dir
+            (model, request, description),
+            case_out_dir,
+            dump_plot=dump_plot,
+            parameters_to_plot=parameters_to_plot,
+            point_plot_config=point_plot_config,
+            num_points=num_points,
         )
         return results
         # ParameterSpacePlotter(
@@ -157,7 +203,15 @@ class Runner:
         # ).plot(show=False)
         # plt.savefig(f"{case_out_dir}/scenario1_base_ps_beta_space.png")
 
-    def run_test_case(self, case, case_out_dir):
+    def run_test_case(
+        self,
+        case,
+        case_out_dir,
+        dump_plot=False,
+        parameters_to_plot=None,
+        point_plot_config={},
+        num_points=None,
+    ):
         if not os.path.exists(case_out_dir):
             os.mkdir(case_out_dir)
 
@@ -168,7 +222,14 @@ class Runner:
         self._storage.start(self.settings.data_path)
         self._worker.start()
 
-        results = self.run_instance(case, out_dir=case_out_dir)
+        results = self.run_instance(
+            case,
+            out_dir=case_out_dir,
+            dump_plot=dump_plot,
+            parameters_to_plot=parameters_to_plot,
+            point_plot_config=point_plot_config,
+            num_points=num_points,
+        )
 
         self._worker.stop()
         self._storage.stop()
@@ -187,7 +248,13 @@ class Runner:
         raise Exception(f"Could not determine the Model type of {model_file}")
 
     def run_instance(
-        self, case: Tuple[str, Union[str, Dict], str], out_dir="."
+        self,
+        case: Tuple[str, Union[str, Dict], str],
+        out_dir=".",
+        dump_plot=False,
+        parameters_to_plot=None,
+        point_plot_config={},
+        num_points=None,
     ):
         killer = GracefulKiller()
         (model_file, request_file, description) = case
@@ -210,21 +277,39 @@ class Runner:
 
         sleep(2)  # need to sleep until worker has a chance to start working
         outfile = f"{out_dir}/{work_unit.id}.json"
+        plotted = False
         while not killer.kill_now:
             if self._worker.is_processing_id(work_unit.id):
                 l.info(f"Dumping results to {outfile}")
                 results = self._worker.get_results(work_unit.id)
                 with open(outfile, "w") as f:
-                    f.write(results.model_dump_json())
-                # ParameterSpacePlotter(
-                #     results.parameter_space, plot_points=True
-                # ).plot(show=False)
-                # plt.savefig(f"{out_dir}/{model.__module__}.png")
-                # plt.close()
-                sleep(5)
+                    f.write(results.model_dump_json(by_alias=True))
+                points = results.parameter_space.points()
+                boxes = results.parameter_space.boxes()
+                if dump_plot and (len(points) > 0 or len(boxes) > 0):
+                    plotted = True
+                    self.create_plots(
+                        results,
+                        out_dir,
+                        work_unit,
+                        num_points,
+                        point_plot_config,
+                        parameters_to_plot,
+                    )
+                sleep(10)
             else:
                 results = self._worker.get_results(work_unit.id)
                 break
+
+        if not plotted and dump_plot:
+            self.create_plots(
+                results,
+                out_dir,
+                work_unit,
+                num_points,
+                point_plot_config,
+                parameters_to_plot,
+            )
 
         if killer.kill_now:
             l.info(
@@ -241,13 +326,104 @@ class Runner:
 
         return results
 
+    def create_plots(
+        self,
+        results: FunmanResults,
+        out_dir,
+        work_unit,
+        num_points,
+        point_plot_config,
+        parameters_to_plot,
+    ):
+        points = results.parameter_space.points()
+        if len(points) > 0:
+            point_plot_filename = f"{out_dir}/{work_unit.id}_points.png"
+            l.info(
+                f"Creating plot of point trajectories: {point_plot_filename}"
+            )
+
+            points_to_plot = (
+                random.choices(
+                    points,
+                    k=min(
+                        len(points),
+                        (
+                            num_points
+                            if num_points is not None
+                            else len(points)
+                        ),
+                    ),
+                )
+                if num_points
+                else results.parameter_space.points()
+            )
+            results.plot(points=points_to_plot, **point_plot_config)
+            plt.show()
+            plt.savefig(point_plot_filename)
+            plt.close()
+
+        boxes = results.parameter_space.boxes()
+        if parameters_to_plot is None:
+            parameters_to_plot = results.model._parameter_names() + [
+                "timestep"
+            ]
+        assert (
+            len(parameters_to_plot) > 1
+        ), "Cannot plot a parameter space for one parameter"
+        if len(boxes) > 0 and len(parameters_to_plot) > 1:
+            space_plot_filename = (
+                f"{out_dir}/{work_unit.id}_parameter_space.png"
+            )
+            l.info(f"Creating plot of parameter space: {space_plot_filename}")
+            ParameterSpacePlotter(
+                results.parameter_space,
+                plot_points=False,
+                parameters=parameters_to_plot,
+            ).plot(show=True)
+            plt.savefig(space_plot_filename)
+        plt.close()
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "model",
+        type=str,
+        help=f"model json file",
+    )
+    parser.add_argument(
+        "request",
+        type=str,
+        help=f"request json file",
+    )
+    parser.add_argument(
+        "-o",
+        "--outdir",
+        type=str,
+        default="out",
+        help=f"Output directory",
+    )
+    parser.add_argument(
+        "-p",
+        "--plot",
+        action="store_true",
+        default=False,
+        help=f"Write plots in outdir.",
+    )
+    parser.set_defaults(plot=False)
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = get_args()
+    if not os.path.exists(args.outdir):
+        os.mkdir(args.outdir)
+
+    results = Runner().run(
+        args.model, args.request, case_out_dir=args.outdir, dump_plot=args.plot
+    )
+    print(results.model_dump_json(indent=4))
+
 
 if __name__ == "__main__":
-    model = args[1]
-    request = args[2]
-    out_dir = args[3]
-
-    if not os.path.exists(out_dir):
-        os.mkdir(out_dir)
-
-    Runner().run(model, request, case_out_dir=out_dir)
+    main()

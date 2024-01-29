@@ -35,6 +35,11 @@ class Parameter(BaseModel):
     def __hash__(self):
         return abs(hash(self.name))
 
+    @model_validator(mode="after")
+    def set_interval_original_width(self) -> str:
+        self.interval.original_width = self.interval.width()
+        return self
+
 
 class LabeledParameter(Parameter):
     label: Literal["any", "all"] = LABEL_ANY

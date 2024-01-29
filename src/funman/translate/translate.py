@@ -30,7 +30,7 @@ from pysmt.solvers.solver import Model as pysmtModel
 
 from funman.config import FUNMANConfig
 from funman.constants import NEG_INFINITY, POS_INFINITY
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.model.query import (
     QueryAnd,
     QueryEncoded,
@@ -301,18 +301,25 @@ class Encoder(ABC, BaseModel):
     ) -> EncodedFormula:
         assumption = next(a for a in assumptions if a.constraint == constraint)
         assumption_symbol = self.encode_assumption(assumption, options)
-        timed_assumption_symbol = self.encode_assumption(
-            assumption, options, layer_idx=layer_idx
-        )
 
-        # Assumption is the same at all timepoints and it is equisatisfiable with the encoded_constraint
-        assumed_constraint = And(
-            # Iff(assumption_symbol, timed_assumption_symbol),
-            Implies(assumption_symbol, timed_assumption_symbol),
-            Iff(timed_assumption_symbol, encoded_constraint[0]),
-        )
+        # The assumption is timed if the constraint has a timed variable
+        if constraint.time_dependent():
+            timed_assumption_symbol = self.encode_assumption(
+                assumption, options, layer_idx=layer_idx
+            )
+
+            # Assumption is the same at all timepoints and it is equisatisfiable with the encoded_constraint
+            assumed_constraint = And(
+                # Iff(assumption_symbol, timed_assumption_symbol),
+                Implies(assumption_symbol, timed_assumption_symbol),
+                Iff(timed_assumption_symbol, encoded_constraint[0]),
+            )
+        else:
+            assumed_constraint = And(
+                Iff(assumption_symbol, encoded_constraint[0]),
+            )
         symbols = {k: v for k, v in encoded_constraint[1].items()}
-        symbols[str(assumption_symbol)] = assumption_symbol
+        symbols[assumption_symbol.symbol_name()] = assumption_symbol
         return (assumed_constraint, symbols)
 
     def encode_assumption(
@@ -373,7 +380,7 @@ class Encoder(ABC, BaseModel):
             return formula
 
     def _encode_next_step(
-        self, model: Model, step: int, next_step: int, substitutions={}
+        self, model: FunmanModel, step: int, next_step: int, substitutions={}
     ) -> FNode:
         pass
 
@@ -402,7 +409,7 @@ class Encoder(ABC, BaseModel):
         initial_state = self._timed_model_elements["init"]
         initial_symbols = initial_state.get_free_variables()
 
-        return (initial_state, {str(s): s for s in initial_symbols})
+        return (initial_state, {s.symbol_name(): s for s in initial_symbols})
 
     def encode_transition_layer(
         self,
@@ -439,7 +446,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
         num_steps: int
             number of encoding steps (e.g., time steps)
@@ -482,14 +489,14 @@ class Encoder(ABC, BaseModel):
         return parameter_assignments
 
     def parameter_values(
-        self, model: Model, pysmtModel: pysmtModel
+        self, model: FunmanModel, pysmtModel: pysmtModel
     ) -> Dict[str, List[Union[float, None]]]:
         """
         Gather values assigned to model parameters.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model encoded by self
         pysmtModel : pysmt.solvers.solver.Model
             the assignment to symbols
@@ -509,13 +516,13 @@ class Encoder(ABC, BaseModel):
             l.warning(e)
             return {}
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         """
         Get the names of the state (i.e., timed) variables of the model.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             The petrinet model
 
         Returns
@@ -525,8 +532,8 @@ class Encoder(ABC, BaseModel):
         """
         pass
 
-    def _get_untimed_symbols(self, model: Model) -> Set[str]:
-        untimed_symbols = set([])
+    def _get_untimed_symbols(self, model: FunmanModel) -> Set[str]:
+        untimed_symbols = set(["timestep"])
         # All flux nodes correspond to untimed symbols
         for var_name in model._parameter_names():
             untimed_symbols.add(var_name)
@@ -695,7 +702,10 @@ class Encoder(ABC, BaseModel):
                 closed_upper_bound=False,
                 infinity_constraints=False,
             )
-            return (formula, {str(s): s for s in formula.get_free_variables()})
+            return (
+                formula,
+                {s.symbol_name(): s for s in formula.get_free_variables()},
+            )
         else:
             return None
 
@@ -711,11 +721,18 @@ class Encoder(ABC, BaseModel):
         vars: List[str] = constraint.variables
         weights: List[int | float] = constraint.weights
         timestep = options.schedule.time_at_step(layer_idx)
+        parameters = scenario.parameters
+        encoded_vars = [
+            self._encode_state_var(v)
+            if len([p for p in parameters if p.name == v]) > 0
+            else self._encode_state_var(v, time=timestep)
+            for v in vars
+        ]
         expression = Plus(
             [
                 Times(
                     Real(weights[i]),
-                    self._encode_state_var(vars[i], time=timestep),
+                    encoded_vars[i],
                 )
                 for i in range(len(vars))
             ]
@@ -916,7 +933,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns
@@ -1047,7 +1064,10 @@ class Encoder(ABC, BaseModel):
         else:
             formula = TRUE()
 
-        return (formula, {str(v): v for v in formula.get_free_variables()})
+        return (
+            formula,
+            {v.symbol_name(): v for v in formula.get_free_variables()},
+        )
 
     def _encode_query_le(
         self,
@@ -1173,7 +1193,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        p : Parameter
+        p : funman.representation.parameter.Parameter
             parameter to constrain
         closed_upper_bound : bool, optional
             interpret interval as closed (i.e., p <= ub), by default False

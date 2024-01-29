@@ -7,15 +7,13 @@ import pysmt.operators as op
 import pysmt.typing as types
 import sympy
 from pysmt.formula import FNode, FormulaManager
+from pysmt.shortcuts import GE, GT, LE, LT, REAL
+from pysmt.shortcuts import Abs as pysmt_Abs
 from pysmt.shortcuts import (
-    GE,
-    GT,
-    LE,
-    LT,
-    REAL,
     And,
     Div,
     Equals,
+    Ite,
     Plus,
     Pow,
     Real,
@@ -24,7 +22,7 @@ from pysmt.shortcuts import (
     get_env,
 )
 from pysmt.walkers import IdentityDagWalker
-from sympy import Add, Expr, Rational, exp, series, symbols, sympify
+from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
 
 l = logging.getLogger(__name__)
 
@@ -191,6 +189,8 @@ def sympy_to_pysmt(expr):
         return sympy_to_pysmt_op(Times, expr)
     elif func.is_Add:
         return sympy_to_pysmt_op(Plus, expr)
+    elif isinstance(expr, Abs):
+        return sympy_to_pysmt_abs(expr)
     elif func.is_Symbol:
         return sympy_to_pysmt_symbol(Symbol, expr, op_type=REAL)
     elif func.is_Pow:
@@ -219,6 +219,11 @@ def sympy_to_pysmt(expr):
 def sympy_to_pysmt_op(op, expr, explode=False):
     terms = [sympy_to_pysmt(arg) for arg in expr.args]
     return op(*terms) if explode else op(terms)
+
+
+def sympy_to_pysmt_abs(expr):
+    p_expr = sympy_to_pysmt(expr.args[0])
+    return pysmt_Abs(p_expr)
 
 
 def sympy_to_pysmt_pow(expr):
@@ -258,7 +263,12 @@ def sympy_to_pysmt_real(expr, numerator_digits=6):
 
 
 def sympy_to_pysmt_symbol(op, expr, op_type=None):
-    return op(str(expr), op_type) if op_type else op(str(expr))
+    s_expr = str(expr)
+    reserved = [s for s in reserved_words if s in s_expr]
+    if len(reserved) > 0:
+        for r in reserved:
+            s_expr = s_expr.replace(f"funman_{r}", r)
+    return op(s_expr, op_type) if op_type else op(str(expr))
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "funman"
-copyright = "2023, SIFT"
+copyright = "2024, SIFT"
 author = "SIFT"
 
 from funman import __version__

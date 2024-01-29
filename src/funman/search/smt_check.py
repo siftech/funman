@@ -1,6 +1,5 @@
-import json
 import logging
-import sys
+import os
 import threading
 from typing import Callable, Optional, Tuple, Union
 
@@ -27,7 +26,6 @@ from .search import Search, SearchEpisode
 
 
 l = logging.getLogger(__file__)
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class SMTCheck(Search):
@@ -55,49 +53,73 @@ class SMTCheck(Search):
             options = EncodingOptions(schedule=schedule)
 
             # self._initialize_encoding(solver, episode, box_timepoint, box)
-            result = self.expand(
+            model_result, explanation_result = self.expand(
                 problem,
                 episode,
                 options,
                 parameter_space,
                 schedule,
             )
+            point = None
+            timestep = len(schedule.timepoints) - 1
+            if model_result is not None and isinstance(
+                model_result, pysmtModel
+            ):
+                # result_dict = model_result.to_dict() if model_result else None
+                # l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
+                # if result_dict is not None:
+                #     parameter_values = {
+                #         k: v
+                #         for k, v in result_dict.items()
+                #         # if k in [p.name for p in problem.parameters]
+                #     }
+                #     # for k, v in structural_configuration.items():
+                #     #     parameter_values[k] = v
+                point_label = (
+                    LABEL_TRUE if explanation_result is None else LABEL_FALSE
+                )
+                results_dict = model_result.to_dict()
+                point = Point(
+                    values=results_dict,
+                    label=point_label,
+                    schedule=schedule,
+                )
+                point.values["timestep"] = timestep
 
-            if result is not None and isinstance(result, pysmtModel):
-                result_dict = result.to_dict() if result else None
-                l.debug(f"Result: {json.dumps(result_dict, indent=4)}")
-                if result_dict is not None:
-                    parameter_values = {
-                        k: v
-                        for k, v in result_dict.items()
-                        # if k in [p.name for p in problem.parameters]
-                    }
-                    # for k, v in structural_configuration.items():
-                    #     parameter_values[k] = v
-                    point = Point(
-                        values=parameter_values,
-                        label=LABEL_TRUE,
-                        schedule=schedule,
-                    )
-                    point.values["timestep"] = schedule.time_at_step(
-                        len(schedule.timepoints) - 1
-                    )
-                    if config.normalize:
-                        denormalized_point = point.denormalize(problem)
-                        point = denormalized_point
-                    models[point] = result
-                    consistent[point] = result_dict
-                    parameter_space.true_boxes.append(Box.from_point(point))
-            elif result is not None and isinstance(result, Explanation):
+                if config.normalize:
+                    denormalized_point = point.denormalize(problem)
+                    point = denormalized_point
+
+                if point_label == LABEL_TRUE:
+                    models[point] = model_result
+                    consistent[point] = results_dict
+
+                box = Box.from_point(point)
+                # parameter_space.true_boxes.append(Box.from_point(point))
+            else:
                 box = Box(
                     bounds={
-                        p.name: Interval(lb=p.interval.lb, ub=p.interval.ub)
+                        p.name: p.interval.model_copy()
                         for p in problem.parameters
                     },
-                    label=LABEL_FALSE,
-                    explanation=result,
+                    label=LABEL_FALSE,  # lack of a point means this must be a false box
+                    points=[],
                 )
+                box.bounds["timestep"] = Interval(
+                    lb=timestep, ub=timestep, closed_upper_bound=True
+                )
+            box.schedule = schedule
+
+            if explanation_result is not None and isinstance(
+                explanation_result, Explanation
+            ):
+                box.explanation = explanation_result
+
+            if box.label == LABEL_TRUE:
+                parameter_space.true_boxes.append(box)
+            else:
                 parameter_space.false_boxes.append(box)
+
             if resultsCallback:
                 resultsCallback(parameter_space)
 
@@ -147,9 +169,10 @@ class SMTCheck(Search):
                     for x in layer_formulas
                 ]
 
-        all_layers_formula = And(
-            And(assumption_formulas), And([f for f in layer_formulas])
-        )
+        model_formula = And([f for f in layer_formulas])
+
+        all_layers_formula = And(And(assumption_formulas), model_formula)
+
         all_simplified_layers_formula = (
             And(
                 And(assumption_formulas),
@@ -158,7 +181,7 @@ class SMTCheck(Search):
             if len(simplified_layer_formulas) > 0
             else None
         )
-        return all_layers_formula, all_simplified_layers_formula
+        return all_layers_formula, all_simplified_layers_formula, model_formula
 
     def solve_formula(
         self, s: Solver, formula: FNode, episode
@@ -166,9 +189,13 @@ class SMTCheck(Search):
         s.push(1)
         s.add_assertion(formula)
         if episode.config.save_smtlib:
+            filename = os.path.join(
+                episode.config.save_smtlib, "dbg_steps.smt2"
+            )
+            l.trace(f"Saving smt file: {filename}")
             self.store_smtlib(
                 formula,
-                filename=f"dbg_steps.smt2",
+                filename=filename,
             )
         l.trace(f"Solving: {formula.serialize()}")
         result = self.invoke_solver(s)
@@ -184,6 +211,8 @@ class SMTCheck(Search):
         parameter_space,
         schedule: EncodingSchedule,
     ):
+        model_result = None
+        explanation_result = None
         if episode.config.solver == "dreal":
             opts = {
                 "dreal_precision": episode.config.dreal_precision,
@@ -202,7 +231,7 @@ class SMTCheck(Search):
             logic=QF_NRA,
             solver_options=opts,
         ) as s:
-            formula, simplified_formula = self.build_formula(
+            formula, simplified_formula, model_formula = self.build_formula(
                 episode, schedule, options
             )
 
@@ -210,7 +239,8 @@ class SMTCheck(Search):
                 # If using a simplified formula, we need to solve it and use its values in the original formula to get the values of all variables
                 result = self.solve_formula(s, simplified_formula, episode)
                 if result is not None and isinstance(result, pysmtModel):
-                    assigned_vars = result.to_dict()
+                    model_result = result
+                    assigned_vars = model_result.to_dict()
                     substitution = {
                         Symbol(p, (REAL if isinstance(v, float) else BOOL)): (
                             Real(v) if isinstance(v, float) else Bool(v)
@@ -239,16 +269,24 @@ class SMTCheck(Search):
                     formula_w_params = And(
                         formula.substitute(substitution), result_assignment
                     )
-                    result = self.solve_formula(s, formula_w_params, episode)
+                    model_result = self.solve_formula(
+                        s, formula_w_params, episode
+                    )
                 elif result is not None and isinstance(result, str):
+                    explanation_result = result
                     # Unsat core
-                    pass
             else:
-                result = self.solve_formula(s, formula, episode)
-                if isinstance(result, Explanation):
-                    result.check_assumptions(episode, s, options)
+                model_result = self.solve_formula(s, formula, episode)
+                if isinstance(model_result, Explanation):
+                    explanation_result = model_result
+                    model_result.check_assumptions(episode, s, options)
 
-        return result
+                    # If formula with assumptions is unsat, then we need to generate a trace of the model by giving up on the assumptions.
+                    model_result = self.solve_formula(
+                        s, model_formula, episode
+                    )
+
+        return model_result, explanation_result
 
     def store_smtlib(self, formula, filename="dbg.smt2"):
         with open(filename, "w") as f:

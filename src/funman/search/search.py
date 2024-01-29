@@ -2,6 +2,7 @@ import datetime
 import logging
 import threading
 from abc import ABC, abstractmethod
+from decimal import Decimal
 from multiprocessing import Array, Queue, Value
 from queue import Queue as SQueue
 from typing import Callable, List, Optional, Union
@@ -95,6 +96,10 @@ class SearchEpisode(BaseModel):
         box.bounds["timestep"] = Interval(
             lb=0, ub=len(schedule.timepoints) - 1, closed_upper_bound=True
         )
+        box.bounds["timestep"].original_width = Decimal(
+            len(schedule.timepoints) - 1
+        )
+
         return box
 
 
@@ -113,9 +118,9 @@ class Search(ABC):
         pass
 
     def invoke_solver(self, s: Solver) -> Union[pysmtModel, BoxExplanation]:
-        l.debug("Invoking solver ...")
+        l.trace("Invoking solver ...")
         result = s.solve()
-        l.debug(f"Solver result = {result}")
+        l.trace(f"Solver result = {result}")
         if result:
             result = s.get_model()
         else:

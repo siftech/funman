@@ -15,7 +15,7 @@ from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import FunmanConstraint
+from funman.representation.constraint import FunmanUserConstraint
 from funman.representation.explanation import Explanation
 from funman.representation.parameter import (
     ModelParameter,
@@ -40,7 +40,7 @@ from ..representation.parameter_space import ParameterSpace
 
 class FunmanWorkRequest(BaseModel):
     query: Optional[Union[QueryAnd, QueryLE, QueryFunction, QueryTrue]] = None
-    constraints: Optional[List[FunmanConstraint]] = None
+    constraints: Optional[List[FunmanUserConstraint]] = None
     parameters: Optional[List[ModelParameter]] = None
     config: Optional[FUNMANConfig] = None
     structure_parameters: Optional[
@@ -51,9 +51,9 @@ class FunmanWorkRequest(BaseModel):
     @classmethod
     def check_unique_names(
         cls,
-        constraints: Optional[List[FunmanConstraint]],
+        constraints: Optional[List[FunmanUserConstraint]],
         info: ValidationInfo,
-    ) -> Optional[List[FunmanConstraint]]:
+    ) -> Optional[List[FunmanUserConstraint]]:
         if constraints is not None and len(constraints) > 0:
             name_counts = Counter([c.name for c in constraints])
             dups = {k: v for k, v in name_counts.items() if v > 1}
@@ -70,6 +70,9 @@ class FunmanProgress(BaseModel):
     progress: float = 0.0
     coverage_of_search_space: float = 0.0
     coverage_of_representable_space: float = 0.0
+
+    def __str__(self) -> str:
+        return f"progress: {self.progress:.5f}"
 
 
 class FunmanWorkUnit(BaseModel):
@@ -182,9 +185,9 @@ class FunmanResults(BaseModel):
         # TODO handle copy?
         self.parameter_space = results
         # compute volumes
-        labeled_volume = results.labeled_volume()
+        labeled_volume = results.labeled_volume(scenario=scenario)
         # TODO precompute and cache?
-        search_volume = scenario.search_space_volume()
+        search_volume = scenario.search_space_volume(normalize=True)
         # TODO precompute and cache?
         repr_volume = scenario.representable_space_volume()
         # compute ratios
@@ -193,6 +196,7 @@ class FunmanResults(BaseModel):
             coverage_of_search_space = 0.0
         else:
             coverage_of_search_space = float(labeled_volume / search_volume)
+            coverage_of_search_space = round(coverage_of_search_space, 15)
 
         if repr_volume == 0.0:
             # TODO handle point volume?
@@ -326,17 +330,14 @@ class FunmanResults(BaseModel):
         """
         series = self.symbol_values(point, variables)
         a_series = {}  # timeseries as array/list
-        max_t = max(
-            [
-                max([int(k) for k in tps.keys() if k.isdigit()] + [0])
-                for _, tps in series.items()
-            ]
-        )
+        timestep = point.timestep()
+        max_t = point.schedule.timepoints[timestep]
+
         a_series["index"] = list(range(0, max_t + 1))
         for var, tps in series.items():
             vals = [None] * (int(max_t) + 1)
             for t, v in tps.items():
-                if t.isdigit():
+                if t.isdigit() and int(t) <= int(max_t):
                     vals[int(t)] = v
             a_series[var] = vals
         return a_series
@@ -421,8 +422,13 @@ class FunmanResults(BaseModel):
         variables=None,
         log_y=False,
         max_time=None,
+        title="Point Trajectories",
+        xlabel="Time",
+        ylabel="Population",
         label_marker={"true": "+", "false": "o"},
         label_color={"true": "g", "false": "r"},
+        legend=None,
+        dpi=100,
         **kwargs,
     ):
         """
@@ -444,32 +450,37 @@ class FunmanResults(BaseModel):
             points = self.points()
 
         df = self.dataframe(points, max_time=max_time)
-        fig, ax = plt.subplots(figsize=(8, 6))
+        fig, ax = plt.subplots(figsize=(8, 6), dpi=dpi)
         groups = df.groupby("label")
         for label, group in groups:
-            if variables is not None:
-                for id, g in group.groupby("id"):
-                    plt.plot(
-                        g[variables],
+            for id, g in group.groupby("id"):
+                state_vars = g[self.model._state_var_names()]
+                if variables is not None:
+                    ax = plt.plot(
+                        state_vars[variables],
                         label=label,
                         marker=label_marker[label],
                         c=label_color[label],
                         **kwargs,
                     )
-            else:
-                plt.plot(
-                    group,
-                    label=label,
-                    marker=label_marker[label],
-                    c=label_color[label],
-                    **kwargs,
-                )
-                ax = df.plot(label=label, marker=label_marker[label], **kwargs)
-        # plt.legend()
+                else:
+                    ax = plt.plot(
+                        state_vars,
+                        label=label,
+                        marker=label_marker[label],
+                        c=label_color[label],
+                        **kwargs,
+                    )
+            # ax = df.plot(label=label, marker=label_marker[label], **kwargs)
+        if legend:
+            plt.legend(legend)
         if log_y:
             ax.set_yscale("symlog")
             plt.ylim(bottom=0)
         # plt.show(block=False)
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
         return ax
 
     def explain(self) -> Explanation:

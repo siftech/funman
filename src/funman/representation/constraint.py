@@ -9,7 +9,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated
 
-from funman.model import Model
+from funman.model import FunmanModel
 from funman.model.query import Query
 
 from .interval import Interval
@@ -20,7 +20,8 @@ class Constraint(BaseModel):
     soft: bool = True
     name: str
 
-    # model_config = ConfigDict(extra="forbid")
+    def time_dependent(self) -> bool:
+        return False
 
     def __hash__(self) -> int:
         return 1
@@ -36,15 +37,22 @@ class TimedConstraint(Constraint):
     timepoints: Optional["Interval"] = None
 
     def contains_time(self, time: Union[float, int]) -> bool:
-        return self.timepoints is None or self.timepoints.contains_value(time)
+        return (
+            self.timepoints.contains_value(time)
+            if self.time_dependent()
+            else True
+        )
 
     def relevant_at_time(self, time: int) -> bool:
         return self.contains_time(time)
 
+    def time_dependent(self) -> bool:
+        return self.timepoints is not None
+
 
 class ModelConstraint(Constraint):
     soft: bool = False
-    model: Model
+    model: FunmanModel
 
     model_config = ConfigDict(extra="forbid")
 
@@ -65,10 +73,10 @@ class ParameterConstraint(Constraint):
         return not isinstance(self.parameter, StructureParameter)
 
     def relevant_at_time(self, time: int) -> bool:
-        return time == 0
+        return True  # time == 0
 
 
-class QueryConstraint(Constraint):
+class QueryConstraint(TimedConstraint):
     soft: bool = True
     query: Query
 
@@ -114,12 +122,6 @@ class LinearConstraint(TimedConstraint):
     def __hash__(self) -> int:
         return 4
 
-    def contains_time(self, time: Union[float, int]) -> bool:
-        return self.timepoints is None or self.timepoints.contains_value(time)
-
-    def relevant_at_time(self, time: int) -> bool:
-        return self.contains_time(time)
-
 
 FunmanConstraint = Union[
     ModelConstraint,
@@ -128,3 +130,6 @@ FunmanConstraint = Union[
     LinearConstraint,
     QueryConstraint,
 ]
+
+
+FunmanUserConstraint = Union[StateVariableConstraint, LinearConstraint]

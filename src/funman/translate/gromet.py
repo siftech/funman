@@ -16,7 +16,7 @@ from automates.model_assembly.gromet.model.typed_value import TypedValue
 from pysmt.shortcuts import And, Equals, Int, Symbol
 from pysmt.typing import INT
 
-from funman.model import Model
+from funman.model import FunmanModel
 from funman.model.gromet import GrometModel
 from funman.translate import Encoder, EncodingOptions, EncodingSchedule
 from funman.translate.translate import EncodingSchedule
@@ -52,7 +52,7 @@ class GrometEncoder(Encoder):
             str(LiteralValue): self._gromet_literal_value_to_smtlib,
         }
 
-    def encode_model(self, model: Model):
+    def encode_model(self, model: FunmanModel):
         """Convert the self._gromet_fn into a set of smtlib constraints.
 
         Returns:
