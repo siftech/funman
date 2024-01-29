@@ -1,4 +1,4 @@
-# funman: Functional Model Analysis tool
+# `funman`: Functional Model Analysis tool
 
 <!-- Outline:
 - Introduction (problem solved, major packages, prerequisites)
@@ -128,9 +128,11 @@ Plotting the points generated while creating the parameter space, will result in
 
 The plot illustrates $S$, $I$, and $R$ for all points that `funman` generates to construct the parameter space.  The green lines correspond to true points, and red, false.  The lines that begin near 1.0 a time 0 correspond to $S$.  The group of lines near 0.2 at time 50 correspond to $I$, and the remaining group, to $R$.  The false trajectories are truncated at time 50 because they violate the constraint and will not satisfy it if extended to longer time spans.  (This is also the reason that the parameter space includes many false regions for time steps 5 and greater.)  
 
-# funman inputs
+# `funman` inputs
 
-Funman supports a number of model formats, which correspond to the classes in `funman.models`:
+`funman` requires two inputs: a model and an analysis request.  There are several ways to configure these inputs, but the most simple is to write a pair of json files.  It is also possible to define these inputs via python objects, as illustrated by tests in [tests/test_use_cases.py](https://github.com/siftech/funman/blob/v1.8.0-rc/test/test_use_cases.py).
+
+`funman` supports a number of model formats, which correspond to the classes in `funman.models`:
 
 - [GeneratedPetriNet](#funman.model.generated_models.petrinet.Model): AMR model for petri nets generated 
 - [GeneratedRegNet](#funman.model.generated_models.regnet.Model): AMR model for regulatory networks
@@ -138,169 +140,171 @@ Funman supports a number of model formats, which correspond to the classes in `f
 - [PetrinetModel](#funman.model.petrinet.PetrinetModel): MIRA model for petri nets
 - [BilayerModel](#funman.model.bilayer.BilayerModel): ASKE model for bilayer networks
 
+
+
 Requests correspond to the class `funman.server.query.FunmanWorkRequest` and specify the following keys:
 - [query](#funman.model.query): a soft constraint that a model must satisfy (legacy support, deprecated)
 - [constraints](#funman.representation.constraint): a list of hard or soft constraints that a model must satisfy
-- parameters: a list of bounded parameters that funman will either synthesize ("label": "all") or satsify ("label": "any").  Funman will check  "all" values within the parameter bounds or if "any" within the bounds permit the model to satisfy the query and constraints.
-- [config](#funman.config): A dictionary of funman configuration options. 
+- parameters: a list of bounded parameters that `funman` will either synthesize ("label": "all") or satsify ("label": "any").  `funman` will check  "all" values within the parameter bounds or if "any" within the bounds permit the model to satisfy the query and constraints.
+- [config](#funman.config): A dictionary of `funman` configuration options. 
  label regions of the parameter space as satisfying the query and constraints, if synthesized, or find any legal value if asked to satsify.  
-- [structure_parameters](#funman.representation.parameter): parameters shaping the way that funman structures its analysis.  Funman requires that either the `num_steps` and `step_size` parameters are specified, or the `schedules` parameter is specified.  If all are omitted, then funman defaults to checking one unit-sized step.
+- [structure_parameters](#funman.representation.parameter): parameters shaping the way that `funman` structures its analysis.  `funman` requires that either the `num_steps` and `step_size` parameters are specified, or the `schedules` parameter is specified.  If all are omitted, then `funman` defaults to checking one unit-sized step.
 
-## **Running funman**
+The example illustrated in the quickstart uses the request [resources/amr/petrinet/terrarium-tests/sir_request.json](https://github.com/siftech/funman/blob/v1.8.0-rc/resources/amr/petrinet/terrarium-tests/sir_request.json)
 
-There are multiple ways to run Funman on a model and request pair. We recommend running funman in Docker, due to some complex dependencies on dReal (and its dependency on ibex).  Funman has a Makefile that supports building three Docker use cases: 1) run a development container that mounts the source code, 2) run a container with a jupyter server, and 3) run a container with uvicorn serving a REST API. Examples of running each of these cases are illustrated by the tests (`test/test_api.py`, and `test/test_terarium.py`).  It is also possible to pull a pre-generated image that will run the API, as described in `terarium/README.md`.
-
-## **Use cases**
-### **Compare Bilayer Model to Simulator**:
-
-This use case involves the simulator and FUNMAN reasoning about the CHIME
-SIR bilayer model.  See test `test_use_case_bilayer_consistency` in `test/test_use_cases.py`.
-
-It first uses a SimulationScenario to execute the input simulator
-function and evaluate the input query function using the simulation results.
-In the example below this results in the run_CHIME_SIR simulator function and
-evaluating whether or not the number of infected crosses the provided threshold with a custom QueryFunction referencing the `does_not_cross_threshold` function.
-
-It then constructs an instance of the ConsistencyScenario class to evaluate whether a BilayerModel will satisfy the given query. The query asks whether the
-number of infected at any time point exceeds a specified threshold.
-
-Once each of these steps is executed the results are compared. The test will
-succeed if the SimulatorScenario and ConsistencyScenario agree on the response to the query.
-
-```python
-    def compare_against_CHIME_Sim(
-        self, bilayer_path, init_values, infected_threshold
-    ):
-        # query the simulator
-        def does_not_cross_threshold(sim_results):
-            i = sim_results[2]
-            return all(i_t <= infected_threshold for i_t in i)
-
-        query = QueryLE("I", infected_threshold)
-
-        funman = Funman()
-
-        sim_result: SimulationScenarioResult = funman.solve(
-            SimulationScenario(
-                model=SimulatorModel(run_CHIME_SIR),
-                query=QueryFunction(does_not_cross_threshold),
-            )
-        )
-
-        consistency_result: ConsistencyScenarioResult = funman.solve(
-            ConsistencyScenario(
-                model=BilayerModel(
-                    BilayerDynamics.from_json(bilayer_path),
-                    init_values=init_values,
-                ),
-                query=query,
-            )
-        )
-
-        # assert the both queries returned the same result
-        return sim_result.query_satisfied == consistency_result.query_satisfied
-
-    def test_use_case_bilayer_consistency(self):
-        """
-        This test compares a BilayerModel against a SimulatorModel to
-        determine whether their response to a query is identical.
-        """
-        bilayer_path = os.path.join(
-            RESOURCES, "bilayer", "CHIME_SIR_dynamics_BiLayer.json"
-        )
-        infected_threshold = 130
-        init_values = {"S": 9998, "I": 1, "R": 1}
-        assert self.compare_against_CHIME_Sim(
-            bilayer_path, init_values, infected_threshold
-        )
+```json
+{
+    "constraints": [
+        {
+            "name": "I",
+            "variable": "I",
+            "interval": {
+                "lb": 0.15,
+                "ub": 1.0
+            },
+            "timepoints": {
+                "lb": 50,
+                "ub": 50,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.08,
+                "ub": 0.1
+            },
+            "label": "all"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.02,
+                "ub": 0.03
+            },
+            "label": "all"
+        },
+        {
+            "name": "S0",
+            "interval": {
+                "lb": 0.99,
+                "ub": 0.99
+            },
+            "label": "all"
+        },
+        {
+            "name": "I0",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.01
+            },
+            "label": "all"
+        },
+        {
+            "name": "R0",
+            "interval": {
+                "lb": 0,
+                "ub": 0
+            },
+            "label": "all"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10,
+                        20,
+                        30,
+                        40,
+                        50,
+                        60,
+                        70,
+                        80,
+                        90,
+                        100
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "use_compartmental_constraints": true,
+        "normalization_constant": 1,
+        "tolerance": 0.02
+    }
+}
 ```
 
-### **Parameter Synthesis**
+## **Running `funman`**
 
-See tests `test_use_case_simple_parameter_synthesis` and `test_use_case_bilayer_parameter_synthesis` in  `test/test_use_cases.py`.
+There are multiple ways to run `funman` on a model and request pair. We recommend running `funman` in Docker, due to some complex dependencies on dReal (and its dependency on ibex).  `funman` has a Makefile that supports building three Docker use cases: 1) run a development container that mounts the source code, 2) run a container with a jupyter server, and 3) run a container with uvicorn serving a REST API. Examples of running each of these cases are illustrated by the tests (`test/test_api.py`, and `test/test_terarium.py`).  It is also possible to pull a pre-generated image that will run the API, as described in `terarium/README.md`.
 
-The base set of types used during Parameter Synthesis include:
+# **Use cases**
 
-- a list of Parameters representing variables to be assigned
-- a Model to be encoded as an SMTLib formula 
-- a Scenario container representing a set of parameters and model
-- a SearchConfig to configure search behavior
-- the Funman interface that runs analysis using scenarios and configuration data
+The documentation at [https://siftech.github.io/funman/use_cases.html](https://siftech.github.io/funman/use_cases.html) describes several epidemiology use cases for `funman`.  These use cases are also implemented by tests in [tests/test_use_cases.py](https://github.com/siftech/funman/blob/v1.8.0-rc/test/test_use_cases.py)
 
-In the following example two parameters, x and y, are constructed. A model is 
-also constructed that says 0.0 < x < 5.0 and 10.0 < y < 12.0. These parameters
-and model are used to define a scenario that will use BoxSearch to synthesize
-the parameters. The Funman interface and a search configuration are also 
-defined. All that remains is to have Funman solve the scenario using the defined
-configuration.
 
-```python
-def test_use_case_simple_parameter_synthesis(self):
-        x = Symbol("x", REAL)
-        y = Symbol("y", REAL)
 
-        formula = And(
-            LE(x, Real(5.0)),
-            GE(x, Real(0.0)),
-            LE(y, Real(12.0)),
-            GE(y, Real(10.0)),
-        )
 
-        funman = Funman()
-        result: ParameterSynthesisScenarioResult = funman.solve(
-            ParameterSynthesisScenario(
-                [
-                    Parameter(name="x", symbol=x),
-                    Parameter(name="y", symbol=y),
-                ],
-                EncodedModel(formula),
-            )
-        )
-        assert result
-```
+# Development Setup
 
-As an additional parameter synthesis example, the following test case
-demonstrates how to perform parameter synthesis for a bilayer model.  The
-configuration differs from the example above by introducing bilayer-specific
-constraints on the initial conditions (`init_values` assignments), parameter
-bounds (`parameter_bounds` intervals) and a model query.
+## Code layout
 
-```python
-    def test_use_case_bilayer_parameter_synthesis(self):
-        bilayer_path = os.path.join(
-            RESOURCES, "bilayer", "CHIME_SIR_dynamics_BiLayer.json"
-        )
-        infected_threshold = 3
-        init_values = {"S": 9998, "I": 1, "R": 1}
+- .config: linting configuration
+- .devcontainer: dev container configuration
+- .github/workflows: workflow configuration (create docker images)
+- artifacts: analysis artifacts
+- auxiliary_packages:
+  - funman_benchmarks: tools to benchmark configurations of `funman`  
+  - funman_demo: tools related to specific demos
+  - funman_dreal: extensions to pysmt configuration that include dreal  
+  - funman_plot: plotting helpers
+  - ibex_tests: ibex usage testing
+  - pde2petri: convert PDE models to petri nets
+- docker: docker files for building containers
+- docs: sphinx/read-the-docs static content and configuration
+- notebooks: usage notebooks
+- notes: development notes
+- resources: models and requests 
+- scratch: old demos and prototyping
+- src/funman: 
+  - api: REST API
+  - config.py: flags for request `configuration` dictionary
+  - constants.py: constants 
+  - funman.py: main entrypoint
+  - __init__.py: global imports
+  - model: input model representations
+  - representation: internal and output representations
+  - scenario: scenario definitions
+  - search: search methods to generate parameter spaces
+  - server: API server
+  - translate: methods for encoding to SMT 
+  - utils: utilities
+  - _version.py: current version
+- terarium: scripts and examples for terarium integration
+- test: unit tests
+- tools: helper scripts 
+- .gitignore
+- .pre-commit-config.yaml: precommit hook config
+- .pylintrc: pylint config
+- LICENSE
+- Makefile
+- Makefile.uncharted: Uncharted's custom make
+- README.md
+- pyproject.toml: project configuration
+- requirements-dev-extras.txt: extra development dependencies
+- requirements-dev.txt: development dependencies
+- setup.py: pip install configuration
 
-        lb = 0.000067 * (1 - 0.5)
-        ub = 0.000067 * (1 + 0.5)
-
-        funman = Funman()
-        result: ParameterSynthesisScenarioResult = funman.solve(
-            ParameterSynthesisScenario(
-                parameters=[Parameter(name="beta", lb=lb, ub=ub)],
-                model=BilayerModel(
-                    BilayerDynamics.from_json(bilayer_path),
-                    init_values=init_values,
-                    parameter_bounds={
-                        "beta": [lb, ub],
-                        "gamma": [1.0 / 14.0, 1.0 / 14.0],
-                    },
-                ),
-                query=QueryLE("I", infected_threshold),
-            ),
-            config=SearchConfig(tolerance=1e-8),
-        )
-        assert len(result.parameter_space.true_boxes) > 0 
-        assert len(result.parameter_space.false_boxes) > 0 
-```
----
-
-## Development Setup
 
 ### Pre-commit hooks
-FUNMAN has a set of pre-commit hooks to help with code uniformity. These hooks
+`funman` has a set of pre-commit hooks to help with code uniformity. These hooks
 will share the same rules as any automated testing so it is recommended to
 install the hooks locally to ease the development process.
 
@@ -335,7 +339,7 @@ plugin will use the `coverage.xml` to display code coverage highlighting over
 the source files.
 
 ### Development Setup: Docker dev container
-FUNMAN provides tooling to build a Docker image that can be used as a
+`funman` provides tooling to build a Docker image that can be used as a
 development container. The image builds on either arm64 or amd64 architectures.
 
 The dev container itself is meant to be ephemeral. The `launch-dev-container`
@@ -344,7 +348,7 @@ available in the local cache. Any data that is meant to be retained from the
 dev-container must be kept in one of the mounted volumes.
 
 The dev container supports editing and rebuilding of dreal4 as well. This
-requires that a dreal4 repository is cloned as a sibling to the funman
+requires that a dreal4 repository is cloned as a sibling to the `funman`
 directory (../dreal4). So long as that directory is present, the next time the
 funman-dev container is created will also result in a bind mount of the dreal4
 directory to the container.

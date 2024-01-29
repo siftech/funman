@@ -2,14 +2,14 @@ from typing import Dict, List, Union
 
 from pydantic import BaseModel
 
-from .model import Model
+from .model import FunmanModel
 
 
 class DecapodeDynamics(BaseModel):
     json_graph: Dict[str, List[Dict[str, Union[int, str]]]]
 
 
-class DecapodeModel(Model):
+class DecapodeModel(FunmanModel):
     decapode: DecapodeDynamics
 
     def default_encoder(

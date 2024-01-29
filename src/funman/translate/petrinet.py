@@ -18,7 +18,7 @@ from pysmt.shortcuts import (
     Times,
 )
 
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils.sympy_utils import (
     rate_expr_to_pysmt,
@@ -35,7 +35,7 @@ l = logging.getLogger(__file__)
 class PetrinetEncoder(Encoder):
     _transition_rate_cache: Dict[str, List[sympy.Expr]] = {}
 
-    def encode_model(self, model: "Model") -> Encoding:
+    def encode_model(self, model: "FunmanModel") -> Encoding:
         """
         Encode a model into an SMTLib formula.
 
@@ -370,7 +370,7 @@ class PetrinetEncoder(Encoder):
                 # .simplify()
             )
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         """
         Get the names of the state (i.e., timed) variables of the model.
 

@@ -3,7 +3,7 @@ from typing import Dict, Set
 from pysmt.formula import FNode
 from pysmt.shortcuts import REAL, TRUE, And, Symbol, Times, substitute
 
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 
 from .translate import Encoder, Encoding
 
@@ -26,7 +26,7 @@ class EnsembleEncoder(Encoder):
         return Encoding(formula=TRUE(), symbols={})
 
     def _encode_next_step(
-        self, model: "Model", step: int, next_step: int
+        self, model: "FunmanModel", step: int, next_step: int
     ) -> FNode:
         model_steps = {
             model.name: substitute(
@@ -43,7 +43,7 @@ class EnsembleEncoder(Encoder):
         return And(list(model_steps.values()))
 
     def _submodel_substitution_map(
-        self, model: Model, step=None, next_step=None
+        self, model: FunmanModel, step=None, next_step=None
     ) -> Dict[Symbol, Symbol]:
         curr_var_sub_map: Dict[Symbol, Symbol] = {
             Symbol(f"{variable}_{step}", REAL): Symbol(
@@ -85,7 +85,7 @@ class EnsembleEncoder(Encoder):
 
         return Times([param_symbol] + ins)
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         """
         Get the names of the state (i.e., timed) variables of the model.
 

@@ -10,10 +10,10 @@ from funman.utils.sympy_utils import substitute, to_sympy
 from ..representation.interval import Interval
 from .generated_models.petrinet import Model as GeneratedPetrinet
 from .generated_models.petrinet import State, Transition
-from .model import Model
+from .model import FunmanModel
 
 
-class AbstractPetriNetModel(Model):
+class AbstractPetriNetModel(FunmanModel):
     def _num_flow_from_state_to_transition(
         self, state_id: Union[str, int], transition_id: Union[str, int]
     ) -> int:
@@ -226,7 +226,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _get_init_value(
         self, var: str, scenario: "AnalysisScenario", config: "FUNMANConfig"
     ):
-        value = Model._get_init_value(self, var, scenario, config)
+        value = FunmanModel._get_init_value(self, var, scenario, config)
         if value is None:
             if hasattr(self.petrinet.semantics, "ode"):
                 initials = self.petrinet.semantics.ode.initials

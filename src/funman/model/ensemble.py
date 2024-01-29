@@ -7,14 +7,14 @@ from pysmt.shortcuts import REAL, Div, Real, Symbol
 from funman.representation.interval import Interval
 from funman.representation.parameter import ModelParameter
 
-from .model import Model
+from .model import FunmanModel
 
 
-class EnsembleModel(Model):
-    models: List[Model]
-    _model_name_map: Dict[str, Model] = None
-    _var_name_map: Dict[str, Tuple[str, Model]] = None
-    _parameter_name_map: Dict[str, Tuple[str, Model]] = None
+class EnsembleModel(FunmanModel):
+    models: List[FunmanModel]
+    _model_name_map: Dict[str, FunmanModel] = None
+    _var_name_map: Dict[str, Tuple[str, FunmanModel]] = None
+    _parameter_name_map: Dict[str, Tuple[str, FunmanModel]] = None
     _parameter_map: Dict[str, ModelParameter] = None
     model_config = ConfigDict()
 

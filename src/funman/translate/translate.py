@@ -30,7 +30,7 @@ from pysmt.solvers.solver import Model as pysmtModel
 
 from funman.config import FUNMANConfig
 from funman.constants import NEG_INFINITY, POS_INFINITY
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.model.query import (
     QueryAnd,
     QueryEncoded,
@@ -380,7 +380,7 @@ class Encoder(ABC, BaseModel):
             return formula
 
     def _encode_next_step(
-        self, model: Model, step: int, next_step: int, substitutions={}
+        self, model: FunmanModel, step: int, next_step: int, substitutions={}
     ) -> FNode:
         pass
 
@@ -489,14 +489,14 @@ class Encoder(ABC, BaseModel):
         return parameter_assignments
 
     def parameter_values(
-        self, model: Model, pysmtModel: pysmtModel
+        self, model: FunmanModel, pysmtModel: pysmtModel
     ) -> Dict[str, List[Union[float, None]]]:
         """
         Gather values assigned to model parameters.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model encoded by self
         pysmtModel : pysmt.solvers.solver.Model
             the assignment to symbols
@@ -516,7 +516,7 @@ class Encoder(ABC, BaseModel):
             l.warning(e)
             return {}
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         """
         Get the names of the state (i.e., timed) variables of the model.
 
@@ -532,7 +532,7 @@ class Encoder(ABC, BaseModel):
         """
         pass
 
-    def _get_untimed_symbols(self, model: Model) -> Set[str]:
+    def _get_untimed_symbols(self, model: FunmanModel) -> Set[str]:
         untimed_symbols = set(["timestep"])
         # All flux nodes correspond to untimed symbols
         for var_name in model._parameter_names():

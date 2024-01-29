@@ -24,4 +24,5 @@ from .decapode import *
 from .petrinet import *
 from .ensemble import *
 from .regnet import *
-from .generated_models import *
+
+# from .generated_models import *

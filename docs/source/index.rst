@@ -11,7 +11,6 @@ Welcome to funman's documentation!
    :caption: Contents:
    
    use_cases
-   sw_use_cases
    classes
    packages
    funman
