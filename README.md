@@ -116,6 +116,12 @@ Solving this analysis problem generates a parameter space, as summarized by the 
 
 ![Funman synthesizes parameters the SIR model](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/parameter-space.png?raw=true)
 
+The plot illustrates the parameter space as a matrix of 2D plots for each pair of parameters. (This example includes parameters $S0$, $I0$, and $R0$ for the initial state assignment).  `funman` introduces the `timestep` as an additional parameter to support reasoning about different time spans.  This `timestep` is important for many scenarios because the constraints may be satsified or not under different assumptions about the scenario time span.    
+
+The upper left plot for $\beta$-$\gamma$ projects all boxes onto $\beta$ and $\gamma$, indicating that there are values of the other parameters where any assignment to the pair will satisfy the constraint.  Unsurprisingly, larger values for $\beta$ and smaller values for $\gamma$ result in more scenario time spans where the constraints are satisfied (darker green regions include more true regions that are stacked/projected onto $\beta$ and $\gamma$). 
+
+The lower left plots for $\beta$-timestep and $\gamma$-timestep help to interpret the $\beta$-$\gamma$ plot.  Timesteps 5-10 (corresponding to 50-100 days) include several false regions (also stacked) where the constraints are not satisfied, and a few true regions where they are satisfied.  
+
 Plotting the points generated while creating the parameter space, will result in the following trajectories.
 
 ![Funman creates multiple trajectories for the SIR model](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/trajectories.png?raw=true)
