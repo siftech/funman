@@ -3,19 +3,19 @@ from typing import Set
 from pysmt.formula import FNode
 from pysmt.shortcuts import REAL, TRUE, And, Equals, Plus, Real, Symbol, Times
 
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 
 from .translate import Encoder, Encoding
 
 
 class RegnetEncoder(Encoder):
-    def encode_model(self, model: "Model") -> Encoding:
+    def encode_model(self, model: "FunmanModel") -> Encoding:
         """
         Encode a model into an SMTLib formula.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns
@@ -26,7 +26,7 @@ class RegnetEncoder(Encoder):
         return Encoding(formula=TRUE(), symbols={})
 
     def _encode_next_step(
-        self, model: "Model", step: int, next_step: int
+        self, model: "FunmanModel", step: int, next_step: int
     ) -> FNode:
         state_var_names = model._state_var_names()
         transitions = model._transitions()
@@ -109,13 +109,13 @@ class RegnetEncoder(Encoder):
 
         return formula
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         """
         Get the names of the state (i.e., timed) variables of the model.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             The regnet model
 
         Returns

@@ -15,7 +15,7 @@ import funman
 from funman.api.settings import Settings
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.generated_models.regnet import Model as GeneratedRegnet
-from funman.model.model import Model, _wrap_with_internal_model
+from funman.model.model import FunmanModel, _wrap_with_internal_model
 from funman.server.query import (
     FunmanResults,
     FunmanWorkRequest,
@@ -150,7 +150,7 @@ class Runner:
 
     def run(
         self,
-        model: Union[str, Model, Dict],
+        model: Union[str, funman.FunmanModel, Dict],
         request: Union[str, FunmanWorkRequest, Dict],
         description: str = "",
         case_out_dir: str = ".",
@@ -164,7 +164,7 @@ class Runner:
 
         Parameters
         ----------
-        model : Union[str, Model, Dict]
+        model : Union[str, GeneratedPetriNet, GeneratedRegNet, Dict]
             Model to analyze
         request : Union[str, FunmanWorkRequest, Dict]
             Request to configure analysis

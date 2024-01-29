@@ -316,3 +316,6 @@ unsat.core
 .gitignore
 core.dimacs
 notebooks/saved-results/out
+**/*.bbl
+**/*.blg
+**/*.out

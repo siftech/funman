@@ -7,10 +7,10 @@ from .generated_models.regnet import Edge as GeneratedRegnetEdge
 from .generated_models.regnet import Model as GeneratedRegnet
 from .generated_models.regnet import Parameter as GeneratedRegnetParameter
 from .generated_models.regnet import Vertice as GeneratedRegnetVertice
-from .model import Model
+from .model import FunmanModel
 
 
-class AbstractRegnetModel(Model):
+class AbstractRegnetModel(FunmanModel):
     def default_encoder(
         self, config: "FUNMANConfig", scenario: "AnalysisScenario"
     ) -> "Encoder":
@@ -104,7 +104,7 @@ class GeneratedRegnetModel(AbstractRegnetModel):
     def _get_init_value(
         self, var: str, scenario: "AnalysisScenario", config: "FUNMANConfig"
     ):
-        value = Model._get_init_value(self, var, scenario, config)
+        value = FunmanModel._get_init_value(self, var, scenario, config)
         if value is None:
             state_var = next(s for s in self._state_vars() if s.id == var)
             value = state_var.initial
@@ -121,7 +121,7 @@ class RegnetModel(AbstractRegnetModel):
     def _get_init_value(
         self, var: str, scenario: "AnalysisScenario", config: "FUNMANConfig"
     ):
-        value = Model._get_init_value(self, var, scenario, config)
+        value = FunmanModel._get_init_value(self, var, scenario, config)
         if value is None:
             state_var = next(s for s in self._state_vars() if s["id"] == var)
             if "initial" in state_var:

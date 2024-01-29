@@ -6,7 +6,7 @@ from typing import List, Optional, Union
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.representation.symbol import ModelSymbol
 
 
@@ -15,7 +15,7 @@ class Query(BaseModel):
     Abstract base class for queries.
     """
 
-    model: Optional[Model] = None
+    model: Optional[FunmanModel] = None
 
     def __str__(self) -> str:
         return self.__class__.__name__

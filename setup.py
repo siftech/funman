@@ -29,7 +29,8 @@ setup(
         "pyparsing",
         "pysmt @ git+https://github.com/danbryce/pysmt@add-abs-value#egg=pysmt-0.9.6.dev1",
         "pandas",
-        "matplotlib"
+        "matplotlib",
+        "pydantic>=2"
         # "automates @ https://github.com/danbryce/automates/archive/e5fb635757aa57007615a75371f55dd4a24851e0.zip#sha1=f9b3c8a7d7fa28864952ccdd3293d02894614e3f"
     ],
     # dependency_links=["git+https://github.com/danbryce/pysmt/pysmt@add-abs-value#egg=pysmt-0.9.6.dev1"],

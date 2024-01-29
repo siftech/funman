@@ -1,16 +1,16 @@
 {
     "constraints": [
         {
-            "name": "S",
-            "variable": "S",
+            "name": "I",
+            "variable": "I",
             "interval": {
-                "lb": 0.95,
+                "lb": 0.15,
                 "ub": 1.0
             },
             "timepoints": {
-                "lb": 60,
-                "ub": 100,
-                "closed_upper_bound": false
+                "lb": 50,
+                "ub": 50,
+                "closed_upper_bound": true
             }
         }
     ],
@@ -18,8 +18,8 @@
         {
             "name": "beta",
             "interval": {
-                "lb": 0.01,
-                "ub": 0.06
+                "lb": 0.08,
+                "ub": 0.1
             },
             "label": "all"
         },
@@ -27,7 +27,7 @@
             "name": "gamma",
             "interval": {
                 "lb": 0.02,
-                "ub": 0.05
+                "ub": 0.03
             },
             "label": "all"
         },
@@ -81,6 +81,6 @@
     "config": {
         "use_compartmental_constraints": true,
         "normalization_constant": 1,
-        "tolerance": 0.05
+        "tolerance": 0.02
     }
 }

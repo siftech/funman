@@ -5,7 +5,7 @@ import graphviz
 from pydantic import BaseModel, ConfigDict
 
 from funman.config import FUNMANConfig
-from funman.model import Model
+from funman.model import FunmanModel
 from funman.representation import Interval
 from funman.representation.parameter import ModelParameter
 
@@ -430,7 +430,7 @@ class BilayerMeasurement(BilayerGraph, BaseModel):
         return dot
 
 
-class BilayerModel(Model):
+class BilayerModel(FunmanModel):
     """
     A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:
 

@@ -25,7 +25,7 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
 
     Parameters
     ----------
-    model : Model
+    model : FunmanModel
         model to check
     query : Query
         model query
