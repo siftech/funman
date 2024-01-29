@@ -297,17 +297,32 @@ Climate Use Cases
 .. _pde as petri: https://github.com/ml4ai/funman/tree/main/notebooks/pde_as_petrinet.ipynb
 .. _pde to petri translation: https://github.com/ml4ai/funman/tree/main/auxiliary_packages/pde2petri/doc/discretization/main.pdf
 .. _advection: https://www.uni-muenster.de/imperia/md/content/physik_tp/lectures/ws2016-2017/num_methods_i/advection.pdf
+.. _model representation: https://github.com/DARPA-ASKEM/Model-Representations/pull/77
 
 We developed use cases for climate models by translating the climate models into petri nets.  The use cases involve both consistency and parameter synthesis problems.  The notebook `pde to petri`_ demonstrates scenarios for the Halfar ice dome and advection models.  The methodology for translating the PDE models into petri nets is described in the `pde to petri translation`_ documentation.
 
 Identify Parameters for Halfar Ice Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We developed two formulations of the Halfar Ice dome model that used one-sided or centered differential expressions to compare alternative discretization strategies.  We found that the centered differential expressions are able to model the ice dome change symmetrically and the one-sided differentials led to asymmetric change.  This motivates the use of FUNMAN to investigate the stability of different discretization schemes.  
+We developed multiple formulations of the Halfar Ice dome model that used different differential expressions to compare alternative discretization strategies.  Each model uses a parameter A, which FUNMAN selects to ensure that the ice cap height at each discretized location remained non-negative.  We found that if given the range [1e-20, 1e-12] for the A parameter, FUNMAN is capable of finding a value for A that prevents the ice height from becoming negative.  We also found several differences between the difference methods used to discretize the PDE, namely that centered difference produces symmetric change in the ice dome, and backward and forward difference do not.
+
+.. The centered difference:
+
+.. .. image:: _static/halfar_centered_1D.gif
+
+.. The forward difference:
+
+.. .. image:: _static/halfar_forward_1D.gif
+
+.. The backward difference:
+
+.. .. image:: _static/halfar_backward_1D.gif
  
 Compare Discretization Methods for PDEs with the Advection Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the case of the Advection Equation, we are able to observe phenomena that is expected from the literature [`advection`_]. For example, for the equation ∂h/∂t + a * ∂h/∂x = 0 where a > 0, we expect different results depending on the choice of discretization.  Since both the solution and stability behavior is known, our next steps will be to validate FUNMAN’s parameter synthesis by comparing FUNMAN’s calculated valid parameter ranges for the advection equation to what is known in the literature in the forward, centered, and backward difference scheme cases.  FUNMAN was able discover how the forward difference scheme violates the non-negativity constraints we placed upon the model, and that the backward scheme does not.  
 
-The following figure (gif) animates a time series computed by FUNMAN for the two dimensional advection equation where the boundary condition is zero for all locations and times.  The initial state models  a dome-like energy variable “a” over a 5x5 grid.  FUNMAN identifies a parameter value “u” that satisfies several constraints. The constraints are that “u” is in [0.5, 1], and that “a” is non-negative for all time steps and locations.  FUNMAN solves this problem with a petri net encoding of the discretized PDE, using a backward derivative for the spatial dimensions and a forward derivative for the temporal dimension.  The solution animated below assigns u = 0.5 and corresponds to a positive velocity that moves the energy in the positive direction in each dimension and diffusion.  The AMR for this instance is available through the ASKEM Model-Representation repo. 
+The following figure (gif) animates a time series computed by FUNMAN for the two dimensional advection equation where the boundary condition is zero for all locations and times.  The initial state models  a dome-like energy variable “a” over a 5x5 grid.  FUNMAN identifies a parameter value “u” that satisfies several constraints. The constraints are that “u” is in [0.5, 1], and that “a” is non-negative for all time steps and locations.  FUNMAN solves this problem with a petri net encoding of the discretized PDE, using a backward derivative for the spatial dimensions and a forward derivative for the temporal dimension.  The solution animated below assigns u = 0.5 and corresponds to a positive velocity that moves the energy in the positive direction in each dimension and diffusion.  The AMR for this instance is available through the ASKEM `model representation`_ repo. 
+
+.. image:: _static/advection_backward_2D.gif

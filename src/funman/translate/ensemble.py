@@ -15,7 +15,7 @@ class EnsembleEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns
@@ -91,7 +91,7 @@ class EnsembleEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             The petrinet model
 
         Returns

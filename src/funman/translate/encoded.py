@@ -25,7 +25,7 @@ class EncodedEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             Encoded model
 
         Returns

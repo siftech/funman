@@ -128,7 +128,7 @@ class BilayerEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns

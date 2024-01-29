@@ -446,7 +446,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
         num_steps: int
             number of encoding steps (e.g., time steps)
@@ -522,7 +522,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             The petrinet model
 
         Returns
@@ -933,7 +933,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns
@@ -1193,7 +1193,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        p : Parameter
+        p : funman.representation.parameter.Parameter
             parameter to constrain
         closed_upper_bound : bool, optional
             interpret interval as closed (i.e., p <= ub), by default False

@@ -39,7 +39,7 @@ def animate_heat_map(my_df, frames):
         ax = sns.heatmap(data, vmin=vmin, vmax=vmax, cmap="crest")
         ax.set_xlabel(data.columns[0][0])
         ax.set_ylabel(data.index.name)
-        ax.set_title(data.columns[0][0])
+        ax.set_title(f"{data.columns[0][0]}: time = {i}")
 
     anim = animation.FuncAnimation(
         fig,

@@ -10,7 +10,7 @@ class DecapodeEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns

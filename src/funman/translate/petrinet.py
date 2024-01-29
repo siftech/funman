@@ -41,7 +41,7 @@ class PetrinetEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns
@@ -376,7 +376,7 @@ class PetrinetEncoder(Encoder):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             The petrinet model
 
         Returns
