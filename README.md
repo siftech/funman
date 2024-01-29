@@ -1,4 +1,4 @@
-# funman
+# funman: Functional Model Analysis tool
 
 <!-- Outline:
 - Introduction (problem solved, major packages, prerequisites)
@@ -15,7 +15,112 @@
 
 ![Funman synthesizes parameters for ODE and PDE systems](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/funman-diagram.png?raw=true)
 
-The `funman` package performs Functional Model Analysis by processing a request and model pair that describes an analysis scenario.  Funman supports a number of model formats, which correspond to the classes in `funman.models`:
+The `funman` package performs Functional Model Analysis by processing a request and model pair that describes an analysis scenario.  `funman` answers the question: 
+
+    "Under which parameter assignements will my model behave well?"
+
+`funman` encodes and reasons about parameterized models in the SMT framework.  As illustrated in the figure above, `funman` labels regions of a parameter space that satisfy (green, "true") or do not satisfy (red, "false") a number of constraints on the model dynamics (dashed lines).  Each point in the parameter space corresponds (black arrows) to a trajectory (green and red curves).  
+
+# Quickstart
+
+This section explains how to run `funman`, and the following section describes the analysis request in more detail.
+
+We recommend using a pre-built docker image to run or develop the `funman` source, due to a few build dependencies.  To run `funman` via its API, (in the `funman` root directory) start the API with the script:
+
+```bash
+sh terarium/scripts/run-api-in-docker.sh
+```
+
+This will pull the latest release of the `funman` API image and start a new container.  Then, to submit analysis requests to the API, run the following script:
+
+```bash
+terarium/run_example.sh petrinet-sir
+```
+
+This script will run a request, as specified in `resources/terarium-tests.json`.
+
+Running the example will POST a model analysis request, wait, and then GET the results.  `funman` analysis runs in an anytime fashion, and the GET request may return only partial results.  The example will generate the following output:
+
+```
+Running example 'petrinet-sir':
+{
+  "name": "petrinet-sir",
+  "model-path": "amr/petrinet/terrarium-tests/sir.json",
+  "request-path": "amr/petrinet/terrarium-tests/sir_request.json"
+}
+################################################################################
+################################################################################
+Making POST request to http://127.0.0.1:8190/api/queries with contents:
+{
+    "model": <Contents of /home/danbryce/funman/resources/amr/petrinet/terrarium-tests/sir.json>
+    "request": <Contents of /home/danbryce/funman/resources/amr/petrinet/terrarium-tests/sir_request.json>
+}
+################################################################################
+################################################################################
+Response for query:
+{
+  "id": "cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f",
+  "model": "Removed for brevity",
+  "request": "Removed for brevity"
+}
+################################################################################
+################################################################################
+Work Id is 'cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f'
+Waiting for 5 seconds...
+################################################################################
+################################################################################
+Making GET request to http://127.0.0.1:8190/api/queries/cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f:
+{
+  "id": "cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f",
+  "model": "Removed for brevity",
+  "progress": {
+    "progress": 0.6918088739568541,
+    "coverage_of_search_space": 0.6918088739568541
+  },
+  "request": "Removed for brevity",
+  "parameter_space": {
+    "num_dimensions": 6,
+    "true_boxes": [ {"Removed for brevity"}, {"Removed for brevity"}, ...]
+    "false_boxes": [ {"Removed for brevity"}, {"Removed for brevity"}, ...]
+  }
+}
+```
+
+The response is the status of the query, which includes the model and request used in the query, as well as progress and the current parameter space.  
+
+# Quickstart Example Description
+
+The quickstart example performs an analysis of the SIR model:
+
+$\dot{S} = -\beta SI$
+
+$\dot{I} = \beta SI - \gamma I$
+
+$\dot{R} = \gamma I$
+
+where $\beta$ and $\gamma$ are parameters.  The SIR model captures how a susceptible $S$ population becomes infected $I$ at a rate $\beta SI$, and an infected population becomes recovered $R$ with a rate $\gamma I$.  The $\beta$ parameter describes the transmissibility of a pathogen and the $\gamma$ parameter, the impact (recovery time) of the pathogen on individuals.  The example defines an initial condition where $S(0) = 0.99$, $I(0) = 0.01$, and $R(0) = 0.0$.  
+
+In the example, `funman` analyzes which values of 
+
+$\beta \in [0.08, 0.1)$ and 
+
+$\gamma \in [0.02, 0.03)$ 
+
+will satisfy the constraint 
+
+$0.15 \leq I(t) < 1.0$, for $t \in [50, 50)$.
+
+In this analysis request the analyst would like to know what assumptions on $\beta$ and $\gamma$ are needed so that the infected population is greater than 0.15, 50 days from today.  
+
+Solving this analysis problem generates a parameter space, as summarized by the following plot.
+
+![Funman synthesizes parameters the SIR model](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/parameter-space.png?raw=true)
+
+Plotting the points generated while creating the parameter space, will result in the following trajectories.
+
+![Funman creates multiple trajectories for the SIR model](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/trajectories.png?raw=true)
+
+Funman supports a number of model formats, which correspond to the classes in `funman.models`:
 
 - [GeneratedPetriNet](#funman.model.generated_models.petrinet.Model): AMR model for petri nets generated 
 - [GeneratedRegNet](#funman.model.generated_models.regnet.Model): AMR model for regulatory networks
