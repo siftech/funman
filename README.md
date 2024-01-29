@@ -122,9 +122,13 @@ The upper left plot for $\beta$-$\gamma$ projects all boxes onto $\beta$ and $\g
 
 The lower left plots for $\beta$-timestep and $\gamma$-timestep help to interpret the $\beta$-$\gamma$ plot.  Timesteps 5-10 (corresponding to 50-100 days) include several false regions (also stacked) where the constraints are not satisfied, and a few true regions where they are satisfied.  
 
-Plotting the points generated while creating the parameter space, will result in the following trajectories.
+Plotting the points generated while creating the parameter space, will result in the following trajectories.  
 
 ![Funman creates multiple trajectories for the SIR model](https://github.com/siftech/funman/blob/v1.8.0-rc/fig/trajectories.png?raw=true)
+
+The plot illustrates $S$, $I$, and $R$ for all points that `funman` generates to construct the parameter space.  The green lines correspond to true points, and red, false.  The lines that begin near 1.0 a time 0 correspond to $S$.  The group of lines near 0.2 at time 50 correspond to $I$, and the remaining group, to $R$.  The false trajectories are truncated at time 50 because they violate the constraint and will not satisfy it if extended to longer time spans.  (This is also the reason that the parameter space includes many false regions for time steps 5 and greater.)  
+
+# funman inputs
 
 Funman supports a number of model formats, which correspond to the classes in `funman.models`:
 
