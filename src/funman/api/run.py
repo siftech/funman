@@ -392,9 +392,7 @@ def get_args():
         help=f"model json file",
     )
     parser.add_argument(
-        "request",
-        type=str,
-        help=f"request json file",
+        "request", type=str, help=f"request json file", default={}, nargs="?"
     )
     parser.add_argument(
         "-o",
