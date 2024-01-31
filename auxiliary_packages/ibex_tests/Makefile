@@ -1,11 +1,16 @@
 .DEFAULT_GOAL := all
 
-num_constraint_test.o: src/num_constraint_test.cc
-	g++ -c -g src/num_constraint_test.cc -I/usr/include/ibex -libex
+build:
+	mkdir -p build
 
-num_constraint_test: num_constraint_test.o
-	g++ -g num_constraint_test.o -libex -o num_constraint_test
+build/num_constraint_test.o: src/num_constraint_test.cc
+	g++ -c -g src/num_constraint_test.cc -I/usr/include/ibex -libex -o build/num_constraint_test.o
 
-test: num_constraint_test
+build/num_constraint_test: build/num_constraint_test.o
+	g++ -g build/num_constraint_test.o -libex -o build/num_constraint_test
 
-all: test
+test: build/num_constraint_test
+	build/num_constraint_test
+
+all: build test
+	

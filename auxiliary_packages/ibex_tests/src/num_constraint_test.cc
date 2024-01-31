@@ -10,7 +10,7 @@ using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 
-NumConstraint func(const Array<const ExprSymbol> &args, const ExprCtr &expr)
+NumConstraint func(const Array<const ExprSymbol> &args, const ExprCtr expr)
 {
     cout << "size = " << args.size() << endl;
     switch (args.size())
@@ -93,15 +93,16 @@ NumConstraint func(const Array<const ExprSymbol> &args, const ExprCtr &expr)
 //     cout << "Made constraint c2: " << c2 << endl;
 // }
 
-duration<double, std::milli> make_constraint(const ExprNode *expr, Array<const ExprSymbol> &vars, bool use_opt)
+duration<double, std::milli> make_constraint(const ExprCtr e, Array<const ExprSymbol> &vars, bool use_opt)
 {
     auto t1 = high_resolution_clock::now();
     // cout << vars.size() << endl;
-    cout << "done expr" << endl;
+    cout << "make_constraint(" << use_opt << ") - start" << endl;
 
-    NumConstraint c1 = use_opt ? func(vars, (*expr < 0)) : NumConstraint(vars, (*expr < 0));
+    // cout << "expr = " << e << endl;
+    NumConstraint c1 = use_opt ? func(vars, e) : NumConstraint(vars, e);
 
-    cout << "done expr" << endl;
+    cout << "make_constraint(" << use_opt << ") - end" << endl;
     auto t2 = high_resolution_clock::now();
     duration<double, std::milli> ms_double = t2 - t1;
     return ms_double;
@@ -142,21 +143,39 @@ int main()
     // NumConstraint c(x, x + 1 <= 0);
     // cout << "Made constraint: " << c << endl;
     cout << "Starting: " << endl;
-    int num_vars = 20;
+    int num_vars = 10;
     Variable x[num_vars];
     Array<const ExprSymbol> vars(num_vars);
 
-    // cout << "Made vars: " << vars.size() << endl;
-    make_vars(&vars);
-    cout << vars[0] << endl;
-    cout << "Made vars: " << vars.size() << endl;
-    const ExprNode *expr = make_expr(vars);
-    cout << "Made expr" << endl;
-    cout << (*expr) << endl;
-    auto time_with = make_constraint(expr, vars, true);
-    auto time_without = make_constraint(expr, vars, false);
-    // summary(vars.size(), time_with.count(), time_without.count());
-    delete expr;
+    for (int i = 0; i < num_vars; i++)
+    {
+        // cout << "i = " << i << endl;
+        vars.set_ref(i, x[i]);
+    }
+
+    // const ExprNode *expr = &(vars[0] + 1);
+    // for (int i = 1; i < num_vars; i++)
+    //     expr = &(*expr + vars[i]);
+    // const ExprCtr &e = (*expr < 0);
+
+    // const ExprNode expr = ;
+    const ExprCtr e = (vars[0] + vars[1] + vars[2] + vars[3] + vars[4] + vars[5] + vars[6] + vars[7] + vars[8] + vars[9]) < 0;
+    auto time_without = make_constraint(e, vars, false);
+    auto time_with = make_constraint(e, vars, true);
+    // cout << "Made e" << endl;
+    // const ExprNode *expr1 = &(vars[0] + 1);
+    // for (int i = 1; i < num_vars; i++)
+    //     expr1 = &(*expr1 + vars[i]);
+    // cout << (*expr1) << endl;
+    // cout << endl;
+
+    // const ExprNode *expr1 = make_expr(vars);
+    // cout << "Made expr1" << endl;
+    // cout << (*expr) << endl;
+    // const ExprCtr &e1 = (*expr < 0);
+
+    summary(vars.size(), time_with.count(), time_without.count());
+    // delete expr;
 
     // auto t1 = high_resolution_clock::now();
     // c1();
