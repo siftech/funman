@@ -80,7 +80,7 @@ class ParameterSpacePlotter:
             dim_to_plot,
             squeeze=False,
             dpi=self.dpi,
-            figsize=(10, 10),
+            figsize=(2 * dim_to_plot, 2 * dim_to_plot),
         )
         self.fig = fig
         self.axs = axs
@@ -90,15 +90,16 @@ class ParameterSpacePlotter:
         MEDIUM_SIZE = 10
         BIGGER_SIZE = 12
 
-        plt.rc("font", size=SMALL_SIZE)  # controls default text sizes
+        # plt.rc("font", size=SMALL_SIZE)  # controls default text sizes
         plt.rc("axes", titlesize=SMALL_SIZE)  # fontsize of the axes title
         plt.rc("axes", labelsize=TINY_SIZE)  # fontsize of the x and y labels
         plt.rc("xtick", labelsize=TINY_SIZE)  # fontsize of the tick labels
         plt.rc("ytick", labelsize=TINY_SIZE)  # fontsize of the tick labels
-        plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
-        plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
+        # plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
+        # plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-        self.fig.tight_layout(pad=3.0)
+        # self.fig.tight_layout(pad=3.0)
+        self.fig.tight_layout(pad=1.5)
         self.data = [[None] * self.dim] * self.dim
 
         for i in range(self.dim):

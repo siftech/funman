@@ -3,6 +3,7 @@ import logging
 from typing import Dict
 
 import matplotlib.pyplot as plt
+from funman_demo.parameter_space_plotter import ParameterSpacePlotter
 from IPython.display import clear_output
 from matplotlib.lines import Line2D
 
@@ -68,17 +69,13 @@ def plot_cached_search(search_path, alpha: float = 0.2):
     )
 
 
-def summarize_results(variables, results, ylabel="Height"):
+def summarize_results(
+    variables, results, ylabel="Height", parameters_to_plot=None
+) -> str:
     points = results.points()
     boxes = results.parameter_space.boxes()
 
-    l.info("*" * 80)
-    l.info("*" * 80)
-    l.info("* Analysis Summary ")
-    l.info("*" * 80)
-    l.info(
-        f"{len(points)} Points (+:{len(results.parameter_space.true_points())}, -:{len(results.parameter_space.false_points())}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})"
-    )
+    point_info = ""
     if points and len(points) > 0:
         point: Point = points[-1]
         parameters: Dict[Parameter, float] = results.point_parameters(point)
@@ -91,12 +88,37 @@ def summarize_results(variables, results, ylabel="Height"):
             label_color={"true": "g", "false": "r"},
         )
         parameter_values = {p: point.values[p.name] for p in parameters}
-        l.info(f"Parameters = {parameter_values}")
-        l.info(parameters)
-        l.info(results.dataframe([point]))
+        point_info = f"""Parameters = {parameter_values}
+        # {parameters}
+        {results.dataframe([point])}
+        """
     else:
         # if there are no points, then we have a box that we found without needing points
-        l.info(f"Found box with no points")
         box = boxes[0]
-        l.info(json.dumps(box.explain(), indent=4))
-    l.info("*" * 80)
+        point_info = f"""Found box with no points
+        {json.dumps(box.explain(), indent=4)}
+        """
+
+    boxes = results.parameter_space.boxes()
+    if parameters_to_plot is None:
+        parameters_to_plot = results.model._parameter_names() + ["timestep"]
+    if len(boxes) > 0 and len(parameters_to_plot) > 1:
+        ParameterSpacePlotter(
+            results.parameter_space,
+            parameters=parameters_to_plot,
+            dpi=len(parameters_to_plot) * 20,
+            plot_points=True,
+        ).plot(show=True)
+
+    divider = "*" * 80
+
+    summary = f"""{divider}
+{divider}
+* Analysis Summary
+{divider}
+{len(points)} Points (+:{len(results.parameter_space.true_points())}, -:{len(results.parameter_space.false_points())}), {len(boxes)} Boxes (+:{len(results.parameter_space.true_boxes)}, -:{len(results.parameter_space.false_boxes)})
+{point_info}
+{divider}
+    """
+
+    return summary

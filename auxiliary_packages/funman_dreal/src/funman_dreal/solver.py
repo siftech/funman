@@ -614,9 +614,12 @@ class DRealNative(
                 isinstance(ub, int) or isinstance(lb, int)
             ):
                 return Real(lb) if isinstance(lb, int) else Real(ub)
-            elif mid == lb or mid == ub:
+            elif mid == lb:
                 # Midpoint is not representable
                 return Real(lb) if ub == 0.0 else Real(ub)
+            elif mid == ub:
+                # Midpoint is not representable
+                return Real(ub) if lb == 0.0 else Real(lb)
             elif not math.isinf(mid):
                 return Real(mid)
             else:
