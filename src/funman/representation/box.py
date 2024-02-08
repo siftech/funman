@@ -412,6 +412,26 @@ class Box(BaseModel):
             ]
         )
 
+    def intersection(self, other: "Box") -> "Box":
+        """
+        Return the intersection of two boxes (which is also a box)
+
+        Parameters
+        ----------
+        other : Box
+            other box
+
+        Returns
+        -------
+        Box
+            self intersected with other
+        """
+        result = [
+            {p: interval.intersection(other.bounds[p])}
+            for p, interval in self.bounds.items()
+        ]
+        return result
+
     def _get_max_width_point_Parameter(
         self, points: List[List[Point]], parameters: List[Parameter]
     ):
