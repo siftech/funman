@@ -52,7 +52,7 @@ class TestCompilation(unittest.TestCase):
                 },
             }
         )
-        result = ps1.intersection(ps2)
+        result = ps1.intersection(ps2)  ## should consist of 2 boxes
         assert result
 
 

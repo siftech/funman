@@ -286,6 +286,9 @@ class ParameterSpace(BaseModel):
         return True
 
     def intersection(self, ps2: "ParameterSpace") -> "ParameterSpace":
+        """
+        Intersect the true boxes belonging to two parameter spaces.
+        """
         result = []
         ps1_boxes = self.true_boxes
         ps2_boxes = ps2.true_boxes
