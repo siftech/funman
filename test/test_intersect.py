@@ -10,6 +10,7 @@ class TestCompilation(unittest.TestCase):
         assert interval_1.intersection(interval_2) == [2.0, 3.0]
 
     def test_ps_intersection(self):
+        # Set up two parameter spaces to intersect
         ps1 = ParameterSpace(num_dimensions=2)
         ps2 = ParameterSpace(num_dimensions=2)
         ps1.append_result(

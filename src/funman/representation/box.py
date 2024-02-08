@@ -414,7 +414,7 @@ class Box(BaseModel):
 
     def intersection(self, other: "Box") -> "Box":
         """
-        Return the intersection of two boxes (which is also a box).
+        Return the intersection of two boxes (which is also a box)
 
         Parameters
         ----------
