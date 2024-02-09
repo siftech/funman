@@ -2,7 +2,6 @@
 This module defines classes that wrap a simulator to function as a Model.
 """
 
-
 from funman.model.model import FunmanModel
 
 

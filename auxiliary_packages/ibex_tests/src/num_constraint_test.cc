@@ -139,7 +139,7 @@ int main()
     // NumConstraint c(x, x + 1 <= 0);
     // cout << "Made constraint: " << c << endl;
     cout << "Starting: " << endl;
-    for (int num_vars = 21; num_vars <= 21; num_vars++)
+    for (int num_vars = 20; num_vars <= 20; num_vars++)
     {
         // int num_vars = 10;
         Variable x1[num_vars];

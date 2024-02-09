@@ -2,6 +2,7 @@
 This module defines enocoders for already encoded models.  (Technically, a
 pass-through that helps make the encoder abstraction uniform.)
 """
+
 from typing import List
 
 from funman.model import FunmanModel
