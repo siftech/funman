@@ -246,7 +246,8 @@ class BoxSearchEpisode(SearchEpisode):
     def _add_unknown_box(self, box: Box) -> bool:
         if (
             box.width(
-                parameters=self.problem.model_parameters(), normalize=True
+                parameters=self.problem.synthesized_model_parameters(),
+                normalize=True,
             )
             > self.config.tolerance
         ):
