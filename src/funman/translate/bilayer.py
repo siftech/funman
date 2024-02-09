@@ -2,6 +2,7 @@
 This module encodes bilayer models into a SMTLib formula.  
 
 """
+
 import logging
 from functools import reduce
 from typing import Dict, Set, Tuple

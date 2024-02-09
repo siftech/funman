@@ -1,6 +1,7 @@
 """
 This module wraps a simulator invocation as a Scenario.
 """
+
 from importlib import import_module
 from typing import Any
 

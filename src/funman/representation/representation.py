@@ -2,6 +2,7 @@
 This submodule contains definitions for the classes used
 during the configuration and execution of a search.
 """
+
 import logging
 import math
 from typing import Dict, Literal, Optional, Set

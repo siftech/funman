@@ -2,6 +2,7 @@
 This module defines the BoxSearch class and supporting classes.
 
 """
+
 import glob
 import logging
 import multiprocessing as mp
@@ -826,13 +827,15 @@ class BoxSearch(Search):
             episode._add_false_point,
             my_solver,
             options,
-            _smtlib_save_fn=partial(
-                self.store_smtlib,
-                episode,
-                box,
-            )
-            if episode.config.save_smtlib
-            else None,
+            _smtlib_save_fn=(
+                partial(
+                    self.store_smtlib,
+                    episode,
+                    box,
+                )
+                if episode.config.save_smtlib
+                else None
+            ),
         )
 
         return box.false_points(step=box.timestep().lb), explanation
@@ -967,9 +970,11 @@ class BoxSearch(Search):
                 episode._add_true_point,
                 my_solver,
                 options,
-                _smtlib_save_fn=partial(self.store_smtlib, episode, box)
-                if episode.config.save_smtlib
-                else None,
+                _smtlib_save_fn=(
+                    partial(self.store_smtlib, episode, box)
+                    if episode.config.save_smtlib
+                    else None
+                ),
             )
             if len(box.true_points(step=box.timestep().lb)) == 0:
                 # Could not find a point at the current step, so there won't be any at subsequent steps
@@ -1172,15 +1177,15 @@ class BoxSearch(Search):
                                 l.trace(f"+++ True:\n{box}")
 
                                 if episode.config.corner_points:
-                                    corner_points: List[
-                                        Point
-                                    ] = self.get_box_corners(
-                                        solver,
-                                        episode,
-                                        curr_step_box,
-                                        rval,
-                                        options,
-                                        my_solver,
+                                    corner_points: List[Point] = (
+                                        self.get_box_corners(
+                                            solver,
+                                            episode,
+                                            curr_step_box,
+                                            rval,
+                                            options,
+                                            my_solver,
+                                        )
                                     )
 
                                 # Advance a true box to be considered for later timesteps
@@ -1206,15 +1211,15 @@ class BoxSearch(Search):
                             l.debug(f"False @ {box.timestep().lb}")
                             l.trace(f"--- False:\n{box}")
                             if episode.config.corner_points:
-                                corner_points: List[
-                                    Point
-                                ] = self.get_box_corners(
-                                    solver,
-                                    episode,
-                                    box,
-                                    rval,
-                                    options,
-                                    my_solver,
+                                corner_points: List[Point] = (
+                                    self.get_box_corners(
+                                        solver,
+                                        episode,
+                                        box,
+                                        rval,
+                                        options,
+                                        my_solver,
+                                    )
                                 )
                             rval.put(box.model_dump())
                         episode._formula_stack.pop()  # Remove box constraints from solver
