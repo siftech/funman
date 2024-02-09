@@ -222,6 +222,9 @@ class AnalysisScenario(ABC, BaseModel):
     def model_parameters(self):
         return self.parameters_of_type(ModelParameter)
 
+    def synthesized_model_parameters(self):
+        return [p for p in self.model_parameters() if p.is_synthesized()]
+
     def synthesized_parameters(self):
         return [p for p in self.parameters if p.is_synthesized()]
 
