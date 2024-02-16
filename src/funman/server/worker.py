@@ -7,7 +7,7 @@ import traceback
 from enum import Enum
 from typing import Optional
 
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.scenario.scenario import AnalysisScenario
 from funman.server.exception import FunmanWorkerException
 from funman.server.query import (
@@ -73,7 +73,7 @@ class FunmanWorker:
             return self._state == state
 
     def enqueue_work(
-        self, model: Model, request: FunmanWorkRequest
+        self, model: FunmanModel, request: FunmanWorkRequest
     ) -> FunmanWorkUnit:
         if not self.in_state(WorkerState.RUNNING):
             raise FunmanWorkerException(

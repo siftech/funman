@@ -5,7 +5,7 @@ import graphviz
 from pydantic import BaseModel, ConfigDict
 
 from funman.config import FUNMANConfig
-from funman.model import Model
+from funman.model import FunmanModel
 from funman.representation import Interval
 from funman.representation.parameter import ModelParameter
 
@@ -130,12 +130,12 @@ class BilayerGraph(ABC, BaseModel):
     model_config = ConfigDict()
 
     json_graph: Dict
-    _node_incoming_edges: Dict[
-        BilayerNode, Dict[BilayerNode, BilayerEdge]
-    ] = {}
-    _node_outgoing_edges: Dict[
-        BilayerNode, Dict[BilayerNode, BilayerEdge]
-    ] = {}
+    _node_incoming_edges: Dict[BilayerNode, Dict[BilayerNode, BilayerEdge]] = (
+        {}
+    )
+    _node_outgoing_edges: Dict[BilayerNode, Dict[BilayerNode, BilayerEdge]] = (
+        {}
+    )
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -190,15 +190,15 @@ class BilayerDynamics(BilayerGraph):
 
     model_config = ConfigDict()
 
-    _tangent: Dict[
-        int, BilayerStateNode
-    ] = {}  # Output layer variables, defined in Qout
-    _flux: Dict[
-        int, BilayerFluxNode
-    ] = {}  # Functions, defined in Box, one param per flux
-    _state: Dict[
-        int, BilayerStateNode
-    ] = {}  # Input layer variables, defined in Qin
+    _tangent: Dict[int, BilayerStateNode] = (
+        {}
+    )  # Output layer variables, defined in Qout
+    _flux: Dict[int, BilayerFluxNode] = (
+        {}
+    )  # Functions, defined in Box, one param per flux
+    _state: Dict[int, BilayerStateNode] = (
+        {}
+    )  # Input layer variables, defined in Qin
     _input_edges: BilayerEdge = []  # Input to flux, defined in Win
     _output_edges: BilayerEdge = []  # Flux to Output, defined in Wa,Wn
 
@@ -332,9 +332,9 @@ class BilayerMeasurement(BilayerGraph, BaseModel):
     """
 
     state: Dict[int, BilayerStateNode] = {}
-    flux: Dict[
-        int, BilayerFluxNode
-    ] = {}  # Functions, defined in observable, one param per flux
+    flux: Dict[int, BilayerFluxNode] = (
+        {}
+    )  # Functions, defined in observable, one param per flux
     observable: Dict[int, BilayerStateNode] = {}
     input_edges: BilayerEdge = []  # Input to observable, defined in Win
     output_edges: BilayerEdge = []  # Flux to Output, defined in Wa,Wn
@@ -430,7 +430,7 @@ class BilayerMeasurement(BilayerGraph, BaseModel):
         return dot
 
 
-class BilayerModel(Model):
+class BilayerModel(FunmanModel):
     """
     A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:
 

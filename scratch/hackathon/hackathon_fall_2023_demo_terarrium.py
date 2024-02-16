@@ -27,7 +27,7 @@ def main():
                     "lb": 0.011,
                     "ub": 0.011,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.008799999999999999, "ub": 0.0132},
             },
             {
@@ -36,7 +36,7 @@ def main():
                     "lb": 0.456,
                     "ub": 0.456,
                     "closed_upper_bound": True,
-                }
+                },
                 #  "interval": {"lb": 0.3648, "ub": 0.5472}
             },
             {
@@ -45,7 +45,7 @@ def main():
                     "lb": 0.011,
                     "ub": 0.011,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.008799999999999999, "ub": 0.0132},
             },
             {
@@ -54,7 +54,7 @@ def main():
                     "lb": 0.57,
                     "ub": 0.57,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {
                 #     "lb": 0.45599999999999996,
                 #     "ub": 0.6839999999999999,
@@ -64,7 +64,7 @@ def main():
                 "name": "epsilon",
                 "interval": {
                     "lb": 0.1368,
-                    "ub": 0.20520000000000002
+                    "ub": 0.20520000000000002,
                     # "ub": 0.18,
                 },
                 "label": "all",
@@ -75,7 +75,7 @@ def main():
                     "lb": 0.125,
                     "ub": 0.125,
                     "closed_upper_bound": True,
-                }
+                },
                 #  "interval": {"lb": 0.1, "ub": 0.15}
             },
             {
@@ -84,7 +84,7 @@ def main():
                     "lb": 0.034,
                     "ub": 0.034,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.027200000000000002, "ub": 0.0408},
             },
             {
@@ -93,7 +93,7 @@ def main():
                     "lb": 0.125,
                     "ub": 0.125,
                     "closed_upper_bound": True,
-                }
+                },
                 #  "interval": {"lb": 0.1, "ub": 0.15}
             },
             {
@@ -102,14 +102,14 @@ def main():
                     "lb": 0.034,
                     "ub": 0.034,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.027200000000000002, "ub": 0.0408},
             },
             {
                 "name": "theta",
                 "interval": {
                     "lb": 0.2968,
-                    "ub": 0.4452
+                    "ub": 0.4452,
                     # "ub": 0.4,
                 },
                 "label": "all",
@@ -120,7 +120,7 @@ def main():
                     "lb": 0.017,
                     "ub": 0.017,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
             },
             {
@@ -129,7 +129,7 @@ def main():
                     "lb": 0.017,
                     "ub": 0.017,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
             },
             {
@@ -138,7 +138,7 @@ def main():
                     "lb": 0.027,
                     "ub": 0.027,
                     "closed_upper_bound": True,
-                }
+                },
                 #   "interval": {"lb": 0.0216, "ub": 0.0324}
             },
             {
@@ -147,7 +147,7 @@ def main():
                     "lb": 0.017,
                     "ub": 0.017,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
             },
             {
@@ -156,7 +156,7 @@ def main():
                     "lb": 0.01,
                     "ub": 0.01,
                     "closed_upper_bound": True,
-                }
+                },
                 #  "interval": {"lb": 0.008, "ub": 0.012}
             },
             {
@@ -165,7 +165,7 @@ def main():
                     "lb": 0.017,
                     "ub": 0.017,
                     "closed_upper_bound": True,
-                }
+                },
                 # "interval": {"lb": 0.013600000000000001, "ub": 0.0204},
             },
         ],

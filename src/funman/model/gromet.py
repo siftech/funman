@@ -1,13 +1,14 @@
 """
 This module represents GrometModel-related classes.
 """
+
 from automates.model_assembly.gromet.model import GrometFNModule
 from automates.program_analysis.JSON2GroMEt.json2gromet import json_to_gromet
 
-from funman.model import Model
+from funman.model import FunmanModel
 
 
-class GrometModel(Model):
+class GrometModel(FunmanModel):
     """
     The GrometModel class is a representation of an executable Gromet model.
     """

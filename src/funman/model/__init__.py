@@ -14,14 +14,16 @@ models in FUNMAN.  The submodules include:
 
 * simulator: classes to wrap simulators as models
 """
+
 from .model import *
 from .query import *
 from .bilayer import *
 from .encoded import *
-from .gromet import *
+# from .gromet import *
 from .simulator import *
 from .decapode import *
 from .petrinet import *
 from .ensemble import *
 from .regnet import *
-from .generated_models import *
+
+# from .generated_models import *

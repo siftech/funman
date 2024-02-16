@@ -2,6 +2,7 @@
 This submodule contains definitions for the classes used
 during the configuration and execution of a search.
 """
+
 import logging
 import math
 from typing import Dict, Literal, Optional, Set
@@ -47,9 +48,12 @@ class Point(BaseModel):
 
     def remove_irrelevant_steps(self, untimed_symbols: Set[str]):
         relevant = self.relevant_timesteps()
+        relevant_timepoints = [
+            self.schedule.time_at_step(ts) for ts in relevant
+        ]
         self.values = {
             k: v
-            for step in relevant
+            for step in relevant_timepoints
             for k, v in self.values.items()
             if (k.endswith(f"_{step}") or k in untimed_symbols)
         }

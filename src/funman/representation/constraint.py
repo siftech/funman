@@ -9,7 +9,7 @@ from pydantic import (
 )
 from typing_extensions import Annotated
 
-from funman.model import Model
+from funman.model import FunmanModel
 from funman.model.query import Query
 
 from .interval import Interval
@@ -52,7 +52,7 @@ class TimedConstraint(Constraint):
 
 class ModelConstraint(Constraint):
     soft: bool = False
-    model: Model
+    model: FunmanModel
 
     model_config = ConfigDict(extra="forbid")
 

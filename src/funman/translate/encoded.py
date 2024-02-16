@@ -2,9 +2,10 @@
 This module defines enocoders for already encoded models.  (Technically, a
 pass-through that helps make the encoder abstraction uniform.)
 """
+
 from typing import List
 
-from funman.model import Model
+from funman.model import FunmanModel
 from funman.model.encoded import EncodedModel
 from funman.representation.assumption import Assumption
 from funman.representation.constraint import ModelConstraint
@@ -19,13 +20,13 @@ class EncodedEncoder(Encoder):
     encoders.
     """
 
-    def encode_model(self, model: Model):
+    def encode_model(self, model: FunmanModel):
         """
         Encode the model by returning the already encoded formula.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             Encoded model
 
         Returns
@@ -62,7 +63,7 @@ class EncodedEncoder(Encoder):
     ) -> Encoding:
         return self.encode_model(scenario.model)._layers[layer_idx]
 
-    def _get_untimed_symbols(self, model: Model) -> List[str]:
+    def _get_untimed_symbols(self, model: FunmanModel) -> List[str]:
         untimed_symbols = []
         # All flux nodes correspond to untimed symbols
         for var_name in model._parameter_names():

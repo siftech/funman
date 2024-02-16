@@ -1,6 +1,7 @@
 """
 This module represents the abstract base classes for models.
 """
+
 import copy
 import uuid
 from abc import ABC
@@ -49,7 +50,7 @@ def _wrap_with_internal_model(
         return model
 
 
-class Model(ABC, BaseModel):
+class FunmanModel(ABC, BaseModel):
     """
     The abstract base class for Models.
     """

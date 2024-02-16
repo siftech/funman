@@ -1,6 +1,7 @@
 """
 This module defines the abstract base classes for the model encoder classes in funman.translate package.
 """
+
 import logging
 from abc import ABC
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
@@ -30,7 +31,7 @@ from pysmt.solvers.solver import Model as pysmtModel
 
 from funman.config import FUNMANConfig
 from funman.constants import NEG_INFINITY, POS_INFINITY
-from funman.model.model import Model
+from funman.model.model import FunmanModel
 from funman.model.query import (
     QueryAnd,
     QueryEncoded,
@@ -380,7 +381,7 @@ class Encoder(ABC, BaseModel):
             return formula
 
     def _encode_next_step(
-        self, model: Model, step: int, next_step: int, substitutions={}
+        self, model: FunmanModel, step: int, next_step: int, substitutions={}
     ) -> FNode:
         pass
 
@@ -446,7 +447,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
         num_steps: int
             number of encoding steps (e.g., time steps)
@@ -489,14 +490,14 @@ class Encoder(ABC, BaseModel):
         return parameter_assignments
 
     def parameter_values(
-        self, model: Model, pysmtModel: pysmtModel
+        self, model: FunmanModel, pysmtModel: pysmtModel
     ) -> Dict[str, List[Union[float, None]]]:
         """
         Gather values assigned to model parameters.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model encoded by self
         pysmtModel : pysmt.solvers.solver.Model
             the assignment to symbols
@@ -516,13 +517,13 @@ class Encoder(ABC, BaseModel):
             l.warning(e)
             return {}
 
-    def _get_timed_symbols(self, model: Model) -> Set[str]:
+    def _get_timed_symbols(self, model: FunmanModel) -> Set[str]:
         """
         Get the names of the state (i.e., timed) variables of the model.
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             The petrinet model
 
         Returns
@@ -532,7 +533,7 @@ class Encoder(ABC, BaseModel):
         """
         pass
 
-    def _get_untimed_symbols(self, model: Model) -> Set[str]:
+    def _get_untimed_symbols(self, model: FunmanModel) -> Set[str]:
         untimed_symbols = set(["timestep"])
         # All flux nodes correspond to untimed symbols
         for var_name in model._parameter_names():
@@ -723,9 +724,11 @@ class Encoder(ABC, BaseModel):
         timestep = options.schedule.time_at_step(layer_idx)
         parameters = scenario.parameters
         encoded_vars = [
-            self._encode_state_var(v)
-            if len([p for p in parameters if p.name == v]) > 0
-            else self._encode_state_var(v, time=timestep)
+            (
+                self._encode_state_var(v)
+                if len([p for p in parameters if p.name == v]) > 0
+                else self._encode_state_var(v, time=timestep)
+            )
             for v in vars
         ]
         expression = Plus(
@@ -933,7 +936,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        model : Model
+        model : FunmanModel
             model to encode
 
         Returns
@@ -1193,7 +1196,7 @@ class Encoder(ABC, BaseModel):
 
         Parameters
         ----------
-        p : Parameter
+        p : funman.representation.parameter.Parameter
             parameter to constrain
         closed_upper_bound : bool, optional
             interpret interval as closed (i.e., p <= ub), by default False

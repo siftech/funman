@@ -4,7 +4,7 @@
 # TARGET_IMAGE=localhost:5000/siftech/funman-api:local
 
 # For public images:
-FUNMAN_VERSION="${FUNMAN_VERSION:-1.7.0}"
+FUNMAN_VERSION="${FUNMAN_VERSION:-1.8.0}"
 TARGET_IMAGE="${TARGET_IMAGE:-ghcr.io/siftech/funman-api:$FUNMAN_VERSION}"
 PLATFORM="${PLATFORM:---platform linux/amd64}"
 

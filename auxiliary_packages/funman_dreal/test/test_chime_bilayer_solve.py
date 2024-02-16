@@ -30,7 +30,7 @@ from pysmt.shortcuts import (
 from pysmt.typing import BOOL, INT, REAL
 
 from funman import Funman
-from funman.model import Model, ModelParameter, QueryLE
+from funman.model import FunmanModel, ModelParameter, QueryLE
 from funman.representation.representation import (
     Point,
     ResultCombinedHandler,

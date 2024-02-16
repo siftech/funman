@@ -7,6 +7,7 @@ The funman package implements multiple simulator model analysis methods.  Curren
 
 - Consistency: Check that a parameterized model is self-consistent.
 """
+
 from .utils import *
 
 setup_logging()

@@ -100,7 +100,7 @@ class SMTCheck(Search):
                 box = Box(
                     bounds={
                         p.name: p.interval.model_copy()
-                        for p in problem.parameters
+                        for p in problem.model_parameters()
                     },
                     label=LABEL_FALSE,  # lack of a point means this must be a false box
                     points=[],

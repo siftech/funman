@@ -4,11 +4,11 @@ from pydantic import ConfigDict, PrivateAttr
 from pysmt.formula import FNode
 from pysmt.shortcuts import TRUE
 
-from funman.model import Model
+from funman.model.model import FunmanModel
 from funman.representation.parameter import ModelParameter
 
 
-class EncodedModel(Model):
+class EncodedModel(FunmanModel):
     """
     Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.
     """
