@@ -1,6 +1,7 @@
 """
 This module contains defintions of constants used within FUNMAN
 """
+
 import sys
 from typing import Literal, Union
 

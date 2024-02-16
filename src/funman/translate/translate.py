@@ -1,6 +1,7 @@
 """
 This module defines the abstract base classes for the model encoder classes in funman.translate package.
 """
+
 import logging
 from abc import ABC
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
@@ -723,9 +724,11 @@ class Encoder(ABC, BaseModel):
         timestep = options.schedule.time_at_step(layer_idx)
         parameters = scenario.parameters
         encoded_vars = [
-            self._encode_state_var(v)
-            if len([p for p in parameters if p.name == v]) > 0
-            else self._encode_state_var(v, time=timestep)
+            (
+                self._encode_state_var(v)
+                if len([p for p in parameters if p.name == v]) > 0
+                else self._encode_state_var(v, time=timestep)
+            )
             for v in vars
         ]
         expression = Plus(

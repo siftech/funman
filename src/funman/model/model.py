@@ -1,6 +1,7 @@
 """
 This module represents the abstract base classes for models.
 """
+
 import copy
 import uuid
 from abc import ABC

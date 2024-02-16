@@ -6,6 +6,7 @@ Raises
 HTTPException
     HTTPException description
 """
+
 import sys
 import traceback
 import uuid
