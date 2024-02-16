@@ -35,7 +35,7 @@ setup(
     ],
     # dependency_links=["git+https://github.com/danbryce/pysmt/pysmt@add-abs-value#egg=pysmt-0.9.6.dev1"],
     extras_require={"dreal": ["funman_dreal"]},
-    tests_require=["unittest"],
+    tests_require=["unittest", "pytest-cov"],
     zip_safe=False,
     entry_points={
         "console_scripts": [
