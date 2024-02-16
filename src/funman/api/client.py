@@ -1,6 +1,7 @@
 """
 Client API Generation and usage functionality.
 """
+
 import json
 import os
 import re

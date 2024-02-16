@@ -2,6 +2,7 @@
 This module defines the Funman class, the primary entry point for FUNMAN
 analysis.
 """
+
 import logging
 import threading
 from typing import Callable, Optional

@@ -2,6 +2,7 @@
 This module encodes Gromet models as SMTLib formulas.
 
 """
+
 from automates.model_assembly.gromet.model.function_type import FunctionType
 from automates.model_assembly.gromet.model.gromet_box_function import (
     GrometBoxFunction,

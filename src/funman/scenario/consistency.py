@@ -1,6 +1,7 @@
 """
 This submodule defines a consistency scenario.  Consistency scenarios specify an existentially quantified model.  If consistent, the solution assigns any unassigned variable, subject to their bounds and other constraints.  
 """
+
 import logging
 import threading
 from typing import Callable, Dict, Optional

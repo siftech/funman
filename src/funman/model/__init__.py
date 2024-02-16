@@ -14,6 +14,7 @@ models in FUNMAN.  The submodules include:
 
 * simulator: classes to wrap simulators as models
 """
+
 from .model import *
 from .query import *
 from .bilayer import *

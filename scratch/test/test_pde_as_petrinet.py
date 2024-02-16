@@ -137,7 +137,7 @@ class TestUseCases(unittest.TestCase):
                 "label_marker": {"true": ",", "false": ","},
                 "xlabel": "Time",
                 "ylabel": "Height",
-                "legend": variables
+                "legend": variables,
                 # ,"label_color":{"true": "g", "false":"r"}
             },
             num_points=None,
