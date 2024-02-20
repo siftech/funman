@@ -80,7 +80,7 @@ class ParameterSpacePlotter:
             dim_to_plot,
             squeeze=False,
             dpi=self.dpi,
-            figsize=(2 * dim_to_plot, 2 * dim_to_plot),
+            figsize=(20, 20),
         )
         self.fig = fig
         self.axs = axs
@@ -99,7 +99,7 @@ class ParameterSpacePlotter:
         # plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
         # self.fig.tight_layout(pad=3.0)
-        self.fig.tight_layout(pad=1.5)
+        self.fig.tight_layout(pad=2)
         self.data = [[None] * self.dim] * self.dim
 
         for i in range(self.dim):
