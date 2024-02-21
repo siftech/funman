@@ -70,7 +70,7 @@ def plot_cached_search(search_path, alpha: float = 0.2):
 
 
 def summarize_results(
-    variables, results, ylabel="Height", parameters_to_plot=None
+    variables, results, ylabel="Height", parameters_to_plot=None, label_color={"true": "g", "false": "r"}
 ) -> str:
     points = results.points()
     boxes = results.parameter_space.boxes()
@@ -85,7 +85,7 @@ def summarize_results(
             xlabel="Time",
             ylabel=ylabel,
             legend=variables,
-            label_color={"true": "g", "false": "r"},
+            label_color=label_color,
         )
         parameter_values = {p: point.values[p.name] for p in parameters}
         point_info = f"""Parameters = {parameter_values}
