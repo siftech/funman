@@ -1,0 +1,21 @@
+{
+  "query": {},
+  "parameters": [],
+  "structure_parameters": [
+    {
+      "name": "schedules",
+      "schedules": [
+        {
+          "timepoints": [
+            0,
+            10
+          ]
+        }
+      ]
+    }
+  ],
+  "config": {
+    "tolerance": 1e-2,
+    "save_smtlib": "./out"
+  }
+}
