@@ -8,6 +8,7 @@ from pysmt.shortcuts import GE, LE, And, Real, Symbol
 from pysmt.typing import REAL
 
 from funman import (
+    LABEL_ALL,
     BilayerDynamics,
     BilayerModel,
     ConsistencyScenario,
@@ -164,7 +165,11 @@ class TestUseCases(unittest.TestCase):
         [lb, ub] = model.parameter_bounds["beta"]
         scenario = ParameterSynthesisScenario(
             parameters=[
-                ModelParameter(name="beta", interval=Interval(lb=lb, ub=ub)),
+                ModelParameter(
+                    name="beta",
+                    interval=Interval(lb=lb, ub=ub),
+                    label=LABEL_ALL,
+                ),
                 NumSteps(name="num_steps", interval=Interval(lb=3, ub=3)),
                 StepSize(name="step_size", interval=Interval(lb=1, ub=1)),
             ],

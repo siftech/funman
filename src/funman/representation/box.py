@@ -91,7 +91,11 @@ class Box(BaseModel):
         return expl
 
     def timestep(self) -> Interval:
-        return self.bounds["timestep"]
+        return (
+            self.bounds["timestep"]
+            if "timestep" in self.bounds
+            else Interval(lb=0, ub=0, closed_upper_bound=True)
+        )
 
     def __hash__(self):
         return int(sum([i.__hash__() for _, i in self.bounds.items()]))
