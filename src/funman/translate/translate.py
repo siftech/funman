@@ -21,6 +21,7 @@ from pysmt.shortcuts import (  # type: ignore
     Equals,
     Iff,
     Implies,
+    Minus,
     Plus,
     Real,
     Symbol,
@@ -731,15 +732,71 @@ class Encoder(ABC, BaseModel):
             )
             for v in vars
         ]
-        expression = Plus(
-            [
-                Times(
-                    Real(weights[i]),
-                    encoded_vars[i],
+        if constraint.derivative:
+            next_timestep = constraint.next_timestep(
+                layer_idx, options.schedule
+            )
+            encoded_dt_vars = [
+                (
+                    self._encode_state_var(v)
+                    if len([p for p in parameters if p.name == v]) > 0
+                    else self._encode_state_var(
+                        v, time=options.schedule.time_at_step(next_timestep)
+                    )
                 )
-                for i in range(len(vars))
+                for v in vars
             ]
-        )
+            curr = (
+                encoded_dt_vars if next_timestep < layer_idx else encoded_vars
+            )
+            curr_t = (
+                options.schedule.time_at_step(next_timestep)
+                if next_timestep < layer_idx
+                else timestep
+            )
+            nxt = (
+                encoded_dt_vars if next_timestep > layer_idx else encoded_vars
+            )
+            nxt_t = (
+                options.schedule.time_at_step(next_timestep)
+                if next_timestep > layer_idx
+                else timestep
+            )
+            expression = Div(
+                Minus(
+                    Plus(
+                        [
+                            Times(
+                                Real(weights[i]),
+                                nxt[i],
+                            )
+                            for i in range(len(vars))
+                        ]
+                    ),
+                    Plus(
+                        [
+                            Times(
+                                Real(weights[i]),
+                                curr[i],
+                            )
+                            for i in range(len(vars))
+                        ]
+                    ),
+                ),
+                Minus(Real(nxt_t), Real(curr_t)),
+            ).simplify()
+            pass
+        else:
+            expression = Plus(
+                [
+                    Times(
+                        Real(weights[i]),
+                        encoded_vars[i],
+                    )
+                    for i in range(len(vars))
+                ]
+            )
+
         if bounds.lb != NEG_INFINITY:
             lb = Real(bounds.lb)
         else:
