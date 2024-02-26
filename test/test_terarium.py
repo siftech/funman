@@ -22,27 +22,29 @@ class TestTerarium(unittest.TestCase):
     def test_terarium(self):
         tests = TEST_JSON["tests"]
         for test in tests:
-            name = test["name"]
-
-            # Read in the model dict
-            model = json.loads(
-                Path(f'{RESOURCES_PREFIX}/{test["model-path"]}').read_bytes()
-            )
-
-            # Either read in the request json or default to an empty dict
-            if test["request-path"] is None:
-                request = {}
-            else:
-                request = json.loads(
-                    Path(
-                        f'{RESOURCES_PREFIX}/{test["request-path"]}'
-                    ).read_bytes()
-                )
+            name, model, request = self.get_model_and_request(test)
 
             with self.subTest(name):
                 with TestClient(app) as client:
                     # run the defined test
                     self.subtest_terarium(client, name, model, request)
+
+    def get_model_and_request(self, test):
+        name = test["name"]
+
+        # Read in the model dict
+        model = json.loads(
+            Path(f'{RESOURCES_PREFIX}/{test["model-path"]}').read_bytes()
+        )
+
+        # Either read in the request json or default to an empty dict
+        if test["request-path"] is None:
+            request = {}
+        else:
+            request = json.loads(
+                Path(f'{RESOURCES_PREFIX}/{test["request-path"]}').read_bytes()
+            )
+        return name, model, request
 
     def subtest_terarium(self, client, name, model, request):
         results = self.post_query_and_wait_until_done(client, model, request)
@@ -186,6 +188,38 @@ class TestTerarium(unittest.TestCase):
 
         assert progress > 0.999999, "Progress was not at 100%"
         return results
+
+    def test_stress_test(self):
+        with TestClient(app) as client:
+            uuids = []
+
+            test = TEST_JSON["tests"][0]
+            # Read in the model dict
+            name, model, request = self.get_model_and_request(test)
+
+            for i in range(10):
+                uuid = self.post_query(client, model, request)
+                uuids.append(uuid)
+
+                # self.poll_until_done(client, uuid)
+
+                uuid = uuids[i % len(uuids)]
+                response = client.get(f"/api/queries/{uuid}")
+                # sleep(1)
+                # Ensure no error status code
+                assert (
+                    response.status_code == 200
+                ), f"Response code was not 200: {response.status_code}"
+                # Get the results
+                results = self.decode_response_to_dict(response)
+                assert (
+                    results.get("error", False) is False
+                ), f"Request {uuid} errored during processing"
+                # # Return if processing is done
+                # if results.get("done", False):
+                #     return results
+
+                results = self.get_status(client, uuid)
 
 
 if __name__ == "__main__":
