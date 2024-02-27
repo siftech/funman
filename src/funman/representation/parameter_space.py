@@ -285,6 +285,19 @@ class ParameterSpace(BaseModel):
             return False
         return True
 
+    def intersection(self, ps2: "ParameterSpace") -> "ParameterSpace":
+        """
+        Intersect the true boxes of two parameter spaces.
+        """
+        result = []
+        ps1_boxes = self.true_boxes
+        ps2_boxes = ps2.true_boxes
+        for i1, b1 in enumerate(ps1_boxes):
+            for i2, b2 in enumerate(ps2_boxes):
+                if b1.intersects(b2):
+                    result.append(b1.intersection(b2))
+        return result
+
     def _reassign_point_labels(self) -> None:
         """
         For every point, update the label based on the box that contains it.

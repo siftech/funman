@@ -10,7 +10,7 @@ using std::chrono::duration_cast;
 using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 
-NumConstraint func(const Array<const ExprSymbol> &args, const ExprCtr &expr)
+NumConstraint func(const Array<const ExprSymbol> &args, const ExprCtr expr)
 {
     cout << "size = " << args.size() << endl;
     switch (args.size())
@@ -93,15 +93,16 @@ NumConstraint func(const Array<const ExprSymbol> &args, const ExprCtr &expr)
 //     cout << "Made constraint c2: " << c2 << endl;
 // }
 
-duration<double, std::milli> make_constraint(const ExprNode *expr, Array<const ExprSymbol> &vars, bool use_opt)
+duration<double, std::milli> make_constraint(const ExprCtr e, Array<const ExprSymbol> &vars, bool use_opt)
 {
     auto t1 = high_resolution_clock::now();
     // cout << vars.size() << endl;
-    cout << "done expr" << endl;
+    cout << "make_constraint(" << use_opt << ") - start" << endl;
 
-    NumConstraint c1 = use_opt ? func(vars, (*expr < 0)) : NumConstraint(vars, (*expr < 0));
+    // cout << "expr = " << e << endl;
+    NumConstraint c1 = use_opt ? func(vars, e) : NumConstraint(vars, e);
 
-    cout << "done expr" << endl;
+    cout << "make_constraint(" << use_opt << ") - end" << endl;
     auto t2 = high_resolution_clock::now();
     duration<double, std::milli> ms_double = t2 - t1;
     return ms_double;
@@ -117,16 +118,12 @@ const ExprNode *make_expr(Array<const ExprSymbol> &x)
     return expr;
 }
 
-void make_vars(Array<const ExprSymbol> *vars)
+void make_vars(Array<const ExprSymbol> &vars, Variable *x)
 {
-    int num_vars = vars->size();
-    Variable x[num_vars];
-    cout << "num_vars: " << num_vars << endl;
-
-    for (int i = 0; i < num_vars; i++)
+    int num_vars = vars.size();
+    for (int i = 0; i < vars.size(); i++)
     {
-        cout << "i = " << i << endl;
-        vars->set_ref(i, x[i]);
+        vars.set_ref(i, x[i]);
     }
 }
 
@@ -142,46 +139,87 @@ int main()
     // NumConstraint c(x, x + 1 <= 0);
     // cout << "Made constraint: " << c << endl;
     cout << "Starting: " << endl;
-    int num_vars = 20;
-    Variable x[num_vars];
-    Array<const ExprSymbol> vars(num_vars);
+    for (int num_vars = 20; num_vars <= 20; num_vars++)
+    {
+        // int num_vars = 10;
+        Variable x1[num_vars];
+        Variable x2[num_vars];
+        Array<const ExprSymbol> vars1(num_vars);
+        Array<const ExprSymbol> vars2(num_vars);
 
-    // cout << "Made vars: " << vars.size() << endl;
-    make_vars(&vars);
-    cout << vars[0] << endl;
-    cout << "Made vars: " << vars.size() << endl;
-    const ExprNode *expr = make_expr(vars);
-    cout << "Made expr" << endl;
-    cout << (*expr) << endl;
-    auto time_with = make_constraint(expr, vars, true);
-    auto time_without = make_constraint(expr, vars, false);
-    // summary(vars.size(), time_with.count(), time_without.count());
-    delete expr;
+        make_vars(vars1, x1);
+        make_vars(vars2, x2);
 
-    // auto t1 = high_resolution_clock::now();
-    // c1();
-    // auto t2 = high_resolution_clock::now();
-    // // c2();
+        // for (int i = 0; i < num_vars; i++)
+        // {
+        //     // cout << "i = " << i << endl;
+        //     vars1.set_ref(i, x1[i]);
+        //     vars2.set_ref(i, x2[i]);
+        // }
 
-    // auto t3 = high_resolution_clock::now();
+        // const ExprNode *expr = &(vars1[0] + 1);
+        // for (int i = 1; i < num_vars; i++)
+        //     expr = &(*expr + vars1[i]);
+        const ExprNode *expr1 = make_expr(vars1);
+        const ExprCtr &e1 = (*expr1 < 0);
+        const ExprNode *expr2 = make_expr(vars2);
+        const ExprCtr &e2 = (*expr2 < 0);
 
-    // /* Getting number of milliseconds as an integer. */
-    // auto ms_int = duration_cast<milliseconds>(t2 - t1);
+        // const ExprNode expr = ;
+        // const ExprCtr e1 = (vars1[0] + vars1[1] + vars1[2] + vars1[3] + vars1[4] + vars1[5] + vars1[6] + vars1[7] + vars1[8] + vars1[9]) < 0;
+        cout << "e1 = " << e1 << endl;
+        // const ExprCtr e2 = (vars2[0] + vars2[1] + vars2[2] + vars2[3] + vars2[4] + vars2[5] + vars2[6] + vars2[7] + vars2[8] + vars2[9]) < 0;
+        cout << "e2 = " << e2 << endl;
 
-    // /* Getting number of milliseconds as a double. */
-    // duration<double, std::milli> ms_double = t2 - t1;
+        // auto ctr = func(vars, e);
+        // auto ctr = NumConstraint(vars1[0], vars1[1], vars1[2], vars1[3], vars1[4], vars1[5], vars1[6], vars1[7], vars1[8], vars1[9], e1);
+        // auto ctr = NumConstraint(vars, e);
+        // cout << "Made ctr: " << ctr << endl;
 
-    // std::cout << ms_int.count() << "ms\n";
-    // std::cout << ms_double.count() << "ms\n";
+        auto time_without = make_constraint(e1, vars1, false);
+        auto time_with = make_constraint(e2, vars2, true);
+        // delete expr1;
+        // delete expr2;
 
-    // /* Getting number of milliseconds as an integer. */
-    // auto ms_int1 = duration_cast<milliseconds>(t3 - t2);
+        // cout << "Made e" << endl;
+        // const ExprNode *expr1 = &(vars[0] + 1);
+        // for (int i = 1; i < num_vars; i++)
+        //     expr1 = &(*expr1 + vars[i]);
+        // cout << (*expr1) << endl;
+        // cout << endl;
 
-    // /* Getting number of milliseconds as a double. */
-    // duration<double, std::milli> ms_double1 = t3 - t2;
+        // const ExprNode *expr1 = make_expr(vars);
+        // cout << "Made expr1" << endl;
+        // cout << (*expr) << endl;
+        // const ExprCtr &e1 = (*expr < 0);
 
-    // // std::cout << ms_int1.count() << "ms\n";
-    // // std::cout << ms_double1.count() << "ms\n";
+        summary(vars1.size(), time_with.count(), time_without.count());
+        // delete expr;
 
+        // auto t1 = high_resolution_clock::now();
+        // c1();
+        // auto t2 = high_resolution_clock::now();
+        // // c2();
+
+        // auto t3 = high_resolution_clock::now();
+
+        // /* Getting number of milliseconds as an integer. */
+        // auto ms_int = duration_cast<milliseconds>(t2 - t1);
+
+        // /* Getting number of milliseconds as a double. */
+        // duration<double, std::milli> ms_double = t2 - t1;
+
+        // std::cout << ms_int.count() << "ms\n";
+        // std::cout << ms_double.count() << "ms\n";
+
+        // /* Getting number of milliseconds as an integer. */
+        // auto ms_int1 = duration_cast<milliseconds>(t3 - t2);
+
+        // /* Getting number of milliseconds as a double. */
+        // duration<double, std::milli> ms_double1 = t3 - t2;
+
+        // // std::cout << ms_int1.count() << "ms\n";
+        // // std::cout << ms_double1.count() << "ms\n";
+    }
     return 0;
 }

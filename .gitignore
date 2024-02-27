@@ -322,3 +322,5 @@ notebooks/saved-results/out
 **/*.bbl
 **/*.blg
 **/*.out
+auxiliary_packages/ibex_tests/num_constraint_test
+auxiliary_packages/ibex_tests/num_constraint_test.o

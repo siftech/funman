@@ -8,9 +8,10 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from IPython.display import HTML
-from sklearn import preprocessing
 
 from funman.server.query import FunmanResults
+
+# from sklearn import preprocessing
 
 
 def animate_heat_map(my_df, frames):
