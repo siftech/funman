@@ -103,8 +103,49 @@ class LinearConstraint(TimedConstraint):
     weights: Annotated[
         Optional[List[Union[int, float]]], Field(validate_default=True)
     ] = None
+    derivative: bool = False
 
     model_config = ConfigDict(extra="forbid")
+
+    def next_timestep(
+        self, timestep: "Timestep", schedule: "EncodingSchedule"
+    ) -> "Timestep":
+        """
+        Get a Timestep in the timepoints other than that is in timepoints
+
+        Parameters
+        ----------
+        timestep : Timestep
+            the reference Timestep
+        schedule : EncodingSchedule
+            the timepoints used for the encoding
+        """
+        if (
+            schedule.time_at_step(timestep) in schedule.timepoints
+            and timestep + 1 < len(schedule.timepoints)
+            and schedule.time_at_step(timestep + 1) in schedule.timepoints
+        ) and (
+            (self.timepoints is None)
+            or self.timepoints.contains_value(
+                schedule.time_at_step(timestep + 1)
+            )
+        ):
+            return timestep + 1
+        elif (
+            schedule.time_at_step(timestep) in schedule.timepoints
+            and timestep - 1 >= 0
+            and schedule.time_at_step(timestep - 1) in schedule.timepoints
+        ) and (
+            (self.timepoints is None)
+            or self.timepoints.contains_value(
+                schedule.time_at_step(timestep - 1)
+            )
+        ):
+            return timestep - 1
+        else:
+            raise Exception(
+                f"Cannot determine a suitable timepoint relative to step = {timestep} where the encoding schedule = {schedule} is defined and constraint timepoints ={self.timepoints} are defined"
+            )
 
     @field_validator("weights")
     @classmethod
