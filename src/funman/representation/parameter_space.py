@@ -269,7 +269,7 @@ class ParameterSpace(BaseModel):
         for i1, b1 in enumerate(boxes):
             for i2, b2 in enumerate(boxes[i1 + 1 :]):
                 if b1.intersects(b2):
-                    l.exception(f"Parameter Space Boxes intersect: {b1} {b2}")
+                    l.error(f"Parameter Space Boxes intersect: {b1} {b2}")
                     return False
         for tp in self.true_points():
             if not any([b.contains_point(tp) for b in self.true_boxes]):

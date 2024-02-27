@@ -203,7 +203,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _initialize_boxes(self, expander_count, schedule: EncodingSchedule):
         # initial_box = self._initial_box()
         # if not self.add_unknown(initial_box):
-        #     l.exception(
+        #     l.error(
         #         f"Did not add an initial box (of width {initial_box.width()}), try reducing config.tolerance, currently {self.config.tolerance}"
         #     )
         initial_boxes = QueueSP()
@@ -220,7 +220,7 @@ class BoxSearchEpisode(SearchEpisode):
         for i in range(num_boxes):
             b = initial_boxes.get()
             if not self._add_unknown(b):
-                l.exception(
+                l.error(
                     f"Did not find add an initial box (box had width {b.normalized_width()}), try reducing config.tolerance, currently {self.config.tolerance}"
                 )
             # l.debug(f"Initial box: {b}")
