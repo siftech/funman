@@ -47,6 +47,9 @@ class FunmanWorkRequest(BaseModel):
         List[Union[Union[NumSteps, StepSize], Schedules]]
     ] = None
 
+    def parameter(self, name: str) -> ModelParameter:
+        return next(iter([x for x in self.parameters if x.name == name]))
+
     @field_validator("constraints")
     @classmethod
     def check_unique_names(

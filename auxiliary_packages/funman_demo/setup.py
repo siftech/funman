@@ -22,7 +22,7 @@ setup(
     license="MIT",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    install_requires=["funman", "matplotlib", "jupyter"],
+    install_requires=["funman", "matplotlib", "jupyter", "seaborn"],
     tests_require=["unittest"],
     zip_safe=False,
 )

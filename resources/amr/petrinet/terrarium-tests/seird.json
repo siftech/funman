@@ -1,0 +1,335 @@
+{
+    "header": {
+        "name": "DC ES1_2ci_SEIRHD",
+        "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.5/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "DC Evaluation Scenario 2 Base model",
+        "model_version": "0.1"
+    },
+    "model": {
+        "states": [
+            {
+                "id": "S",
+                "name": "S",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I",
+                "name": "I",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "E",
+                "name": "E",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "0000154"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R",
+                "name": "R",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "H",
+                "name": "H",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "property": "ncit:C25179"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D",
+                "name": "D",
+                "grounding": {
+                    "identifiers": {
+                        "ncit": "C28554"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "id": "t1",
+                "input": [
+                    "I",
+                    "S"
+                ],
+                "output": [
+                    "E",
+                    "I"
+                ],
+                "properties": {
+                    "name": "t1"
+                }
+            },
+            {
+                "id": "t2",
+                "input": [
+                    "E"
+                ],
+                "output": [
+                    "I"
+                ],
+                "properties": {
+                    "name": "t2"
+                }
+            },
+            {
+                "id": "t3",
+                "input": [
+                    "I"
+                ],
+                "output": [
+                    "R"
+                ],
+                "properties": {
+                    "name": "t3"
+                }
+            },
+            {
+                "id": "t4",
+                "input": [
+                    "I"
+                ],
+                "output": [
+                    "H"
+                ],
+                "properties": {
+                    "name": "t4"
+                }
+            },
+            {
+                "id": "t5",
+                "input": [
+                    "H"
+                ],
+                "output": [
+                    "R"
+                ],
+                "properties": {
+                    "name": "t5"
+                }
+            },
+            {
+                "id": "t6",
+                "input": [
+                    "H"
+                ],
+                "output": [
+                    "D"
+                ],
+                "properties": {
+                    "name": "t6"
+                }
+            }
+        ]
+    },
+    "semantics": {
+        "ode": {
+            "rates": [
+                {
+                    "target": "t1",
+                    "expression": "I*S*beta/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t2",
+                    "expression": "E*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E</ci><ci>r_E_to_I</ci></apply>"
+                },
+                {
+                    "target": "t3",
+                    "expression": "I*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                },
+                {
+                    "target": "t4",
+                    "expression": "I*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                },
+                {
+                    "target": "t5",
+                    "expression": "H*p_H_to_R*r_H_to_R",
+                    "expression_mathml": "<apply><times/><ci>H</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
+                },
+                {
+                    "target": "t6",
+                    "expression": "H*p_H_to_D*r_H_to_D",
+                    "expression_mathml": "<apply><times/><ci>H</ci><ci>p_H_to_D</ci><ci>r_H_to_D</ci></apply>"
+                }
+            ],
+            "initials": [
+                {
+                    "target": "S",
+                    "expression": "S0",
+                    "expression_mathml": "<cn>S0</cn>"
+                },
+                {
+                    "target": "I",
+                    "expression": "I0",
+                    "expression_mathml": "<cn>I0</cn>"
+                },
+                {
+                    "target": "E",
+                    "expression": "E0",
+                    "expression_mathml": "<cn>E0</cn>"
+                },
+                {
+                    "target": "R",
+                    "expression": "R0",
+                    "expression_mathml": "<cn>R0</cn>"
+                },
+                {
+                    "target": "H",
+                    "expression": "H0",
+                    "expression_mathml": "<cn>H0</cn>"
+                },
+                {
+                    "target": "D",
+                    "expression": "D0",
+                    "expression_mathml": "<cn>D0</cn>"
+                }
+            ],
+            "parameters": [
+                {
+                    "id": "S0",
+                    "value": 100.0
+                },
+                {
+                    "id": "I0",
+                    "value": 1.0
+                },
+                {
+                    "id": "E0",
+                    "value": 0.0
+                },
+                {
+                    "id": "R0",
+                    "value": 0.0
+                },
+                {
+                    "id": "H0",
+                    "value": 0.0
+                },
+                {
+                    "id": "D0",
+                    "value": 0.0
+                },
+                {
+                    "id": "N",
+                    "value": 101.0
+                },
+                {
+                    "id": "beta",
+                    "value": 0.2
+                },
+                {
+                    "id": "r_E_to_I",
+                    "value": 0.2
+                },
+                {
+                    "id": "p_I_to_R",
+                    "value": 0.2
+                },
+                {
+                    "id": "r_I_to_R",
+                    "value": 0.1
+                },
+                {
+                    "id": "p_I_to_H",
+                    "value": 0.1
+                },
+                {
+                    "id": "r_I_to_H",
+                    "value": 0.1
+                },
+                {
+                    "id": "p_H_to_R",
+                    "value": 0.1
+                },
+                {
+                    "id": "r_H_to_R",
+                    "value": 0.1
+                },
+                {
+                    "id": "p_H_to_D",
+                    "value": 0.1
+                },
+                {
+                    "id": "r_H_to_D",
+                    "value": 0.1
+                }
+            ],
+            "time": {
+                "id": "t",
+                "units": {
+                    "expression": "day",
+                    "expression_mathml": "<ci>day</ci>"
+                }
+            }
+        }
+    },
+    "metadata": {
+        "annotations": {
+            "authors": [],
+            "references": [],
+            "locations": [],
+            "pathogens": [],
+            "diseases": [],
+            "hosts": [],
+            "model_types": []
+        }
+    },
+    "id": "4f34b9e4-65c3-470c-ae7d-ba709ff11d90",
+    "createdOn": "2024-02-20T03:52:50.682+00:00",
+    "temporary": false,
+    "publicAsset": false
+}

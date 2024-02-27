@@ -64,11 +64,15 @@ class Funman(object):
                 import cProfile
 
                 with cProfile.Profile() as pr:
-                    result = problem.solve(
-                        config,
-                        haltEvent=haltEvent,
-                        resultsCallback=resultsCallback,
-                    )
+                    try:
+                        result = problem.solve(
+                            config,
+                            haltEvent=haltEvent,
+                            resultsCallback=resultsCallback,
+                        )
+                    except Exception as e:
+                        pr.dump_stats("profile.stats")
+                        return None
                     pr.dump_stats("profile.stats")
             else:
                 result = problem.solve(
