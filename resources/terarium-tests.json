@@ -1,19 +1,36 @@
 {
     "tests": [
         {
+            "name": "petrinet-stress-test",
+            "model-path": "amr/petrinet/terrarium-tests/stress-test-model.json",
+            "request-path": "amr/petrinet/terrarium-tests/stress-test-request.json",
+            "expected-outcome": {
+                "true-boxes": 0
+            }
+        },
+        {
             "name": "petrinet-query-default",
             "model-path": "amr/petrinet/mira/models/scenario1_a.json",
-            "request-path": null
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 1
+            }
         },
         {
             "name": "petrinet-query-with-basic-request",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
-            "request-path": "amr/petrinet/mira/requests/request2_b_default_wo_compartmental_constrs.json"
+            "request-path": "amr/petrinet/mira/requests/request2_b_default_wo_compartmental_constrs.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            }
         },
         {
             "name": "petrinet-query-parameter-synthesis",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
-            "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json"
+            "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json",
+            "expected-outcome": {
+                "true-boxes": 3
+            }
         }
     ]
 }

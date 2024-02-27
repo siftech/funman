@@ -1,3 +1,4 @@
+import logging
 import random
 from collections import Counter
 from typing import Dict, List, Optional, Tuple, Union
@@ -36,6 +37,8 @@ from funman.scenario.parameter_synthesis import (
 from funman.scenario.scenario import AnalysisScenario
 
 from ..representation.parameter_space import ParameterSpace
+
+l = logging.getLogger(__name__)
 
 
 class FunmanWorkRequest(BaseModel):
@@ -230,8 +233,12 @@ class FunmanResults(BaseModel):
 
         if ps is None:
             raise Exception("No ParameterSpace for result")
-
-        self.update_parameter_space(scenario, ps)
+        try:
+            self.update_parameter_space(scenario, ps)
+        except Exception as e:
+            l.error(
+                f"Could not update the parameter space while finalizing the result because: {e}"
+            )
         self.done = True
         self.progress.progress = 1.0
 

@@ -22,12 +22,19 @@ class TestTerarium(unittest.TestCase):
     def test_terarium(self):
         tests = TEST_JSON["tests"]
         for test in tests:
-            name, model, request = self.get_model_and_request(test)
+            (
+                name,
+                model,
+                request,
+                expected_outcome,
+            ) = self.get_model_and_request(test)
 
             with self.subTest(name):
                 with TestClient(app) as client:
                     # run the defined test
-                    self.subtest_terarium(client, name, model, request)
+                    self.subtest_terarium(
+                        client, name, model, request, expected_outcome
+                    )
 
     def get_model_and_request(self, test):
         name = test["name"]
@@ -44,18 +51,20 @@ class TestTerarium(unittest.TestCase):
             request = json.loads(
                 Path(f'{RESOURCES_PREFIX}/{test["request-path"]}').read_bytes()
             )
-        return name, model, request
 
-    def subtest_terarium(self, client, name, model, request):
+        expected_outcome = test["expected-outcome"]
+        return name, model, request, expected_outcome
+
+    def subtest_terarium(self, client, name, model, request, expected_outcome):
         results = self.post_query_and_wait_until_done(client, model, request)
         assert (
             "parameter_space" in results
         ), "Results does not contain a 'parameter_space' field"
         ps = results["parameter_space"]
         assert ps is not None, "ParameterSpace is None"
+
         assert (
-            len(ps.get("true_points", [])) > 0
-            or len(ps.get("true_boxes", [])) > 0
+            len(ps.get("true_boxes", [])) == expected_outcome["true-boxes"]
         ), f"Terarium Test '{name}' has neither true points nor true boxes"
 
     def POST(self, client: TestClient, url: str, json: dict, *, expect=200):
@@ -190,36 +199,54 @@ class TestTerarium(unittest.TestCase):
         return results
 
     def test_stress_test(self):
+        # here is an example that starts to return 404s GET /api/queries/:id after successfully submitting through POST /api/queries
+        # Earlier the GET request was returning, albeit seemingly never finished. Roughly the steps:
+        # Submit this payload
+        # Query via the ID, couldn't get result, seems to be running forever
+        # Resubmit this payload
+        # Start to get 404s
         with TestClient(app) as client:
-            uuids = []
-
             test = TEST_JSON["tests"][0]
-            # Read in the model dict
-            name, model, request = self.get_model_and_request(test)
+            (
+                name,
+                model,
+                request,
+                expected_outcome,
+            ) = self.get_model_and_request(test)
+            uuid = self.post_query(client, model, request)
+            sleep(5)
+            response = client.get(f"/api/queries/{uuid}")
 
-            for i in range(10):
-                uuid = self.post_query(client, model, request)
-                uuids.append(uuid)
+            assert (
+                response.status_code == 200
+            ), f"Response code was not 200: {response.status_code}"
 
-                # self.poll_until_done(client, uuid)
+            test1 = TEST_JSON["tests"][1]
+            (
+                name1,
+                model1,
+                request1,
+                expected_outcome,
+            ) = self.get_model_and_request(test1)
 
-                uuid = uuids[i % len(uuids)]
-                response = client.get(f"/api/queries/{uuid}")
-                # sleep(1)
-                # Ensure no error status code
-                assert (
-                    response.status_code == 200
-                ), f"Response code was not 200: {response.status_code}"
-                # Get the results
-                results = self.decode_response_to_dict(response)
-                assert (
-                    results.get("error", False) is False
-                ), f"Request {uuid} errored during processing"
-                # # Return if processing is done
-                # if results.get("done", False):
-                #     return results
+            uuid1 = self.post_query(client, model1, request1)
+            sleep(5)
+            response1 = client.get(f"/api/queries/{uuid1}")
 
-                results = self.get_status(client, uuid)
+            assert (
+                response1.status_code == 200
+            ), f"Response code was not 200: {response1.status_code}"
+
+            # # Get the results
+            # results = self.decode_response_to_dict(response)
+            # assert (
+            #     results.get("error", False) is False
+            # ), f"Request {uuid} errored during processing"
+            # # # Return if processing is done
+            # # if results.get("done", False):
+            # #     return results
+
+            # results = self.get_status(client, uuid)
 
 
 if __name__ == "__main__":

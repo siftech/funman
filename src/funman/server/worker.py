@@ -1,7 +1,6 @@
 import copy
 import logging
 import queue
-import sys
 import threading
 import traceback
 from enum import Enum
@@ -75,10 +74,10 @@ class FunmanWorker:
     def enqueue_work(
         self, model: FunmanModel, request: FunmanWorkRequest
     ) -> FunmanWorkUnit:
-        if not self.in_state(WorkerState.RUNNING):
-            raise FunmanWorkerException(
-                f"FunmanWorker must be starting or running to enqueue work: {self.get_state()}"
-            )
+        # if not self.in_state(WorkerState.RUNNING):
+        #     raise FunmanWorkerException(
+        #         f"FunmanWorker must be starting or running to enqueue work: {self.get_state()}"
+        #     )
         id = self.storage.claim_id()
         work = FunmanWorkUnit(id=id, model=model, request=request)
         self.queue.put(work)
@@ -143,9 +142,10 @@ class FunmanWorker:
 
     def get_results(self, id: str):
         if not self.in_state(WorkerState.RUNNING):
-            raise FunmanWorkerException(
-                f"FunmanWorker must be running to get results: {self.get_state()}"
-            )
+            # raise FunmanWorkerException(
+            #     f"FunmanWorker must be running to get results: {self.get_state()}"
+            # )
+            return self.storage.get_result(id)
         with self._id_lock:
             if self.current_id == id:
                 return copy.copy(self.current_results)
@@ -246,25 +246,27 @@ class FunmanWorker:
                         self.current_results.finalize_result(scenario, result)
                     l.info(f"Completed work on: {work.id}")
                 except Exception as e:
-                    l.exception(
-                        f"Internal Server Error ({work.id}):", file=sys.stderr
-                    )
+                    l.error(f"Internal Server Error ({work.id}):")
                     traceback.print_exc()
                     with self._results_lock:
                         self.current_results.finalize_result_as_error()
-                    l.exception(f"Aborting work on: {work.id}")
+                    l.error(f"Aborting work on: {work.id}")
                 finally:
                     self.storage.add_result(self.current_results)
                     self.queue.task_done()
                     with self._id_lock:
                         self.current_id = None
                         self.current_results = None
-        except Exception:
-            l.exception("Fatal error in worker!", file=sys.stderr)
+        except Exception as e:
+            l.error("Fatal error in worker!")
             traceback.print_exc()
             # Only mark the state as errored if the thread
             # has not yet been told to stop
             if not stop_event.is_set():
                 with self._state_lock:
                     self._state = WorkerState.ERRORED
+                    result = self.storage.get_result(work.id)
+                    result.error = True
+                    result.done = True
+                    # self.storage.add_result(result)
         l.info("FunmanWorker exiting...")
