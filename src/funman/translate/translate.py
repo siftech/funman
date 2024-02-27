@@ -701,7 +701,7 @@ class Encoder(ABC, BaseModel):
             formula = self.interval_to_smt(
                 parameter.name,
                 parameter.interval.model_copy(deep=True),
-                closed_upper_bound=False,
+                # closed_upper_bound=False,
                 infinity_constraints=False,
             )
             return (
@@ -1116,9 +1116,10 @@ class Encoder(ABC, BaseModel):
                 Interval(
                     lb=lb,
                     ub=ub,
+                    closed_upper_bound=query.interval.closed_upper_bound,
                 ),
                 time=time,
-                closed_upper_bound=False,
+                # closed_upper_bound=query.interval.closed_upper_bound,
                 infinity_constraints=False,
             )
         else:
@@ -1245,7 +1246,7 @@ class Encoder(ABC, BaseModel):
         p: str,
         i: Interval,
         time: int = None,
-        closed_upper_bound: bool = False,
+        # closed_upper_bound: bool = False,
         infinity_constraints=False,
     ) -> FNode:
         """
@@ -1273,7 +1274,7 @@ class Encoder(ABC, BaseModel):
                 if i.lb != NEG_INFINITY or infinity_constraints
                 else TRUE()
             )
-            upper_ineq = LE if closed_upper_bound else LT
+            upper_ineq = LE if i.closed_upper_bound else LT
             upper = (
                 upper_ineq(symbol, Real(i.ub))
                 if i.ub != POS_INFINITY or infinity_constraints
@@ -1316,7 +1317,7 @@ class Encoder(ABC, BaseModel):
                 self.interval_to_smt(
                     p,
                     interval,
-                    closed_upper_bound=closed_upper_bound,
+                    # closed_upper_bound=closed_upper_bound,
                     infinity_constraints=infinity_constraints,
                 )
                 for p, interval in box.bounds.items()

@@ -187,14 +187,14 @@ class TestUseCases(unittest.TestCase):
             config=FUNMANConfig(
                 # solver="dreal",
                 # dreal_mcts=True,
-                # save_smtlib="./out",
-                dreal_log_level="info",
+                save_smtlib="./out",
+                # dreal_log_level="info",
                 tolerance=1e-3,
                 number_of_processes=1,
                 normalize=False,
                 simplify_query=False,
                 use_compartmental_constraints=False,
-                verbosity=5,
+                verbosity=10,
                 _handler=ResultCombinedHandler(
                     [
                         ResultCacheWriter(f"box_search.json"),

@@ -133,7 +133,7 @@ class LinearConstraint(TimedConstraint):
             return timestep + 1
         elif (
             schedule.time_at_step(timestep) in schedule.timepoints
-            and timestep - 1 > 0
+            and timestep - 1 >= 0
             and schedule.time_at_step(timestep - 1) in schedule.timepoints
         ) and (
             (self.timepoints is None)
