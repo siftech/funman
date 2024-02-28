@@ -112,6 +112,7 @@ def summarize_results(
             parameters=parameters_to_plot,
             dpi=len(parameters_to_plot) * 20,
             plot_points=True,
+            synthesized_parameters=results.problem.synthesized_parameters(),
         ).plot(show=True)
 
     divider = "*" * 80

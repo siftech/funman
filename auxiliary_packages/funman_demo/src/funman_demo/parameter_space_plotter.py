@@ -27,6 +27,7 @@ class ParameterSpacePlotter:
         plot_points=False,
         parameters=None,
         dpi=100,
+        synthesized_parameters=None,
     ):
         if isinstance(parameter_space, ParameterSpace):
             self.ps = parameter_space
@@ -44,6 +45,11 @@ class ParameterSpacePlotter:
             values = false_points[0].values
 
         self.parameters = [k for k in values if parameters and k in parameters]
+        self.synthesized_parameters = (
+            [p.name for p in synthesized_parameters]
+            if synthesized_parameters
+            else None
+        )
         self.dim = len(self.parameters)
         self.plot_points = plot_points
 
@@ -189,6 +195,12 @@ class ParameterSpacePlotter:
                     continue
                 if j_coord > i_coord:
                     continue
+
+                if self.synthesized_parameters and (
+                    self.parameters[i] not in self.synthesized_parameters
+                    or self.parameters[j] not in self.synthesized_parameters
+                ):
+                    return
 
                 x_limits = box.bounds[self.parameters[i]]
                 y_limits = box.bounds[self.parameters[j]]

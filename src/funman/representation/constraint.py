@@ -73,7 +73,7 @@ class ParameterConstraint(Constraint):
         return not isinstance(self.parameter, StructureParameter)
 
     def relevant_at_time(self, time: int) -> bool:
-        return True  # time == 0
+        return time == 0
 
 
 class QueryConstraint(TimedConstraint):
@@ -158,6 +158,12 @@ class LinearConstraint(TimedConstraint):
 
         if weights is None:
             weights = [1.0] * len(info.data["variables"])
+        else:
+            vars = info.data["variables"]
+            assert len(weights) == len(
+                vars
+            ), f"Linear Constraint must have equal number of weights (found {len(weights)}) and variables (found {len(vars)})"
+
         return weights
 
     def __hash__(self) -> int:
