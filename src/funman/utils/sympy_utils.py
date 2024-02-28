@@ -253,7 +253,7 @@ def sympy_to_pysmt_real(expr, numerator_digits=6):
     # try:
     #     trunc_f_expr = f_expr.limit_denominator(max_denominator=max_denominator)
     # except Exception as e:
-    #     l.exception(f"max_denominator = {max_denominator} is not large enough to limit the denominator of {expr} during conversion from sympy to pysmt")
+    #     l.error(f"max_denominator = {max_denominator} is not large enough to limit the denominator of {expr} during conversion from sympy to pysmt")
 
     # r_value = Div(Real(trunc_f_expr.numerator), Real(trunc_f_expr.denominator)).simplify()
 

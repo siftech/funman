@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 import sys
 from pathlib import Path
 from time import sleep
 
 from get_status import get_status, make_status_endpoint
 from post_query import QUERIES_ENDPOINT, post_query
+
+l = logging.getLogger(__name__)
 
 
 def read_to_dict(path: str):
@@ -41,48 +44,48 @@ if __name__ == "__main__":
     names = list(examples.keys())
 
     if args.run is None:
-        print("Available examples:")
-        print("-  " + "\n-  ".join(names))
+        l.info("Available examples:")
+        l.info("-  " + "\n-  ".join(names))
         sys.exit()
     if args.run not in examples:
-        print(f"'{args.run}' is not a valid example!")
-        print("Available examples:")
-        print("-  " + "\n-  ".join(names))
+        l.info(f"'{args.run}' is not a valid example!")
+        l.info("Available examples:")
+        l.info("-  " + "\n-  ".join(names))
         sys.exit()
 
     example = examples[args.run]
-    print(f"Running example '{args.run}':\n{json.dumps(example, indent=2)}")
+    l.info(f"Running example '{args.run}':\n{json.dumps(example, indent=2)}")
 
     model_path = prefix / example["model-path"]
     request_path = None
     if example["request-path"] is not None:
         request_path = prefix / example["request-path"]
-    print(delim)
+    l.info(delim)
 
-    print(
+    l.info(
         f"Making POST request to {args.url}{QUERIES_ENDPOINT} with contents:"
     )
     results = post_query(args.url, model_path, request_path)
-    print(delim)
+    l.info(delim)
 
-    print("Response for query:")
+    l.info("Response for query:")
     results["model"] = "Removed for brevity"
     results["request"] = "Removed for brevity"
-    print(json.dumps(results, indent=2), file=sys.stdout)
-    print(delim)
+    l.info(json.dumps(results, indent=2))
+    l.info(delim)
 
     work_id = results["id"]
-    print(f"Work Id is '{work_id}'")
-    print("Waiting for 5 seconds...")
+    l.info(f"Work Id is '{work_id}'")
+    l.info("Waiting for 5 seconds...")
     sleep(5)
-    print(delim)
+    l.info(delim)
 
-    print(f"Making GET request to {args.url}{make_status_endpoint(work_id)}:")
+    l.info(f"Making GET request to {args.url}{make_status_endpoint(work_id)}:")
     results = get_status(args.url, work_id)
     results["model"] = "Removed for brevity"
     results["request"] = "Removed for brevity"
-    print(json.dumps(results, indent=2), file=sys.stdout)
-    print(delim)
+    l.info(json.dumps(results, indent=2))
+    l.info(delim)
 
-    print("The resulting ParameterSpace is:")
-    print(json.dumps(results["parameter_space"], indent=2), file=sys.stdout)
+    l.info("The resulting ParameterSpace is:")
+    l.info(json.dumps(results["parameter_space"], indent=2))
