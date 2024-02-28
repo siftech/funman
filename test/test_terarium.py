@@ -27,7 +27,11 @@ class TestTerarium(unittest.TestCase):
                 model,
                 request,
                 expected_outcome,
+                regression,
             ) = self.get_model_and_request(test)
+
+            if not regression:
+                continue
 
             with self.subTest(name):
                 with TestClient(app) as client:
@@ -53,7 +57,8 @@ class TestTerarium(unittest.TestCase):
             )
 
         expected_outcome = test["expected-outcome"]
-        return name, model, request, expected_outcome
+        regression = test["regression"]
+        return name, model, request, expected_outcome, regression
 
     def subtest_terarium(self, client, name, model, request, expected_outcome):
         results = self.post_query_and_wait_until_done(client, model, request)
@@ -212,6 +217,7 @@ class TestTerarium(unittest.TestCase):
                 model,
                 request,
                 expected_outcome,
+                regression,
             ) = self.get_model_and_request(test)
             uuid = self.post_query(client, model, request)
             sleep(5)
@@ -227,6 +233,7 @@ class TestTerarium(unittest.TestCase):
                 model1,
                 request1,
                 expected_outcome,
+                regression,
             ) = self.get_model_and_request(test1)
 
             uuid1 = self.post_query(client, model1, request1)

@@ -1,0 +1,160 @@
+{
+    "constraints": [],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.008799999999999999,
+                "ub": 0.0132
+            },
+            "label": "any"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.3648,
+                "ub": 0.5472
+            },
+            "label": "any"
+        },
+        {
+            "name": "delta",
+            "interval": {
+                "lb": 0.008799999999999999,
+                "ub": 0.0132
+            },
+            "label": "any"
+        },
+        {
+            "name": "alpha",
+            "interval": {
+                "lb": 0.45599999999999996,
+                "ub": 0.6839999999999999
+            },
+            "label": "any"
+        },
+        {
+            "name": "epsilon",
+            "interval": {
+                "lb": 0.1368,
+                "ub": 0.20520000000000002
+            },
+            "label": "any"
+        },
+        {
+            "name": "zeta",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.15
+            },
+            "label": "any"
+        },
+        {
+            "name": "lambdax",
+            "interval": {
+                "lb": 0.027200000000000002,
+                "ub": 0.0408
+            },
+            "label": "any"
+        },
+        {
+            "name": "eta",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.15
+            },
+            "label": "any"
+        },
+        {
+            "name": "rho",
+            "interval": {
+                "lb": 0.027200000000000002,
+                "ub": 0.0408
+            },
+            "label": "any"
+        },
+        {
+            "name": "theta",
+            "interval": {
+                "lb": 0.2968,
+                "ub": 0.4452
+            },
+            "label": "any"
+        },
+        {
+            "name": "kappa",
+            "interval": {
+                "lb": 0.013600000000000001,
+                "ub": 0.0204
+            },
+            "label": "any"
+        },
+        {
+            "name": "mu",
+            "interval": {
+                "lb": 0.013600000000000001,
+                "ub": 0.0204
+            },
+            "label": "any"
+        },
+        {
+            "name": "nu",
+            "interval": {
+                "lb": 0.0216,
+                "ub": 0.0324
+            },
+            "label": "any"
+        },
+        {
+            "name": "xi",
+            "interval": {
+                "lb": 0.013600000000000001,
+                "ub": 0.0204
+            },
+            "label": "any"
+        },
+        {
+            "name": "tau",
+            "interval": {
+                "lb": 0.008,
+                "ub": 0.012
+            },
+            "label": "any"
+        },
+        {
+            "name": "sigma",
+            "interval": {
+                "lb": 0.013600000000000001,
+                "ub": 0.0204
+            },
+            "label": "any"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10,
+                        20,
+                        30,
+                        40,
+                        50,
+                        60,
+                        70,
+                        80,
+                        90,
+                        100
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "use_compartmental_constraints": false,
+        "normalization_constant": 1,
+        "tolerance": 0.4
+    }
+}
