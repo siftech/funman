@@ -75,6 +75,7 @@ def summarize_results(
     ylabel="Height",
     parameters_to_plot=None,
     label_color={"true": "g", "false": "r"},
+    synthesized_parameters=None,
 ) -> str:
     points = results.points()
     boxes = results.parameter_space.boxes()
@@ -112,7 +113,7 @@ def summarize_results(
             parameters=parameters_to_plot,
             dpi=len(parameters_to_plot) * 20,
             plot_points=True,
-            synthesized_parameters=results.problem.synthesized_parameters(),
+            synthesized_parameters=synthesized_parameters,
         ).plot(show=True)
 
     divider = "*" * 80
