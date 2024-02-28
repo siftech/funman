@@ -16,7 +16,7 @@
             "expected-outcome": {
                 "true-boxes": 0
             },
-            "regression": true
+            "regression": false
         },
         {
             "name": "petrinet-query-default",

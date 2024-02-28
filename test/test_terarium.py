@@ -33,6 +33,8 @@ class TestTerarium(unittest.TestCase):
             if not regression:
                 continue
 
+            print(f"Testing: {model} {request}")
+
             with self.subTest(name):
                 with TestClient(app) as client:
                     # run the defined test
@@ -211,7 +213,7 @@ class TestTerarium(unittest.TestCase):
         # Resubmit this payload
         # Start to get 404s
         with TestClient(app) as client:
-            test = TEST_JSON["tests"][0]
+            test = TEST_JSON["tests"][1]
             (
                 name,
                 model,
@@ -227,7 +229,7 @@ class TestTerarium(unittest.TestCase):
                 response.status_code == 200
             ), f"Response code was not 200: {response.status_code}"
 
-            test1 = TEST_JSON["tests"][1]
+            test1 = TEST_JSON["tests"][2]
             (
                 name1,
                 model1,

@@ -384,6 +384,7 @@ class Runner:
                 results.parameter_space,
                 plot_points=False,
                 parameters=parameters_to_plot,
+                synthesized_parameters=results.problem.synthesized_parameters(),
             ).plot(show=True)
             plt.savefig(space_plot_filename)
         plt.close()
