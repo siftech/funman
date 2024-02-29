@@ -226,7 +226,10 @@ class Interval(BaseModel):
             if math_utils.gt(
                 minArray.ub, maxArray.lb
             ):  ## has nonempty intersection. return intersection
-                return [float(maxArray.lb), float(minArray.ub)]
+                result = Interval()
+                result.lb = float(maxArray.lb)
+                result.ub = float(minArray.ub)
+                return result
             else:  ## no intersection.
                 return []
 

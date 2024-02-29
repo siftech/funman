@@ -426,11 +426,24 @@ class Box(BaseModel):
         Box
             self intersected with other
         """
-        result = [
-            {p: interval.intersection(other.bounds[p])}
-            for p, interval in self.bounds.items()
-        ]
-        return result
+        result = Box()
+        result_bounds = {}
+        if self.label == other.label:
+            for p, interval in self.bounds.items():
+                result_bounds[p] = interval.intersection(other.bounds[p])
+            result.label = self.label
+            result.bounds = result_bounds
+        for (
+            p,
+            interval,
+        ) in (
+            result.bounds.items()
+        ):  # If any intervals are empty, there is no intersection
+            if interval == []:
+                result.bounds = {}
+        return (
+            result  # FIXME should this also include points and unknown boxes?
+        )
 
     def _get_max_width_point_Parameter(
         self, points: List[List[Point]], parameters: List[Parameter]
@@ -720,56 +733,6 @@ class Box(BaseModel):
         )
         return [b2, b1]
 
-    def intersect(self, b2: "Box", param_list: List[str] = None):
-        """
-        Intersect self with box, optionally over only a subset of the dimensions listed in param_list.
-
-        Parameters
-        ----------
-        b2 : Box
-            box to intersect with
-        param_list : List[str], optional
-            parameters to intersect, by default None
-
-        Returns
-        -------
-        Box
-            box representing intersection, optionally defined over parameters in param_list (when specified)
-        """
-        params_ans = []
-        common_params = (
-            param_list if param_list else [k.name for k in self.bounds]
-        )
-        for p1 in common_params:
-            # FIXME iterating over dict keys is not efficient
-            for b, i in self.bounds.items():
-                if b == p1:
-                    b1_bounds = Interval(lb=i.lb, ub=i.ub)
-            for b, i in b2.bounds.items():
-                if b == p1:
-                    b2_bounds = Interval(lb=i.lb, ub=i.ub)
-            intersection_ans = b1_bounds.intersection(
-                b2_bounds
-            )  ## will be a list with 2 elements (lower and upper bound) or empty list
-            if (
-                len(intersection_ans) < 1
-            ):  ## empty list: no intersection in 1 variable means no intersection overall.
-                return None
-            else:
-                new_param = ModelParameter(
-                    name=f"{p1}",
-                    interval=Interval(
-                        lb=intersection_ans[0], ub=intersection_ans[1]
-                    ),
-                )
-                params_ans.append(new_param)
-        return Box(
-            bounds={
-                p.name: Interval(lb=p.interval.lb, ub=p.interval.ub)
-                for p in params_ans
-            }
-        )
-
     def symm_diff(b1: "Box", b2: "Box"):
         result = []
         ## First check that the two boxes have the same variables
@@ -809,20 +772,6 @@ class Box(BaseModel):
                     true_boxes.append(b)
             return true_boxes
 
-    def __intersect_two_boxes(b1, b2):
-        # FIXME subsumed by Box.intersect(), can be removed.
-        a = list(b1.bounds.values())
-        b = list(b2.bounds.values())
-        result = []
-        d = len(a)  ## dimension
-        for i in range(d):
-            subresult = a[i].intersection(b[i])
-            if subresult == []:
-                return None
-            else:
-                result.append(subresult)
-        return result
-
     @staticmethod
     def _subtract_two_1d_boxes(a, b):
         """Given 2 intervals a = [a0,a1] and b=[b0,b1], return the part of a that does not intersect with b."""
@@ -850,83 +799,3 @@ class Box(BaseModel):
                 return []
 
         return [lhs, rhs]
-
-    @staticmethod
-    def __intersect_two_boxes(a: "Box", b: "Box"):
-        # FIXME not sure how this is different than Box.intersect()
-        a_params = list(a.bounds.keys())
-        b_params = list(b.bounds.keys())
-
-        beta_0_a = a.bounds[a_params[0]]
-        beta_1_a = a.bounds[a_params[1]]
-        beta_0_b = b.bounds[b_params[0]]
-        beta_1_b = b.bounds[b_params[1]]
-
-        beta_0 = beta_0_a.intersection(beta_0_b)
-        if len(beta_0) < 1:
-            return None
-        beta_1 = beta_1_a.intersection(beta_1_b)
-        if len(beta_1) < 1:
-            return None
-
-        return Box(
-            bounds={
-                ModelParameter(
-                    name=a_params[0], lb=beta_0[0], ub=beta_0[1]
-                ): Interval(lb=beta_0[0], ub=beta_0[1]),
-                ModelParameter(
-                    name=a_params[1], lb=beta_1[0], ub=beta_1[1]
-                ): Interval(lb=beta_1[0], ub=beta_1[1]),
-            }
-        )
-
-    ### Can remove and replace this with Box.symm_diff, which works for any number of dimensions.  TODO write a corresponding parameter space symmetric difference and use case.
-    def _symmetric_difference_two_boxes(self, b: "Box") -> List["Box"]:
-        result: List["Box"] = []
-        # if the same box then no symmetric difference
-        if self == b:
-            return result
-
-        ## no intersection so they are disjoint - return both original boxes
-        if Box.__intersect_two_boxes(self, b) == None:
-            return [self, b]
-
-        # There must be some symmetric difference below here
-        a_params = list(self.bounds.keys())
-        b_params = list(b.bounds.keys())
-
-        beta_0_a = self.bounds[a_params[0]]
-        beta_1_a = self.bounds[a_params[1]]
-        beta_0_b = b.bounds[b_params[0]]
-        beta_1_b = b.bounds[b_params[1]]
-
-        # TODO assumes 2 dimensions and aligned parameter names
-        def make_box_2d(p_bounds):
-            b0_bounds = p_bounds[0]
-            b1_bounds = p_bounds[1]
-            b = Box(
-                bounds={
-                    ModelParameter(
-                        name=a_params[0], lb=b0_bounds.lb, ub=b0_bounds.ub
-                    ): Interval(lb=b0_bounds.lb, ub=b0_bounds.ub),
-                    ModelParameter(
-                        name=a_params[1], lb=b1_bounds.lb, ub=b1_bounds.ub
-                    ): Interval(lb=b1_bounds.lb, ub=b1_bounds.ub),
-                }
-            )
-            return b
-
-        xbounds = Box._subtract_two_1d_intervals(beta_0_a, beta_0_b)
-        if xbounds != None:
-            result.append(make_box_2d([xbounds, beta_1_a]))
-        xbounds = Box._subtract_two_1d_intervals(beta_0_b, beta_0_a)
-        if xbounds != None:
-            result.append(make_box_2d([xbounds, beta_1_b]))
-        ybounds = Box._subtract_two_1d_intervals(beta_1_a, beta_1_b)
-        if ybounds != None:
-            result.append(make_box_2d([beta_0_a, ybounds]))
-        ybounds = Box._subtract_two_1d_intervals(beta_1_b, beta_1_a)
-        if ybounds != None:
-            result.append(make_box_2d([beta_0_b, ybounds]))
-
-        return result

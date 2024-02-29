@@ -121,24 +121,6 @@ class ParameterSpace(BaseModel):
         return ParameterSpace()
 
     @staticmethod
-    def _intersect_boxes(b1s, b2s):
-        results_list = []
-        for box1 in b1s:
-            for box2 in b2s:
-                subresult = Box.__intersect_two_boxes(box1, box2)
-                if subresult != None:
-                    results_list.append(subresult)
-        return results_list
-
-    # STUB intersect parameters spaces
-    @staticmethod
-    def intersect(ps1, ps2):
-        return ParameterSpace(
-            ParameterSpace._intersect_boxes(ps1.true_boxes, ps2.true_boxes),
-            ParameterSpace._intersect_boxes(ps1.false_boxes, ps2.false_boxes),
-        )
-
-    @staticmethod
     def symmetric_difference(ps1: "ParameterSpace", ps2: "ParameterSpace"):
         return ParameterSpace(
             ParameterSpace._symmetric_difference(
@@ -287,15 +269,25 @@ class ParameterSpace(BaseModel):
 
     def intersection(self, ps2: "ParameterSpace") -> "ParameterSpace":
         """
-        Intersect the true boxes of two parameter spaces.
+        Intersect two parameter spaces.
         """
-        result = []
+        result = ParameterSpace(num_dimensions=self.num_dimensions)
+        true_result = []
+        false_result = []
         ps1_boxes = self.true_boxes
         ps2_boxes = ps2.true_boxes
         for i1, b1 in enumerate(ps1_boxes):
             for i2, b2 in enumerate(ps2_boxes):
                 if b1.intersects(b2):
-                    result.append(b1.intersection(b2))
+                    true_result.append(b1.intersection(b2))
+        result.true_boxes = true_result
+        ps1_boxes = self.false_boxes
+        ps2_boxes = ps2.false_boxes
+        for i1, b1 in enumerate(ps1_boxes):
+            for i2, b2 in enumerate(ps2_boxes):
+                if b1.intersects(b2):
+                    false_result.append(b1.intersection(b2))
+        result.false_boxes = false_result
         return result
 
     def _reassign_point_labels(self) -> None:
