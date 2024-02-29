@@ -1,0 +1,152 @@
+{
+    "constraints": [],
+    "parameters": [
+        {
+            "name": "beta_Vax",
+            "interval": {
+                "lb": 0.833,
+                "ub": 0.833,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "epsilon_Vax",
+            "interval": {
+                "lb": 0.3333333333333333,
+                "ub": 0.3333333333333333,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "gamma_Vax",
+            "interval": {
+                "lb": 0.125,
+                "ub": 0.125,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "alpha_Vax",
+            "interval": {
+                "lb": 0.006,
+                "ub": 0.006,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "lambda_Vax",
+            "interval": {
+                "lb": 120480.0,
+                "ub": 120480.0,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "mu_Vax",
+            "interval": {
+                "lb": 0.012048,
+                "ub": 0.012048,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "City_Vax",
+            "interval": {
+                "lb": 1.0,
+                "ub": 1.0,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "beta_UnVax",
+            "interval": {
+                "lb": 0.833,
+                "ub": 0.833,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "epsilon_UnVax",
+            "interval": {
+                "lb": 0.3333333333333333,
+                "ub": 0.3333333333333333,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "gamma_UnVax",
+            "interval": {
+                "lb": 0.125,
+                "ub": 0.125,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "alpha_UnVax",
+            "interval": {
+                "lb": 0.006,
+                "ub": 0.006,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "lambda_UnVax",
+            "interval": {
+                "lb": 120480.0,
+                "ub": 120480.0,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "mu_UnVax",
+            "interval": {
+                "lb": 0.012048,
+                "ub": 0.012048,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "City_UnVax",
+            "interval": {
+                "lb": 1.0,
+                "ub": 1.0,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "vax",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.01,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10,
+                        20,
+                        30,
+                        40,
+                        50,
+                        60,
+                        70,
+                        80,
+                        90,
+                        100
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "use_compartmental_constraints": true,
+        "normalization_constant": 200,
+        "tolerance": 0.1
+    }
+}

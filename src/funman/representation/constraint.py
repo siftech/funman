@@ -126,9 +126,7 @@ class LinearConstraint(TimedConstraint):
             and schedule.time_at_step(timestep + 1) in schedule.timepoints
         ) and (
             (self.timepoints is None)
-            or self.timepoints.contains_value(
-                schedule.time_at_step(timestep + 1)
-            )
+            or self.timepoints.contains_value(schedule.time_at_step(timestep))
         ):
             return timestep + 1
         elif (
@@ -137,9 +135,7 @@ class LinearConstraint(TimedConstraint):
             and schedule.time_at_step(timestep - 1) in schedule.timepoints
         ) and (
             (self.timepoints is None)
-            or self.timepoints.contains_value(
-                schedule.time_at_step(timestep - 1)
-            )
+            or self.timepoints.contains_value(schedule.time_at_step(timestep))
         ):
             return timestep - 1
         else:
