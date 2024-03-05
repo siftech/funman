@@ -184,7 +184,7 @@ class DRealConverter(Converter, DagWalker):
         return str_formula
 
     def create_dreal_symbols(self, rewritten_formula: str) -> List[Symbol]:
-        patterns = ["(disj[0-9]+)", "(conj[0-9]+)", "neg"]
+        patterns = ["(disj[0-9]+)", "(conj[0-9]+)", "neg", "ITE[0-9]*"]
         symbol_names = [
             q for p in patterns for q in list(re.findall(p, rewritten_formula))
         ]
@@ -219,6 +219,22 @@ class DRealConverter(Converter, DagWalker):
 
     def walk_implies(self, formula, args, **kwargs):
         res = dreal.Implies(args[0], args[1])
+        # self._check_term_result(res)
+        return res
+
+    def walk_ite(self, formula, args, **kwargs):
+        converted_args = []
+        for arg in args:
+            if isinstance(arg, Fraction):
+                converted_args.append(float(arg))
+            elif isinstance(arg, dreal.Variable):
+                converted_args.append(dreal.Expression(arg))
+            else:
+                converted_args.append(arg)
+
+        res = dreal.if_then_else(
+            converted_args[0], converted_args[1], converted_args[2]
+        )
         # self._check_term_result(res)
         return res
 

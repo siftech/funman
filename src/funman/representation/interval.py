@@ -349,6 +349,11 @@ class Interval(BaseModel):
 
     @model_validator(mode="after")
     def check_interval(self) -> str:
+        if self.lb is None:
+            self.lb = NEG_INFINITY
+        if self.ub is None:
+            self.ub = POS_INFINITY
+
         # Assume that intervals where lb == ub imply closed_upper_bound
         if self.lb == self.ub and not self.closed_upper_bound:
             l.warning(

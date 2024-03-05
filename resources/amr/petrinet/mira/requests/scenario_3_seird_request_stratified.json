@@ -4,32 +4,32 @@
         {
             "name": "beta_Vax",
             "interval": {
-                "lb": 0.833,
-                "ub": 0.833,
+                "lb": 0.015,
+                "ub": 0.015,
                 "closed_upper_bound": true
             }
         },
         {
             "name": "epsilon_Vax",
             "interval": {
-                "lb": 0.3333333333333333,
-                "ub": 0.3333333333333333,
+                "lb": 0.12,
+                "ub": 0.12,
                 "closed_upper_bound": true
             }
         },
         {
             "name": "gamma_Vax",
             "interval": {
-                "lb": 0.125,
-                "ub": 0.125,
+                "lb": 0.01,
+                "ub": 0.01,
                 "closed_upper_bound": true
             }
         },
         {
             "name": "alpha_Vax",
             "interval": {
-                "lb": 0.006,
-                "ub": 0.006,
+                "lb": 0.1,
+                "ub": 0.1,
                 "closed_upper_bound": true
             }
         },
@@ -44,8 +44,8 @@
         {
             "name": "mu_Vax",
             "interval": {
-                "lb": 0.012048,
-                "ub": 0.012048,
+                "lb": 0.7,
+                "ub": 0.7,
                 "closed_upper_bound": true
             }
         },
@@ -68,24 +68,24 @@
         {
             "name": "epsilon_UnVax",
             "interval": {
-                "lb": 0.3333333333333333,
-                "ub": 0.3333333333333333,
+                "lb": 0.01,
+                "ub": 0.01,
                 "closed_upper_bound": true
             }
         },
         {
             "name": "gamma_UnVax",
             "interval": {
-                "lb": 0.125,
-                "ub": 0.125,
+                "lb": 0.02,
+                "ub": 0.02,
                 "closed_upper_bound": true
             }
         },
         {
             "name": "alpha_UnVax",
             "interval": {
-                "lb": 0.006,
-                "ub": 0.006,
+                "lb": 0.02,
+                "ub": 0.02,
                 "closed_upper_bound": true
             }
         },
@@ -100,8 +100,8 @@
         {
             "name": "mu_UnVax",
             "interval": {
-                "lb": 0.012048,
-                "ub": 0.012048,
+                "lb": 0.9,
+                "ub": 0.9,
                 "closed_upper_bound": true
             }
         },
@@ -116,8 +116,24 @@
         {
             "name": "vax",
             "interval": {
-                "lb": 0.01,
-                "ub": 0.01,
+                "lb": 0.1,
+                "ub": 0.1,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "t_mask",
+            "interval": {
+                "lb": 40.0,
+                "ub": 40.0,
+                "closed_upper_bound": true
+            }
+        },
+        {
+            "name": "mask",
+            "interval": {
+                "lb": 0.5,
+                "ub": 0.5,
                 "closed_upper_bound": true
             }
         }

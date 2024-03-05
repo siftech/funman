@@ -318,7 +318,7 @@
             "rates": [
                 {
                     "target": "t1_Vax",
-                    "expression": "Infected_Vax*Susceptible_Vax*beta_Vax/Total_population",
+                    "expression": "Infected_Vax*Susceptible_Vax*beta_Vax*Piecewise((1, t < t_mask), (0.1, True))/Total_population",
                     "expression_mathml": "<apply><divide/><apply><times/><ci>Infected_Vax</ci><ci>Susceptible_Vax</ci><ci>beta</ci></apply><ci>Total_population</ci></apply>"
                 },
                 {
@@ -526,6 +526,14 @@
                 {
                     "id": "vax",
                     "value": 0.1
+                },
+                {
+                    "id": "t_mask",
+                    "value": 20.0
+                },
+                {
+                    "id": "mask",
+                    "value": 0.5
                 }
             ],
             "observables": [],
