@@ -158,6 +158,7 @@ class Runner:
         parameters_to_plot: Optional[List[str]] = None,
         point_plot_config: Dict = {},
         num_points: Optional[int] = None,
+        dump_results: bool = True,
     ) -> FunmanResults:
         """
         Run a FUNMAN scenario.
@@ -194,6 +195,7 @@ class Runner:
             parameters_to_plot=parameters_to_plot,
             point_plot_config=point_plot_config,
             num_points=num_points,
+            dump_results=dump_results,
         )
         return results
         # ParameterSpacePlotter(
@@ -211,6 +213,7 @@ class Runner:
         parameters_to_plot=None,
         point_plot_config={},
         num_points=None,
+        dump_results=True,
     ):
         if not os.path.exists(case_out_dir):
             os.mkdir(case_out_dir)
@@ -229,6 +232,7 @@ class Runner:
             parameters_to_plot=parameters_to_plot,
             point_plot_config=point_plot_config,
             num_points=num_points,
+            dump_results=dump_results,
         )
 
         self._worker.stop()
@@ -245,7 +249,7 @@ class Runner:
                 return m
             except Exception as e:
                 pass
-        raise Exception(f"Could not determine the Model type of {model_file}")
+        raise Exception(f"Could not determine the Model type of f{model_file}")
 
     def run_instance(
         self,
@@ -255,6 +259,7 @@ class Runner:
         parameters_to_plot=None,
         point_plot_config={},
         num_points=None,
+        dump_results=False,
     ):
         killer = GracefulKiller()
         (model_file, request_file, description) = case
@@ -279,7 +284,7 @@ class Runner:
         outfile = f"{out_dir}/{work_unit.id}.json"
         plotted = False
         while not killer.kill_now:
-            if self._worker.is_processing_id(work_unit.id):
+            if dump_results and self._worker.is_processing_id(work_unit.id):
                 l.info(f"Dumping results to {outfile}")
                 results = self._worker.get_results(work_unit.id)
                 with open(outfile, "w") as f:
@@ -379,6 +384,7 @@ class Runner:
                 results.parameter_space,
                 plot_points=False,
                 parameters=parameters_to_plot,
+                synthesized_parameters=parameters_to_plot,
             ).plot(show=True)
             plt.savefig(space_plot_filename)
         plt.close()
@@ -392,9 +398,7 @@ def get_args():
         help=f"model json file",
     )
     parser.add_argument(
-        "request",
-        type=str,
-        help=f"request json file",
+        "request", type=str, help=f"request json file", default={}, nargs="?"
     )
     parser.add_argument(
         "-o",

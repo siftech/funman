@@ -27,6 +27,7 @@ class ParameterSpacePlotter:
         plot_points=False,
         parameters=None,
         dpi=100,
+        synthesized_parameters=None,
     ):
         if isinstance(parameter_space, ParameterSpace):
             self.ps = parameter_space
@@ -44,6 +45,9 @@ class ParameterSpacePlotter:
             values = false_points[0].values
 
         self.parameters = [k for k in values if parameters and k in parameters]
+        self.synthesized_parameters = (
+            synthesized_parameters if synthesized_parameters else None
+        )
         self.dim = len(self.parameters)
         self.plot_points = plot_points
 
@@ -80,7 +84,7 @@ class ParameterSpacePlotter:
             dim_to_plot,
             squeeze=False,
             dpi=self.dpi,
-            figsize=(10, 10),
+            figsize=(20, 20),
         )
         self.fig = fig
         self.axs = axs
@@ -90,15 +94,16 @@ class ParameterSpacePlotter:
         MEDIUM_SIZE = 10
         BIGGER_SIZE = 12
 
-        plt.rc("font", size=SMALL_SIZE)  # controls default text sizes
+        # plt.rc("font", size=SMALL_SIZE)  # controls default text sizes
         plt.rc("axes", titlesize=SMALL_SIZE)  # fontsize of the axes title
         plt.rc("axes", labelsize=TINY_SIZE)  # fontsize of the x and y labels
         plt.rc("xtick", labelsize=TINY_SIZE)  # fontsize of the tick labels
         plt.rc("ytick", labelsize=TINY_SIZE)  # fontsize of the tick labels
-        plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
-        plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
+        # plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
+        # plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-        self.fig.tight_layout(pad=3.0)
+        # self.fig.tight_layout(pad=3.0)
+        self.fig.tight_layout(pad=2)
         self.data = [[None] * self.dim] * self.dim
 
         for i in range(self.dim):
@@ -187,6 +192,12 @@ class ParameterSpacePlotter:
                 if i_coord is None or j_coord is None:
                     continue
                 if j_coord > i_coord:
+                    continue
+
+                if self.synthesized_parameters and (
+                    self.parameters[i] not in self.synthesized_parameters
+                    or self.parameters[j] not in self.synthesized_parameters
+                ):
                     continue
 
                 x_limits = box.bounds[self.parameters[i]]

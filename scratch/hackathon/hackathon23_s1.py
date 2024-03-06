@@ -418,7 +418,7 @@ class TestUseCases(unittest.TestCase):
         query._formula = And(
             [
                 LT(Symbol(f"S_{steps}", REAL), Real(init_values["S"])),
-                GE(Symbol(f"R_{steps}", REAL), Real(init_values["R"]))
+                GE(Symbol(f"R_{steps}", REAL), Real(init_values["R"])),
                 # GT(
                 #     Symbol(f"R_{steps}", REAL), Real(5.0)
                 # ),  # R is near 10 at day 80

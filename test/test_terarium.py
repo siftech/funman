@@ -22,38 +22,56 @@ class TestTerarium(unittest.TestCase):
     def test_terarium(self):
         tests = TEST_JSON["tests"]
         for test in tests:
-            name = test["name"]
+            (
+                name,
+                model,
+                request,
+                expected_outcome,
+                regression,
+            ) = self.get_model_and_request(test)
 
-            # Read in the model dict
-            model = json.loads(
-                Path(f'{RESOURCES_PREFIX}/{test["model-path"]}').read_bytes()
-            )
+            if not regression:
+                continue
 
-            # Either read in the request json or default to an empty dict
-            if test["request-path"] is None:
-                request = {}
-            else:
-                request = json.loads(
-                    Path(
-                        f'{RESOURCES_PREFIX}/{test["request-path"]}'
-                    ).read_bytes()
-                )
+            print(f"Testing: {model} {request}")
 
             with self.subTest(name):
                 with TestClient(app) as client:
                     # run the defined test
-                    self.subtest_terarium(client, name, model, request)
+                    self.subtest_terarium(
+                        client, name, model, request, expected_outcome
+                    )
 
-    def subtest_terarium(self, client, name, model, request):
+    def get_model_and_request(self, test):
+        name = test["name"]
+
+        # Read in the model dict
+        model = json.loads(
+            Path(f'{RESOURCES_PREFIX}/{test["model-path"]}').read_bytes()
+        )
+
+        # Either read in the request json or default to an empty dict
+        if test["request-path"] is None:
+            request = {}
+        else:
+            request = json.loads(
+                Path(f'{RESOURCES_PREFIX}/{test["request-path"]}').read_bytes()
+            )
+
+        expected_outcome = test["expected-outcome"]
+        regression = test["regression"]
+        return name, model, request, expected_outcome, regression
+
+    def subtest_terarium(self, client, name, model, request, expected_outcome):
         results = self.post_query_and_wait_until_done(client, model, request)
         assert (
             "parameter_space" in results
         ), "Results does not contain a 'parameter_space' field"
         ps = results["parameter_space"]
         assert ps is not None, "ParameterSpace is None"
+
         assert (
-            len(ps.get("true_points", [])) > 0
-            or len(ps.get("true_boxes", [])) > 0
+            len(ps.get("true_boxes", [])) == expected_outcome["true-boxes"]
         ), f"Terarium Test '{name}' has neither true points nor true boxes"
 
     def POST(self, client: TestClient, url: str, json: dict, *, expect=200):
@@ -186,6 +204,58 @@ class TestTerarium(unittest.TestCase):
 
         assert progress > 0.999999, "Progress was not at 100%"
         return results
+
+    def test_stress_test(self):
+        # here is an example that starts to return 404s GET /api/queries/:id after successfully submitting through POST /api/queries
+        # Earlier the GET request was returning, albeit seemingly never finished. Roughly the steps:
+        # Submit this payload
+        # Query via the ID, couldn't get result, seems to be running forever
+        # Resubmit this payload
+        # Start to get 404s
+        with TestClient(app) as client:
+            test = TEST_JSON["tests"][1]
+            (
+                name,
+                model,
+                request,
+                expected_outcome,
+                regression,
+            ) = self.get_model_and_request(test)
+            uuid = self.post_query(client, model, request)
+            sleep(5)
+            response = client.get(f"/api/queries/{uuid}")
+
+            assert (
+                response.status_code == 200
+            ), f"Response code was not 200: {response.status_code}"
+
+            test1 = TEST_JSON["tests"][2]
+            (
+                name1,
+                model1,
+                request1,
+                expected_outcome,
+                regression,
+            ) = self.get_model_and_request(test1)
+
+            uuid1 = self.post_query(client, model1, request1)
+            sleep(5)
+            response1 = client.get(f"/api/queries/{uuid1}")
+
+            assert (
+                response1.status_code == 200
+            ), f"Response code was not 200: {response1.status_code}"
+
+            # # Get the results
+            # results = self.decode_response_to_dict(response)
+            # assert (
+            #     results.get("error", False) is False
+            # ), f"Request {uuid} errored during processing"
+            # # # Return if processing is done
+            # # if results.get("done", False):
+            # #     return results
+
+            # results = self.get_status(client, uuid)
 
 
 if __name__ == "__main__":

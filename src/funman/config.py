@@ -2,6 +2,7 @@
 This module defines the Funman class, the primary entry point for FUNMAN
 analysis.
 """
+
 import logging
 import os
 from typing import Optional, Union
@@ -86,6 +87,8 @@ class FUNMANConfig(BaseModel):
     corner_points: bool = False
     """ Verbosity (INFO, DEBUG, WARN, ERROR)"""
     verbosity: int = logging.INFO
+    """ Use transition symbols in encoding transition functions """
+    use_transition_symbols: bool = False
 
     @field_validator("solver")
     @classmethod

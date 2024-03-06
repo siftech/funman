@@ -303,10 +303,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 t_rates = [
                     (
                         to_sympy(r.expression, self._symbols())
-                        if not any(
-                            p == r.expression for p in self._parameter_names()
-                        )
-                        else r.expression
+                        # if not any(
+                        #     p == r.expression for p in self._parameter_names()
+                        # )
+                        # else r.expression
                     )
                     for r in self.petrinet.semantics.ode.rates
                     if r.target == transition.id

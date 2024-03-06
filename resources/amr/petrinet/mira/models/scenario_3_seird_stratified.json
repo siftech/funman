@@ -1,0 +1,564 @@
+{
+    "header": {
+        "name": "EPI Scenario 3",
+        "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "EPI Scenario 3",
+        "model_version": "0.1"
+    },
+    "properties": {},
+    "model": {
+        "states": [
+            {
+                "id": "Susceptible_Vax",
+                "name": "Susceptible_Vax",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Infected_Vax",
+                "name": "Infected_Vax",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Exposed_Vax",
+                "name": "Exposed_Vax",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "00000154"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Recovered_Vax",
+                "name": "Recovered_Vax",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Deceased_Vax",
+                "name": "Deceased_Vax",
+                "grounding": {
+                    "identifiers": {
+                        "ncit": "C28554"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Total_population",
+                "name": "Total_population",
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Susceptible_UnVax",
+                "name": "Susceptible_UnVax",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Infected_UnVax",
+                "name": "Infected_UnVax",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Exposed_UnVax",
+                "name": "Exposed_UnVax",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "00000154"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Recovered_UnVax",
+                "name": "Recovered_UnVax",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "Deceased_UnVax",
+                "name": "Deceased_UnVax",
+                "grounding": {
+                    "identifiers": {
+                        "ncit": "C28554"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "id": "t1_Vax",
+                "input": [
+                    "Infected_Vax",
+                    "Susceptible_Vax",
+                    "Total_population"
+                ],
+                "output": [
+                    "Infected_Vax",
+                    "Exposed_Vax",
+                    "Total_population"
+                ],
+                "properties": {
+                    "name": "t1_Vax"
+                }
+            },
+            {
+                "id": "t2_Vax",
+                "input": [
+                    "Exposed_Vax"
+                ],
+                "output": [
+                    "Infected_Vax"
+                ],
+                "properties": {
+                    "name": "t2_Vax"
+                }
+            },
+            {
+                "id": "t3_Vax",
+                "input": [
+                    "Infected_Vax"
+                ],
+                "output": [
+                    "Recovered_Vax"
+                ],
+                "properties": {
+                    "name": "t3_Vax"
+                }
+            },
+            {
+                "id": "t4_Vax",
+                "input": [
+                    "Infected_Vax"
+                ],
+                "output": [
+                    "Deceased_Vax"
+                ],
+                "properties": {
+                    "name": "t4_Vax"
+                }
+            },
+            {
+                "id": "t1_UnVax",
+                "input": [
+                    "Infected_UnVax",
+                    "Susceptible_UnVax",
+                    "Total_population"
+                ],
+                "output": [
+                    "Infected_UnVax",
+                    "Exposed_UnVax",
+                    "Total_population"
+                ],
+                "properties": {
+                    "name": "t1_UnVax"
+                }
+            },
+            {
+                "id": "t2_UnVax",
+                "input": [
+                    "Exposed_UnVax"
+                ],
+                "output": [
+                    "Infected_UnVax"
+                ],
+                "properties": {
+                    "name": "t2_UnVax"
+                }
+            },
+            {
+                "id": "t3_UnVax",
+                "input": [
+                    "Infected_UnVax"
+                ],
+                "output": [
+                    "Recovered_UnVax"
+                ],
+                "properties": {
+                    "name": "t3_UnVax"
+                }
+            },
+            {
+                "id": "t4_UnVax",
+                "input": [
+                    "Infected_UnVax"
+                ],
+                "output": [
+                    "Deceased_UnVax"
+                ],
+                "properties": {
+                    "name": "t4_UnVax"
+                }
+            },
+            {
+                "id": "tSusceptible_UnVax_to_Vax",
+                "input": [
+                    "Susceptible_UnVax"
+                ],
+                "output": [
+                    "Susceptible_Vax"
+                ],
+                "properties": {
+                    "name": "tSusceptible_UnVax_to_Vax"
+                }
+            },
+            {
+                "id": "tInfected_UnVax_to_Vax",
+                "input": [
+                    "Infected_UnVax"
+                ],
+                "output": [
+                    "Infected_Vax"
+                ],
+                "properties": {
+                    "name": "tInfected_UnVax_to_Vax"
+                }
+            },
+            {
+                "id": "tExposed_UnVax_to_Vax",
+                "input": [
+                    "Exposed_UnVax"
+                ],
+                "output": [
+                    "Exposed_Vax"
+                ],
+                "properties": {
+                    "name": "tExposed_UnVax_to_Vax"
+                }
+            },
+            {
+                "id": "tRecovered_UnVax_to_Vax",
+                "input": [
+                    "Recovered_UnVax"
+                ],
+                "output": [
+                    "Recovered_Vax"
+                ],
+                "properties": {
+                    "name": "tRecovered_UnVax_to_Vax"
+                }
+            }
+        ]
+    },
+    "semantics": {
+        "ode": {
+            "rates": [
+                {
+                    "target": "t1_Vax",
+                    "expression": "Infected_Vax*Susceptible_Vax*beta_Vax*Piecewise((1, t < t_mask), (0.1, True))/Total_population",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>Infected_Vax</ci><ci>Susceptible_Vax</ci><ci>beta</ci></apply><ci>Total_population</ci></apply>"
+                },
+                {
+                    "target": "t2_Vax",
+                    "expression": "Exposed_Vax*epsilon_Vax",
+                    "expression_mathml": "<apply><times/><ci>Exposed_Vax</ci><ci>epsilon_Vax</ci></apply>"
+                },
+                {
+                    "target": "t3_Vax",
+                    "expression": "Infected_Vax*gamma_Vax",
+                    "expression_mathml": "<apply><times/><ci>Infected_Vax</ci><ci>gamma_Vax</ci></apply>"
+                },
+                {
+                    "target": "t4_Vax",
+                    "expression": "Infected_Vax*alpha_Vax",
+                    "expression_mathml": "<apply><times/><ci>Infected_Vax</ci><ci>alpha_Vax</ci></apply>"
+                },
+                {
+                    "target": "t1_UnVax",
+                    "expression": "Infected_UnVax*Susceptible_UnVax*beta_UnVax/Total_population",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>Infected_UnVax</ci><ci>Susceptible_UnVax</ci><ci>beta</ci></apply><ci>Total_population</ci></apply>"
+                },
+                {
+                    "target": "t2_UnVax",
+                    "expression": "Exposed_UnVax*epsilon_UnVax",
+                    "expression_mathml": "<apply><times/><ci>Exposed_UnVax</ci><ci>epsilon_UnVax</ci></apply>"
+                },
+                {
+                    "target": "t3_UnVax",
+                    "expression": "Infected_UnVax*gamma_UnVax",
+                    "expression_mathml": "<apply><times/><ci>Infected_UnVax</ci><ci>gamma_UnVax</ci></apply>"
+                },
+                {
+                    "target": "t4_UnVax",
+                    "expression": "Infected_UnVax*alpha_UnVax",
+                    "expression_mathml": "<apply><times/><ci>Infected_UnVax</ci><ci>alpha_UnVax</ci></apply>"
+                },
+                {
+                    "target": "tSusceptible_UnVax_to_Vax",
+                    "expression": "Susceptible_UnVax*vax",
+                    "expression_mathml": "<apply><times/><ci>Susceptible_UnVax</ci><ci>vax</ci></apply>"
+                },
+                {
+                    "target": "tInfected_UnVax_to_Vax",
+                    "expression": "Infected_UnVax*vax",
+                    "expression_mathml": "<apply><times/><ci>Infected<_UnVax/ci><ci>vax</ci></apply>"
+                },
+                {
+                    "target": "tExposed_UnVax_to_Vax",
+                    "expression": "Exposed_UnVax*vax",
+                    "expression_mathml": "<apply><times/><ci>Exposed_UnVax</ci><ci>vax</ci></apply>"
+                },
+                {
+                    "target": "tRecovered_UnVax_to_Vax",
+                    "expression": "Recovered_UnVax*vax",
+                    "expression_mathml": "<apply><times/><ci>Recovered_UnVax</ci><ci>vax</ci></apply>"
+                }
+            ],
+            "initials": [
+                {
+                    "target": "Susceptible_Vax",
+                    "expression": "0.0000000",
+                    "expression_mathml": "<cn>14561489.0</cn>"
+                },
+                {
+                    "target": "Infected_Vax",
+                    "expression": "1.00000000",
+                    "expression_mathml": "<cn>2123452.0</cn>"
+                },
+                {
+                    "target": "Exposed_Vax",
+                    "expression": "0.000000000",
+                    "expression_mathml": "<cn>530863.0</cn>"
+                },
+                {
+                    "target": "Recovered_Vax",
+                    "expression": "0.00000000",
+                    "expression_mathml": "<cn>2069902.0</cn>"
+                },
+                {
+                    "target": "Total_population",
+                    "expression": "100.000000000000",
+                    "expression_mathml": "<cn>744.0</cn>"
+                },
+                {
+                    "target": "Deceased_Vax",
+                    "expression": "0.0000000000",
+                    "expression_mathml": "<cn>53550.0</cn>"
+                },
+                {
+                    "target": "Susceptible_UnVax",
+                    "expression": "98.0000000",
+                    "expression_mathml": "<cn>14561489.0</cn>"
+                },
+                {
+                    "target": "Infected_UnVax",
+                    "expression": "1.00000000",
+                    "expression_mathml": "<cn>2123452.0</cn>"
+                },
+                {
+                    "target": "Exposed_UnVax",
+                    "expression": "0.000000000",
+                    "expression_mathml": "<cn>530863.0</cn>"
+                },
+                {
+                    "target": "Recovered_UnVax",
+                    "expression": "0.00000000",
+                    "expression_mathml": "<cn>2069902.0</cn>"
+                },
+                {
+                    "target": "Deceased_UnVax",
+                    "expression": "0.0000000000",
+                    "expression_mathml": "<cn>53550.0</cn>"
+                }
+            ],
+            "parameters": [
+                {
+                    "id": "beta_Vax",
+                    "value": 0.833,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "epsilon_Vax",
+                    "value": 0.3333333333333333,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "gamma_Vax",
+                    "value": 0.125,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "alpha_Vax",
+                    "value": 0.006,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "lambda_Vax",
+                    "value": 120480.0
+                },
+                {
+                    "id": "mu_Vax",
+                    "value": 0.012048
+                },
+                {
+                    "id": "City_Vax",
+                    "value": 1.0
+                },
+                {
+                    "id": "beta_UnVax",
+                    "value": 0.833,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "epsilon_UnVax",
+                    "value": 0.3333333333333333,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "gamma_UnVax",
+                    "value": 0.125,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "alpha_UnVax",
+                    "value": 0.006,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "lambda_UnVax",
+                    "value": 120480.0
+                },
+                {
+                    "id": "mu_UnVax",
+                    "value": 0.012048
+                },
+                {
+                    "id": "City_UnVax",
+                    "value": 1.0
+                },
+                {
+                    "id": "vax",
+                    "value": 0.1
+                },
+                {
+                    "id": "t_mask",
+                    "value": 20.0
+                },
+                {
+                    "id": "mask",
+                    "value": 0.5
+                }
+            ],
+            "observables": [],
+            "time": {
+                "id": "t",
+                "units": {
+                    "expression": "day",
+                    "expression_mathml": "<ci>day</ci>"
+                }
+            }
+        }
+    },
+    "metadata": {
+        "annotations": {
+            "license": null,
+            "authors": [],
+            "references": [],
+            "time_scale": null,
+            "time_start": null,
+            "time_end": null,
+            "locations": [],
+            "pathogens": [],
+            "diseases": [],
+            "hosts": [],
+            "model_types": []
+        }
+    }
+}

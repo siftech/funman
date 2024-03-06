@@ -2,6 +2,7 @@
 This module encodes bilayer models into a SMTLib formula.  
 
 """
+
 import logging
 from functools import reduce
 from typing import Dict, Set, Tuple
@@ -219,7 +220,7 @@ class BilayerEncoder(Encoder):
                         }
                     )
                 parameter_constraints = self.box_to_smt(
-                    parameter_box, closed_upper_bound=True
+                    parameter_box  # , closed_upper_bound=True
                 )
             else:
                 parameter_constraints = TRUE()

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import json
-import sys
+import logging
 from pathlib import Path
 
 import requests
+
+l = logging.getLogger(__name__)
 
 QUERIES_ENDPOINT = "/api/queries"
 
@@ -13,7 +15,7 @@ def post_query(
     url: str, model_path: str, request_path: str, timeout: float = None
 ):
     if request_path is None:
-        print("Falling back to default request of {}", file=sys.stderr)
+        l.info("Falling back to default request of {}")
         request = {}
         payload = [f'"model": <Contents of {model_path}>', '"request": {}']
     else:
@@ -22,10 +24,10 @@ def post_query(
             f'"model": <Contents of {model_path}>',
             f'"request": <Contents of {request_path}>',
         ]
-    print("{", file=sys.stderr)
+    l.error("{")
     for p in payload:
-        print(f"    {p}", file=sys.stderr)
-    print("}", file=sys.stderr)
+        l.error(f"    {p}")
+    l.error("}")
 
     model = read_to_dict(model_path)
     endpoint = f"{url.rstrip('/')}{QUERIES_ENDPOINT}"
@@ -58,5 +60,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     results = post_query(args.url, args.model, args.request)
-    print(f"Query received work id: {results['id']}", file=sys.stderr)
-    print(results["id"], file=sys.stdout)
+    l.error(f"Query received work id: {results['id']}")
+    l.info(results["id"])

@@ -140,13 +140,17 @@ class PetrinetEncoder(Encoder):
             }
 
         # for each var, next state is the net flow for the var: sum(inflow) - sum(outflow)
-        net_flows = []
+        # Transition id -> State -> net flow
+        net_flows = {}
+        # transition_values = {}
+        # State -> [Transition id]
+        state_var_flows = {}
         for var in state_vars:
-            state_var_flows = []
+            state_var_id = scenario.model._state_var_id(var)
+            state_var_flows[state_var_id] = []
             for transition in transitions:
-                state_var_id = scenario.model._state_var_id(var)
-
                 transition_id = scenario.model._transition_id(transition)
+
                 outflow = scenario.model._num_flow_from_transition_to_state(
                     state_var_id, transition_id
                 )
@@ -156,23 +160,96 @@ class PetrinetEncoder(Encoder):
                 net_flow = outflow - inflow
 
                 if net_flow != 0:
-                    state_var_flows.append(
-                        [
-                            Times(Real(net_flow) * t)
-                            for t in transition_terms[transition_id]
-                        ]
+                    tnf = net_flows.get(transition_id, {})
+                    tnf[state_var_id] = net_flow
+                    net_flows[transition_id] = tnf
+                    # tv = .get(transition_id, {})
+                    # transition_values[transition_id] = [
+                    #     Times(Real(net_flow) * t)
+                    #     for t in transition_terms[transition_id]
+                    # ]
+                    # transition_values[transition_id] = tv
+                    # transition_values[transition_id] = [
+                    #     Times(Real(net_flow) * t)
+                    #     for t in transition_terms[transition_id]
+                    # ]
+                    state_var_flows[state_var_id].append(transition_id)
+
+        # Encode a timed symbol for the transition value
+        # tr_k = flow_k
+        # transition_values_encoded = {
+        #     transition_id: Or(
+        #         [
+        #             Equals(
+        #                 self._encode_state_var(transition_id, time=step),
+        #                 rule,
+        #             )
+        #             for rule in flow
+        #         ]
+        #     ).simplify()
+        #     if self.config.use_transition_symbols else
+        #     Or(flow).simplify()
+        #     for transition_id, flow in transition_values.items()
+        # }
+
+        # Simplify transition_values
+        if self.config.substitute_subformulas:
+            for (
+                transition_id,
+                possible_transitions,
+            ) in transition_terms.items():
+                possible_transitions = [
+                    FUNMANSimplifier.sympy_simplify(
+                        # flows.substitute(substitutions),
+                        to_sympy(
+                            transition.substitute(substitutions).simplify(),
+                            scenario.model._symbols(),
+                        ),
+                        parameters=scenario.model_parameters(),
+                        threshold=self.config.series_approximation_threshold,
+                        taylor_series_order=self.config.taylor_series_order,
                     )
-            if len(state_var_flows) > 0:
-                # FIXME: the below should involve computing update as the cross product of all transition_rate equations
+                    for transition in possible_transitions
+                ]
+
+                substitutions[
+                    self._encode_state_var(transition_id, time=step)
+                ] = transition_terms[transition_id][0]
+
+        # Compose transitions and previous state
+        var_updates = []
+        for var in state_vars:
+            state_var_id = scenario.model._state_var_id(var)
+            if len(state_var_flows[state_var_id]) > 0:
+                # FIXME: the below should involve computing update as the cross product of all transition_rate equations if there is more than one rate per transition
+                #  s + (tr_0 + tr_1 ...) * dt
                 flows = Plus(
-                    Times(
-                        Real(step_size),
-                        Plus(
-                            [s[0] for s in state_var_flows]
-                        ),  # FIXME see above
-                    ),  # .simplify()
                     current_state[state_var_id],
-                )  # .simplify()
+                    Times(
+                        Plus(
+                            [
+                                (
+                                    self._encode_state_var(
+                                        transition_id, time=step
+                                    )
+                                    if self.config.use_transition_symbols
+                                    else Times(
+                                        Real(
+                                            net_flows[transition_id][
+                                                state_var_id
+                                            ]
+                                        ),
+                                        transition_terms[transition_id][0],
+                                    )  # FIXME see above
+                                )
+                                for transition_id in state_var_flows[
+                                    state_var_id
+                                ]
+                            ]
+                        ),
+                        Real(step_size),
+                    ).simplify(),
+                )
                 if self.config.substitute_subformulas:
                     # flows = flows.substitute(substitutions)
                     flows = FUNMANSimplifier.sympy_simplify(
@@ -189,9 +266,22 @@ class PetrinetEncoder(Encoder):
                 flows = current_state[state_var_id]
                 # .substitute(substitutions)
 
-            net_flows.append(Equals(next_state[state_var_id], flows))
+            var_updates.append(Equals(next_state[state_var_id], flows))
             if self.config.substitute_subformulas:
                 substitutions[next_state[state_var_id]] = flows
+
+        if self.config.use_transition_symbols:
+            var_updates.append(
+                And(
+                    [
+                        Equals(
+                            self._encode_state_var(transition_id, time=step),
+                            rate[0],
+                        )
+                        for transition_id, rate in transition_terms.items()
+                    ]
+                )
+            )
 
         # If any variables depend upon time, then time updates need to be encoded.
         if time_var is not None:
@@ -204,12 +294,12 @@ class PetrinetEncoder(Encoder):
             # time_update = Equals(next_time_var, time_increment)
             time_update = Equals(next_time_var, next_time)
             if self.config.substitute_subformulas:
-                substitutions[next_time_var] = time_increment
+                substitutions[next_time_var] = next_time
         else:
             time_update = TRUE()
 
         return (
-            And(net_flows + [time_update]),
+            And(var_updates + [time_update]),
             substitutions,
         )
 

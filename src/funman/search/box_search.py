@@ -2,6 +2,7 @@
 This module defines the BoxSearch class and supporting classes.
 
 """
+
 import glob
 import logging
 import multiprocessing as mp
@@ -202,7 +203,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _initialize_boxes(self, expander_count, schedule: EncodingSchedule):
         # initial_box = self._initial_box()
         # if not self.add_unknown(initial_box):
-        #     l.exception(
+        #     l.error(
         #         f"Did not add an initial box (of width {initial_box.width()}), try reducing config.tolerance, currently {self.config.tolerance}"
         #     )
         initial_boxes = QueueSP()
@@ -219,7 +220,7 @@ class BoxSearchEpisode(SearchEpisode):
         for i in range(num_boxes):
             b = initial_boxes.get()
             if not self._add_unknown(b):
-                l.exception(
+                l.error(
                     f"Did not find add an initial box (box had width {b.normalized_width()}), try reducing config.tolerance, currently {self.config.tolerance}"
                 )
             # l.debug(f"Initial box: {b}")
@@ -245,7 +246,8 @@ class BoxSearchEpisode(SearchEpisode):
     def _add_unknown_box(self, box: Box) -> bool:
         if (
             box.width(
-                parameters=self.problem.model_parameters(), normalize=True
+                parameters=self.problem.synthesized_model_parameters(),
+                normalize=True,
             )
             > self.config.tolerance
         ):
@@ -826,13 +828,15 @@ class BoxSearch(Search):
             episode._add_false_point,
             my_solver,
             options,
-            _smtlib_save_fn=partial(
-                self.store_smtlib,
-                episode,
-                box,
-            )
-            if episode.config.save_smtlib
-            else None,
+            _smtlib_save_fn=(
+                partial(
+                    self.store_smtlib,
+                    episode,
+                    box,
+                )
+                if episode.config.save_smtlib
+                else None
+            ),
         )
 
         return box.false_points(step=box.timestep().lb), explanation
@@ -967,9 +971,11 @@ class BoxSearch(Search):
                 episode._add_true_point,
                 my_solver,
                 options,
-                _smtlib_save_fn=partial(self.store_smtlib, episode, box)
-                if episode.config.save_smtlib
-                else None,
+                _smtlib_save_fn=(
+                    partial(self.store_smtlib, episode, box)
+                    if episode.config.save_smtlib
+                    else None
+                ),
             )
             if len(box.true_points(step=box.timestep().lb)) == 0:
                 # Could not find a point at the current step, so there won't be any at subsequent steps

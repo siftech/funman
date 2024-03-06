@@ -73,7 +73,7 @@ class ParameterConstraint(Constraint):
         return not isinstance(self.parameter, StructureParameter)
 
     def relevant_at_time(self, time: int) -> bool:
-        return True  # time == 0
+        return time == 0
 
 
 class QueryConstraint(TimedConstraint):
@@ -103,8 +103,45 @@ class LinearConstraint(TimedConstraint):
     weights: Annotated[
         Optional[List[Union[int, float]]], Field(validate_default=True)
     ] = None
+    derivative: bool = False
 
     model_config = ConfigDict(extra="forbid")
+
+    def next_timestep(
+        self, timestep: "Timestep", schedule: "EncodingSchedule"
+    ) -> "Timestep":
+        """
+        Get a Timestep in the timepoints other than that is in timepoints
+
+        Parameters
+        ----------
+        timestep : Timestep
+            the reference Timestep
+        schedule : EncodingSchedule
+            the timepoints used for the encoding
+        """
+        if (
+            schedule.time_at_step(timestep) in schedule.timepoints
+            and timestep + 1 < len(schedule.timepoints)
+            and schedule.time_at_step(timestep + 1) in schedule.timepoints
+        ) and (
+            (self.timepoints is None)
+            or self.timepoints.contains_value(schedule.time_at_step(timestep))
+        ):
+            return timestep + 1
+        elif (
+            schedule.time_at_step(timestep) in schedule.timepoints
+            and timestep - 1 >= 0
+            and schedule.time_at_step(timestep - 1) in schedule.timepoints
+        ) and (
+            (self.timepoints is None)
+            or self.timepoints.contains_value(schedule.time_at_step(timestep))
+        ):
+            return timestep - 1
+        else:
+            raise Exception(
+                f"Cannot determine a suitable timepoint relative to step = {timestep} where the encoding schedule = {schedule} is defined and constraint timepoints ={self.timepoints} are defined"
+            )
 
     @field_validator("weights")
     @classmethod
@@ -117,6 +154,12 @@ class LinearConstraint(TimedConstraint):
 
         if weights is None:
             weights = [1.0] * len(info.data["variables"])
+        else:
+            vars = info.data["variables"]
+            assert len(weights) == len(
+                vars
+            ), f"Linear Constraint must have equal number of weights (found {len(weights)}) and variables (found {len(vars)})"
+
         return weights
 
     def __hash__(self) -> int:

@@ -1,24 +1,49 @@
 {
     "tests": [
         {
-            "name": "petrinet-sir",
-            "model-path": "amr/petrinet/terrarium-tests/sir.json",
-            "request-path": "amr/petrinet/terrarium-tests/sir_request.json"
+            "name": "sidarthe-bug",
+            "model-path": "amr/petrinet/terrarium-tests/sidarthe_bug_model.json",
+            "request-path": "amr/petrinet/terrarium-tests/sidarthe_bug_request.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": false
+        },
+        {
+            "name": "petrinet-stress-test",
+            "model-path": "amr/petrinet/terrarium-tests/stress-test-model.json",
+            "request-path": "amr/petrinet/terrarium-tests/stress-test-request.json",
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
         },
         {
             "name": "petrinet-query-default",
             "model-path": "amr/petrinet/mira/models/scenario1_a.json",
-            "request-path": null
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": true
         },
         {
             "name": "petrinet-query-with-basic-request",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
-            "request-path": "amr/petrinet/mira/requests/request2_b_default_wo_compartmental_constrs.json"
+            "request-path": "amr/petrinet/mira/requests/request2_b_default_wo_compartmental_constrs.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": true
         },
         {
             "name": "petrinet-query-parameter-synthesis",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
-            "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json"
+            "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json",
+            "expected-outcome": {
+                "true-boxes": 3
+            },
+            "regression": true
         }
     ]
 }

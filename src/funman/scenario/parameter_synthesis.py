@@ -1,6 +1,7 @@
 """
 This module defines the Parameter Synthesis scenario.
 """
+
 import threading
 from typing import Callable, List, Optional, Union
 

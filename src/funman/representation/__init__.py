@@ -1,6 +1,7 @@
 """
 Classes for representing analysis elements, such as parameter, intervals, boxes, and parmaeter spaces.
 """
+
 from typing import Union
 
 Timepoint = Union[int, float]

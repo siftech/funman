@@ -36,11 +36,27 @@ class Box(BaseModel):
     _points_at_step: Dict[Timestep, List[Point]] = {}
 
     @staticmethod
-    def from_point(point: Point) -> "Box":
+    def from_point(
+        point: Point, radius: float = None, radius_vars=None
+    ) -> "Box":
         box = Box()
-        box.bounds = {
-            p: Interval.from_value(v) for p, v in point.values.items()
-        }
+        if radius is not None and radius_vars is not None:
+            assert (
+                radius > 0
+            ), "Cannot create a bounding box around a point using a non-positive radius."
+            box.bounds = {
+                p: (
+                    Interval(lb=v - radius, ub=v + radius)
+                    if p in radius_vars
+                    else Interval.from_value(v)
+                )
+                for p, v in point.values.items()
+            }
+
+        else:
+            box.bounds = {
+                p: Interval.from_value(v) for p, v in point.values.items()
+            }
         box.points.append(point)
         box.schedule = point.schedule
         box.label = point.label
@@ -75,7 +91,11 @@ class Box(BaseModel):
         return expl
 
     def timestep(self) -> Interval:
-        return self.bounds["timestep"]
+        return (
+            self.bounds["timestep"]
+            if "timestep" in self.bounds
+            else Interval(lb=0, ub=0, closed_upper_bound=True)
+        )
 
     def __hash__(self):
         return int(sum([i.__hash__() for _, i in self.bounds.items()]))
@@ -461,7 +481,7 @@ class Box(BaseModel):
         Parameter
             parameter (dimension of box) where points are most distant from the center of the box.
         """
-        parameter_names = [p.name for p in parameters]
+        parameter_names = [p.name for p in parameters if p.is_synthesized()]
         group_centers = {
             p: [average([pt.values[p] for pt in grp]) for grp in points]
             for p in self.bounds
@@ -517,6 +537,7 @@ class Box(BaseModel):
                     self.bounds[parameter.name].width(normalize=normalize)
                 )
                 for parameter in parameters
+                if parameter.is_synthesized()
             }
         else:
             widths = {
@@ -726,10 +747,10 @@ class Box(BaseModel):
         }
 
         l.info(
-            f"Split({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])"
+            f"Split[{self.timestep()}]({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])"
         )
         l.info(
-            f"widths: {self.width():.5f} -> {b1.width():.5f} {b2.width():.5f} (raw), {self.normalized_width():.5f} -> {b1.normalized_width():.5f} {b2.normalized_width():.5f} (norm)"
+            f"widths: {self.width(parameters=parameters):.5f} -> {b1.width(parameters=parameters):.5f} {b2.width():.5f} (raw), {self.normalized_width(parameters=parameters):.5f} -> {b1.normalized_width(parameters=parameters):.5f} {b2.normalized_width(parameters=parameters):.5f} (norm)"
         )
         return [b2, b1]
 
