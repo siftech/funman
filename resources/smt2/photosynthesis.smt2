@@ -61,6 +61,7 @@
 (declare-fun q_s () Real)
 (declare-fun active_bgc () Real)
 (declare-fun beta_t () Real)
+(declare-fun x () Real)
 
 (assert (and 
 
