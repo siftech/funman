@@ -193,7 +193,7 @@ class Interval(BaseModel):
             )
         )
 
-    def intersection(self, b: "Interval") -> "Interval":
+    def intersection(self, b: "Interval") -> Optional["Interval"]:
         """
         Given an interval b with self = [a0,a1] and b=[b0,b1], check whether they intersect.  If they do, return interval with their intersection.
 
@@ -231,7 +231,7 @@ class Interval(BaseModel):
                 result.ub = float(minArray.ub)
                 return result
             else:  ## no intersection.
-                return []
+                return None
 
     def subtract(self, b: "Interval") -> "Interval":
         """

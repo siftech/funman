@@ -432,7 +432,7 @@ class Box(BaseModel):
             ]
         )
 
-    def intersection(self, other: "Box") -> "Box":
+    def intersection(self, other: "Box", param_list=None) -> Optional["Box"]:
         """
         Return the intersection of two boxes (which is also a box)
 
@@ -450,7 +450,8 @@ class Box(BaseModel):
         result_bounds = {}
         if self.label == other.label:
             for p, interval in self.bounds.items():
-                result_bounds[p] = interval.intersection(other.bounds[p])
+                if param_list is None or p in param_list:
+                    result_bounds[p] = interval.intersection(other.bounds[p])
             result.label = self.label
             result.bounds = result_bounds
         for (
@@ -459,8 +460,8 @@ class Box(BaseModel):
         ) in (
             result.bounds.items()
         ):  # If any intervals are empty, there is no intersection
-            if interval == []:
-                result.bounds = {}
+            if interval is None:
+                return None
         return (
             result  # FIXME should this also include points and unknown boxes?
         )
@@ -771,7 +772,7 @@ class Box(BaseModel):
             )
         ### Find intersection
         desired_vars_list = list(vars_b1)
-        intersection = b1.intersect(b2, param_list=desired_vars_list)
+        intersection = b1.intersection(b2, param_list=desired_vars_list)
         ### Calculate symmetric difference based on intersection
         if (
             intersection == None

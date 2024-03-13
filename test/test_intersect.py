@@ -68,7 +68,7 @@ class TestCompilation(unittest.TestCase):
             label="true",
         )
         result = box1.intersection(box2)
-        assert result.bounds == {}
+        assert result is None
 
     def test_box_intersection_nonidentical(self):  # Non-empty, non-identical
         box1 = Box(
