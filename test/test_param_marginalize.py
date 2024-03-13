@@ -60,7 +60,7 @@ def marginalize(b1, b2, var):
     # plt.legend(custom_lines, ['PS 1', 'PS 2'])
     # plt.show()
     ## Find the intersection (if it exists)
-    intersection_marginal = b1.intersect(b2, param_list=desired_vars_list)
+    intersection_marginal = b1.intersection(b2, param_list=desired_vars_list)
     ## Form versions of boxes minus the part that we're marginalizing: named box1_x_y and box2_x_y
     box1_x_y = b1.project(desired_vars_list)
     box2_x_y = b2.project(desired_vars_list)
