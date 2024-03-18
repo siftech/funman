@@ -38,7 +38,7 @@ class TimedConstraint(Constraint):
 
     def contains_time(self, time: Union[float, int]) -> bool:
         return (
-            self.timepoints.contains_value(time)
+            self.timepoints is None or self.timepoints.contains_value(time)
             if self.time_dependent()
             else True
         )
@@ -120,16 +120,16 @@ class LinearConstraint(TimedConstraint):
         schedule : EncodingSchedule
             the timepoints used for the encoding
         """
+        # if (
+        #     schedule.time_at_step(timestep) in schedule.timepoints
+        #     and timestep + 1 < len(schedule.timepoints)
+        #     and schedule.time_at_step(timestep + 1) in schedule.timepoints
+        # ) and (
+        #     (self.timepoints is None)
+        #     or self.timepoints.contains_value(schedule.time_at_step(timestep))
+        # ):
+        #     return timestep + 1
         if (
-            schedule.time_at_step(timestep) in schedule.timepoints
-            and timestep + 1 < len(schedule.timepoints)
-            and schedule.time_at_step(timestep + 1) in schedule.timepoints
-        ) and (
-            (self.timepoints is None)
-            or self.timepoints.contains_value(schedule.time_at_step(timestep))
-        ):
-            return timestep + 1
-        elif (
             schedule.time_at_step(timestep) in schedule.timepoints
             and timestep - 1 >= 0
             and schedule.time_at_step(timestep - 1) in schedule.timepoints
@@ -142,6 +142,13 @@ class LinearConstraint(TimedConstraint):
             raise Exception(
                 f"Cannot determine a suitable timepoint relative to step = {timestep} where the encoding schedule = {schedule} is defined and constraint timepoints ={self.timepoints} are defined"
             )
+
+
+    def time_dependent(self) -> bool:
+        return self.derivative or super().time_dependent()
+
+    def relevant_at_time(self, time: int) -> bool:
+        return (self.derivative and time > 0) or (not self.derivative and super().relevant_at_time(time))
 
     @field_validator("weights")
     @classmethod
