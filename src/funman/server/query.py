@@ -142,6 +142,7 @@ class FunmanWorkUnit(BaseModel):
             not hasattr(self.request, "parameters")
             or self.request.parameters is None
             or all(p.label == LABEL_ANY for p in self.request.parameters)
+            or all(p.width() == 0.0 for p in self.request.parameters)
         ):
             return ConsistencyScenario(
                 model=self.model,
