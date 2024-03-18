@@ -50,20 +50,20 @@ RUN pip install --no-cache-dir build
 RUN pip install --no-cache-dir pylint
 RUN pip install --no-cache-dir black
 RUN pip install --no-cache-dir uvicorn
-RUN pip install --no-cache-dir pydantic>=2.3.0
-RUN pip install --no-cache-dir fastapi>=0.103.1
+RUN pip install --no-cache-dir pydantic==2.3.*
+RUN pip install --no-cache-dir fastapi==0.103.*
 RUN pip install --no-cache-dir pre-commit
 RUN pip install --no-cache-dir pycln
 RUN pip install --no-cache-dir openapi-python-client
 
 WORKDIR /home/$UNAME
 
-# Install automates
-RUN git clone --depth=1 https://github.com/danbryce/automates.git automates \
-    && cd automates \
-    && git fetch --depth=1 origin e5fb635757aa57007615a75371f55dd4a24851e0 \
-    && git checkout e5fb635757aa57007615a75371f55dd4a24851e0
-RUN pip install -e automates
+# # Install automates
+# RUN git clone --depth=1 https://github.com/danbryce/automates.git automates \
+#     && cd automates \
+#     && git fetch --depth=1 origin e5fb635757aa57007615a75371f55dd4a24851e0 \
+#     && git checkout e5fb635757aa57007615a75371f55dd4a24851e0
+# RUN pip install -e automates
 
 RUN pip install --no-cache-dir z3-solver
 RUN pip install --no-cache-dir graphviz
