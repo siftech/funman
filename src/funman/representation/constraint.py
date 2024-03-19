@@ -143,12 +143,13 @@ class LinearConstraint(TimedConstraint):
                 f"Cannot determine a suitable timepoint relative to step = {timestep} where the encoding schedule = {schedule} is defined and constraint timepoints ={self.timepoints} are defined"
             )
 
-
     def time_dependent(self) -> bool:
         return self.derivative or super().time_dependent()
 
     def relevant_at_time(self, time: int) -> bool:
-        return (self.derivative and time > 0) or (not self.derivative and super().relevant_at_time(time))
+        return (self.derivative and time > 0) or (
+            not self.derivative and super().relevant_at_time(time)
+        )
 
     @field_validator("weights")
     @classmethod
