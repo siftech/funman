@@ -15,11 +15,11 @@ DEPS_WORKSPACE=/tmp/ibex-deps
 ifneq ($(ENABLE_DEBUG),no)
 IBEX_DEBUGGING=--with-debug
 MATHLIB_DEBUGGING=--enable-debug
-GAOL_DEBUGGING=
+GAOL_DEBUGGING=--enable-debug
 else
 IBEX_DEBUGGING=
 MATHLIB_DEBUGGING=
-GAOL_DEBUGGING=
+GAOL_DEBUGGING=--disable-debug
 endif
 
 LP_LIB_ARGS=

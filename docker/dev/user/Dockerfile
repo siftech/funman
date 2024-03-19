@@ -51,6 +51,7 @@ RUN pip install --no-cache-dir pylint
 RUN pip install --no-cache-dir black
 RUN pip install --no-cache-dir uvicorn
 RUN pip install --no-cache-dir pydantic==2.3.*
+RUN pip install --no-cache-dir pydantic-settings
 RUN pip install --no-cache-dir fastapi==0.103.*
 RUN pip install --no-cache-dir pre-commit
 RUN pip install --no-cache-dir pycln
