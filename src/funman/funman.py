@@ -82,4 +82,9 @@ class Funman(object):
                 )
             return result
         except Exception as e:
-            l.error(f"funman.solve() exiting due to exception: {e}")
+            try:
+                l.error(
+                    f"funman.solve() exiting due to exception: {e.backtrace()}"
+                )
+            except:
+                l.error(f"funman.solve() exiting due to exception: {e}")

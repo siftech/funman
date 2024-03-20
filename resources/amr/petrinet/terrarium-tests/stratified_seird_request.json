@@ -1,0 +1,105 @@
+{
+    "constraints": [],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 1.6,
+                "ub": 1.6,
+                "closed_upper_bound": true,
+                "original_width": 0
+            },
+            "label": "all"
+        },
+        {
+            "name": "epsilon",
+            "interval": {
+                "lb": 0.33333,
+                "ub": 0.33333,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.125,
+                "ub": 0.125,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "alpha",
+            "interval": {
+                "lb": 0.006,
+                "ub": 0.006,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "p_UnVax_Vax",
+            "interval": {
+                "lb": 0,
+                "ub": 0,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "p_Vax_UnVax",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.1,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "lambda",
+            "interval": {
+                "lb": 120480,
+                "ub": 120480,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "mu",
+            "interval": {
+                "lb": 0.012048000000000001,
+                "ub": 0.012048000000000001,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        },
+        {
+            "name": "City",
+            "interval": {
+                "lb": 1,
+                "ub": 1,
+                "closed_upper_bound": true,
+                "original_width": 0
+            }
+        }
+    ],
+    "config": {
+        "tolerance": 0.1,
+        "normalization_constant": 20000000,
+        "use_compartmental_constraints": true
+    },
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10
+                    ]
+                }
+            ]
+        }
+    ]
+}

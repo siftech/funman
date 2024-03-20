@@ -32,11 +32,11 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ARG AUTOMATES_COMMIT_TAG
 # Install automates
-RUN git clone --depth=1 https://github.com/danbryce/automates.git automates \
-    && cd automates \
-    && git fetch --depth=1 origin ${AUTOMATES_COMMIT_TAG} \
-    && git checkout ${AUTOMATES_COMMIT_TAG}
-RUN pip install -e automates
+# RUN git clone --depth=1 https://github.com/danbryce/automates.git automates \
+#     && cd automates \
+#     && git fetch --depth=1 origin ${AUTOMATES_COMMIT_TAG} \
+#     && git checkout ${AUTOMATES_COMMIT_TAG}
+# RUN pip install -e automates
 
 RUN pip install --no-cache-dir z3-solver
 RUN pip install --no-cache-dir graphviz

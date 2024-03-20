@@ -153,6 +153,9 @@ class AnalysisScenario(ABC, BaseModel):
         for schedule in self._smt_encoder._timed_model_elements[
             "schedules"
         ].schedules:
+            assert (
+                0 in schedule.timepoints
+            ), "Schedule for encoding does not include a timepoint 0"
             encoding = self._smt_encoder.initialize_encodings(
                 self, len(schedule.timepoints)
             )

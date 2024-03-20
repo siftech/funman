@@ -249,7 +249,7 @@ class Runner:
                 return m
             except Exception as e:
                 pass
-        raise Exception(f"Could not determine the Model type of f{model_file}")
+        raise Exception(f"Could not determine the Model type of {model_file}")
 
     def run_instance(
         self,
@@ -384,7 +384,7 @@ class Runner:
                 results.parameter_space,
                 plot_points=False,
                 parameters=parameters_to_plot,
-                synthesized_parameters=results.problem.synthesized_parameters(),
+                synthesized_parameters=parameters_to_plot,
             ).plot(show=True)
             plt.savefig(space_plot_filename)
         plt.close()
