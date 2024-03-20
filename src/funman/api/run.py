@@ -249,7 +249,7 @@ class Runner:
                 return m
             except Exception as e:
                 pass
-        raise Exception(f"Could not determine the Model type of f{model_file}")
+        raise Exception(f"Could not determine the Model type of {model_file}")
 
     def run_instance(
         self,

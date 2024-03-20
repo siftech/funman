@@ -19,6 +19,15 @@
             "regression": false
         },
         {
+            "name": "stratified-seird",
+            "model-path": "amr/petrinet/terrarium-tests/stratified_seird_model.json",
+            "request-path": "amr/petrinet/terrarium-tests/stratified_seird_request.json",
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": true
+        },
+        {
             "name": "petrinet-query-default",
             "model-path": "amr/petrinet/mira/models/scenario1_a.json",
             "request-path": null,

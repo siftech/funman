@@ -72,7 +72,9 @@ class Storage:
                 return self.results[id]
             path = self.path / f"{id}.json"
             if not path.is_file():
-                raise NotFoundFunmanException("Result for id '{id}' not found")
+                raise NotFoundFunmanException(
+                    f"Result for id '{id}' not found"
+                )
             with open(path, "r") as f:
                 result = FunmanResults.model_validate(json.load(f))
             self.results[id] = result
