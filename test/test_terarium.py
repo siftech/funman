@@ -19,7 +19,7 @@ TEST_JSON = json.loads(
 
 
 class TestTerarium(unittest.TestCase):
-    def test_terarium(self):
+    def test01_terarium(self):
         tests = TEST_JSON["tests"]
         for test in tests:
             (
@@ -50,8 +50,13 @@ class TestTerarium(unittest.TestCase):
             Path(f'{RESOURCES_PREFIX}/{test["model-path"]}').read_bytes()
         )
 
+        # model file has model and request pair inside
+        if "model" in model and "request" in model:
+            request = model["request"]
+            model = model["model"]
+
         # Either read in the request json or default to an empty dict
-        if test["request-path"] is None:
+        elif test["request-path"] is None:
             request = {}
         else:
             request = json.loads(
@@ -205,7 +210,7 @@ class TestTerarium(unittest.TestCase):
         assert progress > 0.999999, "Progress was not at 100%"
         return results
 
-    def test_stress_test(self):
+    def test02_stress_test(self):
         # here is an example that starts to return 404s GET /api/queries/:id after successfully submitting through POST /api/queries
         # Earlier the GET request was returning, albeit seemingly never finished. Roughly the steps:
         # Submit this payload
