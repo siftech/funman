@@ -5,7 +5,7 @@ import sympy
 from pydantic import BaseModel, ConfigDict
 from pysmt.shortcuts import REAL, Div, Real, Symbol
 
-from funman.utils.sympy_utils import substitute, to_sympy
+from funman.utils.sympy_utils import substitute, sympy_to_pysmt, to_sympy
 
 from ..representation.interval import Interval
 from .generated_models.petrinet import Model as GeneratedPetrinet
@@ -244,7 +244,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         if isinstance(value, int):
             value = Real(float(value))
         elif isinstance(value, str):
-            value = Symbol(value, REAL)
+            expr = to_sympy(value, self._symbols())
+            if expr.is_symbol:
+                value = Symbol(value, REAL)
+            else:
+                value = sympy_to_pysmt(expr)
 
         if scenario.normalization_constant and config.normalize:
             value = Div(value, Real(scenario.normalization_constant))

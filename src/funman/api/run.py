@@ -240,13 +240,27 @@ class Runner:
 
         return results
 
-    def get_model(self, model_file: str):
+    def get_model(
+        self, model_file: str
+    ) -> Tuple[FunmanModel, Optional[FunmanWorkRequest]]:
         for model in models:
             try:
                 with open(model_file, "r") as mf:
                     j = json.load(mf)
-                    m = _wrap_with_internal_model(model(**j))
-                return m
+                    if "model" in j and "request" in j:
+                        mod = j["model"]
+                        req = j["request"]
+                    else:
+                        mod = j
+                        req = None
+                    m = _wrap_with_internal_model(model(**mod))
+                    r = (
+                        FunmanWorkRequest.model_validate(req)
+                        if req is not None
+                        else None
+                    )
+
+                return m, r
             except Exception as e:
                 pass
         raise Exception(f"Could not determine the Model type of {model_file}")
@@ -264,17 +278,22 @@ class Runner:
         killer = GracefulKiller()
         (model_file, request_file, description) = case
 
-        model = self.get_model(model_file)
+        model, request = self.get_model(model_file)
 
-        try:
-            with open(request_file, "r") as rf:
-                request = FunmanWorkRequest(**json.load(rf))
-        except TypeError as te:
-            # request_file may not be a path, could be a dict
+        assert request is None or (
+            request_file is None or request_file == ""
+        ), f"Ambiguous Requests specified, both in model file and as a requests file"
+
+        if request is None:
             try:
-                request = FunmanWorkRequest.model_validate(request_file)
-            except Exception as e:
-                raise e
+                with open(request_file, "r") as rf:
+                    request = FunmanWorkRequest(**json.load(rf))
+            except TypeError as te:
+                # request_file may not be a path, could be a dict
+                try:
+                    request = FunmanWorkRequest.model_validate(request_file)
+                except Exception as e:
+                    raise e
 
         work_unit: FunmanWorkUnit = self._worker.enqueue_work(
             model=model, request=request
@@ -398,7 +417,7 @@ def get_args():
         help=f"model json file",
     )
     parser.add_argument(
-        "request", type=str, help=f"request json file", default={}, nargs="?"
+        "request", type=str, help=f"request json file", default=None, nargs="?"
     )
     parser.add_argument(
         "-o",
