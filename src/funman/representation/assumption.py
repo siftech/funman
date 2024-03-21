@@ -13,8 +13,11 @@ class Assumption(BaseModel):
         return self.constraint.relevant_at_time(timepoint)
 
     def __str__(self) -> str:
-        if hasattr(self.constraint, "name"):
-            return f"assume_{self.constraint.name}"
+        assert (
+            self.constraint._escaped_name is not None
+        ), f"Assumption {self.name} does not have an '_escaped_name'."
+        if hasattr(self.constraint, "_escaped_name"):
+            return f"assume_{self.constraint._escaped_name}"
         else:
             return f"assume_{str(self.constraint)}"
 
