@@ -6,6 +6,7 @@ from pydantic import (
     Field,
     ValidationInfo,
     field_validator,
+    model_validator,
 )
 from typing_extensions import Annotated
 
@@ -19,6 +20,7 @@ from .parameter import ModelParameter, StructureParameter
 class Constraint(BaseModel):
     soft: bool = True
     name: str
+    _escaped_name: str
 
     def time_dependent(self) -> bool:
         return False
@@ -31,6 +33,11 @@ class Constraint(BaseModel):
 
     def relevant_at_time(self, time: int) -> bool:
         return True
+
+    @model_validator(mode="after")
+    def check_name(self) -> "FUNMANConfig":
+        self._escaped_name = self.name.replace(" ", "_")
+        return self
 
 
 class TimedConstraint(Constraint):

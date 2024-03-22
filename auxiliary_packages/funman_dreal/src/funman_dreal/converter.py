@@ -288,7 +288,8 @@ class DRealConverter(Converter, DagWalker):
 
     def walk_pow(self, formula, args, **kwargs):
         exponent = float(args[1]) if isinstance(args[1], Fraction) else args[1]
-        res = dreal.pow(args[0], exponent)
+        base = float(args[0]) if isinstance(args[0], Fraction) else args[0]
+        res = dreal.pow(base, exponent)
         return res
 
     def walk_abs(self, formula, args, **kwargs):
