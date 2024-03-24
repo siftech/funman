@@ -28,13 +28,31 @@
             "regression": false
         },
         {
+            "name": "sir",
+            "model-path": "amr/petrinet/terrarium-tests/sir.json",
+            "request-path": "amr/petrinet/terrarium-tests/sir_request.json",
+            "expected-outcome": {
+                "true-boxes": 49
+            },
+            "regression": false
+        },
+        {
+            "name": "sir_request_constraint_no_ub",
+            "model-path": "amr/petrinet/terrarium-tests/sir.json",
+            "request-path": "amr/petrinet/terrarium-tests/sir_request_constraint_no_ub.json",
+            "expected-outcome": {
+                "true-boxes": 5
+            },
+            "regression": false
+        },
+        {
             "name": "stratified-seird",
             "model-path": "amr/petrinet/terrarium-tests/stratified_seird_model.json",
             "request-path": "amr/petrinet/terrarium-tests/stratified_seird_request.json",
             "expected-outcome": {
-                "true-boxes": 0
+                "true-boxes": 52
             },
-            "regression": true
+            "regression": false
         },
         {
             "name": "petrinet-query-default",

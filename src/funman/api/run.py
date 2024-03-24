@@ -284,7 +284,7 @@ class Runner:
             request_file is None or request_file == ""
         ), f"Ambiguous Requests specified, both in model file and as a requests file"
 
-        if request is None:
+        if request is None and request_file is not None and request_file != "":
             try:
                 with open(request_file, "r") as rf:
                     request = FunmanWorkRequest(**json.load(rf))
@@ -294,6 +294,9 @@ class Runner:
                     request = FunmanWorkRequest.model_validate(request_file)
                 except Exception as e:
                     raise e
+
+        if request is None:
+            request = {}
 
         work_unit: FunmanWorkUnit = self._worker.enqueue_work(
             model=model, request=request

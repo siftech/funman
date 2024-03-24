@@ -202,8 +202,8 @@ async def get_queries(
     with internal_error_handler():
         try:
             return worker.get_results(query_id)
-        except NotFoundFunmanException:
-            raise HTTPException(404)
+        except NotFoundFunmanException as e:
+            raise HTTPException(404, detail=str(e))
 
 
 @api_router.post(
