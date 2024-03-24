@@ -203,7 +203,7 @@ async def get_queries(
         try:
             return worker.get_results(query_id)
         except NotFoundFunmanException as e:
-            raise HTTPException(404, detail=str(e.backtrace()))
+            raise HTTPException(404, detail=str(e))
 
 
 @api_router.post(
