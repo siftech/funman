@@ -74,12 +74,17 @@ class FunmanWorker:
     def enqueue_work(
         self, model: FunmanModel, request: FunmanWorkRequest
     ) -> FunmanWorkUnit:
-        # if not self.in_state(WorkerState.RUNNING):
-        #     raise FunmanWorkerException(
-        #         f"FunmanWorker must be starting or running to enqueue work: {self.get_state()}"
-        #     )
         id = self.storage.claim_id()
         work = FunmanWorkUnit(id=id, model=model, request=request)
+
+        self.storage.add_result(
+            FunmanResults(
+                id=id,
+                model=work.model,
+                request=work.request,
+                parameter_space=ParameterSpace(),
+            )
+        )
         self.queue.put(work)
         with self._set_lock:
             self.queued_ids.add(work.id)
@@ -215,11 +220,8 @@ class FunmanWorker:
 
                 with self._id_lock:
                     self.current_id = work.id
-                    self.current_results = FunmanResults(
-                        id=work.id,
-                        model=work.model,
-                        request=work.request,
-                        parameter_space=ParameterSpace(),
+                    self.current_results = self.storage.get_result(
+                        self.current_id
                     )
 
                 l.info(f"Starting work on: {work.id}")

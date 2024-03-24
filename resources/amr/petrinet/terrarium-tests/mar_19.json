@@ -1994,7 +1994,7 @@
       {
         "name": "beta_c",
         "interval": {
-          "lb": 0.51,
+          "lb": 0.1,
           "ub": 0.8
         },
         "label": "any"
@@ -2019,7 +2019,7 @@
         "name": "kappa",
         "interval": {
           "lb": 0.05,
-          "ub": 0.58
+          "ub": 0.8
         },
         "label": "any"
       },
