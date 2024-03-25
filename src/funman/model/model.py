@@ -104,6 +104,16 @@ class FunmanModel(ABC, BaseModel):
             value = Div(value, norm)
         return value
 
+    def _try_float(self, num):
+        """
+        Try to convert a str to a float.
+        """
+        try:
+            n = float(num)
+            return n
+        except Exception:
+            return num
+
     def variables(self, include_next_state=False):
         """
         Get all initial values and parameters.
