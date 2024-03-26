@@ -181,6 +181,7 @@ class FunmanResults(BaseModel):
     request: FunmanWorkRequest
     done: bool = False
     error: bool = False
+    error_message: Optional[str] = None
     parameter_space: Optional[ParameterSpace] = None
 
     def is_final(self):
@@ -243,13 +244,12 @@ class FunmanResults(BaseModel):
         self.done = True
         self.progress.progress = 1.0
 
-    def finalize_result_as_error(
-        self,
-    ):
+    def finalize_result_as_error(self, message=None):
         if self._finalized:
             raise Exception("FunmanResults was already finalized")
         self._finalized = True
         self.error = True
+        self.error_message = message
         self.done = True
         self.progress.progress = 1.0
 

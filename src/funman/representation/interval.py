@@ -28,10 +28,29 @@ class Interval(BaseModel):
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
     original_width: Optional[Decimal] = None
+    normalized: bool = False
+    unnormalized_lb: Optional[Union[float, str]] = None
+    unnormalized_ub: Optional[Union[float, str]] = None
 
     @field_serializer("original_width")
     def ser_wrap(self, v: Decimal, _info) -> float:
         return float(v)
+
+    def normalize_bounds(self, normalization_constant):
+        assert (
+            not self.normalized
+        ), f"Cannot normalize an interval twice: {self}"
+
+        return Interval(
+            lb=math_utils.div(self.lb, normalization_constant),
+            ub=math_utils.div(self.ub, normalization_constant),
+            normalized=True,
+            unnormalized_lb=self.lb,
+            unnormalized_ub=self.ub,
+            original_width=self.original_width
+            / Decimal(normalization_constant),
+            closed_upper_bound=self.closed_upper_bound,
+        )
 
     @staticmethod
     def from_value(v: Union[float, str]):

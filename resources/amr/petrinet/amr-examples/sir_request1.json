@@ -68,6 +68,7 @@
     }
   ],
   "config": {
-    "tolerance": 1e-2
+    "tolerance": 1e-2,
+    "normalization_constant": 1001
   }
 }

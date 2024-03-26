@@ -251,7 +251,9 @@ class FunmanWorker:
                     l.error(f"Internal Server Error ({work.id}):")
                     traceback.print_exc()
                     with self._results_lock:
-                        self.current_results.finalize_result_as_error()
+                        self.current_results.finalize_result_as_error(
+                            message=str(e)
+                        )
                     l.error(f"Aborting work on: {work.id}")
                 finally:
                     self.storage.add_result(self.current_results)

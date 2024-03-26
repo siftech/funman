@@ -88,3 +88,4 @@ class Funman(object):
                 )
             except:
                 l.error(f"funman.solve() exiting due to exception: {e}")
+            raise e

@@ -40,6 +40,9 @@ class Parameter(BaseModel):
         self.interval.original_width = self.interval.width()
         return self
 
+    def normalize_bounds(self, normalization_constant):
+        self.interval = self.interval.normalize_bounds(normalization_constant)
+
 
 class LabeledParameter(Parameter):
     label: Literal["any", "all"] = LABEL_ANY

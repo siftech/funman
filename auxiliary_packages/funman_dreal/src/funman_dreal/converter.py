@@ -88,28 +88,41 @@ class CoreLexer(HRLexer):
 
         self.identifier_map = {"and": "&", "or": "|", "==": "="}
 
-        self.rules = [
-            Rule(r"(pow)", PowOpAdapter(self.mgr.Pow, 80), False),  # pow
-            Rule(
-                r"(and)", InfixOpAdapter(self.AndOrBVAnd, 40), False
-            ),  # conjunction
-            Rule(
-                r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
-            ),  # disjunction
-            Rule(
-                r"(abs)", UnaryOpAdapter(self.mgr.Abs, 50), False
-            ),  # absolute value
-            Rule(
-                r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
-            ),  # b()
-            Rule(r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False),  # eq
-            Rule(
-                r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
-            ),  # decimals scientific
-            Rule(
-                r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
-            ),  # decimals scientific
-        ] + self.rules
+        self.rules = (
+            [
+                Rule(r"(pow)", PowOpAdapter(self.mgr.Pow, 80), False),  # pow
+                Rule(
+                    r"(and)", InfixOpAdapter(self.AndOrBVAnd, 40), False
+                ),  # conjunction
+                Rule(
+                    r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
+                ),  # disjunction
+                Rule(
+                    r"(abs)", UnaryOpAdapter(self.mgr.Abs, 50), False
+                ),  # absolute value
+                Rule(
+                    r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
+                ),  # b()
+                Rule(
+                    r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False
+                ),  # eq
+                Rule(
+                    r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
+                ),  # decimals scientific
+                Rule(
+                    r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
+                ),  # decimals scientific
+            ]
+            + self.rules[0:-1]
+            + [
+                Rule(
+                    r"(([A-Za-z_]|[^\u0000-\u007F])([A-Za-z_]|[^\u0000-\u007F])*)",
+                    self.identifier,
+                    True,
+                ),  # unicode identifiers
+            ]
+            + self.rules[-2:-1]
+        )
         self.compile()
 
     def BinaryLiteral(self, x):
