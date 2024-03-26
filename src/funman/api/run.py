@@ -243,27 +243,43 @@ class Runner:
     def get_model(
         self, model_file: str
     ) -> Tuple[FunmanModel, Optional[FunmanWorkRequest]]:
+        m = None
+        req = None
         for model in models:
             try:
                 with open(model_file, "r") as mf:
                     j = json.load(mf)
                     if "model" in j and "request" in j:
-                        mod = j["model"]
                         req = j["request"]
+                        if "petrinet" in j["model"]:
+                            mod = j["model"]["petrinet"]
+                        else:
+                            mod = j["model"]
                     else:
                         mod = j
                         req = None
                     m = _wrap_with_internal_model(model(**mod))
-                    r = (
-                        FunmanWorkRequest.model_validate(req)
-                        if req is not None
-                        else None
-                    )
+                    break
 
-                return m, r
             except Exception as e:
                 pass
-        raise Exception(f"Could not determine the Model type of {model_file}")
+
+        if m is None:
+            raise Exception(
+                f"Could not determine the Model type of {model_file}"
+            )
+
+        r = (
+            (
+                FunmanWorkRequest.model_validate(req)
+                if req is not None
+                else None
+            )
+            if req is not None
+            else None
+        )
+
+        return m, r
 
     def run_instance(
         self,

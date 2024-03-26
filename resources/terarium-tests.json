@@ -36,7 +36,6 @@
             },
             "regression": false
         },
-        
         {
             "name": "eval_scenario_2",
             "model-path": "amr/petrinet/terrarium-tests/eval_scenario2_model.json",

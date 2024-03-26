@@ -699,7 +699,7 @@ class Encoder(ABC, BaseModel):
         parameter = constraint.parameter
         if parameter in scenario.model_parameters():
             formula = self.interval_to_smt(
-                parameter.name,
+                parameter._escaped_name,
                 parameter.interval.model_copy(deep=True),
                 # closed_upper_bound=False,
                 infinity_constraints=False,

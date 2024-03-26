@@ -66,7 +66,7 @@ class TestTerarium(unittest.TestCase):
         # model file has model and request pair inside
         if "model" in model and "request" in model:
             request = model["request"]
-            if "petrinet" in "model":
+            if "petrinet" in model["model"]:
                 model = model["model"]["petrinet"]
             else:
                 model = model["model"]

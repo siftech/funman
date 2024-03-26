@@ -36,7 +36,7 @@ class Constraint(BaseModel):
 
     @model_validator(mode="after")
     def check_name(self) -> "FUNMANConfig":
-        self._escaped_name = self.name.replace(" ", "_")
+        self._escaped_name = self.name.replace(" ", "_").replace("-", "_")
         return self
 
 
