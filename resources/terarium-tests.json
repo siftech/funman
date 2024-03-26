@@ -28,6 +28,25 @@
             "regression": false
         },
         {
+            "name": "mar_25",
+            "model-path": "amr/petrinet/terrarium-tests/funman-mar-25.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        
+        {
+            "name": "eval_scenario_2",
+            "model-path": "amr/petrinet/terrarium-tests/eval_scenario2_model.json",
+            "request-path": "amr/petrinet/terrarium-tests/eval_scenario2_request.json",
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
             "name": "sir",
             "model-path": "amr/petrinet/terrarium-tests/sir.json",
             "request-path": "amr/petrinet/terrarium-tests/sir_request.json",

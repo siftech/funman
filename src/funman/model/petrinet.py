@@ -258,7 +258,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _parameter_lb(self, param_name: str):
         return next(
             (
-                p.distribution.parameters["minimum"]
+                self._try_float(p.distribution.parameters["minimum"])
                 if p.distribution
                 else p.value
             )
@@ -269,7 +269,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _parameter_ub(self, param_name: str):
         return next(
             (
-                p.distribution.parameters["maximum"]
+                self._try_float(p.distribution.parameters["maximum"])
                 if p.distribution
                 else p.value
             )

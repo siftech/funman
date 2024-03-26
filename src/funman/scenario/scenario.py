@@ -117,11 +117,11 @@ class AnalysisScenario(ABC, BaseModel):
         ]
 
         self._set_normalization(config)
+        self._normalize_parameters()
 
         if config.use_compartmental_constraints:
-            ccs = self.model.compartmental_constraints(
-                self.normalization_constant
-            )
+            capacity = 1.0 if config.normalize else self.normalization_constant
+            ccs = self.model.compartmental_constraints(capacity)
             if ccs is not None:
                 self.constraints += ccs
                 for cc in ccs:
@@ -316,6 +316,11 @@ class AnalysisScenario(ABC, BaseModel):
                 or isinstance(p, StructureParameter)
             ]
             self.parameters = filtered_parameters
+
+    def _normalize_parameters(self):
+        for p in self.parameters:
+            if p.name == "N":
+                p.normalize_bounds(self.normalization_constant)
 
     def _set_normalization(self, config):
         if config.normalization_constant is not None:

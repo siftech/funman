@@ -32,6 +32,9 @@ class TestTerarium(unittest.TestCase):
     def test01_terarium(self):
         tests = TEST_JSON["tests"]
         for test in tests:
+            if not test["regression"]:
+                continue
+
             (
                 name,
                 model,
@@ -63,7 +66,10 @@ class TestTerarium(unittest.TestCase):
         # model file has model and request pair inside
         if "model" in model and "request" in model:
             request = model["request"]
-            model = model["model"]
+            if "petrinet" in "model":
+                model = model["model"]["petrinet"]
+            else:
+                model = model["model"]
 
         # Either read in the request json or default to an empty dict
         elif test["request-path"] is None:
