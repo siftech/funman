@@ -72,6 +72,7 @@ class Point(BaseModel):
                 values=denormalized_values,
                 normalized_values=self.values,
                 type=self.type,
+                schedule=self.schedule,
             )
             return denormalized_point
         else:

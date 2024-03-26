@@ -1,0 +1,171 @@
+ {
+        "constraints": [
+            {
+                "name": "c1",
+                "additive_bounds": {
+                    "lb": -99999999999,
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "S"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "c2",
+                "additive_bounds": {
+                    "lb": -99999999999,
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "R"
+                ],
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "c3",
+                "additive_bounds": {
+                    "lb": -99999999999,
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "D"
+                ],
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            }
+        ],
+        "parameters": [
+            {
+                "name": "N",
+                "interval": {
+                    "lb": 150000000,
+                    "ub": 150000000,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                }
+            },
+            {
+                "name": "a",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.1,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "b",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.1,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "c",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.1,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "d",
+                "interval": {
+                    "lb": 0.2,
+                    "ub": 0.4,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "e",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.1,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "f",
+                "interval": {
+                    "lb": 0.001,
+                    "ub": 0.02,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "g",
+                "interval": {
+                    "lb": 0.8,
+                    "ub": 0.9,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "all"
+            },
+            {
+                "name": "h",
+                "interval": {
+                    "lb": 0.1,
+                    "ub": 0.15,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "all"
+            },
+            {
+                "name": "β",
+                "interval": {
+                    "lb": 0.1,
+                    "ub": 0.2,
+                    "closed_upper_bound": true,
+                    "original_width": 0
+                },
+                "label": "all"
+            }
+        ],
+        "config": {
+            "tolerance": 0.05,
+            "normalization_constant": 150000000,
+            "use_compartmental_constraints": true
+        },
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+                        
+                        ]
+                    }
+                ]
+            }
+        ]
+    }

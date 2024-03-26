@@ -74,7 +74,7 @@ class FUNMANConfig(BaseModel):
     """ Simplify query by propagating substutions """
     use_compartmental_constraints: bool = False
     """Normalize scenarios prior to solving"""
-    normalize: bool = False
+    normalize: bool = True
     """Normalization constant to use for normalization (attempt to compute if None)"""
     simplify_query: bool = False
     """ Series approximation threshold for dropping series terms """
