@@ -665,7 +665,7 @@
     "request": {
         "constraints": [
             {
-                "name": "param_01",
+                "name": "param-01",
                 "timepoints": {
                     "lb": 0.0,
                     "ub": 100.0,

@@ -47,7 +47,7 @@ class FunmanWorkRequest(BaseModel):
     parameters: Optional[List[ModelParameter]] = None
     config: Optional[FUNMANConfig] = None
     structure_parameters: Optional[
-        List[Union[Union[NumSteps, StepSize], Schedules]]
+        List[Union[Schedules, Union[NumSteps, StepSize]]]
     ] = None
 
     def parameter(self, name: str) -> ModelParameter:

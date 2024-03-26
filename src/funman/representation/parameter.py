@@ -25,6 +25,7 @@ l: logging.Logger = logging.getLogger(__name__)
 class Parameter(BaseModel):
     name: Union[str, ModelSymbol]
     interval: Interval = Interval()
+    _escaped_name: str
 
     def width(self) -> Decimal:
         return self.interval.width()
@@ -34,6 +35,11 @@ class Parameter(BaseModel):
 
     def __hash__(self):
         return abs(hash(self.name))
+
+    @model_validator(mode="after")
+    def check_name(self) -> "FUNMANConfig":
+        self._escaped_name = self.name.replace(" ", "_").replace("-", "_")
+        return self
 
     @model_validator(mode="after")
     def set_interval_original_width(self) -> str:
@@ -57,19 +63,17 @@ class StructureParameter(LabeledParameter):
 
 
 class NumSteps(StructureParameter):
-    @field_validator("name")
-    @classmethod
-    def check_name(cls, name: str, info: ValidationInfo):
-        assert name == "num_steps", "NumSteps.name must be 'num_steps'"
-        return name
+    @model_validator(mode="after")
+    def check_name(self) -> "FUNMANConfig":
+        assert self.name == "num_steps", "NumSteps.name must be 'num_steps'"
+        return self
 
 
 class StepSize(StructureParameter):
-    @field_validator("name")
-    @classmethod
-    def check_name(cls, name: str, info: ValidationInfo):
-        assert name == "step_size", "StepSize.name must be 'step_size'"
-        return name
+    @model_validator(mode="after")
+    def check_name(self) -> "FUNMANConfig":
+        assert self.name == "step_size", "StepSize.name must be 'step_size'"
+        return self
 
 
 StepListValue = List[Union[float, int]]
@@ -78,11 +82,10 @@ StepListValue = List[Union[float, int]]
 class Schedules(StructureParameter):
     schedules: List[EncodingSchedule]
 
-    @field_validator("name")
-    @classmethod
-    def check_name(cls, name: str, info: ValidationInfo):
-        assert name == "schedules", "StepList.name must be 'step_list'"
-        return name
+    @model_validator(mode="after")
+    def check_name(self) -> "FUNMANConfig":
+        assert self.name == "schedules", "Schedules.name must be 'schedules'"
+        return self
 
     @model_validator(mode="before")
     def check_empty_name(self) -> str:
