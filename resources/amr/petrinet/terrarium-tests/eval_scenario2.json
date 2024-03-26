@@ -1,5 +1,5 @@
 {
-    "id": "8e0b3531-c1ba-474f-9b0d-e3d3dc21ac48",
+    "id": "cd7046cc-e512-4320-82f1-e7f01877f434",
     "model": {
         "petrinet": {
             "header": {
@@ -143,7 +143,7 @@
                             "id": "N",
                             "name": "N",
                             "description": "Total population",
-                            "value": 150000000
+                            "value": 1.5E8
                         },
                         {
                             "id": "a",
@@ -232,45 +232,15 @@
         }
     },
     "request": {
-        "constraints": [
-            {
-                "name": "c1",
-                "additive_bounds": {
-                    "lb": 0
-                    
-                   
-                },
-                "variables": [
-                    "S"
-                ],
-                "weights": [
-                    -1
-                ],
-                "derivative": true
-            },
-            {
-                "name": "c3",
-                "additive_bounds": {
-                    "lb": 0
-                    
-                },
-                "variables": [
-                    "D"
-                ],
-                "weights": [
-                    1
-                ],
-                "derivative": true
-            }
-        ],
+        "constraints": [],
         "parameters": [
             {
                 "name": "N",
                 "interval": {
-                    "lb": 150000000,
-                    "ub": 150000000,
+                    "lb": 1.5E8,
+                    "ub": 1.5E8,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -279,7 +249,7 @@
                     "lb": 0.07,
                     "ub": 0.07,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -288,7 +258,7 @@
                     "lb": 0.07,
                     "ub": 0.07,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -297,7 +267,7 @@
                     "lb": 0.07,
                     "ub": 0.07,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -306,7 +276,7 @@
                     "lb": 0.30000000000000004,
                     "ub": 0.30000000000000004,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -315,7 +285,7 @@
                     "lb": 0.09000000000000001,
                     "ub": 0.09000000000000001,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -324,7 +294,7 @@
                     "lb": 0.01,
                     "ub": 0.01,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -333,7 +303,7 @@
                     "lb": 0.8700000000000001,
                     "ub": 0.8700000000000001,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -342,7 +312,7 @@
                     "lb": 0.13,
                     "ub": 0.13,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             },
             {
@@ -351,13 +321,13 @@
                     "lb": 0.18000000000000002,
                     "ub": 0.18000000000000002,
                     "closed_upper_bound": true,
-                    "original_width": 0
+                    "original_width": 0.0
                 }
             }
         ],
         "config": {
             "tolerance": 0.2,
-            "normalization_constant": 150000000,
+            "normalization_constant": 1.5E8,
             "use_compartmental_constraints": true
         },
         "structure_parameters": [
@@ -367,13 +337,11 @@
                     {
                         "timepoints": [
                             0,
-                            5,
                             10
                         ]
                     }
                 ]
             }
         ]
-    },
-    "parameter_space": {}
+    }
 }

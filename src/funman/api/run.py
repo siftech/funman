@@ -248,8 +248,12 @@ class Runner:
                 with open(model_file, "r") as mf:
                     j = json.load(mf)
                     if "model" in j and "request" in j:
-                        mod = j["model"]
                         req = j["request"]
+                        if "petrinet" in j["model"]:
+                            mod = j["model"]["petrinet"]
+                        else:
+                            mod = j["model"]
+
                     else:
                         mod = j
                         req = None
