@@ -1,5 +1,5 @@
 {
-    "id": "cd7046cc-e512-4320-82f1-e7f01877f434",
+    "id": "f7fe6d2c-2876-4f3f-b510-18d515694fa2",
     "model": {
         "petrinet": {
             "header": {
@@ -231,24 +231,11 @@
             "publicAsset": false
         }
     },
+    "progress": {
+        "progress": 1.0
+    },
     "request": {
-        "constraints": [
-            {
-                "name": "c1",
-                "additive_bounds": {
-                    "lb": -9.9999999999E10,
-                    "ub": 0.0,
-                    "original_width": 9.9999999999E10
-                },
-                "variables": [
-                    "S"
-                ],
-                "weights": [
-                    1
-                ],
-                "derivative": true
-            }
-        ],
+        "constraints": [],
         "parameters": [
             {
                 "name": "N",
@@ -262,22 +249,20 @@
             {
                 "name": "a",
                 "interval": {
-                    "lb": 0,
-                    "ub": 0.05,
+                    "lb": 0.07,
+                    "ub": 0.07,
                     "closed_upper_bound": true,
                     "original_width": 0.0
-                },
-                "label": "all"
+                }
             },
             {
                 "name": "b",
                 "interval": {
-                    "lb": 0.05,
-                    "ub": 0.15,
+                    "lb": 0.07,
+                    "ub": 0.07,
                     "closed_upper_bound": true,
                     "original_width": 0.0
-                },
-                "label": "all"
+                }
             },
             {
                 "name": "c",
@@ -300,20 +285,20 @@
             {
                 "name": "e",
                 "interval": {
-                    "lb": 0.09,
-                    "ub": 0.09,
-                    "closed_upper_bound": true
-                },
-                "label": "all"
+                    "lb": 0.09000000000000001,
+                    "ub": 0.09000000000000001,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
             },
             {
                 "name": "f",
                 "interval": {
                     "lb": 0.01,
                     "ub": 0.01,
-                    "closed_upper_bound": true
-                },
-                "label": "all"
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
             },
             {
                 "name": "g",
@@ -336,15 +321,15 @@
             {
                 "name": "β",
                 "interval": {
-                    "lb": 0.18,
-                    "ub": 0.22,
-                    "closed_upper_bound": true
-                },
-                "label": "all"
+                    "lb": 0.18000000000000002,
+                    "ub": 0.18000000000000002,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
             }
         ],
         "config": {
-            "tolerance": 0.05,
+            "tolerance": 0.2,
             "normalization_constant": 1.5E8,
             "use_compartmental_constraints": true
         },
@@ -355,19 +340,99 @@
                     {
                         "timepoints": [
                             0,
-                            10,
-                            20,
-                            30,
-                            40,
-                            50,
-                            60,
-                            70,
-                            80,
-                            90,
-                            100
+                            1
                         ]
                     }
                 ]
+            }
+        ]
+    },
+    "done": true,
+    "parameter_space": {
+        "num_dimensions": 11,
+        "false_boxes": [
+            {
+                "label": "false",
+                "bounds": {
+                    "N": {
+                        "lb": 1.0,
+                        "ub": 1.0,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0,
+                        "normalized": true,
+                        "unnormalized_lb": 1.5E8,
+                        "unnormalized_ub": 1.5E8
+                    },
+                    "a": {
+                        "lb": 0.07,
+                        "ub": 0.07,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "b": {
+                        "lb": 0.07,
+                        "ub": 0.07,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "c": {
+                        "lb": 0.07,
+                        "ub": 0.07,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "d": {
+                        "lb": 0.30000000000000004,
+                        "ub": 0.30000000000000004,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "e": {
+                        "lb": 0.09000000000000001,
+                        "ub": 0.09000000000000001,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "f": {
+                        "lb": 0.01,
+                        "ub": 0.01,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "g": {
+                        "lb": 0.8700000000000001,
+                        "ub": 0.8700000000000001,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "h": {
+                        "lb": 0.13,
+                        "ub": 0.13,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "β": {
+                        "lb": 0.18000000000000002,
+                        "ub": 0.18000000000000002,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    },
+                    "timestep": {
+                        "lb": 1.0,
+                        "ub": 1.0,
+                        "closed_upper_bound": true,
+                        "original_width": 0.0
+                    }
+                },
+                "explanation": {
+                    "expression": "(((((((((((((((S_1 = (S_0 - (((S_0 * I_0) * 'β') * N))) & (R_1 = ((R_0 + ((I_0 * e) * a)) + ((H_0 * g) * c)))) & (S_0 = 17033583333333333/100000000000000000)) & (I_0 = 32481998666666667/100000000000000000)) & ('β' = 9000000000000001/50000000000000000)) & (N = 1.0)) & (e = 90000000000000011/1000000000000000000)) & (a = 70000000000000007/1000000000000000000)) & (H_0 = 18002419333333333/100000000000000000)) & (g = 87000000000000011/100000000000000000)) & (c = 70000000000000007/1000000000000000000)) & (R_0 = 31961210666666667/100000000000000000)) & ((((((((((((((S_1 < 0.0) | (R_1 < 0.0)) | (! (S_1 = (S_0 - (((S_0 * I_0) * 'β') * N))))) | (! (R_1 = ((R_0 + ((I_0 * e) * a)) + ((H_0 * g) * c))))) | (! (S_0 = 17033583333333333/100000000000000000))) | (! (I_0 = 32481998666666667/100000000000000000))) | (! ('β' = 9000000000000001/50000000000000000))) | (! (N = 1.0))) | (! (e = 90000000000000011/1000000000000000000))) | (! (a = 70000000000000007/1000000000000000000))) | (! (H_0 = 18002419333333333/100000000000000000))) | (! (g = 87000000000000011/100000000000000000))) | (! (c = 70000000000000007/1000000000000000000))) | (! (R_0 = 31961210666666667/100000000000000000)))) & (! (S_1 < 0.0))) & (! (R_1 < 0.0)))"
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        1
+                    ]
+                }
             }
         ]
     }

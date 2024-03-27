@@ -611,11 +611,25 @@
                 },
                 {
                     "id": "p_UnVax_Vax",
-                    "value": 0.1
+                    "value": 0.1,
+                    "distribution": {
+                        "type": "Uniform1",
+                        "parameters": {
+                            "minimum": 0.05,
+                            "maximum": 0.15000000000000002
+                        }
+                    }
                 },
                 {
                     "id": "p_Vax_UnVax",
-                    "value": 0.1
+                    "value": 0.1,
+                    "distribution": {
+                        "type": "Uniform1",
+                        "parameters": {
+                            "minimum": 0.05,
+                            "maximum": 0.15000000000000002
+                        }
+                    }
                 },
                 {
                     "id": "lambda",

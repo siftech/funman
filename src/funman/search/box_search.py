@@ -1449,7 +1449,11 @@ class BoxSearch(Search):
                     config=config, problem=problem, schedule=schedule
                 )
                 episode._initialize_boxes(config.num_initial_boxes, schedule)
-                options = EncodingOptions(schedule=schedule)
+                options = EncodingOptions(
+                    schedule=schedule,
+                    normalize=config.normalize,
+                    normalization_constant=config.normalization_constant,
+                )
                 self._expand(
                     rval,
                     episode,
@@ -1477,6 +1481,8 @@ class BoxSearch(Search):
             options = EncodingOptions(
                 num_steps=structural_configuration["num_steps"],
                 step_size=structural_configuration["step_size"],
+                normalize=config.normalize,
+                normalization_constant=config.normalization_constant,
             )
             self._expand(
                 rval,

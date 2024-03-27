@@ -448,9 +448,9 @@ def get_args():
     parser.add_argument(
         "-p",
         "--plot",
-        action="store_true",
-        default=False,
-        help=f"Write plots in outdir.",
+        # action="store_true",
+        nargs="*",
+        help=f"Write plots in outdir. Optionally list parameters to plot",
     )
     parser.set_defaults(plot=False)
     return parser.parse_args()
@@ -461,8 +461,13 @@ def main() -> int:
     if not os.path.exists(args.outdir):
         os.mkdir(args.outdir)
 
+    to_plot = args.plot + ["timestep"] if args.plot else None
     results = Runner().run(
-        args.model, args.request, case_out_dir=args.outdir, dump_plot=args.plot
+        args.model,
+        args.request,
+        case_out_dir=args.outdir,
+        dump_plot=args.plot is not None,
+        parameters_to_plot=to_plot,
     )
     print(results.model_dump_json(indent=4))
 
