@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
@@ -17,7 +17,7 @@ class EncodingOptions(BaseModel):
 
     schedule: EncodingSchedule
     normalize: bool = False
-    normalization_constant: float = 1.0
+    normalization_constant: Optional[float] = 1.0
 
 
 class Encoding(BaseModel):

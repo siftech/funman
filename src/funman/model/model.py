@@ -144,6 +144,9 @@ class FunmanModel(ABC, BaseModel):
         return None
 
     def _is_normalized(self, var: str):
+        if var == "N":  # FIXME hack
+            return True
+
         try:
             name, time = var.rsplit("_", 1)
             return name in self._state_var_names()

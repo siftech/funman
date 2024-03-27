@@ -140,5 +140,7 @@
       "label": "all"
     }
   ],
-  "config": {}
+  "config": {
+    "normalization_constant": 1.0
+  }
 }
