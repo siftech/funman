@@ -123,8 +123,8 @@
                     "rates": [
                         {
                             "target": "t0",
-                            "expression": "I*S*beta/N",
-                            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
+                            "expression": "I*S*β/N",
+                            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>β</ci></apply><ci>N</ci></apply>"
                         },
                         {
                             "target": "t1",
@@ -189,7 +189,7 @@
                             }
                         },
                         {
-                            "id": "beta",
+                            "id": "β",
                             "name": "β",
                             "description": "Number of infections per infected person per day",
                             "value": 1,
@@ -332,15 +332,14 @@
             {
                 "name": "I bound",
                 "timepoints": {
-                    "lb": 0,
-                    "ub": 100,
+                    "lb": 50,
+                    "ub": 50,
                     "closed_upper_bound": true,
                     "original_width": 100
                 },
                 "variable": "I",
                 "interval": {
-                    "lb": 0,
-                    "ub": 15000000,
+                    "lb": 9000000,
                     "original_width": 15000000
                 }
             }
@@ -350,15 +349,15 @@
                 "name": "N",
                 "interval": {
                     "lb": 150000000,
-                    "ub": 150000100,
+                    "ub": 150000000,
                     "original_width": 100
                 }
             },
             {
-                "name": "beta",
+                "name": "β",
                 "interval": {
                     "lb": 0.01,
-                    "ub": 0.25,
+                    "ub": 1,
                     "original_width": 0.24000000000000002
                 },
                 "label": "all"
