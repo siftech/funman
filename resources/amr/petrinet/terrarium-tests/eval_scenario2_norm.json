@@ -330,6 +330,51 @@
     "request": {
         "constraints": [
             {
+                "name": "c1",
+                "additive_bounds": {
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "S"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "c2",
+                "additive_bounds": {
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "R"
+                ],
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "c3",
+                "additive_bounds": {
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "D"
+                ],
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            },
+            {
                 "name": "I bound",
                 "timepoints": {
                     "lb": 50,
@@ -384,7 +429,8 @@
                     "lb": 0.07,
                     "ub": 0.33,
                     "original_width": 0.26
-                }
+                },
+                "label": "any"
             },
             {
                 "name": "f",
@@ -400,7 +446,8 @@
                     "lb": 0.07,
                     "ub": 0.1,
                     "original_width": 0.03
-                }
+                },
+                "label": "any"
             },
             {
                 "name": "e",
@@ -428,7 +475,7 @@
             }
         ],
         "config": {
-            "tolerance": 0.05,
+            "tolerance": 0.01,
             "normalization_constant": 150000000,
             "use_compartmental_constraints": true
         },
@@ -443,7 +490,12 @@
                             20,
                             30,
                             40,
-                            50
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            100
                         ]
                     }
                 ]

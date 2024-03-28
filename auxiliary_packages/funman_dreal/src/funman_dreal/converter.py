@@ -107,6 +107,12 @@ class CoreLexer(HRLexer):
                     r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False
                 ),  # eq
                 Rule(
+                    r"(-?\d+e\+?\d+)", self.real_constant, True
+                ),  # decimals scientific
+                Rule(
+                    r"(-?\d+?e-?\d+)", self.real_constant, True
+                ),  # decimals scientific
+                 Rule(
                     r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
                 ),  # decimals scientific
                 Rule(
@@ -121,7 +127,7 @@ class CoreLexer(HRLexer):
                     True,
                 ),  # unicode identifiers
             ]
-            + self.rules[-2:-1]
+            + self.rules[-1:]
         )
         self.compile()
 
