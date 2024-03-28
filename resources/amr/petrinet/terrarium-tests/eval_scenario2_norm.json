@@ -123,8 +123,8 @@
                     "rates": [
                         {
                             "target": "t0",
-                            "expression": "I*S*beta/N",
-                            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
+                            "expression": "I*S*β/N",
+                            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>β</ci></apply><ci>N</ci></apply>"
                         },
                         {
                             "target": "t1",
@@ -189,7 +189,7 @@
                             }
                         },
                         {
-                            "id": "beta",
+                            "id": "β",
                             "name": "β",
                             "description": "Number of infections per infected person per day",
                             "value": 1,
@@ -330,17 +330,61 @@
     "request": {
         "constraints": [
             {
+                "name": "c1",
+                "additive_bounds": {
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "S"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "c2",
+                "additive_bounds": {
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "R"
+                ],
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "c3",
+                "additive_bounds": {
+                    "ub": 0,
+                    "closed_upper_bound": true,
+                    "original_width": 99999999999
+                },
+                "variables": [
+                    "D"
+                ],
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            },
+            {
                 "name": "I bound",
                 "timepoints": {
-                    "lb": 0,
-                    "ub": 100,
+                    "lb": 50,
+                    "ub": 50,
                     "closed_upper_bound": true,
                     "original_width": 100
                 },
                 "variable": "I",
                 "interval": {
-                    "lb": 0,
-                    "ub": 15000000,
+                    "lb": 9000000,
                     "original_width": 15000000
                 }
             }
@@ -350,15 +394,15 @@
                 "name": "N",
                 "interval": {
                     "lb": 150000000,
-                    "ub": 150000100,
+                    "ub": 150000000,
                     "original_width": 100
                 }
             },
             {
-                "name": "beta",
+                "name": "β",
                 "interval": {
                     "lb": 0.01,
-                    "ub": 0.25,
+                    "ub": 1,
                     "original_width": 0.24000000000000002
                 },
                 "label": "all"
@@ -385,7 +429,8 @@
                     "lb": 0.07,
                     "ub": 0.33,
                     "original_width": 0.26
-                }
+                },
+                "label": "any"
             },
             {
                 "name": "f",
@@ -401,7 +446,8 @@
                     "lb": 0.07,
                     "ub": 0.1,
                     "original_width": 0.03
-                }
+                },
+                "label": "any"
             },
             {
                 "name": "e",
@@ -429,7 +475,7 @@
             }
         ],
         "config": {
-            "tolerance": 0.05,
+            "tolerance": 0.01,
             "normalization_constant": 150000000,
             "use_compartmental_constraints": true
         },
@@ -444,7 +490,12 @@
                             20,
                             30,
                             40,
-                            50
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            100
                         ]
                     }
                 ]
