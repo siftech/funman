@@ -112,7 +112,7 @@ class CoreLexer(HRLexer):
                 Rule(
                     r"(-?\d+?e-?\d+)", self.real_constant, True
                 ),  # decimals scientific
-                 Rule(
+                Rule(
                     r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
                 ),  # decimals scientific
                 Rule(

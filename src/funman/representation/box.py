@@ -351,7 +351,13 @@ class Box(BaseModel):
             ]
         )
 
-    def contains_point(self, point: Point) -> bool:
+    def _denormalize(self):
+        for p, interval in self.bounds.items():
+            interval._denormalize()
+
+    def contains_point(
+        self, point: Point, denormalize_bounds: bool = False
+    ) -> bool:
         """
         Does the box contain a point?
 
@@ -359,6 +365,8 @@ class Box(BaseModel):
         ----------
         point : Point
             a point
+        denormalize_bounds : bool
+            if true, and self has unnormalized_lb and unormalized_ub, use these insead of lb and ub.
 
         Returns
         -------
@@ -367,7 +375,9 @@ class Box(BaseModel):
         """
         return all(
             [
-                interval.contains_value(point.values[p])
+                interval.contains_value(
+                    point.values[p], denormalize_bounds=denormalize_bounds
+                )
                 for p, interval in self.bounds.items()
             ]
         )

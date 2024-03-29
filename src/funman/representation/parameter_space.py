@@ -304,7 +304,7 @@ class ParameterSpace(BaseModel):
             for point in iter(
                 pt for pt in points if pt not in assigned_points
             ):
-                if box.contains_point(point):
+                if box.contains_point(point, denormalize_bounds=True):
                     point.label = box.label
                     box.points.append(point)
                     assigned_points.add(point)
@@ -312,6 +312,11 @@ class ParameterSpace(BaseModel):
         self.unknown_points = [
             pt for pt in points if pt not in assigned_points
         ]
+
+    def _denormalize(self):
+        boxes: List[Box] = self.true_boxes + self.false_boxes
+        for box in boxes:
+            box._denormalize()
 
     def _compact(self):
         """

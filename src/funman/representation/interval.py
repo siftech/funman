@@ -347,7 +347,9 @@ class Interval(BaseModel):
             # ]
             return ans
 
-    def contains_value(self, value: float) -> bool:
+    def contains_value(
+        self, value: float, denormalize_bounds: bool = False
+    ) -> bool:
         """
         Does the interval include a value?
 
@@ -355,19 +357,38 @@ class Interval(BaseModel):
         ----------
         value : float
             value to check for containment
+        denormalize_bounds : bool
+            if true, and self has unnormalized_lb and unormalized_ub, use these insead of lb and ub.
 
         Returns
         -------
         bool
             the value is in the interval
         """
-        lb_sat = math_utils.gte(value, self.lb)
+        lb = (
+            self.lb
+            if not self.unnormalized_lb or not denormalize_bounds
+            else self.unnormalized_lb
+        )
+        ub = (
+            self.ub
+            if not self.unnormalized_ub or not denormalize_bounds
+            else self.unnormalized_ub
+        )
+
+        lb_sat = math_utils.gte(value, lb)
         ub_sat = (
-            math_utils.lte(value, self.ub)
+            math_utils.lte(value, ub)
             if self.closed_upper_bound
-            else math_utils.lt(value, self.ub)
+            else math_utils.lt(value, ub)
         )
         return lb_sat and ub_sat
+
+    def _denormalize(self):
+        self.lb = self.lb if not self.unnormalized_lb else self.unnormalized_lb
+        self.unnormalized_lb = None
+        self.ub = self.ub if not self.unnormalized_ub else self.unnormalized_ub
+        self.unnormalized_ub = None
 
     @model_validator(mode="after")
     def check_interval(self) -> str:
