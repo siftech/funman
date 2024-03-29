@@ -103,6 +103,7 @@ class ParameterSynthesisScenarioResult(AnalysisScenarioResult, BaseModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parameter_space._reassign_point_labels()
+        self.parameter_space._denormalize()
         self.parameter_space._compact()
 
     def plot(self, **kwargs):
