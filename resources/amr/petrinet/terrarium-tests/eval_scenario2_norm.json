@@ -123,8 +123,8 @@
                     "rates": [
                         {
                             "target": "t0",
-                            "expression": "I*S*β/N",
-                            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>β</ci></apply><ci>N</ci></apply>"
+                            "expression": "I*S*beta/N",
+                            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
                         },
                         {
                             "target": "t1",
@@ -189,14 +189,14 @@
                             }
                         },
                         {
-                            "id": "β",
-                            "name": "β",
+                            "id": "beta",
+                            "name": "beta",
                             "description": "Number of infections per infected person per day",
                             "value": 1,
                             "distribution": {
                                 "type": "StandardUniform1",
                                 "parameters": {
-                                    "minimum": 0.01,
+                                    "minimum": 0.1,
                                     "maximum": 0.25
                                 }
                             }
@@ -375,18 +375,62 @@
                 "derivative": true
             },
             {
-                "name": "I bound",
+                "name": "I increase",
                 "timepoints": {
-                    "lb": 50,
-                    "ub": 50,
-                    "closed_upper_bound": true,
-                    "original_width": 100
+                    "ub": 50
                 },
-                "variable": "I",
-                "interval": {
-                    "lb": 9000000,
-                    "original_width": 15000000
-                }
+                "variables": [
+                    "I"
+                ],
+                "additive_bounds": {
+                    "lb": 0
+                },
+                "derivative": true
+            },
+            {
+                "name": "I decrease",
+                "timepoints": {
+                    "lb": 60
+                },
+                "variables": [
+                    "I"
+                ],
+                "additive_bounds": {
+                    "lb": 0
+                },
+                "weights": [
+                    -1
+                ],
+                "derivative": true
+            },
+            {
+                "name": "H increase",
+                "timepoints": {
+                    "ub": 55
+                },
+                "variables": [
+                    "H"
+                ],
+                "additive_bounds": {
+                    "lb": 0
+                },
+                "derivative": true
+            },
+            {
+                "name": "H decrease",
+                "timepoints": {
+                    "lb": 65
+                },
+                "variables": [
+                    "H"
+                ],
+                "additive_bounds": {
+                    "lb": 0
+                },
+                "weights": [
+                    -1
+                ],
+                "derivative": true
             }
         ],
         "parameters": [
@@ -399,10 +443,10 @@
                 }
             },
             {
-                "name": "β",
+                "name": "beta",
                 "interval": {
-                    "lb": 0.01,
-                    "ub": 1,
+                    "lb": 0.5,
+                    "ub": 0.6,
                     "original_width": 0.24000000000000002
                 },
                 "label": "all"
@@ -426,8 +470,8 @@
             {
                 "name": "b",
                 "interval": {
-                    "lb": 0.07,
-                    "ub": 0.33,
+                    "lb": 0.75,
+                    "ub": 1.0,
                     "original_width": 0.26
                 },
                 "label": "any"
@@ -490,12 +534,14 @@
                             20,
                             30,
                             40,
+                            45,
                             50,
+                            55,
                             60,
+                            65,
                             70,
-                            80,
-                            90,
-                            100
+                            75,
+                            80
                         ]
                     }
                 ]
