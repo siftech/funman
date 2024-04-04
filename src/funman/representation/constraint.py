@@ -154,8 +154,8 @@ class LinearConstraint(TimedConstraint):
         return self.derivative or super().time_dependent()
 
     def relevant_at_time(self, time: int) -> bool:
-        return (self.derivative and time > 0) or (
-            not self.derivative and super().relevant_at_time(time)
+        return (not self.derivative or time > 0) and super().relevant_at_time(
+            time
         )
 
     @field_validator("weights")
