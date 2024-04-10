@@ -4,8 +4,8 @@
             "name": "ibounds",
             "variable": "I",
             "interval": {
-                "lb": 0.45,
-                "ub": 0.55
+                "lb": 450,
+                "ub": 550
             },
             "timepoints": {
                 "lb": 45,
@@ -34,16 +34,16 @@
         {
             "name": "S0",
             "interval": {
-                "lb": 0.99,
-                "ub": 0.99
+                "lb": 990,
+                "ub": 990
             },
             "label": "any"
         },
         {
             "name": "I0",
             "interval": {
-                "lb": 0.01,
-                "ub": 0.01
+                "lb": 10,
+                "ub": 10
             },
             "label": "any"
         },
@@ -52,6 +52,14 @@
             "interval": {
                 "lb": 0,
                 "ub": 0
+            },
+            "label": "any"
+        },
+        {
+            "name": "N",
+            "interval": {
+                "lb": 1000,
+                "ub": 1000
             },
             "label": "any"
         }
@@ -76,8 +84,7 @@
     ],
     "config": {
         "tolerance": 1e-2,
-        "normalization_constant": 1,
-        "normalize": true,
+        "normalization_constant": 1000,
         "save_smtlib": "./out"
     }
 }

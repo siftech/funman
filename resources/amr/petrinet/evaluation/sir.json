@@ -87,7 +87,7 @@
             "rates": [
                 {
                     "target": "inf",
-                    "expression": "S*I*beta",
+                    "expression": "S*I*beta/N",
                     "expression_mathml": "<apply><times/><ci>S</ci><ci>I</ci><ci>beta</ci></apply>"
                 },
                 {
@@ -170,6 +170,12 @@
                     "name": "R₀",
                     "description": "Total recovered population at timestep 0",
                     "value": 0
+                },
+                {
+                    "id": "N",
+                    "name": "N",
+                    "description": "Total population",
+                    "value": 1001
                 }
             ],
             "observables": [
