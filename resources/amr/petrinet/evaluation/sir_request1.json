@@ -1,0 +1,83 @@
+{
+    "constraints": [
+        {
+            "name": "ibounds",
+            "variable": "I",
+            "interval": {
+                "lb": 0.45,
+                "ub": 0.55
+            },
+            "timepoints": {
+                "lb": 45,
+                "ub": 55,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.2
+            },
+            "label": "all"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.0,
+                "ub": 0.05
+            },
+            "label": "all"
+        },
+        {
+            "name": "S0",
+            "interval": {
+                "lb": 0.99,
+                "ub": 0.99
+            },
+            "label": "any"
+        },
+        {
+            "name": "I0",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.01
+            },
+            "label": "any"
+        },
+        {
+            "name": "R0",
+            "interval": {
+                "lb": 0,
+                "ub": 0
+            },
+            "label": "any"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "num_steps",
+            "interval": {
+                "lb": 10,
+                "ub": 10
+            },
+            "label": "all"
+        },
+        {
+            "name": "step_size",
+            "interval": {
+                "lb": 10,
+                "ub": 10
+            },
+            "label": "all"
+        }
+    ],
+    "config": {
+        "tolerance": 1e-2,
+        "normalization_constant": 1,
+        "normalize": true,
+        "save_smtlib": "./out"
+    }
+}
