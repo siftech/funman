@@ -298,7 +298,7 @@ class PetrinetEncoder(Encoder):
         else:
             time_update = TRUE()
 
-        # normalization_constraint = TRUE()
+        normalization_constraint = TRUE()
         # if self.config.normalize:
         #     normalization_constraint = And([
         #         And(LE(Real(0.0),  current_state[scenario.model._state_var_id(var)]), LE( current_state[scenario.model._state_var_id(var)], Real(1.0)))
