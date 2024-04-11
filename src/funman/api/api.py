@@ -204,7 +204,7 @@ async def get_queries(
         try:
             start_time = time.time()
             results = worker.get_results(query_id)
-            print(f"Time took to process the request and return response is {(time.time() - start_time)} sec")
+            l.info(f"Time took to process the request and return response is {(time.time() - start_time)} sec")
             return results
         except NotFoundFunmanException as e:
             raise HTTPException(404, detail=str(e))
