@@ -1,0 +1,3901 @@
+{
+  "id": "d7ecd256-66eb-4e23-85f3-0774ad796a42",
+  "model": {
+    "petrinet": {
+      "header": {
+        "name": "Giordano2020 - SIDARTHE model of COVID-19 spread in Italy",
+        "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.5/petrinet/petrinet_schema.json",
+        "description": "Giordano2020 - SIDARTHE model of COVID-19 spread in Italy",
+        "model_version": "0.1"
+      },
+      "model": {
+        "states": [
+          {
+            "id": "Susceptible",
+            "name": "Susceptible",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000514"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Diagnosed",
+            "name": "Diagnosed",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000511"
+              },
+              "modifiers": {
+                "diagnosis": "ncit:C15220"
+              }
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Infected",
+            "name": "Infected",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000511"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Ailing",
+            "name": "Ailing",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000511"
+              },
+              "modifiers": {
+                "disease_severity": "ncit:C25269",
+                "diagnosis": "ncit:C113725"
+              }
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Recognized",
+            "name": "Recognized",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000511"
+              },
+              "modifiers": {
+                "diagnosis": "ncit:C15220"
+              }
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Healed",
+            "name": "Healed",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000592"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Threatened",
+            "name": "Threatened",
+            "grounding": {
+              "identifiers": {
+                "ido": "0000511"
+              },
+              "modifiers": {
+                "disease_severity": "ncit:C25467"
+              }
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "Extinct",
+            "name": "Extinct",
+            "grounding": {
+              "identifiers": {
+                "ncit": "C28554"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "id": "t1",
+            "input": [
+              "Diagnosed",
+              "Susceptible"
+            ],
+            "output": [
+              "Diagnosed",
+              "Infected"
+            ],
+            "properties": {
+              "name": "t1"
+            }
+          },
+          {
+            "id": "t2",
+            "input": [
+              "Ailing",
+              "Susceptible"
+            ],
+            "output": [
+              "Ailing",
+              "Infected"
+            ],
+            "properties": {
+              "name": "t2"
+            }
+          },
+          {
+            "id": "t3",
+            "input": [
+              "Recognized",
+              "Susceptible"
+            ],
+            "output": [
+              "Recognized",
+              "Infected"
+            ],
+            "properties": {
+              "name": "t3"
+            }
+          },
+          {
+            "id": "t4",
+            "input": [
+              "Infected",
+              "Susceptible"
+            ],
+            "output": [
+              "Infected",
+              "Infected"
+            ],
+            "properties": {
+              "name": "t4"
+            }
+          },
+          {
+            "id": "t5",
+            "input": [
+              "Infected"
+            ],
+            "output": [
+              "Diagnosed"
+            ],
+            "properties": {
+              "name": "t5"
+            }
+          },
+          {
+            "id": "t6",
+            "input": [
+              "Infected"
+            ],
+            "output": [
+              "Ailing"
+            ],
+            "properties": {
+              "name": "t6"
+            }
+          },
+          {
+            "id": "t7",
+            "input": [
+              "Infected"
+            ],
+            "output": [
+              "Healed"
+            ],
+            "properties": {
+              "name": "t7"
+            }
+          },
+          {
+            "id": "t8",
+            "input": [
+              "Diagnosed"
+            ],
+            "output": [
+              "Recognized"
+            ],
+            "properties": {
+              "name": "t8"
+            }
+          },
+          {
+            "id": "t9",
+            "input": [
+              "Diagnosed"
+            ],
+            "output": [
+              "Healed"
+            ],
+            "properties": {
+              "name": "t9"
+            }
+          },
+          {
+            "id": "t10",
+            "input": [
+              "Ailing"
+            ],
+            "output": [
+              "Recognized"
+            ],
+            "properties": {
+              "name": "t10"
+            }
+          },
+          {
+            "id": "t11",
+            "input": [
+              "Ailing"
+            ],
+            "output": [
+              "Healed"
+            ],
+            "properties": {
+              "name": "t11"
+            }
+          },
+          {
+            "id": "t12",
+            "input": [
+              "Ailing"
+            ],
+            "output": [
+              "Threatened"
+            ],
+            "properties": {
+              "name": "t12"
+            }
+          },
+          {
+            "id": "t13",
+            "input": [
+              "Recognized"
+            ],
+            "output": [
+              "Threatened"
+            ],
+            "properties": {
+              "name": "t13"
+            }
+          },
+          {
+            "id": "t14",
+            "input": [
+              "Recognized"
+            ],
+            "output": [
+              "Healed"
+            ],
+            "properties": {
+              "name": "t14"
+            }
+          },
+          {
+            "id": "t15",
+            "input": [
+              "Threatened"
+            ],
+            "output": [
+              "Extinct"
+            ],
+            "properties": {
+              "name": "t15"
+            }
+          },
+          {
+            "id": "t16",
+            "input": [
+              "Threatened"
+            ],
+            "output": [
+              "Healed"
+            ],
+            "properties": {
+              "name": "t16"
+            }
+          }
+        ]
+      },
+      "semantics": {
+        "ode": {
+          "rates": [
+            {
+              "target": "t1",
+              "expression": "Diagnosed*Susceptible*beta",
+              "expression_mathml": "<apply><times/><ci>Diagnosed</ci><ci>Susceptible</ci><ci>beta</ci></apply>"
+            },
+            {
+              "target": "t2",
+              "expression": "Ailing*Susceptible*gamma",
+              "expression_mathml": "<apply><times/><ci>Ailing</ci><ci>Susceptible</ci><ci>gamma</ci></apply>"
+            },
+            {
+              "target": "t3",
+              "expression": "Recognized*Susceptible*delta",
+              "expression_mathml": "<apply><times/><ci>Recognized</ci><ci>Susceptible</ci><ci>delta</ci></apply>"
+            },
+            {
+              "target": "t4",
+              "expression": "Infected*Susceptible*alpha",
+              "expression_mathml": "<apply><times/><ci>Infected</ci><ci>Susceptible</ci><ci>alpha</ci></apply>"
+            },
+            {
+              "target": "t5",
+              "expression": "Infected*epsilon",
+              "expression_mathml": "<apply><times/><ci>Infected</ci><ci>epsilon</ci></apply>"
+            },
+            {
+              "target": "t6",
+              "expression": "Infected*zeta",
+              "expression_mathml": "<apply><times/><ci>Infected</ci><ci>zeta</ci></apply>"
+            },
+            {
+              "target": "t7",
+              "expression": "Infected*lambda",
+              "expression_mathml": "<apply><times/><ci>Infected</ci><ci>lambda</ci></apply>"
+            },
+            {
+              "target": "t8",
+              "expression": "Diagnosed*eta",
+              "expression_mathml": "<apply><times/><ci>Diagnosed</ci><ci>eta</ci></apply>"
+            },
+            {
+              "target": "t9",
+              "expression": "Diagnosed*rho",
+              "expression_mathml": "<apply><times/><ci>Diagnosed</ci><ci>rho</ci></apply>"
+            },
+            {
+              "target": "t10",
+              "expression": "Ailing*theta",
+              "expression_mathml": "<apply><times/><ci>Ailing</ci><ci>theta</ci></apply>"
+            },
+            {
+              "target": "t11",
+              "expression": "Ailing*kappa",
+              "expression_mathml": "<apply><times/><ci>Ailing</ci><ci>kappa</ci></apply>"
+            },
+            {
+              "target": "t12",
+              "expression": "Ailing*mu",
+              "expression_mathml": "<apply><times/><ci>Ailing</ci><ci>mu</ci></apply>"
+            },
+            {
+              "target": "t13",
+              "expression": "Recognized*nu",
+              "expression_mathml": "<apply><times/><ci>Recognized</ci><ci>nu</ci></apply>"
+            },
+            {
+              "target": "t14",
+              "expression": "Recognized*xi",
+              "expression_mathml": "<apply><times/><ci>Recognized</ci><ci>xi</ci></apply>"
+            },
+            {
+              "target": "t15",
+              "expression": "Threatened*tau",
+              "expression_mathml": "<apply><times/><ci>Threatened</ci><ci>tau</ci></apply>"
+            },
+            {
+              "target": "t16",
+              "expression": "Threatened*sigma",
+              "expression_mathml": "<apply><times/><ci>Threatened</ci><ci>sigma</ci></apply>"
+            }
+          ],
+          "initials": [
+            {
+              "target": "Susceptible",
+              "expression": "0.999996300000000",
+              "expression_mathml": "<cn>0.99999629999999995</cn>"
+            },
+            {
+              "target": "Diagnosed",
+              "expression": "3.33333333000000e-7",
+              "expression_mathml": "<cn>3.33333333e-7</cn>"
+            },
+            {
+              "target": "Infected",
+              "expression": "3.33333333000000e-6",
+              "expression_mathml": "<cn>3.3333333299999999e-6</cn>"
+            },
+            {
+              "target": "Ailing",
+              "expression": "1.66666666000000e-8",
+              "expression_mathml": "<cn>1.6666666599999999e-8</cn>"
+            },
+            {
+              "target": "Recognized",
+              "expression": "3.33333333000000e-8",
+              "expression_mathml": "<cn>3.33333333e-8</cn>"
+            },
+            {
+              "target": "Healed",
+              "expression": "0.0",
+              "expression_mathml": "<cn>0.0</cn>"
+            },
+            {
+              "target": "Threatened",
+              "expression": "0.0",
+              "expression_mathml": "<cn>0.0</cn>"
+            },
+            {
+              "target": "Extinct",
+              "expression": "0.0",
+              "expression_mathml": "<cn>0.0</cn>"
+            }
+          ],
+          "parameters": [
+            {
+              "id": "beta",
+              "value": 0.011000000000000001,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.008799999999999999,
+                  "maximum": 0.013200000000000002
+                }
+              }
+            },
+            {
+              "id": "gamma",
+              "value": 0.456,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.3648,
+                  "maximum": 0.5472
+                }
+              }
+            },
+            {
+              "id": "delta",
+              "value": 0.011000000000000001,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.008799999999999999,
+                  "maximum": 0.013200000000000002
+                }
+              }
+            },
+            {
+              "id": "alpha",
+              "value": 0.5700000000000001,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.45599999999999996,
+                  "maximum": 0.6839999999999999
+                }
+              }
+            },
+            {
+              "id": "epsilon",
+              "value": 0.171,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.1368,
+                  "maximum": 0.20520000000000002
+                }
+              }
+            },
+            {
+              "id": "zeta",
+              "value": 0.125,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.1,
+                  "maximum": 0.15000000000000002
+                }
+              }
+            },
+            {
+              "id": "lambda",
+              "value": 0.034,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.027200000000000002,
+                  "maximum": 0.0408
+                }
+              }
+            },
+            {
+              "id": "eta",
+              "value": 0.125,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.1,
+                  "maximum": 0.15000000000000002
+                }
+              }
+            },
+            {
+              "id": "rho",
+              "value": 0.034,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.027200000000000002,
+                  "maximum": 0.0408
+                }
+              }
+            },
+            {
+              "id": "theta",
+              "value": 0.37100000000000005,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.2968,
+                  "maximum": 0.44520000000000004
+                }
+              }
+            },
+            {
+              "id": "kappa",
+              "value": 0.017,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.013600000000000001,
+                  "maximum": 0.0204
+                }
+              }
+            },
+            {
+              "id": "mu",
+              "value": 0.017,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.013600000000000001,
+                  "maximum": 0.0204
+                }
+              }
+            },
+            {
+              "id": "nu",
+              "value": 0.027000000000000003,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.0216,
+                  "maximum": 0.032400000000000005
+                }
+              }
+            },
+            {
+              "id": "xi",
+              "value": 0.017,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.013600000000000001,
+                  "maximum": 0.0204
+                }
+              }
+            },
+            {
+              "id": "tau",
+              "value": 0.01,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.008,
+                  "maximum": 0.012
+                }
+              }
+            },
+            {
+              "id": "sigma",
+              "value": 0.017,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.013600000000000001,
+                  "maximum": 0.0204
+                }
+              }
+            }
+          ],
+          "time": {
+            "id": "t",
+            "units": {
+              "expression": "day",
+              "expression_mathml": "<ci>day</ci>"
+            }
+          }
+        }
+      },
+      "metadata": {
+        "timeseries": {},
+        "initials": {},
+        "parameters": {}
+      },
+      "id": "d56b82ec-538e-4303-8e28-1a512f5ea545",
+      "createdOn": "2024-02-27T23:12:01.763+00:00",
+      "temporary": false,
+      "publicAsset": false
+    }
+  },
+  "progress": {
+    "progress": 1.0,
+    "coverage_of_search_space": 1.0
+  },
+  "request": {
+    "constraints": [],
+    "parameters": [
+      {
+        "name": "beta",
+        "interval": {
+          "lb": 0.008799999999999999,
+          "ub": 0.013200000000000002,
+          "original_width": 0.004400000000000003
+        },
+        "label": "all"
+      },
+      {
+        "name": "gamma",
+        "interval": {
+          "lb": 0.3648,
+          "ub": 0.5472,
+          "original_width": 0.1824
+        },
+        "label": "all"
+      },
+      {
+        "name": "delta",
+        "interval": {
+          "lb": 0.008799999999999999,
+          "ub": 0.013200000000000002,
+          "original_width": 0.004400000000000003
+        }
+      },
+      {
+        "name": "alpha",
+        "interval": {
+          "lb": 0.45599999999999996,
+          "ub": 0.6839999999999999,
+          "original_width": 0.228
+        }
+      },
+      {
+        "name": "epsilon",
+        "interval": {
+          "lb": 0.1368,
+          "ub": 0.20520000000000002,
+          "original_width": 0.06840000000000002
+        }
+      },
+      {
+        "name": "zeta",
+        "interval": {
+          "lb": 0.1,
+          "ub": 0.15000000000000002,
+          "original_width": 0.05000000000000002
+        }
+      },
+      {
+        "name": "lambda",
+        "interval": {
+          "lb": 0.027200000000000002,
+          "ub": 0.0408,
+          "original_width": 0.013600000000000001
+        }
+      },
+      {
+        "name": "eta",
+        "interval": {
+          "lb": 0.1,
+          "ub": 0.15000000000000002,
+          "original_width": 0.05000000000000002
+        }
+      },
+      {
+        "name": "rho",
+        "interval": {
+          "lb": 0.027200000000000002,
+          "ub": 0.0408,
+          "original_width": 0.013600000000000001
+        }
+      },
+      {
+        "name": "theta",
+        "interval": {
+          "lb": 0.2968,
+          "ub": 0.44520000000000004,
+          "original_width": 0.14840000000000003
+        }
+      },
+      {
+        "name": "kappa",
+        "interval": {
+          "lb": 0.013600000000000001,
+          "ub": 0.0204,
+          "original_width": 0.0068000000000000005
+        }
+      },
+      {
+        "name": "mu",
+        "interval": {
+          "lb": 0.013600000000000001,
+          "ub": 0.0204,
+          "original_width": 0.0068000000000000005
+        }
+      },
+      {
+        "name": "nu",
+        "interval": {
+          "lb": 0.0216,
+          "ub": 0.032400000000000005,
+          "original_width": 0.010800000000000006
+        }
+      },
+      {
+        "name": "xi",
+        "interval": {
+          "lb": 0.013600000000000001,
+          "ub": 0.0204,
+          "original_width": 0.0068000000000000005
+        }
+      },
+      {
+        "name": "tau",
+        "interval": {
+          "lb": 0.008,
+          "ub": 0.012,
+          "original_width": 0.004
+        }
+      },
+      {
+        "name": "sigma",
+        "interval": {
+          "lb": 0.013600000000000001,
+          "ub": 0.0204,
+          "original_width": 0.0068000000000000005
+        }
+      }
+    ],
+    "config": {
+      "tolerance": 0.2,
+      "normalization_constant": 1.0,
+      "use_compartmental_constraints": true
+    },
+    "structure_parameters": [
+      {
+        "name": "schedules",
+        "schedules": [
+          {
+            "timepoints": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50,
+              60,
+              70,
+              80,
+              90,
+              100
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "done": true,
+  "parameter_space": {
+    "num_dimensions": 17,
+    "true_boxes": [
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 0.0,
+            "ub": 0.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 0.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 0.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 1.0,
+            "ub": 1.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 1.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 1.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 2.0,
+            "ub": 2.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 2.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998848262798113,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.0000753920253063553,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 2.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998848262798113,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.0000753920253063553,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 3.0,
+            "ub": 3.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 3.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992271948812,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.000025933939308356896,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997166205575423,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00020792274478406128,
+              "Ailing_30": 0.00003890090896253535,
+              "Recognized_30": 0.000041756184843327254,
+              "Healed_30": 0.000030947634916488586,
+              "Threatened_30": 0.000007431263429990533,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 3.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992271948812,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.000025933939308356896,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997166205575423,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00020792274478406128,
+              "Ailing_30": 0.00003890090896253535,
+              "Recognized_30": 0.000041756184843327254,
+              "Healed_30": 0.000030947634916488586,
+              "Threatened_30": 0.000007431263429990533,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 4.0,
+            "ub": 4.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 4.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992271948812,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.000025933939308356896,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997166205575423,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00020792274478406128,
+              "Ailing_30": 0.00003890090896253535,
+              "Recognized_30": 0.000041756184843327254,
+              "Healed_30": 0.000030947634916488586,
+              "Threatened_30": 0.000007431263429990533,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.998076145408812,
+              "Diagnosed_40": 0.0004266574722968938,
+              "Infected_40": 0.001848397893514358,
+              "Ailing_40": 0.00035078502613862734,
+              "Recognized_40": 0.00021494303154453466,
+              "Healed_40": 0.00013364220762548864,
+              "Threatened_40": 0.000026965973932329584,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 4.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992271948812,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.000025933939308356896,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997166205575423,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00020792274478406128,
+              "Ailing_30": 0.00003890090896253535,
+              "Recognized_30": 0.000041756184843327254,
+              "Healed_30": 0.000030947634916488586,
+              "Threatened_30": 0.000007431263429990533,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.998076145408812,
+              "Diagnosed_40": 0.0004266574722968938,
+              "Infected_40": 0.001848397893514358,
+              "Ailing_40": 0.00035078502613862734,
+              "Recognized_40": 0.00021494303154453466,
+              "Healed_40": 0.00013364220762548864,
+              "Threatened_40": 0.000026965973932329584,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 5.0,
+            "ub": 5.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 5.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992271948812,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.000025933939308356896,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997166205575423,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00020792274478406128,
+              "Ailing_30": 0.00003890090896253535,
+              "Recognized_30": 0.000041756184843327254,
+              "Healed_30": 0.000030947634916488586,
+              "Threatened_30": 0.000007431263429990533,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.998076145408812,
+              "Diagnosed_40": 0.0004266574722968938,
+              "Infected_40": 0.001848397893514358,
+              "Ailing_40": 0.00035078502613862734,
+              "Recognized_40": 0.00021494303154453466,
+              "Healed_40": 0.00013364220762548864,
+              "Threatened_40": 0.000026965973932329584,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9834297562740207,
+              "Diagnosed_50": 0.004219569949788358,
+              "Infected_50": 0.016494787028305577,
+              "Ailing_50": 0.003123381866410165,
+              "Recognized_50": 0.0024166241763590446,
+              "Healed_50": 0.0011827743793260401,
+              "Threatened_50": 0.0001681676614850388,
+              "Extinct_50": 0.000004159885741998931,
+              "timer_t_50": 50.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.456,
+              "delta": 0.011,
+              "alpha": 0.57,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.37100000000000005,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 5.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999771837374165,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00001144959592455574,
+              "Ailing_10": 0.0000041158333293700015,
+              "Recognized_10": 4.97166665984e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992271948812,
+              "Diagnosed_20": 0.0000185941451644823,
+              "Infected_20": 0.000025933939308356896,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023358492243743297,
+              "Healed_20": 0.000008331919781287986,
+              "Threatened_20": 8.765557324231243e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997166205575423,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00020792274478406128,
+              "Ailing_30": 0.00003890090896253535,
+              "Recognized_30": 0.000041756184843327254,
+              "Healed_30": 0.000030947634916488586,
+              "Threatened_30": 0.000007431263429990533,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.998076145408812,
+              "Diagnosed_40": 0.0004266574722968938,
+              "Infected_40": 0.001848397893514358,
+              "Ailing_40": 0.00035078502613862734,
+              "Recognized_40": 0.00021494303154453466,
+              "Healed_40": 0.00013364220762548864,
+              "Threatened_40": 0.000026965973932329584,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9834297562740207,
+              "Diagnosed_50": 0.004219569949788358,
+              "Infected_50": 0.016494787028305577,
+              "Ailing_50": 0.003123381866410165,
+              "Recognized_50": 0.0024166241763590446,
+              "Healed_50": 0.0011827743793260401,
+              "Threatened_50": 0.0001681676614850388,
+              "Extinct_50": 0.000004159885741998931,
+              "timer_t_50": 50.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 6.0,
+            "ub": 6.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.42879580115845184,
+              "delta": 0.011,
+              "alpha": 0.5032892188397481,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.36748083230435197,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 6.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999794119559083,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.000009221377432754503,
+              "Ailing_10": 0.00000411641985731693,
+              "Recognized_10": 4.965801380370715e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9999124562233198,
+              "Diagnosed_20": 0.000014019276546806165,
+              "Infected_20": 0.000019553201499492812,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023000385689170543,
+              "Healed_20": 0.000007422351084850597,
+              "Threatened_20": 8.761274796299099e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.999800245331395,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00013111412291672012,
+              "Ailing_30": 0.00002932980224923922,
+              "Recognized_30": 0.000034042206576308296,
+              "Healed_30": 0.000025470164561511714,
+              "Threatened_30": 0.000007275597614852348,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9989337792729438,
+              "Diagnosed_40": 0.0002690461802251097,
+              "Infected_40": 0.0009975801813679604,
+              "Ailing_40": 0.00022600098662431943,
+              "Recognized_40": 0.00015619521109716037,
+              "Healed_40": 0.00009326347042713382,
+              "Threatened_40": 0.000022261265647635334,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.992305746552174,
+              "Diagnosed_50": 0.002316080712392165,
+              "Infected_50": 0.00762561290213777,
+              "Ailing_50": 0.0017223712586762602,
+              "Recognized_50": 0.001501015271543838,
+              "Healed_50": 0.0006925563484844062,
+              "Threatened_50": 0.00011897271531447647,
+              "Extinct_50": 0.00000359532074783562,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.9287531836919171,
+              "Diagnosed_60": 0.017963838387578875,
+              "Infected_60": 0.07120863605979222,
+              "Ailing_60": 0.013160790611882918,
+              "Recognized_60": 0.01214848249363792,
+              "Healed_60": 0.005430608629301675,
+              "Threatened_60": 0.0009566654000646372,
+              "Extinct_60": 0.000017872046585572803,
+              "timer_t_60": 60.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.42879580115845184,
+              "delta": 0.011,
+              "alpha": 0.5032892188397481,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.36748083230435197,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 6.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999794119559083,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.000009221377432754503,
+              "Ailing_10": 0.00000411641985731693,
+              "Recognized_10": 4.965801380370715e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9999124562233198,
+              "Diagnosed_20": 0.000014019276546806165,
+              "Infected_20": 0.000019553201499492812,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023000385689170543,
+              "Healed_20": 0.000007422351084850597,
+              "Threatened_20": 8.761274796299099e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.999800245331395,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00013111412291672012,
+              "Ailing_30": 0.00002932980224923922,
+              "Recognized_30": 0.000034042206576308296,
+              "Healed_30": 0.000025470164561511714,
+              "Threatened_30": 0.000007275597614852348,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9989337792729438,
+              "Diagnosed_40": 0.0002690461802251097,
+              "Infected_40": 0.0009975801813679604,
+              "Ailing_40": 0.00022600098662431943,
+              "Recognized_40": 0.00015619521109716037,
+              "Healed_40": 0.00009326347042713382,
+              "Threatened_40": 0.000022261265647635334,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.992305746552174,
+              "Diagnosed_50": 0.002316080712392165,
+              "Infected_50": 0.00762561290213777,
+              "Ailing_50": 0.0017223712586762602,
+              "Recognized_50": 0.001501015271543838,
+              "Healed_50": 0.0006925563484844062,
+              "Threatened_50": 0.00011897271531447647,
+              "Extinct_50": 0.00000359532074783562,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.9287531836919171,
+              "Diagnosed_60": 0.017963838387578875,
+              "Infected_60": 0.07120863605979222,
+              "Ailing_60": 0.013160790611882918,
+              "Recognized_60": 0.01214848249363792,
+              "Healed_60": 0.005430608629301675,
+              "Threatened_60": 0.0009566654000646372,
+              "Extinct_60": 0.000017872046585572803,
+              "timer_t_60": 60.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 7.0,
+            "ub": 7.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.45647069803240803,
+              "delta": 0.011,
+              "alpha": 0.5969395690401448,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.337256998043261,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 7.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.999976285676656,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.000012269100596439785,
+              "Ailing_10": 0.000004121457163006963,
+              "Recognized_10": 4.91542832347039e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998926230133433,
+              "Diagnosed_20": 0.000018626650885858338,
+              "Infected_20": 0.000025133255014132395,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000021697976623698137,
+              "Healed_20": 0.00000848906696625961,
+              "Threatened_20": 8.754984516993756e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997276456680468,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00016794918812398801,
+              "Ailing_30": 0.000036525937275076663,
+              "Recognized_30": 0.00003866947491729197,
+              "Healed_30": 0.000030019091886422175,
+              "Threatened_30": 0.000006890500870576466,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9984555421121406,
+              "Diagnosed_40": 0.00034463173403042344,
+              "Infected_40": 0.0015259738129176843,
+              "Ailing_40": 0.0002784946637739447,
+              "Recognized_40": 0.0001666758683772184,
+              "Healed_40": 0.00011496515158641496,
+              "Threatened_40": 0.00002456356863310442,
+              "Extinct_40": 8.5885328426282e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9838655720598898,
+              "Diagnosed_50": 0.003279851723242418,
+              "Infected_50": 0.01626167038287001,
+              "Ailing_50": 0.002424123310858736,
+              "Recognized_50": 0.0017355367928511439,
+              "Healed_50": 0.0009349865100744279,
+              "Threatened_50": 0.0001349299426154458,
+              "Extinct_50": 0.0000039634668711817166,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.8706718352996725,
+              "Diagnosed_60": 0.02819909846319397,
+              "Infected_60": 0.11441739070821917,
+              "Ailing_60": 0.01281067523559874,
+              "Recognized_60": 0.015811567405224207,
+              "Healed_60": 0.009062107253454304,
+              "Threatened_60": 0.001191765018914399,
+              "Extinct_60": 0.000020155059985035215,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.2472506669706395,
+              "Diagnosed_70": 0.04891523075329561,
+              "Infected_70": 0.5445045568596265,
+              "Ailing_70": 0.1929532891503114,
+              "Recognized_70": 0.029673576509298676,
+              "Healed_70": 0.08349035363069161,
+              "Threatened_70": 0.008928090606269187,
+              "Extinct_70": 0.00016316686225476313,
+              "timer_t_70": 70.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.45647069803240803,
+              "delta": 0.011,
+              "alpha": 0.5969395690401448,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.337256998043261,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 7.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.999976285676656,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.000012269100596439785,
+              "Ailing_10": 0.000004121457163006963,
+              "Recognized_10": 4.91542832347039e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998926230133433,
+              "Diagnosed_20": 0.000018626650885858338,
+              "Infected_20": 0.000025133255014132395,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000021697976623698137,
+              "Healed_20": 0.00000848906696625961,
+              "Threatened_20": 8.754984516993756e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997276456680468,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00016794918812398801,
+              "Ailing_30": 0.000036525937275076663,
+              "Recognized_30": 0.00003866947491729197,
+              "Healed_30": 0.000030019091886422175,
+              "Threatened_30": 0.000006890500870576466,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9984555421121406,
+              "Diagnosed_40": 0.00034463173403042344,
+              "Infected_40": 0.0015259738129176843,
+              "Ailing_40": 0.0002784946637739447,
+              "Recognized_40": 0.0001666758683772184,
+              "Healed_40": 0.00011496515158641496,
+              "Threatened_40": 0.00002456356863310442,
+              "Extinct_40": 8.5885328426282e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9838655720598898,
+              "Diagnosed_50": 0.003279851723242418,
+              "Infected_50": 0.01626167038287001,
+              "Ailing_50": 0.002424123310858736,
+              "Recognized_50": 0.0017355367928511439,
+              "Healed_50": 0.0009349865100744279,
+              "Threatened_50": 0.0001349299426154458,
+              "Extinct_50": 0.0000039634668711817166,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.8706718352996725,
+              "Diagnosed_60": 0.02819909846319397,
+              "Infected_60": 0.11441739070821917,
+              "Ailing_60": 0.01281067523559874,
+              "Recognized_60": 0.015811567405224207,
+              "Healed_60": 0.009062107253454304,
+              "Threatened_60": 0.001191765018914399,
+              "Extinct_60": 0.000020155059985035215,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.2472506669706395,
+              "Diagnosed_70": 0.04891523075329561,
+              "Infected_70": 0.5445045568596265,
+              "Ailing_70": 0.1929532891503114,
+              "Recognized_70": 0.029673576509298676,
+              "Healed_70": 0.08349035363069161,
+              "Threatened_70": 0.008928090606269187,
+              "Extinct_70": 0.00016316686225476313,
+              "timer_t_70": 70.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 8.0,
+            "ub": 8.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.5157249039450337,
+              "delta": 0.011,
+              "alpha": 0.554146660898824,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.36748083230435197,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 8.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999777022259837,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.000010931107357410804,
+              "Ailing_10": 0.00000411641985731693,
+              "Recognized_10": 4.965801380370715e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992010361928,
+              "Diagnosed_20": 0.00001636454971363755,
+              "Infected_20": 0.000021992561291237656,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023000385689170543,
+              "Healed_20": 0.000008007338400669643,
+              "Threatened_20": 8.761274796299099e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997620168356062,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00015581318558121054,
+              "Ailing_30": 0.00003283543356439602,
+              "Recognized_30": 0.000036756748557852224,
+              "Healed_30": 0.000027892716369424867,
+              "Threatened_30": 0.000007275597614852348,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9986379878204783,
+              "Diagnosed_40": 0.00031972865681264407,
+              "Infected_40": 0.001278357033691465,
+              "Ailing_40": 0.00026518778851379913,
+              "Recognized_40": 0.00017223220262469553,
+              "Healed_40": 0.00010701129161603138,
+              "Threatened_40": 0.000023793335421983683,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9870781325833816,
+              "Diagnosed_50": 0.0029429172899475306,
+              "Infected_50": 0.012879496465456667,
+              "Ailing_50": 0.002182723339050997,
+              "Recognized_50": 0.0017562814966154373,
+              "Healed_50": 0.0008531177719600456,
+              "Threatened_50": 0.00013369487792920008,
+              "Extinct_50": 0.000003779169120757422,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.8765824235925945,
+              "Diagnosed_60": 0.024497190096889308,
+              "Infected_60": 0.04852216298104916,
+              "Ailing_60": 0.021522149766396617,
+              "Recognized_60": 0.01526128176091767,
+              "Healed_60": 0.007810768185762362,
+              "Threatened_60": 0.0011480056439990055,
+              "Extinct_60": 0.000019822554472261437,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.6616273633566316,
+              "Diagnosed_70": 0.14856185863089152,
+              "Infected_70": 0.048026488236626516,
+              "Ailing_70": 0.02829825260596848,
+              "Recognized_70": 0.17226765974300906,
+              "Healed_70": 0.043116725684085686,
+              "Threatened_70": 0.009862133573254578,
+              "Extinct_70": 0.00015758323175214212,
+              "timer_t_70": 70.0,
+              "Susceptible_80": 0.271259032398292,
+              "Diagnosed_80": 0.027430281926474342,
+              "Infected_80": 0.027430281926474342,
+              "Ailing_80": 0.027430281926474342,
+              "Recognized_80": 0.47828083561017365,
+              "Healed_80": 0.20375837696244425,
+              "Threatened_80": 0.0865850734828856,
+              "Extinct_80": 0.0013359668964811552,
+              "timer_t_80": 80.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.5157249039450337,
+              "delta": 0.011,
+              "alpha": 0.554146660898824,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.125,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.36748083230435197,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 8.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999777022259837,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.000010931107357410804,
+              "Ailing_10": 0.00000411641985731693,
+              "Recognized_10": 4.965801380370715e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9998992010361928,
+              "Diagnosed_20": 0.00001636454971363755,
+              "Infected_20": 0.000021992561291237656,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023000385689170543,
+              "Healed_20": 0.000008007338400669643,
+              "Threatened_20": 8.761274796299099e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997620168356062,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00015581318558121054,
+              "Ailing_30": 0.00003283543356439602,
+              "Recognized_30": 0.000036756748557852224,
+              "Healed_30": 0.000027892716369424867,
+              "Threatened_30": 0.000007275597614852348,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9986379878204783,
+              "Diagnosed_40": 0.00031972865681264407,
+              "Infected_40": 0.001278357033691465,
+              "Ailing_40": 0.00026518778851379913,
+              "Recognized_40": 0.00017223220262469553,
+              "Healed_40": 0.00010701129161603138,
+              "Threatened_40": 0.000023793335421983683,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9870781325833816,
+              "Diagnosed_50": 0.0029429172899475306,
+              "Infected_50": 0.012879496465456667,
+              "Ailing_50": 0.002182723339050997,
+              "Recognized_50": 0.0017562814966154373,
+              "Healed_50": 0.0008531177719600456,
+              "Threatened_50": 0.00013369487792920008,
+              "Extinct_50": 0.000003779169120757422,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.8765824235925945,
+              "Diagnosed_60": 0.024497190096889308,
+              "Infected_60": 0.04852216298104916,
+              "Ailing_60": 0.021522149766396617,
+              "Recognized_60": 0.01526128176091767,
+              "Healed_60": 0.007810768185762362,
+              "Threatened_60": 0.0011480056439990055,
+              "Extinct_60": 0.000019822554472261437,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.6616273633566316,
+              "Diagnosed_70": 0.14856185863089152,
+              "Infected_70": 0.048026488236626516,
+              "Ailing_70": 0.02829825260596848,
+              "Recognized_70": 0.17226765974300906,
+              "Healed_70": 0.043116725684085686,
+              "Threatened_70": 0.009862133573254578,
+              "Extinct_70": 0.00015758323175214212,
+              "timer_t_70": 70.0,
+              "Susceptible_80": 0.271259032398292,
+              "Diagnosed_80": 0.027430281926474342,
+              "Infected_80": 0.027430281926474342,
+              "Ailing_80": 0.027430281926474342,
+              "Recognized_80": 0.47828083561017365,
+              "Healed_80": 0.20375837696244425,
+              "Threatened_80": 0.0865850734828856,
+              "Extinct_80": 0.0013359668964811552,
+              "timer_t_80": 80.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 9.0,
+            "ub": 9.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.44960755449528567,
+              "delta": 0.011,
+              "alpha": 0.49527947205495626,
+              "epsilon": 0.171,
+              "zeta": 0.12500969957734,
+              "lambda": 0.034,
+              "eta": 0.1266739303266183,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.3668457444732957,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 9.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999796754778669,
+              "Diagnosed_10": 0.000005501586656089339,
+              "Infected_10": 0.000008957855474105555,
+              "Ailing_10": 0.000004116525705288349,
+              "Recognized_10": 4.982209618063151e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9999143149667478,
+              "Diagnosed_20": 0.00001345091552780735,
+              "Infected_20": 0.00001876048744667868,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000022995392158645007,
+              "Healed_20": 0.000007314598260057659,
+              "Threatened_20": 8.761168948327681e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9998093690384148,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00012309089513684417,
+              "Ailing_30": 0.000028191057103580817,
+              "Recognized_30": 0.000033166010280660763,
+              "Healed_30": 0.000024826025537772495,
+              "Threatened_30": 0.000007268333579507201,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9990064757344657,
+              "Diagnosed_40": 0.00025258251682080425,
+              "Infected_40": 0.0009259841990859911,
+              "Ailing_40": 0.0002128273998088471,
+              "Recognized_40": 0.00015039732156793835,
+              "Healed_40": 0.0000889432234279416,
+              "Threatened_40": 0.000021755987862200747,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9907984254153176,
+              "Diagnosed_50": 0.0021527020933452584,
+              "Infected_50": 0.009380707553566415,
+              "Ailing_50": 0.001601803698437834,
+              "Recognized_50": 0.0014143047819774029,
+              "Healed_50": 0.0006483442563423275,
+              "Threatened_50": 0.00011391699195067752,
+              "Extinct_50": 0.0000035346874135834695,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.923095703364343,
+              "Diagnosed_60": 0.01649603242532257,
+              "Infected_60": 0.06600468505332129,
+              "Ailing_60": 0.013704698974970515,
+              "Recognized_60": 0.011304390436764887,
+              "Healed_60": 0.005492051645496393,
+              "Threatened_60": 0.0008989351781321342,
+              "Extinct_60": 0.000017204726447664776,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.6062712579262823,
+              "Diagnosed_70": 0.1565664916416704,
+              "Infected_70": 0.07621814963148468,
+              "Ailing_70": 0.029331792527250072,
+              "Recognized_70": 0.12937515694392604,
+              "Healed_70": 0.046028795696857486,
+              "Threatened_70": 0.007027260727567633,
+              "Extinct_70": 0.0001250769478235209,
+              "timer_t_70": 70.0,
+              "Susceptible_80": 0.16424313224819495,
+              "Diagnosed_80": 0.014814006787584919,
+              "Infected_80": 0.074104532828003,
+              "Ailing_80": 0.04954279067886751,
+              "Recognized_80": 0.5148155816757122,
+              "Healed_80": 0.19609359862156264,
+              "Threatened_80": 0.05264321706284197,
+              "Extinct_80": 0.000968348235131637,
+              "timer_t_80": 80.0,
+              "Susceptible_90": 0.03829079744654589,
+              "Diagnosed_90": 0.15141919610960555,
+              "Infected_90": 0.03766288357765154,
+              "Ailing_90": 0.022221010181377357,
+              "Recognized_90": 0.3932686774418735,
+              "Healed_90": 0.35726018558546163,
+              "Threatened_90": 0.15994030809680831,
+              "Extinct_90": 0.006528950077167531,
+              "timer_t_90": 90.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.44960755449528567,
+              "delta": 0.011,
+              "alpha": 0.49527947205495626,
+              "epsilon": 0.171,
+              "zeta": 0.12500969957734,
+              "lambda": 0.034,
+              "eta": 0.1266739303266183,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.3668457444732957,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 9.0,
+              "solve_step_10": 0.0,
+              "Susceptible_10": 0.9999796754778669,
+              "Diagnosed_10": 0.000005501586656089339,
+              "Infected_10": 0.000008957855474105555,
+              "Ailing_10": 0.000004116525705288349,
+              "Recognized_10": 4.982209618063151e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.9999143149667478,
+              "Diagnosed_20": 0.00001345091552780735,
+              "Infected_20": 0.00001876048744667868,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000022995392158645007,
+              "Healed_20": 0.000007314598260057659,
+              "Threatened_20": 8.761168948327681e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9998093690384148,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00012309089513684417,
+              "Ailing_30": 0.000028191057103580817,
+              "Recognized_30": 0.000033166010280660763,
+              "Healed_30": 0.000024826025537772495,
+              "Threatened_30": 0.000007268333579507201,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9990064757344657,
+              "Diagnosed_40": 0.00025258251682080425,
+              "Infected_40": 0.0009259841990859911,
+              "Ailing_40": 0.0002128273998088471,
+              "Recognized_40": 0.00015039732156793835,
+              "Healed_40": 0.0000889432234279416,
+              "Threatened_40": 0.000021755987862200747,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9907984254153176,
+              "Diagnosed_50": 0.0021527020933452584,
+              "Infected_50": 0.009380707553566415,
+              "Ailing_50": 0.001601803698437834,
+              "Recognized_50": 0.0014143047819774029,
+              "Healed_50": 0.0006483442563423275,
+              "Threatened_50": 0.00011391699195067752,
+              "Extinct_50": 0.0000035346874135834695,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.923095703364343,
+              "Diagnosed_60": 0.01649603242532257,
+              "Infected_60": 0.06600468505332129,
+              "Ailing_60": 0.013704698974970515,
+              "Recognized_60": 0.011304390436764887,
+              "Healed_60": 0.005492051645496393,
+              "Threatened_60": 0.0008989351781321342,
+              "Extinct_60": 0.000017204726447664776,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.6062712579262823,
+              "Diagnosed_70": 0.1565664916416704,
+              "Infected_70": 0.07621814963148468,
+              "Ailing_70": 0.029331792527250072,
+              "Recognized_70": 0.12937515694392604,
+              "Healed_70": 0.046028795696857486,
+              "Threatened_70": 0.007027260727567633,
+              "Extinct_70": 0.0001250769478235209,
+              "timer_t_70": 70.0,
+              "Susceptible_80": 0.16424313224819495,
+              "Diagnosed_80": 0.014814006787584919,
+              "Infected_80": 0.074104532828003,
+              "Ailing_80": 0.04954279067886751,
+              "Recognized_80": 0.5148155816757122,
+              "Healed_80": 0.19609359862156264,
+              "Threatened_80": 0.05264321706284197,
+              "Extinct_80": 0.000968348235131637,
+              "timer_t_80": 80.0,
+              "Susceptible_90": 0.03829079744654589,
+              "Diagnosed_90": 0.15141919610960555,
+              "Infected_90": 0.03766288357765154,
+              "Ailing_90": 0.022221010181377357,
+              "Recognized_90": 0.3932686774418735,
+              "Healed_90": 0.35726018558546163,
+              "Threatened_90": 0.15994030809680831,
+              "Extinct_90": 0.006528950077167531,
+              "timer_t_90": 90.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "label": "true",
+        "bounds": {
+          "beta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "gamma": {
+            "lb": 0.3648,
+            "ub": 0.5472,
+            "original_width": 0.1824
+          },
+          "delta": {
+            "lb": 0.008799999999999999,
+            "ub": 0.013200000000000002,
+            "original_width": 0.004400000000000003
+          },
+          "alpha": {
+            "lb": 0.45599999999999996,
+            "ub": 0.6839999999999999,
+            "original_width": 0.228
+          },
+          "epsilon": {
+            "lb": 0.1368,
+            "ub": 0.20520000000000002,
+            "original_width": 0.06840000000000002
+          },
+          "zeta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "lambda": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "eta": {
+            "lb": 0.1,
+            "ub": 0.15000000000000002,
+            "original_width": 0.050000000000000024
+          },
+          "rho": {
+            "lb": 0.027200000000000002,
+            "ub": 0.0408,
+            "original_width": 0.013600000000000001
+          },
+          "theta": {
+            "lb": 0.2968,
+            "ub": 0.44520000000000004,
+            "original_width": 0.14840000000000003
+          },
+          "kappa": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "mu": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "nu": {
+            "lb": 0.0216,
+            "ub": 0.032400000000000005,
+            "original_width": 0.010800000000000008
+          },
+          "xi": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "tau": {
+            "lb": 0.008,
+            "ub": 0.012,
+            "original_width": 0.004
+          },
+          "sigma": {
+            "lb": 0.013600000000000001,
+            "ub": 0.0204,
+            "original_width": 0.0068000000000000005
+          },
+          "timestep": {
+            "lb": 10.0,
+            "ub": 10.0,
+            "closed_upper_bound": true,
+            "original_width": 10.0
+          }
+        },
+        "explanation": {
+          "expression": "True"
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "points": [
+          {
+            "label": "true",
+            "values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.41868106104104047,
+              "delta": 0.011,
+              "alpha": 0.5161030035882033,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.1254710813242038,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.3769872946026529,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 10.0,
+              "solve_step_10": 1.0,
+              "Susceptible_10": 0.9999789865171146,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00000964681622646703,
+              "Ailing_10": 0.000004114835446940217,
+              "Recognized_10": 4.981645484137841e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.999908983563662,
+              "Diagnosed_20": 0.000014514285248295079,
+              "Infected_20": 0.000020243608372622088,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023386625834942537,
+              "Healed_20": 0.000007570878030991131,
+              "Threatened_20": 8.762859206675811e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997899222387383,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00013864146944575137,
+              "Ailing_30": 0.000030365412558933137,
+              "Recognized_30": 0.00003496358159224602,
+              "Healed_30": 0.0000261707318006143,
+              "Threatened_30": 0.000007384287660108051,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9988598827167016,
+              "Diagnosed_40": 0.00028449229530268184,
+              "Infected_40": 0.0010686809914824806,
+              "Ailing_40": 0.0002383276167275602,
+              "Recognized_40": 0.00016431638104697952,
+              "Healed_40": 0.00009745433767367315,
+              "Threatened_40": 0.000022839418275998445,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9893138365279931,
+              "Diagnosed_50": 0.002477425689824732,
+              "Infected_50": 0.010646303052114305,
+              "Ailing_50": 0.0018413491039512813,
+              "Recognized_50": 0.0016063001907897158,
+              "Healed_50": 0.0007363476555563294,
+              "Threatened_50": 0.0001246967595476421,
+              "Extinct_50": 0.0000036646990632391936,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.9265400446062831,
+              "Diagnosed_60": 0.019470551662622064,
+              "Infected_60": 0.061654739392265755,
+              "Ailing_60": 0.019652152786074024,
+              "Recognized_60": 0.013166351957639072,
+              "Healed_60": 0.00637683212680901,
+              "Threatened_60": 0.0010207732385695714,
+              "Extinct_60": 0.00001862831020895625,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.5243790750243628,
+              "Diagnosed_70": 0.12550018527087442,
+              "Infected_70": 0.13026803179011381,
+              "Ailing_70": 0.04159191695894314,
+              "Recognized_70": 0.16946149741843364,
+              "Healed_70": 0.04204313710591895,
+              "Threatened_70": 0.008507701584938509,
+              "Extinct_70": 0.00014112109883730487,
+              "timer_t_70": 70.0,
+              "Susceptible_80": 0.14567606272053954,
+              "Diagnosed_80": 0.20977571629400693,
+              "Infected_80": 0.03989260742311207,
+              "Ailing_80": 0.025946184606657343,
+              "Recognized_80": 0.5613038500502625,
+              "Healed_80": 0.11749082953602831,
+              "Threatened_80": 0.05973513546467013,
+              "Extinct_80": 0.0011246853950513409,
+              "timer_t_80": 80.0,
+              "Susceptible_90": 0.032123050114606054,
+              "Diagnosed_90": 0.06483958974214998,
+              "Infected_90": 0.032779254389623716,
+              "Ailing_90": 0.015520180570050085,
+              "Recognized_90": 0.5670768171942538,
+              "Healed_90": 0.24053584799502056,
+              "Threatened_90": 0.17810732313061314,
+              "Extinct_90": 0.007599937143606797,
+              "timer_t_90": 90.0,
+              "Susceptible_100": 0.032123050114606054,
+              "Diagnosed_100": 0.10848847947308657,
+              "Infected_100": 0.0338708976083114,
+              "Ailing_100": 0.05401120504102966,
+              "Recognized_100": 0.30225431971299854,
+              "Healed_100": 0.34797140614501143,
+              "Threatened_100": 0.2650038484203066,
+              "Extinct_100": 0.03313551642796485,
+              "timer_t_100": 100.0
+            },
+            "normalized_values": {
+              "Healed_0": 0.0,
+              "Threatened_0": 0.0,
+              "Extinct_0": 0.0,
+              "beta": 0.011,
+              "gamma": 0.41868106104104047,
+              "delta": 0.011,
+              "alpha": 0.5161030035882033,
+              "epsilon": 0.171,
+              "zeta": 0.125,
+              "lambda": 0.034,
+              "eta": 0.1254710813242038,
+              "rho": 0.034,
+              "solve_step_0": 1.0,
+              "theta": 0.3769872946026529,
+              "kappa": 0.017,
+              "mu": 0.017,
+              "nu": 0.027,
+              "xi": 0.017,
+              "tau": 0.01,
+              "sigma": 0.017,
+              "timer_t_0": 0.0,
+              "Susceptible_0": 0.9999963000000001,
+              "Diagnosed_0": 3.33333333e-7,
+              "Infected_0": 0.0000033333333300000003,
+              "Ailing_0": 1.6666666600000003e-8,
+              "Recognized_0": 3.33333333e-8,
+              "timestep": 10.0,
+              "solve_step_10": 1.0,
+              "Susceptible_10": 0.9999789865171146,
+              "Diagnosed_10": 0.000005503333327830001,
+              "Infected_10": 0.00000964681622646703,
+              "Ailing_10": 0.000004114835446940217,
+              "Recognized_10": 4.981645484137841e-7,
+              "Healed_10": 0.0000012551666654030002,
+              "Threatened_10": 1.1833333313000001e-8,
+              "Extinct_10": 0.0,
+              "timer_t_10": 10.0,
+              "Susceptible_20": 0.999908983563662,
+              "Diagnosed_20": 0.000014514285248295079,
+              "Infected_20": 0.000020243608372622088,
+              "Ailing_20": 0.0,
+              "Recognized_20": 0.000023386625834942537,
+              "Healed_20": 0.000007570878030991131,
+              "Threatened_20": 8.762859206675811e-7,
+              "Extinct_20": 1.2306666645520002e-9,
+              "timer_t_20": 20.0,
+              "Susceptible_30": 0.9997899222387383,
+              "Diagnosed_30": 0.0,
+              "Infected_30": 0.00013864146944575137,
+              "Ailing_30": 0.000030365412558933137,
+              "Recognized_30": 0.00003496358159224602,
+              "Healed_30": 0.0000261707318006143,
+              "Threatened_30": 0.000007384287660108051,
+              "Extinct_30": 9.570669323289029e-8,
+              "timer_t_30": 30.0,
+              "Susceptible_40": 0.9988598827167016,
+              "Diagnosed_40": 0.00028449229530268184,
+              "Infected_40": 0.0010686809914824806,
+              "Ailing_40": 0.0002383276167275602,
+              "Recognized_40": 0.00016431638104697952,
+              "Healed_40": 0.00009745433767367315,
+              "Threatened_40": 0.000022839418275998445,
+              "Extinct_40": 9.239688701193795e-7,
+              "timer_t_40": 40.0,
+              "Susceptible_50": 0.9893138365279931,
+              "Diagnosed_50": 0.002477425689824732,
+              "Infected_50": 0.010646303052114305,
+              "Ailing_50": 0.0018413491039512813,
+              "Recognized_50": 0.0016063001907897158,
+              "Healed_50": 0.0007363476555563294,
+              "Threatened_50": 0.0001246967595476421,
+              "Extinct_50": 0.0000036646990632391936,
+              "timer_t_50": 50.0,
+              "Susceptible_60": 0.9265400446062831,
+              "Diagnosed_60": 0.019470551662622064,
+              "Infected_60": 0.061654739392265755,
+              "Ailing_60": 0.019652152786074024,
+              "Recognized_60": 0.013166351957639072,
+              "Healed_60": 0.00637683212680901,
+              "Threatened_60": 0.0010207732385695714,
+              "Extinct_60": 0.00001862831020895625,
+              "timer_t_60": 60.0,
+              "Susceptible_70": 0.5243790750243628,
+              "Diagnosed_70": 0.12550018527087442,
+              "Infected_70": 0.13026803179011381,
+              "Ailing_70": 0.04159191695894314,
+              "Recognized_70": 0.16946149741843364,
+              "Healed_70": 0.04204313710591895,
+              "Threatened_70": 0.008507701584938509,
+              "Extinct_70": 0.00014112109883730487,
+              "timer_t_70": 70.0,
+              "Susceptible_80": 0.14567606272053954,
+              "Diagnosed_80": 0.20977571629400693,
+              "Infected_80": 0.03989260742311207,
+              "Ailing_80": 0.025946184606657343,
+              "Recognized_80": 0.5613038500502625,
+              "Healed_80": 0.11749082953602831,
+              "Threatened_80": 0.05973513546467013,
+              "Extinct_80": 0.0011246853950513409,
+              "timer_t_80": 80.0,
+              "Susceptible_90": 0.032123050114606054,
+              "Diagnosed_90": 0.06483958974214998,
+              "Infected_90": 0.032779254389623716,
+              "Ailing_90": 0.015520180570050085,
+              "Recognized_90": 0.5670768171942538,
+              "Healed_90": 0.24053584799502056,
+              "Threatened_90": 0.17810732313061314,
+              "Extinct_90": 0.007599937143606797,
+              "timer_t_90": 90.0,
+              "Susceptible_100": 0.032123050114606054,
+              "Diagnosed_100": 0.10848847947308657,
+              "Infected_100": 0.0338708976083114,
+              "Ailing_100": 0.05401120504102966,
+              "Recognized_100": 0.30225431971299854,
+              "Healed_100": 0.34797140614501143,
+              "Threatened_100": 0.2650038484203066,
+              "Extinct_100": 0.03313551642796485,
+              "timer_t_100": 100.0
+            },
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

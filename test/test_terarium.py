@@ -316,5 +316,41 @@ class TestTerarium(unittest.TestCase):
             ), f"Response code was not 200: {response2.status_code}"
 
 
+    def test04_stress_test(self):
+        # Send two jobs and poll on the second
+        with TestClient(app) as client:
+            test = self.get_test_by_name("apr_11")
+
+            (
+                name,
+                model,
+                request,
+                expected_outcome,
+                regression,
+            ) = self.get_model_and_request(test)
+            uuid = self.post_query(client, model, request)
+            sleep(1)
+            
+
+            uuid1 = self.post_query_and_wait_until_done(client, model, request)
+            response = client.get(f"/api/queries/{uuid}")
+            assert (
+                response.status_code == 200
+            ), f"Response code was not 200: {response.status_code}"
+
+            # uuid1 = self.post_query(client, model, request)
+            # # sleep(1)
+            response1 = client.get(f"/api/queries/{uuid1}")
+
+            assert (
+                response1.status_code == 200
+            ), f"Response code was not 200: {response1.status_code}"
+
+            # response2 = client.get(f"/api/queries/{uuid}")
+
+            # assert (
+            #     response2.status_code == 200
+            # ), f"Response code was not 200: {response2.status_code}"
+
 if __name__ == "__main__":
     unittest.main()

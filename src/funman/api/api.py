@@ -12,6 +12,7 @@ import traceback
 import uuid
 from contextlib import asynccontextmanager, contextmanager
 from typing import Optional, Union
+import time
 
 import uvicorn
 
@@ -201,7 +202,10 @@ async def get_queries(
 ):
     with internal_error_handler():
         try:
-            return worker.get_results(query_id)
+            start_time = time.time()
+            results = worker.get_results(query_id)
+            print(f"Time took to process the request and return response is {(time.time() - start_time)} sec")
+            return results
         except NotFoundFunmanException as e:
             raise HTTPException(404, detail=str(e))
 

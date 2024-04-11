@@ -55,6 +55,15 @@
             "regression": false
         },
         {
+            "name": "apr_11",
+            "model-path": "amr/petrinet/terrarium-tests/funman-apr-11.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
             "name": "sir",
             "model-path": "amr/petrinet/terrarium-tests/sir.json",
             "request-path": "amr/petrinet/terrarium-tests/sir_request.json",
