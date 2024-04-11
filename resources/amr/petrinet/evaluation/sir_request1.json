@@ -68,8 +68,8 @@
         {
             "name": "num_steps",
             "interval": {
-                "lb": 10,
-                "ub": 10
+                "lb": 8,
+                "ub": 8
             },
             "label": "all"
         },
@@ -85,6 +85,6 @@
     "config": {
         "tolerance": 1e-2,
         "normalization_constant": 1000,
-        "save_smtlib": "./out"
+        "use_compartmental_constraints": true
     }
 }
