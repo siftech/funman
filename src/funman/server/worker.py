@@ -146,15 +146,15 @@ class FunmanWorker:
             return self.current_id == id
 
     def get_results(self, id: str):
-        if not self.in_state(WorkerState.RUNNING):
+        if not self.in_state(WorkerState.RUNNING) or self.current_id != id:
             # raise FunmanWorkerException(
             #     f"FunmanWorker must be running to get results: {self.get_state()}"
             # )
             return self.storage.get_result(id)
         with self._id_lock:
-            if self.current_id == id:
-                return copy.copy(self.current_results)
-            return self.storage.get_result(id)
+            # if self.current_id == id:
+            return copy.copy(self.current_results)
+            # return self.storage.get_result(id)
 
     def halt(self, id: str):
         if not self.in_state(WorkerState.RUNNING):
