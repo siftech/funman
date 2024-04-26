@@ -179,6 +179,7 @@ class ParameterSpacePlotter:
                     marker=shape,
                     alpha=alpha,
                     s=10,
+                    zorder=point.timestep(),
                 )
                 # self.fig.canvas.draw()
                 # self.fig.canvas.flush_events()
@@ -227,4 +228,5 @@ class ParameterSpacePlotter:
                             y_limits.ub,
                             color=color,
                             alpha=alpha,
+                            zorder=box.timestep().lb,
                         )
