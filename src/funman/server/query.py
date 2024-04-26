@@ -1,6 +1,7 @@
 import logging
 import random
 from collections import Counter
+from datetime import datetime
 from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
@@ -183,6 +184,14 @@ class FunmanResults(BaseModel):
     error: bool = False
     error_message: Optional[str] = None
     parameter_space: Optional[ParameterSpace] = None
+    start_time: datetime = None
+    end_time: datetime = None
+
+    def start(self):
+        self.start_time = datetime.now()
+
+    def stop(self):
+        self.end_time = datetime.now()
 
     def is_final(self):
         return self._finalized

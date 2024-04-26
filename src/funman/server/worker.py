@@ -226,6 +226,7 @@ class FunmanWorker:
 
                 l.info(f"Starting work on: {work.id}")
                 try:
+                    self.current_results.start()
                     # convert to scenario
                     scenario = work.to_scenario()
 
@@ -256,6 +257,7 @@ class FunmanWorker:
                         )
                     l.error(f"Aborting work on: {work.id}")
                 finally:
+                    self.current_results.stop()
                     self.storage.add_result(self.current_results)
                     self.queue.task_done()
                     with self._id_lock:
