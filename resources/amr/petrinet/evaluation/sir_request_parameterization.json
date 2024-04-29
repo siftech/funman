@@ -1,0 +1,91 @@
+{
+    "constraints": [
+        {
+            "name": "ibounds",
+            "variable": "I",
+            "interval": {
+                "lb": 0.450,
+                "ub": 0.550
+            },
+            "timepoints": {
+                "lb": 45,
+                "ub": 55,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.12,
+                "ub": 0.22
+            },
+            "label": "any"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.015,
+                "ub": 0.035
+            },
+            "label": "any"
+        },
+        {
+            "name": "S0",
+            "interval": {
+                "lb": 0.990,
+                "ub": 0.990
+            },
+            "label": "any"
+        },
+        {
+            "name": "I0",
+            "interval": {
+                "lb": 0.010,
+                "ub": 0.010
+            },
+            "label": "any"
+        },
+        {
+            "name": "R0",
+            "interval": {
+                "lb": 0,
+                "ub": 0
+            },
+            "label": "any"
+        },
+        {
+            "name": "N",
+            "interval": {
+                "lb": 1,
+                "ub": 1
+            },
+            "label": "any"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "num_steps",
+            "interval": {
+                "lb": 30,
+                "ub": 30
+            },
+            "label": "all"
+        },
+        {
+            "name": "step_size",
+            "interval": {
+                "lb": 2,
+                "ub": 2
+            },
+            "label": "all"
+        }
+    ],
+    "config": {
+        "tolerance": 1e-2,
+        "normalization_constant": 1,
+        "dreal_log_level": "info",
+        "use_compartmental_constraints": true
+    }
+}

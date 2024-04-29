@@ -366,8 +366,11 @@ class BoxSearch(Search):
 
     def _split(self, box: Box, episode: BoxSearchEpisode, points=None):
         normalize = episode.problem._original_parameter_widths
+        split_points = (
+            points if not episode.config.uniform_box_splits else None
+        )
         b1, b2 = box.split(
-            points=points,
+            points=split_points,
             normalize=normalize,
             parameters=episode.problem.model_parameters(),
         )
