@@ -4,32 +4,60 @@
             "name": "ibounds",
             "variable": "I",
             "interval": {
-                "lb": 0.450,
-                "ub": 0.550
+                "lb": 0.499,
+                "ub": 0.501
             },
             "timepoints": {
-                "lb": 45,
-                "ub": 55,
+                "lb": 50,
+                "ub": 50,
                 "closed_upper_bound": true
             }
+        },
+        {
+            "name": "inc_i_bounds",
+            "variables": [
+                "I"
+            ],
+            "additive_bounds": {
+                "lb": 0
+            },
+            "timepoints": {
+                "ub": 45,
+                "closed_upper_bound": true
+            },
+            "derivative": true
+        },
+        {
+            "name": "dec_i_bounds",
+            "variables": [
+                "I"
+            ],
+            "additive_bounds": {
+                "ub": 0,
+                "closed_upper_bound": true
+            },
+            "timepoints": {
+                "lb": 55
+            },
+            "derivative": true
         }
     ],
     "parameters": [
         {
             "name": "beta",
             "interval": {
-                "lb": 0.15,
-                "ub": 0.15
+                "lb": 0.16,
+                "ub": 0.16
             },
-            "label": "all"
+            "label": "any"
         },
         {
             "name": "gamma",
             "interval": {
-                "lb": 0.025,
-                "ub": 0.025
+                "lb": 0.03,
+                "ub": 0.03
             },
-            "label": "all"
+            "label": "any"
         },
         {
             "name": "S0",

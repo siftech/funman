@@ -285,8 +285,18 @@ class Box(BaseModel):
             # prefer boxes with true points
             # prefer boxes later in time
             # prefer boxes with smaller width
-            s_t = len(self.true_points())
-            o_t = len(other.true_points())
+            s_t = (
+                float(max(len(self.true_points()), len(self.false_points())))
+                / float(len(self.points))
+                if len(self.points) > 0
+                else 0.0
+            )
+            o_t = (
+                float(max(len(other.true_points()), len(other.false_points())))
+                / float(len(other.points))
+                if len(other.points) > 0
+                else 0.0
+            )
             if s_t == o_t:
                 if self.timestep().lb == other.timestep().lb:
                     return self.normalized_width() > other.normalized_width()

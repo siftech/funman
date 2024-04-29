@@ -1,7 +1,7 @@
 import logging
 import random
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
@@ -165,6 +165,18 @@ class FunmanWorkUnit(BaseModel):
         )
 
 
+class FunmanResultsTiming(BaseModel):
+    start_time: datetime = None
+    end_time: datetime = None
+    total_time: timedelta = None
+    solver_time: timedelta = None
+    encoding_time: timedelta = None
+
+    def finalize(self):
+        """Calculate total time"""
+        self.total_time = self.end_time - self.start_time
+
+
 class FunmanResults(BaseModel):
     _finalized: bool = False
 
@@ -184,14 +196,14 @@ class FunmanResults(BaseModel):
     error: bool = False
     error_message: Optional[str] = None
     parameter_space: Optional[ParameterSpace] = None
-    start_time: datetime = None
-    end_time: datetime = None
+    timing: FunmanResultsTiming = FunmanResultsTiming()
 
     def start(self):
-        self.start_time = datetime.now()
+        self.timing.start_time = datetime.now()
 
     def stop(self):
-        self.end_time = datetime.now()
+        self.timing.end_time = datetime.now()
+        self.timing.finalize()
 
     def is_final(self):
         return self._finalized
