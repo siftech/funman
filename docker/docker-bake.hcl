@@ -102,13 +102,13 @@ target "funman-base" {
     AUTOMATES_COMMIT_TAG = "${AUTOMATES_COMMIT_TAG}"
   }
   dockerfile = "Dockerfile"
-  tags = tag("funman-base", "", "${AUTOMATES_COMMIT_TAG}")
+  tags = tag("funman-base", "", "")
 }
 
 target "funman-pypi" {
   context = "./docker/pypi"
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}-${AUTOMATES_COMMIT_TAG}" = "target:funman-base"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}" = "target:funman-base"
   }
   args = {
     SIFT_REGISTRY_ROOT = "${DOCKER_REGISTRY}/${DOCKER_ORG}/"
@@ -123,7 +123,7 @@ target "funman-pypi" {
 target "funman-git" {
   context = "."
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}-${AUTOMATES_COMMIT_TAG}" = "target:funman-base"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}" = "target:funman-base"
   }
   args = {
     SIFT_REGISTRY_ROOT = "${DOCKER_REGISTRY}/${DOCKER_ORG}/"
@@ -207,7 +207,7 @@ target "funman-base-multiplatform" {
 target "funman-git-multiplatform" {
   inherits = ["_platforms", "funman-git"]
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}-${AUTOMATES_COMMIT_TAG}" = "target:funman-base-multiplatform"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}" = "target:funman-base-multiplatform"
   }
 }
 target "funman-api-multiplatform" {
