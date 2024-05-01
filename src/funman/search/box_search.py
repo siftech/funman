@@ -793,7 +793,9 @@ class BoxSearch(Search):
                         f"box_search_{episode._iteration}",
                     )
                 )
-            result = self.invoke_solver(solver)
+            result = self.invoke_solver(
+                solver, timeout=episode.config.solver_timeout
+            )
             if result is not None and isinstance(result, pysmtModel):
                 # If substituted formulas are on the stack, then add the original formulas to compute the values of all variables
                 if (
@@ -896,7 +898,9 @@ class BoxSearch(Search):
         )
         episode._formula_stack.push()
         episode._formula_stack._add_assertion(negated_assumptions)
-        result = self.invoke_solver(solver)
+        result = self.invoke_solver(
+            solver, timeout=episode.config.solver_timeout
+        )
         if result is not None and isinstance(result, pysmtModel):
             # The assumptions are not minimal
             pass
@@ -929,7 +933,9 @@ class BoxSearch(Search):
                         f"wp_{episode._iteration}.smt2",
                     ),
                 )
-            result = self.invoke_solver(solver)
+            result = self.invoke_solver(
+                solver, timeout=episode.config.solver_timeout
+            )
             if result is not None and isinstance(result, pysmtModel):
                 # Record the false point
                 point = episode._extract_point(result, box)
@@ -1016,7 +1022,9 @@ class BoxSearch(Search):
             ]._encoder.point_to_smt(point)
             episode._formula_stack.push()
             episode._formula_stack.add_assertion(f)
-            result = self.invoke_solver(solver)
+            result = self.invoke_solver(
+                solver, timeout=episode.config.solver_timeout
+            )
             if result is not None and isinstance(result, pysmtModel):
                 corner_point = episode._extract_point(result, box)
                 box.corner_points.append(corner_point)

@@ -373,7 +373,7 @@ class PetrinetEncoder(Encoder):
 
             bounds += [lb, ub]
         # noise_var = Symbol("noise", REAL)
-        noise_const = Real(1e-3)
+        noise_const = Real(self.config.compartmental_constraint_noise)
         sum_vars = Plus(
             [
                 self._encode_state_var(

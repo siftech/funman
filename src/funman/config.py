@@ -65,6 +65,9 @@ class FUNMANConfig(BaseModel):
     num_initial_boxes: int = 1
     """Number of initial boxes for BoxSearch"""
 
+    solver_timeout: Optional[int] = None
+    """Number of seconds to allow each call to SMT solver"""
+
     initial_state_tolerance: float = 0.0
     """Factor used to relax initial state values bounds"""
 
@@ -91,6 +94,9 @@ class FUNMANConfig(BaseModel):
 
     use_compartmental_constraints: bool = False
     """Normalize scenarios prior to solving"""
+
+    compartmental_constraint_noise: float = 0.01
+    """Additional factor used to relax compartmental constraint (needed due to floating point imprecision)"""
 
     normalize: bool = True
     """Normalization constant to use for normalization (attempt to compute if None)"""

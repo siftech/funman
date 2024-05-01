@@ -21,6 +21,19 @@ from ..scenario.scenario import AnalysisScenario
 
 l = logging.getLogger(__name__)
 
+from multiprocessing import Process
+
+
+def run_with_limited_time(func, args, kwargs, time):
+    p = Process(target=func, args=args, kwargs=kwargs)
+    p.start()
+    p.join(time)
+    if p.is_alive():
+        p.terminate()
+        return None
+
+    return args[-1]
+
 
 class SearchStatistics(BaseModel):
     model_config = ConfigDict(
@@ -117,8 +130,22 @@ class Search(ABC):
     ) -> SearchEpisode:
         pass
 
-    def invoke_solver(self, s: Solver) -> Union[pysmtModel, BoxExplanation]:
+    def invoke_solver(
+        self, s: Solver, timeout: int = None
+    ) -> Union[pysmtModel, BoxExplanation]:
         l.trace("Invoking solver ...")
+        result = None
+        # if timeout is not None:
+        #     result = None
+        #     run_with_limited_time(self._internal_invoke_solver, (s, result), {}, timeout)
+        # else:
+        result = self._internal_invoke_solver(s, result)
+
+        return result
+
+    def _internal_invoke_solver(
+        self, s: Solver, result: Union[pysmtModel, BoxExplanation]
+    ):
         result = s.solve()
         l.trace(f"Solver result = {result}")
         if result:

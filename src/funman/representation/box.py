@@ -1,6 +1,7 @@
 import copy
 import logging
 from decimal import ROUND_CEILING, Decimal
+from functools import reduce
 from pickle import FALSE
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
@@ -298,10 +299,13 @@ class Box(BaseModel):
                 else 0.0
             )
             if s_t == o_t:
-                if self.timestep().lb == other.timestep().lb:
-                    return self.normalized_width() > other.normalized_width()
-                else:
-                    return self.timestep().lb > other.timestep().lb
+                # s_residual_volume = self.timestep().width()*self.normalized_volume()*Decimal(s_t)
+                # o_residual_volume = other.timestep().width()*other.normalized_volume()*Decimal(o_t)
+                # return s_residual_volume > o_residual_volume
+                # if self.timestep().lb == other.timestep().lb:
+                return self.normalized_volume() > other.normalized_volume()
+                # else:
+                # return self.timestep().lb > other.timestep().lb
             else:
                 return s_t > o_t
         else:
@@ -657,6 +661,18 @@ class Box(BaseModel):
             product *= Decimal(param_width)
         product *= num_timepoints
         return product
+
+    def normalized_volume(self, parameters: List[ModelParameter] = None):
+        params = self.bounds.keys()
+        if parameters:
+            params = [p.name for p in parameters]
+
+        norm_volume = reduce(
+            lambda a, b: a * b,
+            [Decimal(self.bounds[p].normalized_width()) for p in params],
+            Decimal(1.0),
+        )
+        return norm_volume
 
     def normalized_width(self, parameters: List[ModelParameter] = None):
         p = self._get_max_width_Parameter(
