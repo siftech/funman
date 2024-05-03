@@ -4,11 +4,11 @@
             "name": "ibounds",
             "variable": "I",
             "interval": {
-                "lb": 0.499,
-                "ub": 0.501
+                "lb": 0.25,
+                "ub": 0.3
             },
             "timepoints": {
-                "lb": 50,
+                "lb": 45,
                 "ub": 50,
                 "closed_upper_bound": true
             }
@@ -22,7 +22,7 @@
                 "lb": 0
             },
             "timepoints": {
-                "ub": 45,
+                "ub": 40,
                 "closed_upper_bound": true
             },
             "derivative": true
@@ -37,7 +37,7 @@
                 "closed_upper_bound": true
             },
             "timepoints": {
-                "lb": 55
+                "lb": 50
             },
             "derivative": true
         }
@@ -46,16 +46,16 @@
         {
             "name": "beta",
             "interval": {
-                "lb": 0.16,
-                "ub": 0.16
+                "lb": 0.201544,
+                "ub": 0.201544
             },
             "label": "any"
         },
         {
             "name": "gamma",
             "interval": {
-                "lb": 0.03,
-                "ub": 0.03
+                "lb": 0.071086,
+                "ub": 0.071086
             },
             "label": "any"
         },

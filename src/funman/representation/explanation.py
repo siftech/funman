@@ -15,6 +15,18 @@ class Explanation(BaseModel):
             "expression": self._expression.serialize(),
         }
 
+    def check_assumptions(
+        self,
+        episode: "BoxSearchEpisode",
+        my_solver: Callable,
+        options: "EncodingOptions",
+    ) -> List[Assumption]:
+        return []
+
+
+class TimeoutExplanation(Explanation):
+    pass
+
 
 class BoxExplanation(Explanation):
     relevant_assumptions: List[Assumption] = []

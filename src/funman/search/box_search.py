@@ -46,7 +46,11 @@ from funman import (
 from funman.config import FUNMANConfig
 from funman.representation.assumption import Assumption
 from funman.representation.constraint import ParameterConstraint
-from funman.representation.explanation import Explanation
+from funman.representation.explanation import (
+    BoxExplanation,
+    Explanation,
+    TimeoutExplanation,
+)
 from funman.search import Box, ParameterSpace, Point, Search, SearchEpisode
 from funman.search.search import SearchStaticsMP, SearchStatistics
 from funman.translate.translate import EncodingOptions, EncodingSchedule
@@ -986,7 +990,9 @@ class BoxSearch(Search):
                     else None
                 ),
             )
-            if len(box.true_points(step=box.timestep().lb)) == 0:
+            if len(box.true_points(step=box.timestep().lb)) == 0 or isinstance(
+                explanation, TimeoutExplanation
+            ):
                 # Could not find a point at the current step, so there won't be any at subsequent steps
                 # fall out of loop, after setting the upper bound on the box timestep
                 # if couldn't find a point, then remove all points from box
@@ -1177,7 +1183,9 @@ class BoxSearch(Search):
                                     f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
                                 )
                                 l.trace(f"XXX Split:\n{box}")
-                            else:
+                            elif isinstance(
+                                not_false_explanation, BoxExplanation
+                            ):
                                 # box does not intersect f, so it is in t (true region)
                                 curr_step_box = box.current_step()
                                 episode._add_true(
@@ -1204,7 +1212,27 @@ class BoxSearch(Search):
                                 next_box = box.advance()
                                 if next_box:
                                     episode._add_unknown(next_box)
-                        else:
+                            else:  # Timeout FIXME copy of split code
+                                if self._split(
+                                    box,
+                                    episode,
+                                    points=[true_points, false_points],
+                                ):
+                                    l.trace(f"{process_name} produced work")
+                                else:
+                                    rval.put(box.model_dump())
+                                if episode.config.number_of_processes > 1:
+                                    # FIXME This would only be none when
+                                    # the number of processes is 1. This
+                                    # can be done more cleanly.
+                                    if more_work:
+                                        with more_work:
+                                            more_work.notify_all()
+                                l.debug(
+                                    f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
+                                )
+                                l.trace(f"XXX Split:\n{box}")
+                        elif isinstance(not_true_explanation, BoxExplanation):
                             if len(box.points) == 0:
                                 # If we cannot find a true point, the box is false and we may have not computed any false points, so ensure we have at least one.
                                 self._get_false_points(
@@ -1234,6 +1262,26 @@ class BoxSearch(Search):
                                     )
                                 )
                             rval.put(box.model_dump())
+                        else:  # Timeout FIXME copy of split code
+                            if self._split(
+                                box,
+                                episode,
+                                points=[true_points],
+                            ):
+                                l.trace(f"{process_name} produced work")
+                            else:
+                                rval.put(box.model_dump())
+                            if episode.config.number_of_processes > 1:
+                                # FIXME This would only be none when
+                                # the number of processes is 1. This
+                                # can be done more cleanly.
+                                if more_work:
+                                    with more_work:
+                                        more_work.notify_all()
+                            l.debug(
+                                f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
+                            )
+                            l.trace(f"XXX Split:\n{box}")
                         episode._formula_stack.pop()  # Remove box constraints from solver
                         episode._on_iteration()
                         if handler:
