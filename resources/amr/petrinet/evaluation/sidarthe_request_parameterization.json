@@ -1,15 +1,16 @@
 {
   "constraints": [
     {
-      "name": "I_bound",
+      "name": "ibounds",
       "variable": "Infected",
       "interval": {
-        "lb": 0.45,
-        "ub": 0.55
+        "lb": 0.1,
+        "lb": 0.55
       },
       "timepoints": {
-        "lb": 45,
-        "ub": 55
+        "lb": 40,
+        "ub": 50,
+        "closed_upper_bound": true
       }
     }
   ],
@@ -24,7 +25,7 @@
     {
       "name": "lamb",
       "interval": {
-        "lb": 0.0,
+        "lb": 0.001,
         "ub": 0.1
       }
     },
@@ -144,9 +145,10 @@
     }
   ],
   "config": {
-    "use_compartmental_constraints": true,
-    "normalization_constant": 1.0,
     "tolerance": 1e-2,
-    "save_smtlib": "./out"
+    "normalization_constant": 1,
+    "dreal_log_level": "info",
+    "use_compartmental_constraints": true,
+    "dreal_precision": 1e-2
   }
 }
