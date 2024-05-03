@@ -339,7 +339,8 @@ class Runner:
                         point_plot_config,
                         parameters_to_plot,
                     )
-                sleep(15)
+                
+                sleep(10)
             else:
                 results = self._worker.get_results(work_unit.id)
                 break

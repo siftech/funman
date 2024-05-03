@@ -4,28 +4,13 @@
             "name": "ibounds",
             "variable": "I",
             "interval": {
-                "lb": 0.25,
-                "ub": 0.30
+                "lb": 0.2,
+                "ub": 0.4
             },
             "timepoints": {
                 "lb": 35,
-                "ub": 40,
+                "ub": 50,
                 "closed_upper_bound": true
-            }
-        },
-        {
-            "name": "bg",
-            "variables": [
-                "beta",
-                "gamma"
-            ],
-            "weights": [
-                1,
-                -2.75
-            ],
-            "additive_bounds": {
-                "lb": 0,
-                "ub": 0.01
             }
         }
     ],
@@ -33,16 +18,16 @@
         {
             "name": "beta",
             "interval": {
-                "lb": 0.15,
-                "ub": 0.25
+                "lb": 0.19,
+                "ub": 0.21
             },
             "label": "all"
         },
         {
             "name": "gamma",
             "interval": {
-                "lb": 0.01,
-                "ub": 0.02
+                "lb": 0.06,
+                "ub": 0.08
             },
             "label": "all"
         },
@@ -101,6 +86,7 @@
         "tolerance": 1e-2,
         "normalization_constant": 1,
         "dreal_log_level": "info",
-        "use_compartmental_constraints": true
+        "use_compartmental_constraints": true,
+        "dreal_precision": 1e-2
     }
 }

@@ -4,42 +4,14 @@
             "name": "ibounds",
             "variable": "I",
             "interval": {
-                "lb": 0.25,
-                "ub": 0.3
+                "lb": 0.2,
+                "ub": 0.4
             },
             "timepoints": {
-                "lb": 45,
+                "lb": 35,
                 "ub": 50,
                 "closed_upper_bound": true
             }
-        },
-        {
-            "name": "inc_i_bounds",
-            "variables": [
-                "I"
-            ],
-            "additive_bounds": {
-                "lb": 0
-            },
-            "timepoints": {
-                "ub": 40,
-                "closed_upper_bound": true
-            },
-            "derivative": true
-        },
-        {
-            "name": "dec_i_bounds",
-            "variables": [
-                "I"
-            ],
-            "additive_bounds": {
-                "ub": 0,
-                "closed_upper_bound": true
-            },
-            "timepoints": {
-                "lb": 50
-            },
-            "derivative": true
         }
     ],
     "parameters": [
@@ -114,6 +86,7 @@
         "tolerance": 1e-2,
         "normalization_constant": 1,
         "dreal_log_level": "info",
-        "use_compartmental_constraints": true
+        "use_compartmental_constraints": true,
+        "dreal_precision": 1e-3
     }
 }

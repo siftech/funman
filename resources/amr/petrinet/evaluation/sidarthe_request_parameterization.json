@@ -4,13 +4,12 @@
       "name": "ibounds",
       "variable": "Infected",
       "interval": {
-        "lb": 0.1,
+        "lb": 0.25,
         "lb": 0.55
       },
       "timepoints": {
-        "lb": 40,
-        "ub": 50,
-        "closed_upper_bound": true
+        "lb": 45,
+        "ub": 55
       }
     }
   ],
