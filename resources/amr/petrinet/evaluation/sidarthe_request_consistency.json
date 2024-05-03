@@ -1,0 +1,153 @@
+{
+    "constraints": [
+        {
+            "name": "ibounds",
+            "variable": "Infected",
+            "interval": {
+                "lb": 0.4,
+                "lb": 0.55
+            },
+            "timepoints": {
+                "lb": 40,
+                "ub": 55,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.76,
+                "ub": 0.76
+            }
+        },
+        {
+            "name": "lamb",
+            "interval": {
+                "lb": 0.02,
+                "ub": 0.02
+            }
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.0456,
+                "ub": 0.0456
+            }
+        },
+        {
+            "name": "alpha",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.1
+            }
+        },
+        {
+            "name": "delta",
+            "interval": {
+                "lb": 0.00011,
+                "ub": 0.00011
+            }
+        },
+        {
+            "name": "epsilon",
+            "interval": {
+                "lb": 0.03,
+                "ub": 0.03
+            }
+        },
+        {
+            "name": "zeta",
+            "interval": {
+                "lb": 0.0125,
+                "ub": 0.0125
+            }
+        },
+        {
+            "name": "eta",
+            "interval": {
+                "lb": 0.0125,
+                "ub": 0.0125
+            }
+        },
+        {
+            "name": "rho",
+            "interval": {
+                "lb": 0.034,
+                "ub": 0.034
+            }
+        },
+        {
+            "name": "theta",
+            "interval": {
+                "lb": 0.571,
+                "ub": 0.571
+            }
+        },
+        {
+            "name": "kappa",
+            "interval": {
+                "lb": 0.017,
+                "ub": 0.017
+            }
+        },
+        {
+            "name": "mu",
+            "interval": {
+                "lb": 0.017,
+                "ub": 0.017
+            }
+        },
+        {
+            "name": "nu",
+            "interval": {
+                "lb": 0.027,
+                "ub": 0.027
+            }
+        },
+        {
+            "name": "xi",
+            "interval": {
+                "lb": 0.017,
+                "ub": 0.017
+            }
+        },
+        {
+            "name": "tau",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.01
+            }
+        },
+        {
+            "name": "sigma",
+            "interval": {
+                "lb": 0.017,
+                "ub": 0.017
+            }
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "num_steps",
+            "interval": {
+                "lb": 20,
+                "ub": 20
+            }
+        },
+        {
+            "name": "step_size",
+            "interval": {
+                "lb": 3,
+                "ub": 3
+            }
+        }
+    ],
+    "config": {
+        "tolerance": 1e-2,
+        "normalization_constant": 1,
+        "dreal_log_level": "info",
+        "use_compartmental_constraints": true
+    }
+}

@@ -41,8 +41,8 @@
         {
             "name": "gamma",
             "interval": {
-                "lb": 0.05,
-                "ub": 0.1
+                "lb": 0.01,
+                "ub": 0.02
             },
             "label": "all"
         },
