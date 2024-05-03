@@ -9,7 +9,7 @@
             },
             "timepoints": {
                 "lb": 35,
-                "ub": 50,
+                "ub": 40,
                 "closed_upper_bound": true
             }
         }
@@ -18,16 +18,16 @@
         {
             "name": "beta",
             "interval": {
-                "lb": 0.15,
-                "ub": 0.25
+                "lb": 0.195565,
+                "ub": 0.195565
             },
             "label": "any"
         },
         {
             "name": "gamma",
             "interval": {
-                "lb": 0.05,
-                "ub": 0.1
+                "lb": 0.075158,
+                "ub": 0.075158
             },
             "label": "any"
         },
@@ -87,6 +87,6 @@
         "normalization_constant": 1,
         "dreal_log_level": "info",
         "use_compartmental_constraints": true,
-        "dreal_precision": 1e-3
+        "dreal_precision": 1e-2
     }
 }

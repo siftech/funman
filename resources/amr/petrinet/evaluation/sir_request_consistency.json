@@ -9,7 +9,7 @@
             },
             "timepoints": {
                 "lb": 35,
-                "ub": 50,
+                "ub": 40,
                 "closed_upper_bound": true
             }
         }
@@ -87,6 +87,6 @@
         "normalization_constant": 1,
         "dreal_log_level": "info",
         "use_compartmental_constraints": true,
-        "dreal_precision": 1e-3
+        "dreal_precision": 1e-2
     }
 }

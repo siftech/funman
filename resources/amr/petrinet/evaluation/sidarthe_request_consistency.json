@@ -5,11 +5,11 @@
             "variable": "Infected",
             "interval": {
                 "lb": 0.25,
-                "lb": 0.55
+                "lb": 0.4
             },
             "timepoints": {
-                "lb": 45,
-                "ub": 55
+                "lb": 35,
+                "ub": 40
             }
         }
     ],

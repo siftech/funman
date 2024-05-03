@@ -9,7 +9,7 @@
             },
             "timepoints": {
                 "lb": 35,
-                "ub": 50,
+                "ub": 40,
                 "closed_upper_bound": true
             }
         }
@@ -19,7 +19,7 @@
             "name": "beta",
             "interval": {
                 "lb": 0.19,
-                "ub": 0.21
+                "ub": 0.20
             },
             "label": "all"
         },
