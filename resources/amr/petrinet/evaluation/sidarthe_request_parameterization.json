@@ -4,8 +4,8 @@
       "name": "ibounds",
       "variable": "Infected",
       "interval": {
-        "lb": 0.25,
-        "lb": 0.4
+        "lb": 0.2,
+        "ub": 0.4
       },
       "timepoints": {
         "lb": 35,
@@ -18,15 +18,15 @@
     {
       "name": "beta",
       "interval": {
-        "lb": 0.2,
-        "ub": 0.8
+        "lb": 0.19,
+        "ub": 0.20
       }
     },
     {
       "name": "lamb",
       "interval": {
-        "lb": 0.001,
-        "ub": 0.1
+        "lb": 0.01,
+        "ub": 0.2
       }
     },
     {
@@ -149,6 +149,6 @@
     "normalization_constant": 1,
     "dreal_log_level": "info",
     "use_compartmental_constraints": true,
-    "dreal_precision": 1e-2
+    "dreal_precision": 1e-1
   }
 }

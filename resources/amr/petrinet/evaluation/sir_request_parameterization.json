@@ -18,16 +18,16 @@
         {
             "name": "beta",
             "interval": {
-                "lb": 0.195565,
-                "ub": 0.195565
+                "lb": 0.19,
+                "ub": 0.20
             },
             "label": "any"
         },
         {
             "name": "gamma",
             "interval": {
-                "lb": 0.075158,
-                "ub": 0.075158
+                "lb": 0.06,
+                "ub": 0.08
             },
             "label": "any"
         },
