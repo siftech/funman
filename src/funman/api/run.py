@@ -341,7 +341,7 @@ class Runner:
                     )
                 
                 sleep(10)
-            else:
+            elif not self._worker.is_processing_id(work_unit.id):
                 results = self._worker.get_results(work_unit.id)
                 break
 

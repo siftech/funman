@@ -4,12 +4,13 @@
             "name": "ibounds",
             "variable": "Infected",
             "interval": {
-                "lb": 0.25,
-                "lb": 0.4
+                "lb": 0.2,
+                "ub": 0.4
             },
             "timepoints": {
                 "lb": 35,
-                "ub": 40
+                "ub": 40,
+                "closed_upper_bound": true
             }
         }
     ],
@@ -17,15 +18,15 @@
         {
             "name": "beta",
             "interval": {
-                "lb": 0.15510204081632656,
-                "ub": 0.15510204081632656
+                "lb": 0.699634,
+                "ub": 0.699634
             }
         },
         {
             "name": "lamb",
             "interval": {
-                "lb": 0.0,
-                "ub": 0.0
+                "lb": 0.047,
+                "ub": 0.047
             }
         },
         {
@@ -148,6 +149,7 @@
         "normalization_constant": 1,
         "dreal_log_level": "info",
         "use_compartmental_constraints": true,
-        "dreal_precision": 1e-2
+        "dreal_precision": 1e-1,
+        "save_smtlib": "./out"
     }
 }

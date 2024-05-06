@@ -18,15 +18,15 @@
     {
       "name": "beta",
       "interval": {
-        "lb": 0.19,
-        "ub": 0.20
+        "lb": 0.6,
+        "ub": 0.7
       }
     },
     {
       "name": "lamb",
       "interval": {
         "lb": 0.01,
-        "ub": 0.2
+        "ub": 0.1
       }
     },
     {
