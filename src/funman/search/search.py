@@ -49,6 +49,7 @@ def run_with_limited_time(func, args, kwargs, time):
     except ValueError:
         pass
 
+    l.debug("Awaiting join ...")
     p.join(timeout=time)
     l.debug("joined process")
 
@@ -188,14 +189,18 @@ class Search(ABC):
         l.debug("Solver started")
         result = s.solve()
         l.trace(f"Solver result = {result}")
-        if result:
-            # print(f"put: {s.get_model()}")
-            q.put(s.get_model())
-        else:
-            result = BoxExplanation()
-            result._expression = s.get_unsat_core()
-            # print(f"put: {result}")
-            q.put(result)
+        try:
+            if result:
+                # print(f"put: {s.get_model()}")
+                q.put(s.get_model())
+            else:
+                result = BoxExplanation()
+                result._expression = s.get_unsat_core()
+                # print(f"put: {result}")
+                q.put(result)
+        except RecursionError:
+            l.error("Recursion error pickling solver result in queue.")
+            pass
         l.debug("Solver completed")
         # print(result)
         # return result
