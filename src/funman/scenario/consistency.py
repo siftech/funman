@@ -78,6 +78,7 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
             haltEvent=haltEvent,
             resultsCallback=resultsCallback,
         )
+
         parameter_space.num_dimensions = len(self.parameters)
         l.info(parameter_space)
         scenario_result = ConsistencyScenarioResult(
@@ -86,6 +87,10 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
             parameter_space=parameter_space,
         )
         scenario_result._models = models
+
+        assert self.check_simulation(
+            config, scenario_result
+        ), "Simulation of solution is invalid."
 
         return scenario_result
 

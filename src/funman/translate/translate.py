@@ -47,6 +47,7 @@ from funman.representation.constraint import (
     ParameterConstraint,
     QueryConstraint,
     StateVariableConstraint,
+    TimeseriesConstraint,
 )
 from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils import math_utils
@@ -225,6 +226,7 @@ class Encoder(ABC, BaseModel):
             StateVariableConstraint: self.encode_query_layer,
             QueryConstraint: self.encode_query_layer,
             LinearConstraint: self.encode_linear_constraint,
+            TimeseriesConstraint: self.encode_timeseries,
         }
 
     def step_size_index(self, step_size: int) -> int:
@@ -710,6 +712,28 @@ class Encoder(ABC, BaseModel):
             )
         else:
             return None
+
+    def encode_timeseries(
+        self,
+        scenario: "AnalysisScenario",
+        constraint: TimeseriesConstraint,
+        layer_idx: int,
+        options: EncodingOptions,
+        assumptions: List[Assumption],
+    ) -> Optional[EncodedFormula]:
+        timepoint = constraint.timeseries["time"][layer_idx]
+        formulas = []
+        for sv in constraint.timeseries.columns:
+            if sv == "time":
+                continue
+
+            sv_formula = Equals(
+                self._encode_state_var(sv, time=int(timepoint)),
+                Real(constraint.timeseries[sv][layer_idx]),
+            )
+            formulas.append(sv_formula)
+        formula = And(formulas)
+        return (formula, {str(s): s for s in formula.get_free_variables()})
 
     def encode_linear_constraint(
         self,

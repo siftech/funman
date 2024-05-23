@@ -339,7 +339,7 @@ class Runner:
                         point_plot_config,
                         parameters_to_plot,
                     )
-                
+
                 sleep(10)
             elif not self._worker.is_processing_id(work_unit.id):
                 results = self._worker.get_results(work_unit.id)
