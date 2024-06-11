@@ -148,8 +148,6 @@
         "tolerance": 1e-2,
         "normalization_constant": 1,
         "dreal_log_level": "info",
-        "use_compartmental_constraints": true,
-        "dreal_precision": 1e-1,
-        "save_smtlib": "./out"
+        "use_compartmental_constraints": true
     }
 }

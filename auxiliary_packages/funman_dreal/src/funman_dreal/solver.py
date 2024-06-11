@@ -20,7 +20,7 @@ from pysmt.exceptions import (
 )
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import BOOL, Bool, Real, get_env
+from pysmt.shortcuts import BOOL, Bool, Real, get_env, TRUE
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand
 from pysmt.smtlib.solver import SmtLibOptions, SmtLibSolver
@@ -443,6 +443,8 @@ class DRealNative(
         self.model = None
         self.log_level = dreal.LogLevel.OFF
         if "solver_options" in options:
+            if "preferred" in options["solver_options"]:
+                self.config.preferred = options["solver_options"]["preferred"]
             if "dreal_precision" in options["solver_options"]:
                 self.config.precision = options["solver_options"][
                     "dreal_precision"

@@ -177,7 +177,7 @@ class Search(ABC):
 
             if result is None:
                 result = TimeoutExplanation()
-                result._expression = TRUE()
+                result.set_expression(TRUE())
         else:
             self._internal_invoke_solver(s, q)
             result = q.get()
@@ -195,7 +195,7 @@ class Search(ABC):
                 q.put(s.get_model())
             else:
                 result = BoxExplanation()
-                result._expression = s.get_unsat_core()
+                result.set_expression(s.get_unsat_core())
                 # print(f"put: {result}")
                 q.put(result)
         except RecursionError:

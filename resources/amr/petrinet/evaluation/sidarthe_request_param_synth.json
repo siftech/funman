@@ -18,16 +18,16 @@
     {
       "name": "beta",
       "interval": {
-        "lb": 0.6,
-        "ub": 0.7
+        "lb": 0.60,
+        "ub": 0.63
       },
       "label": "all"
     },
     {
       "name": "lamb",
       "interval": {
-        "lb": 0.01,
-        "ub": 0.02
+        "lb": 0.030,
+        "ub": 0.033
       },
       "label": "all"
     },
@@ -147,10 +147,10 @@
     }
   ],
   "config": {
-    "tolerance": 1e-2,
+    "tolerance": 1e-1,
     "normalization_constant": 1,
     "dreal_log_level": "info",
     "use_compartmental_constraints": true,
-    "dreal_precision": 1e-1
+    "dreal_precision": 1e-3
   }
 }
