@@ -209,7 +209,7 @@ class BoxPlotter(object):
                     linewidth=1,
                     edgecolor=color,
                     facecolor="none",
-                    zorder=box.timestep().lb*box.timestep().lb,
+                    zorder=box.timestep().lb * box.timestep().lb,
                 )
 
                 # Add the patch to the Axes
@@ -313,7 +313,7 @@ class BoxPlotter(object):
                             y_limits.ub,
                             color=color,
                             alpha=alpha,
-                            zorder=box.timestep().lb*box.timestep().lb,
+                            zorder=box.timestep().lb * box.timestep().lb,
                         )
         plt.show(block=False)
 

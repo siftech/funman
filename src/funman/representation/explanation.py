@@ -35,7 +35,6 @@ class TimeoutExplanation(Explanation):
 
 class BoxExplanation(Explanation):
     relevant_assumptions: List[Assumption] = []
-    
 
     def check_assumptions(
         self,
@@ -63,7 +62,7 @@ class BoxExplanation(Explanation):
         assumption_symbols: Dict[str, Assumption] = {
             str(a): a for a in episode.problem._assumptions
         }
-    
+
         self.relevant_assumptions = [
             a
             for symbol, a in assumption_symbols.items()

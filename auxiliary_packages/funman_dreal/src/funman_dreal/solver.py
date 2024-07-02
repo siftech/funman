@@ -20,7 +20,7 @@ from pysmt.exceptions import (
 )
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import BOOL, Bool, Real, get_env, TRUE
+from pysmt.shortcuts import BOOL, TRUE, Bool, Real, get_env
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand
 from pysmt.smtlib.solver import SmtLibOptions, SmtLibSolver
