@@ -1,18 +1,49 @@
 {
+  "constraints": [
+    {
+      "name": "theta_ge_2_epsilon",
+      "additive_bounds": {
+        "lb": 0.0
+      },
+      "variables": [
+        "theta",
+        "epsilon"
+      ],
+      "weights": [
+        1,
+        -2
+      ]
+    },
+    {
+      "name": "IDART_bound",
+      "additive_bounds": {
+        "ub": 0.3333
+      },
+      "variables": [
+        "Identified",
+        "Deceased",
+        "Affected",
+        "Recognized",
+        "Threatened"
+      ]
+    }
+  ],
   "parameters": [
     {
       "name": "epsilon",
       "interval": {
-        "lb": 0.1368,
-        "ub": 0.20520000000000002
-      }
+        "lb": 0.09,
+        "ub": 0.175
+      },
+      "label": "all"
     },
     {
       "name": "theta",
       "interval": {
-        "lb": 0.2968,
-        "ub": 0.4452
-      }
+        "lb": 0.3,
+        "ub": 0.4
+      },
+      "label": "all"
     }
   ],
   "structure_parameters": [
@@ -35,7 +66,6 @@
     }
   ],
   "config": {
-    "use_compartmental_constraints": true,
     "normalization_constant": 1.0,
     "tolerance": 1e-2
   }
