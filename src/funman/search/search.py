@@ -168,8 +168,8 @@ class Search(ABC):
     ) -> Union[pysmtModel, BoxExplanation]:
         l.debug("Invoking solver ...")
         q = JoinableQueue()
-        if timeout is not None:
 
+        if timeout is not None:
             result = run_with_limited_time(
                 Search._internal_invoke_solver, (self, s, q), {}, timeout
             )
@@ -179,8 +179,7 @@ class Search(ABC):
                 result = TimeoutExplanation()
                 result.set_expression(TRUE())
         else:
-            self._internal_invoke_solver(s, q)
-            result = q.get()
+            result = self._internal_invoke_solver(s, None)
         # print(f"invoke_solver, result: [{result}]")
         return result
 
@@ -189,18 +188,24 @@ class Search(ABC):
         l.debug("Solver started")
         result = s.solve()
         l.trace(f"Solver result = {result}")
+
         try:
             if result:
                 # print(f"put: {s.get_model()}")
-                q.put(s.get_model())
+                result = s.get_model()
+                if q:
+                    q.put(result)
             else:
+
                 result = BoxExplanation()
                 result.set_expression(s.get_unsat_core())
                 # print(f"put: {result}")
-                q.put(result)
+                if q:
+                    q.put(result)
+
         except RecursionError:
             l.error("Recursion error pickling solver result in queue.")
             pass
         l.debug("Solver completed")
         # print(result)
-        # return result
+        return result

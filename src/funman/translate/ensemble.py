@@ -1,13 +1,14 @@
+from numbers import Number
 from typing import Dict, Set
 
 from pysmt.formula import FNode
 from pysmt.shortcuts import REAL, TRUE, And, Symbol, Times, substitute
+from pysmt.solvers.solver import Model as pysmtModel
 
 from funman.model.model import FunmanModel
 
 from .translate import Encoder, Encoding
 
-from pysmt.solvers.solver import Model as pysmtModel
 
 class EnsembleEncoder(Encoder):
     def encode_model(self, scenario: "AnalysisScenario") -> Encoding:
@@ -124,16 +125,16 @@ class EnsembleEncoder(Encoder):
         vars = self._symbols(model_encoding.symbols())
         vals = {}
         for var, model_vars in vars.items():
-            for model_idx, model_var in model_vars.items():    
-                vals[model_var] = {}
+            for model_idx, model_var in model_vars.items():
+                vals[var] = {}
                 for t in vars[var]:
                     try:
                         symbol = vars[var][t]
                         value = pysmtModel.get_py_value(symbol)
                         # value = pysmtModel.completed_assignment[symbol]
-                        if isinstance(value, Numeral):
+                        if isinstance(value, Number):
                             value = 0.0
-                        vals[model_var][t] = float(value)
+                        vals[var][t] = float(value)
                     except OverflowError as e:
                         l.warning(e)
         return vals
