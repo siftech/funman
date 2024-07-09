@@ -1,6 +1,7 @@
 import logging
 import random
 from collections import Counter
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
@@ -164,6 +165,38 @@ class FunmanWorkUnit(BaseModel):
         )
 
 
+class FunmanResultsTiming(BaseModel):
+    start_time: datetime = None
+    end_time: Optional[datetime] = None
+    total_time: Optional[timedelta] = None
+    solver_time: Optional[timedelta] = None
+    encoding_time: Optional[timedelta] = None
+    progress_timeseries: List[Tuple[datetime, float]] = []
+
+    def update_progress(
+        self, progress, granularity=timedelta(seconds=1)
+    ) -> None:
+        last_update = (
+            self.progress_timeseries[-1][0]
+            if len(self.progress_timeseries) > 0
+            else None
+        )
+
+        now = datetime.now()
+
+        if last_update is not None:
+            time_delta = now - last_update
+        else:
+            time_delta = now - self.start_time
+
+        if time_delta > granularity:
+            self.progress_timeseries.append((now, progress))
+
+    def finalize(self):
+        """Calculate total time"""
+        self.total_time = self.end_time - self.start_time
+
+
 class FunmanResults(BaseModel):
     _finalized: bool = False
 
@@ -183,6 +216,14 @@ class FunmanResults(BaseModel):
     error: bool = False
     error_message: Optional[str] = None
     parameter_space: Optional[ParameterSpace] = None
+    timing: FunmanResultsTiming = FunmanResultsTiming()
+
+    def start(self):
+        self.timing.start_time = datetime.now()
+
+    def stop(self):
+        self.timing.end_time = datetime.now()
+        self.timing.finalize()
 
     def is_final(self):
         return self._finalized
@@ -215,6 +256,8 @@ class FunmanResults(BaseModel):
         self.progress.progress = coverage_of_search_space
         self.progress.coverage_of_search_space = coverage_of_search_space
         self.progress.coverage_of_representable_space = coverage_of_repr_space
+        self.timing.update_progress(self.progress.coverage_of_search_space)
+
         return self.progress
 
     def finalize_result(

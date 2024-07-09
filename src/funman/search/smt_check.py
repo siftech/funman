@@ -198,7 +198,7 @@ class SMTCheck(Search):
                 filename=filename,
             )
         l.trace(f"Solving: {formula.serialize()}")
-        result = self.invoke_solver(s)
+        result = self.invoke_solver(s, timeout=episode.config.solver_timeout)
         s.pop(1)
         l.trace(f"Result: {type(result)}")
         return result

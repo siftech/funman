@@ -1,0 +1,92 @@
+{
+    "constraints": [
+        {
+            "name": "ibounds",
+            "variable": "I",
+            "interval": {
+                "lb": 0.2,
+                "ub": 0.4
+            },
+            "timepoints": {
+                "lb": 35,
+                "ub": 40,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.201544,
+                "ub": 0.201544
+            },
+            "label": "any"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.071086,
+                "ub": 0.071086
+            },
+            "label": "any"
+        },
+        {
+            "name": "S0",
+            "interval": {
+                "lb": 0.990,
+                "ub": 0.990
+            },
+            "label": "any"
+        },
+        {
+            "name": "I0",
+            "interval": {
+                "lb": 0.010,
+                "ub": 0.010
+            },
+            "label": "any"
+        },
+        {
+            "name": "R0",
+            "interval": {
+                "lb": 0,
+                "ub": 0
+            },
+            "label": "any"
+        },
+        {
+            "name": "N",
+            "interval": {
+                "lb": 1,
+                "ub": 1
+            },
+            "label": "any"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "num_steps",
+            "interval": {
+                "lb": 12,
+                "ub": 12
+            },
+            "label": "all"
+        },
+        {
+            "name": "step_size",
+            "interval": {
+                "lb": 5,
+                "ub": 5
+            },
+            "label": "all"
+        }
+    ],
+    "config": {
+        "tolerance": 1e-2,
+        "normalization_constant": 1,
+        "dreal_log_level": "info",
+        "use_compartmental_constraints": true,
+        "dreal_precision": 1e-2
+    }
+}

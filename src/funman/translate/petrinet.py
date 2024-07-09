@@ -298,8 +298,15 @@ class PetrinetEncoder(Encoder):
         else:
             time_update = TRUE()
 
+        normalization_constraint = TRUE()
+        # if self.config.normalize:
+        #     normalization_constraint = And([
+        #         And(LE(Real(0.0),  current_state[scenario.model._state_var_id(var)]), LE( current_state[scenario.model._state_var_id(var)], Real(1.0)))
+        #     for var in state_vars
+        #     ])
+
         return (
-            And(var_updates + [time_update]),
+            And(var_updates + [time_update, normalization_constraint]),
             substitutions,
         )
 
@@ -366,7 +373,7 @@ class PetrinetEncoder(Encoder):
 
             bounds += [lb, ub]
         # noise_var = Symbol("noise", REAL)
-        noise_const = Real(1e-3)
+        noise_const = Real(self.config.compartmental_constraint_noise)
         sum_vars = Plus(
             [
                 self._encode_state_var(

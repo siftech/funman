@@ -1,6 +1,7 @@
 import copy
 import logging
 from decimal import ROUND_CEILING, Decimal
+from functools import reduce
 from pickle import FALSE
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
@@ -285,15 +286,40 @@ class Box(BaseModel):
             # prefer boxes with true points
             # prefer boxes later in time
             # prefer boxes with smaller width
-            s_t = len(self.true_points())
-            o_t = len(other.true_points())
-            if s_t == o_t:
-                if self.timestep().lb == other.timestep().lb:
-                    return self.normalized_width() > other.normalized_width()
+            # s_t = (
+            #     float(max(len(self.true_points()), len(self.false_points())))
+            #     / float(len(self.points))
+            #     if len(self.points) > 0
+            #     else 0.0
+            # )
+            # o_t = (
+            #     float(max(len(other.true_points()), len(other.false_points())))
+            #     / float(len(other.points))
+            #     if len(other.points) > 0
+            #     else 0.0
+            # )
+            s_t = (
+                float(len(self.true_points())) if len(self.points) > 0 else 0.0
+            )
+            o_t = (
+                float(len(other.true_points()))
+                if len(other.points) > 0
+                else 0.0
+            )
+            if self.timestep().lb == other.timestep().lb:
+                # s_residual_volume = self.timestep().width()*self.normalized_volume()*Decimal(s_t)
+                # o_residual_volume = other.timestep().width()*other.normalized_volume()*Decimal(o_t)
+                # return s_residual_volume > o_residual_volume
+                if s_t == o_t:
+
+                    # if s_t == o_t:
+                    return self.normalized_volume() > other.normalized_volume()
+                    # else:
+                    #     return s_t > o_t
                 else:
-                    return self.timestep().lb > other.timestep().lb
+                    return s_t > o_t
             else:
-                return s_t > o_t
+                return self.timestep().lb > other.timestep().lb
         else:
             raise Exception(f"Cannot compare __lt__() Box to {type(other)}")
 
@@ -494,11 +520,17 @@ class Box(BaseModel):
         """
         parameter_names = [p.name for p in parameters if p.is_synthesized()]
         group_centers = {
-            p: [average([pt.values[p] for pt in grp]) for grp in points]
+            p: [
+                average([pt.values[p] for pt in grp])
+                for grp in points
+                if len(grp) > 0
+            ]
             for p in self.bounds
             if p in parameter_names
         }
-        centers = {p: average(grp) for p, grp in group_centers.items()}
+        centers = {
+            p: average(grp) for p, grp in group_centers.items() if len(grp) > 0
+        }
         # print(points)
         # print(centers)
         point_distances = [
@@ -509,6 +541,7 @@ class Box(BaseModel):
             }
             for grp in points
             for pt in grp
+            if len(grp) > 0
         ]
 
         parameter_widths = {
@@ -648,6 +681,18 @@ class Box(BaseModel):
         product *= num_timepoints
         return product
 
+    def normalized_volume(self, parameters: List[ModelParameter] = None):
+        params = self.bounds.keys()
+        if parameters:
+            params = [p.name for p in parameters]
+
+        norm_volume = reduce(
+            lambda a, b: a * b,
+            [Decimal(self.bounds[p].normalized_width()) for p in params],
+            Decimal(1.0),
+        )
+        return norm_volume
+
     def normalized_width(self, parameters: List[ModelParameter] = None):
         p = self._get_max_width_Parameter(
             normalize=True, parameters=parameters
@@ -708,7 +753,11 @@ class Box(BaseModel):
             Boxes resulting from the split.
         """
         p = None
-        if points:
+        if (
+            points
+            and len(points) > 1
+            and all([len(grp) > 0 for grp in points])
+        ):
             p = self._get_max_width_point_Parameter(
                 points, parameters=parameters
             )
