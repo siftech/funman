@@ -1,6 +1,8 @@
 import copy
 import logging
 from decimal import ROUND_CEILING, Decimal
+from functools import reduce
+from math import log2
 from pickle import FALSE
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
@@ -280,20 +282,74 @@ class Box(BaseModel):
         )
         return c
 
+    def point_entropy(self, bias=1.0) -> float:
+        """
+        Calculate the entropy of a box in terms of the point labels.  Assumes only binary labels, so that p = |true|/(|true|+|false|), and the entropy is H = -(p log p) - ((1-p) log (1-p))
+
+        bias: inverse weight given to positive points
+
+        Returns
+        -------
+        float
+            Entropy of the box
+        """
+        tp = len(self.true_points()) * bias
+        fp = len(self.false_points())
+        p = tp / (tp + fp) if (tp + fp) > 0 else 0.5
+
+        if p == 0.0:
+            H = -((1.0 - p) * log2(1.0 - p))
+        elif p == 1.0:
+            H = -(p * log2(p))
+        else:
+            H = -(p * log2(p)) - ((1.0 - p) * log2(1.0 - p))
+        return H
+
     def __lt__(self, other):
         if isinstance(other, Box):
             # prefer boxes with true points
             # prefer boxes later in time
             # prefer boxes with smaller width
-            s_t = len(self.true_points())
-            o_t = len(other.true_points())
-            if s_t == o_t:
-                if self.timestep().lb == other.timestep().lb:
-                    return self.normalized_width() > other.normalized_width()
+            # s_t = (
+            #     float(max(len(self.true_points()), len(self.false_points())))
+            #     / float(len(self.points))
+            #     if len(self.points) > 0
+            #     else 0.0
+            # )
+            # o_t = (
+            #     float(max(len(other.true_points()), len(other.false_points())))
+            #     / float(len(other.points))
+            #     if len(other.points) > 0
+            #     else 0.0
+            # )
+            # s_t = (
+            #     2.0 * (1.0 - self.point_entropy())
+            #     + 0.5 * (len(self.true_points()))
+            #     + 0.5 * (len(self.false_points()))
+            # )
+            # o_t = (
+            #     2.0 * (1.0 - other.point_entropy())
+            #     + 0.5 * (len(other.true_points()))
+            #     + 0.5 * (len(other.false_points()))
+            # )
+            s_t = (1.0 - self.point_entropy()) * (len(self.true_points()) + 1)
+            o_t = (1.0 - other.point_entropy()) * (
+                len(other.true_points()) + 1
+            )
+            if self.timestep().lb == other.timestep().lb:
+                # s_residual_volume = self.timestep().width()*self.normalized_volume()*Decimal(s_t)
+                # o_residual_volume = other.timestep().width()*other.normalized_volume()*Decimal(o_t)
+                # return s_residual_volume > o_residual_volume
+                if s_t == o_t:
+
+                    # if s_t == o_t:
+                    return self.normalized_volume() > other.normalized_volume()
+                    # else:
+                    #     return s_t > o_t
                 else:
-                    return self.timestep().lb > other.timestep().lb
+                    return s_t > o_t
             else:
-                return s_t > o_t
+                return self.timestep().lb > other.timestep().lb
         else:
             raise Exception(f"Cannot compare __lt__() Box to {type(other)}")
 
@@ -494,11 +550,17 @@ class Box(BaseModel):
         """
         parameter_names = [p.name for p in parameters if p.is_synthesized()]
         group_centers = {
-            p: [average([pt.values[p] for pt in grp]) for grp in points]
+            p: [
+                average([pt.values[p] for pt in grp])
+                for grp in points
+                if len(grp) > 0
+            ]
             for p in self.bounds
             if p in parameter_names
         }
-        centers = {p: average(grp) for p, grp in group_centers.items()}
+        centers = {
+            p: average(grp) for p, grp in group_centers.items() if len(grp) > 0
+        }
         # print(points)
         # print(centers)
         point_distances = [
@@ -509,6 +571,7 @@ class Box(BaseModel):
             }
             for grp in points
             for pt in grp
+            if len(grp) > 0
         ]
 
         parameter_widths = {
@@ -648,6 +711,18 @@ class Box(BaseModel):
         product *= num_timepoints
         return product
 
+    def normalized_volume(self, parameters: List[ModelParameter] = None):
+        params = self.bounds.keys()
+        if parameters:
+            params = [p.name for p in parameters]
+
+        norm_volume = reduce(
+            lambda a, b: a * b,
+            [Decimal(self.bounds[p].normalized_width()) for p in params],
+            Decimal(1.0),
+        )
+        return norm_volume
+
     def normalized_width(self, parameters: List[ModelParameter] = None):
         p = self._get_max_width_Parameter(
             normalize=True, parameters=parameters
@@ -708,7 +783,11 @@ class Box(BaseModel):
             Boxes resulting from the split.
         """
         p = None
-        if points:
+        if (
+            points
+            and len(points) > 1
+            and all([len(grp) > 0 for grp in points])
+        ):
             p = self._get_max_width_point_Parameter(
                 points, parameters=parameters
             )
@@ -757,10 +836,10 @@ class Box(BaseModel):
             for step, pts in b2._points_at_step.items()
         }
 
-        l.info(
+        l.debug(
             f"Split[{self.timestep()}]({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])"
         )
-        l.info(
+        l.debug(
             f"widths: {self.width(parameters=parameters):.5f} -> {b1.width(parameters=parameters):.5f} {b2.width():.5f} (raw), {self.normalized_width(parameters=parameters):.5f} -> {b1.normalized_width(parameters=parameters):.5f} {b2.normalized_width(parameters=parameters):.5f} (norm)"
         )
         return [b2, b1]

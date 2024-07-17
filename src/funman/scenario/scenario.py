@@ -120,8 +120,11 @@ class AnalysisScenario(ABC, BaseModel):
         self._normalize_parameters()
 
         if config.use_compartmental_constraints:
-            capacity = 1.0 if config.normalize else self.normalization_constant
-            ccs = self.model.compartmental_constraints(capacity)
+            capacity = self.normalization_constant
+            # 1.0 if config.normalize else self.normalization_constant
+            ccs = self.model.compartmental_constraints(
+                capacity, config.compartmental_constraint_noise
+            )
             if ccs is not None:
                 self.constraints += ccs
                 for cc in ccs:

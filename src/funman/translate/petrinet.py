@@ -298,8 +298,15 @@ class PetrinetEncoder(Encoder):
         else:
             time_update = TRUE()
 
+        normalization_constraint = TRUE()
+        # if self.config.normalize:
+        #     normalization_constraint = And([
+        #         And(LE(Real(0.0),  current_state[scenario.model._state_var_id(var)]), LE( current_state[scenario.model._state_var_id(var)], Real(1.0)))
+        #     for var in state_vars
+        #     ])
+
         return (
-            And(var_updates + [time_update]),
+            And(var_updates + [time_update, normalization_constraint]),
             substitutions,
         )
 
@@ -309,20 +316,6 @@ class PetrinetEncoder(Encoder):
         initial_state, substitutions = super()._define_init(
             scenario, init_time=init_time
         )
-        # state_var_names = scenario.model._state_var_names()
-        # initial_substitution = {}
-
-        if self.config.use_compartmental_constraints:
-            compartmental_bounds = self._encode_compartmental_bounds(
-                scenario, 0
-            )
-            if self.config.substitute_subformulas and substitutions:
-                compartmental_bounds = compartmental_bounds.substitute(
-                    substitutions
-                ).simplify()
-        else:
-            compartmental_bounds = TRUE()
-        initial_state = And(initial_state, compartmental_bounds).simplify()
 
         return initial_state, substitutions
 
@@ -366,7 +359,7 @@ class PetrinetEncoder(Encoder):
 
             bounds += [lb, ub]
         # noise_var = Symbol("noise", REAL)
-        noise_const = Real(1e-3)
+        noise_const = Real(self.config.compartmental_constraint_noise)
         sum_vars = Plus(
             [
                 self._encode_state_var(
@@ -376,8 +369,8 @@ class PetrinetEncoder(Encoder):
             ]
         )
         total = And(
-            LE(sum_vars, Plus(population, noise_const)),
-            LE(Minus(population, noise_const), sum_vars),
+            LE(sum_vars, Plus(population, noise_const).simplify()),
+            LE(Minus(population, noise_const).simplify(), sum_vars),
         )
 
         return And(bounds + [total])

@@ -50,7 +50,11 @@ class SMTCheck(Search):
             episode = SearchEpisode(
                 config=config, problem=problem, schedule=schedule
             )
-            options = EncodingOptions(schedule=schedule)
+            options = EncodingOptions(
+                schedule=schedule,
+                normalize=config.normalize,
+                normalization_constant=config.normalization_constant,
+            )
 
             # self._initialize_encoding(solver, episode, box_timepoint, box)
             model_result, explanation_result = self.expand(
@@ -198,7 +202,7 @@ class SMTCheck(Search):
                 filename=filename,
             )
         l.trace(f"Solving: {formula.serialize()}")
-        result = self.invoke_solver(s)
+        result = self.invoke_solver(s, timeout=episode.config.solver_timeout)
         s.pop(1)
         l.trace(f"Result: {type(result)}")
         return result

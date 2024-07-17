@@ -140,7 +140,7 @@ class FunmanModel(ABC, BaseModel):
     #         self._normalization_term = Real(self._normalization_constant)
     #     return self._normalization_term
 
-    def compartmental_constraints(self, populuation: int):
+    def compartmental_constraints(self, populuation: int, noise: float):
         return None
 
     def _is_normalized(self, var: str):

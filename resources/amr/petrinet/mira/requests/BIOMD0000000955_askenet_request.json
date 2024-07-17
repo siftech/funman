@@ -1,18 +1,49 @@
 {
+  "constraints": [
+    {
+      "name": "theta_ge_2_epsilon",
+      "additive_bounds": {
+        "lb": 0.0
+      },
+      "variables": [
+        "theta",
+        "epsilon"
+      ],
+      "weights": [
+        1,
+        -2
+      ]
+    },
+    {
+      "name": "IDART_bound",
+      "additive_bounds": {
+        "ub": 0.02
+      },
+      "variables": [
+        "Infected",
+        "Diagnosed",
+        "Ailing",
+        "Recognized",
+        "Threatened"
+      ]
+    }
+  ],
   "parameters": [
     {
       "name": "epsilon",
       "interval": {
         "lb": 0.1368,
         "ub": 0.20520000000000002
-      }
+      },
+      "label": "all"
     },
     {
       "name": "theta",
       "interval": {
         "lb": 0.2968,
         "ub": 0.4452
-      }
+      },
+      "label": "all"
     }
   ],
   "structure_parameters": [
@@ -22,12 +53,33 @@
         {
           "timepoints": [
             0,
+            5,
+            10,
+            15,
             20,
+            25,
+            30,
+            35,
             40,
+            45,
+            50,
+            55,
             60,
+            65,
+            70,
+            75,
             80,
+            85,
+            90,
+            95,
             100,
+            105,
+            110,
+            115,
             120,
+            125,
+            130,
+            135,
             140
           ]
         }
@@ -35,8 +87,10 @@
     }
   ],
   "config": {
-    "use_compartmental_constraints": true,
     "normalization_constant": 1.0,
-    "tolerance": 1e-2
+    "normalize": false,
+    "tolerance": 1e-1,
+    "use_compartmental_constraints": true,
+    "dreal_precision": 1e-8
   }
 }

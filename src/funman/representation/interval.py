@@ -110,7 +110,7 @@ class Interval(BaseModel):
     def normalize(self, normalization_factor: Union[float, int]) -> "Interval":
         return Interval(
             lb=math_utils.div(self.lb, normalization_factor),
-            ub=math_utils.div(self.lb, normalization_factor),
+            ub=math_utils.div(self.ub, normalization_factor),
         )
 
     def __lt__(self, other):

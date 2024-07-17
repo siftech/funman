@@ -808,11 +808,11 @@ class Encoder(ABC, BaseModel):
             ub = None
 
         if options.normalize:
-            expression = Div(expression, Real(options.normalization_constant))
+            # expression = Div(expression, Real(options.normalization_constant))
             if lb is not None:
-                lb = Div(lb, Real(options.normalization_constant))
+                lb = Div(lb, Real(options.normalization_constant)).simplify()
             if ub is not None:
-                ub = Div(ub, Real(options.normalization_constant))
+                ub = Div(ub, Real(options.normalization_constant)).simplify()
 
         if lb is not None:
             lbe = GE(expression, lb)

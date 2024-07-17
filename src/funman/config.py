@@ -34,61 +34,96 @@ class FUNMANConfig(BaseModel):
 
     queue_timeout: int = 1
     """Multiprocessing queue timeout, used by BoxSearch"""
+
     number_of_processes: int = 1  # mp.cpu_count()
     """Number of BoxSearch processes"""
+
     _handler: Union[
         ResultCombinedHandler, NoopResultHandler, ResultHandler
     ] = NoopResultHandler()
     wait_timeout: Optional[int] = None
     """Timeout for BoxSearch procesess to wait for boxes to evaluate"""
+
     _wait_action: WaitAction = None
     wait_action_timeout: float = 0.05
     """Time to sleep proceses waiting for work"""
+
     _read_cache: ResultHandler = None
-    # episode_type: =None,
+
     _search: str = None
     """Name of search algorithm to use"""
+
     solver: str = "dreal"  # "z3"
     """Name of pysmt solver to use"""
+
     num_steps: int = 2
     """Number of timesteps to encode"""
+
     step_size: int = 1
     """Step size for encoding"""
+
     num_initial_boxes: int = 1
     """Number of initial boxes for BoxSearch"""
+
+    solver_timeout: Optional[int] = None
+    """Number of seconds to allow each call to SMT solver"""
+
     initial_state_tolerance: float = 0.0
     """Factor used to relax initial state values bounds"""
+
     save_smtlib: Optional[str] = None
     """Whether to save each smt invocation as an SMTLib file"""
+
     dreal_precision: float = 1e-1
     """Precision delta for dreal solver"""
+
     dreal_log_level: str = "off"
     """Constraint noise term to relax constraints"""
+
     constraint_noise: float = 0.0
     """Use MCTS in dreal"""
+
     dreal_mcts: bool = True
     """Substitute subformulas to simplify overall encoding"""
+
     substitute_subformulas: bool = False
     """Enforce compartmental variable constraints"""
+
     normalization_constant: Optional[float] = None
     """ Simplify query by propagating substutions """
+
     use_compartmental_constraints: bool = False
     """Normalize scenarios prior to solving"""
+
+    compartmental_constraint_noise: float = 0.01
+    """Additional factor used to relax compartmental constraint (needed due to floating point imprecision)"""
+
     normalize: bool = True
     """Normalization constant to use for normalization (attempt to compute if None)"""
+
     simplify_query: bool = False
-    """ Series approximation threshold for dropping series terms """
+    """ Convert query object to a single formula based only on the parameters (deprecated) """
+
     series_approximation_threshold: Optional[float] = None
-    """ Generate profiling output"""
+    """ Series approximation threshold for dropping series terms """
+
     profile: bool = False
-    """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
+    """ Generate profiling output"""
+
     taylor_series_order: Optional[int] = None
-    """ Compute Corner points of each box """
+    """ Use Taylor series of given order to approximate transition function, if None, then do not compute series """
+
     corner_points: bool = False
-    """ Verbosity (INFO, DEBUG, WARN, ERROR)"""
+    """ Compute Corner points of each box """
+
     verbosity: int = logging.INFO
-    """ Use transition symbols in encoding transition functions """
+    """ Verbosity (INFO, DEBUG, WARN, ERROR)"""
+
     use_transition_symbols: bool = False
+    """ Use transition symbols in encoding transition functions """
+
+    uniform_box_splits: bool = False
+    """ Uniformly split boxes in box search, instead of separating points in boxes """
 
     @field_validator("solver")
     @classmethod

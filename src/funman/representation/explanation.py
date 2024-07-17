@@ -7,18 +7,34 @@ from .assumption import Assumption
 
 
 class Explanation(BaseModel):
-    _expression: FNode
+    expression: Optional[str] = None
+    symbols: Optional[List[str]] = None
 
     def explain(self) -> Dict[str, Any]:
         return {
             "description": "The expression is implied by this scenario and is unsatisfiable",
-            "expression": self._expression.serialize(),
+            "expression": self.expression,
         }
+
+    def set_expression(self, e: FNode):
+        self.expression = e.serialize()
+        self.symbols = [str(s) for s in e.get_free_variables()]
+
+    def check_assumptions(
+        self,
+        episode: "BoxSearchEpisode",
+        my_solver: Callable,
+        options: "EncodingOptions",
+    ) -> List[Assumption]:
+        return []
+
+
+class TimeoutExplanation(Explanation):
+    pass
 
 
 class BoxExplanation(Explanation):
     relevant_assumptions: List[Assumption] = []
-    expression: Optional[str] = None
 
     def check_assumptions(
         self,
@@ -41,21 +57,16 @@ class BoxExplanation(Explanation):
         List[Assumption]
             _description_
         """
-        self.expression = self._expression.serialize()
+
         # FIXME use step size from options
         assumption_symbols: Dict[str, Assumption] = {
             str(a): a for a in episode.problem._assumptions
         }
-        # with my_solver() as solver:
-        #     solver.add_assertion(self._expression)
-        #     solver.push(1)
-        expression_symbols = [
-            str(v) for v in self._expression.get_free_variables()
-        ]
+
         self.relevant_assumptions = [
             a
             for symbol, a in assumption_symbols.items()
-            if any(symbol in es for es in expression_symbols)
+            if any(symbol in es for es in self.symbols)
         ]
         return self.relevant_assumptions
 
