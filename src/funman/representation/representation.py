@@ -30,7 +30,7 @@ class Point(BaseModel):
     #     self.values = kw['values']
 
     def timestep(self) -> int:
-        return int(self.values["timestep"])
+        return int(self.values["timestep"]) if "timestep" in self.values else 0
 
     def __str__(self):
         return f"Point({self.model_dump()})"

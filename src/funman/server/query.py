@@ -14,6 +14,7 @@ from funman.model.bilayer import BilayerModel
 from funman.model.decapode import DecapodeModel
 from funman.model.encoded import EncodedModel
 from funman.model.ensemble import EnsembleModel
+from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
@@ -217,6 +218,7 @@ class FunmanResults(BaseModel):
     error_message: Optional[str] = None
     parameter_space: Optional[ParameterSpace] = None
     timing: FunmanResultsTiming = FunmanResultsTiming()
+    contracted_model: Optional[GeneratedPetriNet] = None
 
     def start(self):
         self.timing.start_time = datetime.now()
@@ -227,6 +229,26 @@ class FunmanResults(BaseModel):
 
     def is_final(self):
         return self._finalized
+
+    def contract_model(self):
+        """
+        Use the parameter_space to contract the model parameter bounds and set self.contracted_model
+
+        """
+        if not isinstance(self.model, GeneratedPetriNetModel):
+            raise NotImplemented(
+                f"Cannot contract model of type {type(self.model)}"
+            )
+
+        # Get new bounds for each parameter
+        amr_parameters = self.model._parameter_names()
+        parameter_bounds = {
+            param: self.parameter_space.outer_interval(param)
+            for param in amr_parameters
+        }
+        self.contracted_model = self.model.contract_parameters(
+            parameter_bounds
+        )
 
     def update_parameter_space(
         self, scenario: AnalysisScenario, results: ParameterSpace
@@ -257,6 +279,8 @@ class FunmanResults(BaseModel):
         self.progress.coverage_of_search_space = coverage_of_search_space
         self.progress.coverage_of_representable_space = coverage_of_repr_space
         self.timing.update_progress(self.progress.coverage_of_search_space)
+
+        self.contract_model()
 
         return self.progress
 

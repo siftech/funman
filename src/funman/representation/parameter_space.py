@@ -5,7 +5,14 @@ from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
 from pydantic import BaseModel
 
-from ..constants import LABEL_DROPPED, LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN
+from ..constants import (
+    LABEL_DROPPED,
+    LABEL_FALSE,
+    LABEL_TRUE,
+    LABEL_UNKNOWN,
+    NEG_INFINITY,
+    POS_INFINITY,
+)
 from . import Interval, Point
 from .box import Box
 from .interval import Interval
@@ -77,6 +84,39 @@ class ParameterSpace(BaseModel):
         return [b for b in self.true_boxes if b.timestep().ub == last_step] + [
             b for b in self.false_boxes if b.timestep().ub == last_step
         ]
+
+    def outer_interval(self, param_name: str) -> Interval:
+        """
+        Get the infimum and supremimum values of parameter param_name among all true boxes
+
+        Parameters
+        ----------
+        param_name : str
+            Parameter name
+
+        Returns
+        -------
+        Interval
+            Interval where the lb and ub are the minimum and maximum values taken by parameter among all true boxes.
+        """
+        if len(self.true_boxes) > 0:
+            lb = min(
+                map(
+                    lambda b: b.project([param_name]).bounds[param_name].lb,
+                    self.true_boxes,
+                )
+            )
+            ub = max(
+                map(
+                    lambda b: b.project([param_name]).bounds[param_name].ub,
+                    self.true_boxes,
+                )
+            )
+        else:
+            lb = NEG_INFINITY
+            ub = POS_INFINITY
+
+        return Interval(lb=lb, ub=ub)
 
     def explain(self) -> "ParameterSpaceExplanation":
         from .explanation import ParameterSpaceExplanation
