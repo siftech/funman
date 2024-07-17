@@ -69,6 +69,15 @@ class ParameterSpace(BaseModel):
     def boxes(self) -> List[Box]:
         return self.true_boxes + self.false_boxes
 
+    def last_boxes(self) -> List[Box]:
+        last_step = max(
+            max([b.timestep().ub for b in self.true_boxes] + [0]),
+            max([b.timestep().ub for b in self.false_boxes] + [0]),
+        )
+        return [b for b in self.true_boxes if b.timestep().ub == last_step] + [
+            b for b in self.false_boxes if b.timestep().ub == last_step
+        ]
+
     def explain(self) -> "ParameterSpaceExplanation":
         from .explanation import ParameterSpaceExplanation
 

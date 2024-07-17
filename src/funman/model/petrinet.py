@@ -148,7 +148,7 @@ class AbstractPetriNetModel(FunmanModel):
             )
 
     def compartmental_constraints(
-        self, population: Union[float, int]
+        self, population: Union[float, int], noise: float
     ) -> List["Constraint"]:
         from funman.representation.constraint import LinearConstraint
 
@@ -157,8 +157,8 @@ class AbstractPetriNetModel(FunmanModel):
             LinearConstraint(
                 name="compartmental_constraint_population",
                 additive_bounds={
-                    "lb": population - 1e-5,
-                    "ub": population + 1e-5,
+                    "lb": population - noise,
+                    "ub": population + noise,
                     "closed_upper_bound": True,
                 },
                 variables=vars,

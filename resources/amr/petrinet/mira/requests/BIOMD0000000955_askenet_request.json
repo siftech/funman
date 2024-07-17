@@ -17,12 +17,12 @@
     {
       "name": "IDART_bound",
       "additive_bounds": {
-        "ub": 0.3333
+        "ub": 0.02
       },
       "variables": [
-        "Identified",
-        "Deceased",
-        "Affected",
+        "Infected",
+        "Diagnosed",
+        "Ailing",
         "Recognized",
         "Threatened"
       ]
@@ -32,16 +32,16 @@
     {
       "name": "epsilon",
       "interval": {
-        "lb": 0.09,
-        "ub": 0.175
+        "lb": 0.1368,
+        "ub": 0.20520000000000002
       },
       "label": "all"
     },
     {
       "name": "theta",
       "interval": {
-        "lb": 0.3,
-        "ub": 0.4
+        "lb": 0.2968,
+        "ub": 0.4452
       },
       "label": "all"
     }
@@ -53,12 +53,33 @@
         {
           "timepoints": [
             0,
+            5,
+            10,
+            15,
             20,
+            25,
+            30,
+            35,
             40,
+            45,
+            50,
+            55,
             60,
+            65,
+            70,
+            75,
             80,
+            85,
+            90,
+            95,
             100,
+            105,
+            110,
+            115,
             120,
+            125,
+            130,
+            135,
             140
           ]
         }
@@ -67,6 +88,9 @@
   ],
   "config": {
     "normalization_constant": 1.0,
-    "tolerance": 1e-2
+    "normalize": false,
+    "tolerance": 1e-1,
+    "use_compartmental_constraints": true,
+    "dreal_precision": 1e-8
   }
 }

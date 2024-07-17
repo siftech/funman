@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,6 +15,7 @@ class ParameterSpacePlotter:
     def __init__(
         self,
         parameter_space: ParameterSpace,
+        boxes: List[Box] = None,
         plot_bounds: Box = None,
         title: str = "Feasible Regions",
         color_map: Dict[str, str] = {
@@ -34,6 +35,8 @@ class ParameterSpacePlotter:
         else:
             # FIXME this is a hack to accept ParameterSpace objects from the openapi client
             self.ps = ParameterSpace.model_validate(parameter_space.to_dict())
+
+        self.boxes = boxes
 
         # TODO this should be easier to access
         values = []
@@ -129,10 +132,20 @@ class ParameterSpacePlotter:
         self.initialize_figure(plot_diagonal)
         t = "true"
         f = "false"
-        for b in self.ps.false_boxes:
-            self.plotNDBox(b, self.color_map[f], plot_diagonal=plot_diagonal)
-        for b in self.ps.true_boxes:
-            self.plotNDBox(b, self.color_map[t], plot_diagonal=plot_diagonal)
+        if self.boxes:
+            for b in self.boxes:
+                self.plotNDBox(
+                    b, self.color_map[b.label], plot_diagonal=plot_diagonal
+                )
+        else:
+            for b in self.ps.false_boxes:
+                self.plotNDBox(
+                    b, self.color_map[f], plot_diagonal=plot_diagonal
+                )
+            for b in self.ps.true_boxes:
+                self.plotNDBox(
+                    b, self.color_map[t], plot_diagonal=plot_diagonal
+                )
         if self.plot_points:
             for p in self.ps.false_points():
                 self.plot_add_point(
@@ -229,4 +242,14 @@ class ParameterSpacePlotter:
                             color=color,
                             alpha=alpha,
                             zorder=box.timestep().lb,
+                        )
+                        self.axs[i_coord, j_coord].text(
+                            (x_limits.lb + x_limits.ub) / 2,
+                            (y_limits.lb + y_limits.ub) / 2,
+                            # f"[{box.timestep().lb}, {box.timestep().ub}]",
+                            f"{box.timestep().lb}",
+                            ha="center",
+                            va="center",
+                            fontsize=8,
+                            color="blue",
                         )

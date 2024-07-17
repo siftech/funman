@@ -2,6 +2,7 @@ import copy
 import logging
 from decimal import ROUND_CEILING, Decimal
 from functools import reduce
+from math import log2
 from pickle import FALSE
 from statistics import mean as average
 from typing import Dict, List, Literal, Optional, Union
@@ -281,6 +282,29 @@ class Box(BaseModel):
         )
         return c
 
+    def point_entropy(self, bias=1.0) -> float:
+        """
+        Calculate the entropy of a box in terms of the point labels.  Assumes only binary labels, so that p = |true|/(|true|+|false|), and the entropy is H = -(p log p) - ((1-p) log (1-p))
+
+        bias: inverse weight given to positive points
+
+        Returns
+        -------
+        float
+            Entropy of the box
+        """
+        tp = len(self.true_points()) * bias
+        fp = len(self.false_points())
+        p = tp / (tp + fp) if (tp + fp) > 0 else 0.5
+
+        if p == 0.0:
+            H = -((1.0 - p) * log2(1.0 - p))
+        elif p == 1.0:
+            H = -(p * log2(p))
+        else:
+            H = -(p * log2(p)) - ((1.0 - p) * log2(1.0 - p))
+        return H
+
     def __lt__(self, other):
         if isinstance(other, Box):
             # prefer boxes with true points
@@ -298,13 +322,19 @@ class Box(BaseModel):
             #     if len(other.points) > 0
             #     else 0.0
             # )
-            s_t = (
-                float(len(self.true_points())) if len(self.points) > 0 else 0.0
-            )
-            o_t = (
-                float(len(other.true_points()))
-                if len(other.points) > 0
-                else 0.0
+            # s_t = (
+            #     2.0 * (1.0 - self.point_entropy())
+            #     + 0.5 * (len(self.true_points()))
+            #     + 0.5 * (len(self.false_points()))
+            # )
+            # o_t = (
+            #     2.0 * (1.0 - other.point_entropy())
+            #     + 0.5 * (len(other.true_points()))
+            #     + 0.5 * (len(other.false_points()))
+            # )
+            s_t = (1.0 - self.point_entropy()) * (len(self.true_points()) + 1)
+            o_t = (1.0 - other.point_entropy()) * (
+                len(other.true_points()) + 1
             )
             if self.timestep().lb == other.timestep().lb:
                 # s_residual_volume = self.timestep().width()*self.normalized_volume()*Decimal(s_t)
@@ -806,10 +836,10 @@ class Box(BaseModel):
             for step, pts in b2._points_at_step.items()
         }
 
-        l.info(
+        l.debug(
             f"Split[{self.timestep()}]({p}[{self.bounds[p].lb, mid}][{mid, self.bounds[p].ub}])"
         )
-        l.info(
+        l.debug(
             f"widths: {self.width(parameters=parameters):.5f} -> {b1.width(parameters=parameters):.5f} {b2.width():.5f} (raw), {self.normalized_width(parameters=parameters):.5f} -> {b1.normalized_width(parameters=parameters):.5f} {b2.normalized_width(parameters=parameters):.5f} (norm)"
         )
         return [b2, b1]

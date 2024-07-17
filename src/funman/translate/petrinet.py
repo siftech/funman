@@ -316,20 +316,6 @@ class PetrinetEncoder(Encoder):
         initial_state, substitutions = super()._define_init(
             scenario, init_time=init_time
         )
-        # state_var_names = scenario.model._state_var_names()
-        # initial_substitution = {}
-
-        if self.config.use_compartmental_constraints:
-            compartmental_bounds = self._encode_compartmental_bounds(
-                scenario, 0
-            )
-            if self.config.substitute_subformulas and substitutions:
-                compartmental_bounds = compartmental_bounds.substitute(
-                    substitutions
-                ).simplify()
-        else:
-            compartmental_bounds = TRUE()
-        initial_state = And(initial_state, compartmental_bounds).simplify()
 
         return initial_state, substitutions
 
@@ -383,8 +369,8 @@ class PetrinetEncoder(Encoder):
             ]
         )
         total = And(
-            LE(sum_vars, Plus(population, noise_const)),
-            LE(Minus(population, noise_const), sum_vars),
+            LE(sum_vars, Plus(population, noise_const).simplify()),
+            LE(Minus(population, noise_const).simplify(), sum_vars),
         )
 
         return And(bounds + [total])

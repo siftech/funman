@@ -50,7 +50,11 @@ class SMTCheck(Search):
             episode = SearchEpisode(
                 config=config, problem=problem, schedule=schedule
             )
-            options = EncodingOptions(schedule=schedule)
+            options = EncodingOptions(
+                schedule=schedule,
+                normalize=config.normalize,
+                normalization_constant=config.normalization_constant,
+            )
 
             # self._initialize_encoding(solver, episode, box_timepoint, box)
             model_result, explanation_result = self.expand(

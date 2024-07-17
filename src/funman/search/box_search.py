@@ -1010,6 +1010,17 @@ class BoxSearch(Search):
                 # lb == ub and have a point, so break
                 break
 
+            # if (
+            #     len(box.false_points(step=box.timestep().lb)) > 0
+            #     and len(box.true_points(step=box.timestep().lb)) > 0
+            # ):
+            #     # Do not continue if there is a true and a false point.  It means we already know we need to split this box.
+            #     break
+
+            # if box.timestep().lb == 0:
+            #     # Don't check for later timepoints when looking at the initial time step.  This helps evaluate parameter constraints that would only apply to the initial time step.
+            #     break
+
         # reinstate the original lower bound on timestep so that we will check
         # whether no false points exist in the main loop of the box search
         box.timestep().lb = original_box_timestep_lb
@@ -1079,7 +1090,7 @@ class BoxSearch(Search):
         """
         process_name = f"Expander_{(idx if idx else 'S')}_p{os.getpid()}"
         # l = self._logger(episode.config, process_name=process_name)
-
+        last_progress = -1.0
         try:
             if episode.config.solver == "dreal":
                 opts = {
@@ -1124,6 +1135,9 @@ class BoxSearch(Search):
                             continue
                     else:
                         l.debug(f"Expanding box: {box}")
+                        l.debug(
+                            f"Evaluating box: +: {len(box.true_points())}, -: {len(box.false_points())}, H: {box.point_entropy()}"
+                        )
                         # Setup the model constraints up to the box.timestep.lb and add box constraints
                         self._initialize_model_for_box(
                             solver, box, episode, options
@@ -1287,7 +1301,14 @@ class BoxSearch(Search):
                         episode._on_iteration()
                         if handler:
                             handler(rval, episode.config, all_results)
-                            if "progress" in all_results:
+                            if (
+                                "progress" in all_results
+                                and all_results["progress"].progress
+                                > last_progress
+                            ):
+                                last_progress = all_results[
+                                    "progress"
+                                ].progress
                                 l.info(all_results["progress"])
                         l.trace(f"{process_name} finished work")
                 self._initialize_model_encoding(
@@ -1576,6 +1597,8 @@ class BoxSearch(Search):
             options = EncodingOptions(
                 num_steps=structural_configuration["num_steps"],
                 step_size=structural_configuration["step_size"],
+                normalize=config.normalize,
+                normalization_constant=config.normalization_constant,
             )
             expand_count = processes - 1
             episode._initialize_boxes(expand_count)
