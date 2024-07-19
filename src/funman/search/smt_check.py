@@ -222,6 +222,7 @@ class SMTCheck(Search):
                 "dreal_precision": episode.config.dreal_precision,
                 "dreal_log_level": episode.config.dreal_log_level,
                 "dreal_mcts": episode.config.dreal_mcts,
+                "preferred": [p.name for p in problem.model_parameters()],
             }
         else:
             opts = {}

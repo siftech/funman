@@ -371,7 +371,7 @@ class Box(BaseModel):
                 for k, v in self.bounds.items()
             ]
         )
-        box_str = f"Box(\n|+pts|: {len(self.true_points())}\n|-pts|: {len(self.false_points())}\nlabel: {self.label}\nwidth: {self.width()},\ntimepoints: {Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)},\n{bounds_str}\n)"
+        box_str = f"Box(\n|+pts|: {len(self.true_points())}\n|-pts|: {len(self.false_points())}\nlabel: {self.label}\nwidth: {self.width()}\nnorm-width: {self.width(normalize=True)}\nvolume: {self.volume()}\nnorm-volume: {self.volume(normalize=True)},\ntimepoints: {Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)},\n{bounds_str}\n)"
         return box_str
         # return f"Box(t_{self.timestep()}={Interval(lb=self.schedule.time_at_step(int(self.timestep().lb)), ub=self.schedule.time_at_step(int(self.timestep().ub)), closed_upper_bound=True)} {self.bounds}), width = {self.width()}"
 

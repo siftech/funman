@@ -429,10 +429,8 @@ class Runner:
             parameters_to_plot = results.model._parameter_names()
             if not print_last_time:
                 parameters_to_plot += ["timestep"]
-        assert (
-            len(parameters_to_plot) > 1
-        ), "Cannot plot a parameter space for one parameter"
-        if len(boxes) > 0 and len(parameters_to_plot) > 1:
+
+        if len(boxes) > 0 and len(parameters_to_plot) > 0:
             space_plot_filename = (
                 f"{out_dir}/{work_unit.id}_parameter_space.png"
             )
@@ -445,6 +443,10 @@ class Runner:
                 synthesized_parameters=parameters_to_plot,
             ).plot(show=True)
             plt.savefig(space_plot_filename)
+        else:
+            l.warn(
+                "Cannot plot a parameter space for zero boxes or zero parameters"
+            )
         plt.close()
 
 
