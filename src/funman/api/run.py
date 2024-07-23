@@ -443,11 +443,12 @@ class Runner:
                 synthesized_parameters=parameters_to_plot,
             ).plot(show=True)
             plt.savefig(space_plot_filename)
+            plt.close()
         else:
             l.warn(
                 "Cannot plot a parameter space for zero boxes or zero parameters"
             )
-        plt.close()
+        
 
 
 def get_args():
