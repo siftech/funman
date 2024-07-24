@@ -546,7 +546,7 @@ class BoxSearch(Search):
                 layer_formulas.append(
                     # And(
                     formula
-                # , neg_formula)
+                    # , neg_formula)
                 )
 
             for layer, formula in enumerate(layer_formulas):
@@ -1100,7 +1100,7 @@ class BoxSearch(Search):
                     "dreal_precision": episode.config.dreal_precision,
                     "dreal_log_level": episode.config.dreal_log_level,
                     "dreal_mcts": episode.config.dreal_mcts,
-                    "preferred": [p.name for p in episode.problem.parameters],
+                    "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in episode.problem.parameters] if episode.config.dreal_prefer_parameters else [],
                 }
             else:
                 opts = {}

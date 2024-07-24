@@ -5,7 +5,7 @@ analysis.
 
 import logging
 import os
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
@@ -124,6 +124,9 @@ class FUNMANConfig(BaseModel):
 
     uniform_box_splits: bool = False
     """ Uniformly split boxes in box search, instead of separating points in boxes """
+
+    dreal_prefer_parameters: List[str] = []
+    """ Prefer to split the listed parameters in dreal """
 
     @field_validator("solver")
     @classmethod

@@ -7,14 +7,73 @@
             ],
             "additive_bounds": {
                 "ub": 3000
-            }
+            },
+            "soft": true
+        },
+        {
+            "name": "increasing_D",
+            "variables": [
+                "D"
+            ],
+            "additive_bounds": {
+                "lb": 0
+            },
+            "derivative": true,
+            "soft": false
+        },
+        {
+            "name": "increasing_R",
+            "variables": [
+                "R"
+            ],
+            "additive_bounds": {
+                "lb": 0
+            },
+            "derivative": true,
+            "soft": false
+        },
+        {
+            "name": "increasing_CC",
+            "variables": [
+                "Cumulative_cases"
+            ],
+            "additive_bounds": {
+                "lb": 0
+            },
+            "derivative": true,
+            "soft": false
+        },
+        {
+            "name": "decreasing_S",
+            "variables": [
+                "S_u",
+                "S_v"
+            ],
+            "weights": [
+                -1,
+                -1
+            ],
+            "additive_bounds": {
+                "lb": 0
+            },
+            "derivative": true,
+            "soft": false
         }
     ],
     "parameters": [
         {
+            "name": "r_SvSu",
+            "interval": {
+                "lb": 0.002,
+                "ub": 0.002,
+                "closed_upper_bound": true
+            },
+            "label": "any"
+        },
+        {
             "name": "beta",
             "interval": {
-                "lb": 0.012,
+                "lb": 0.15,
                 "ub": 0.155
             },
             "label": "all"
@@ -22,31 +81,33 @@
         {
             "name": "NPI_mult",
             "interval": {
-                "lb": 0.999,
-                "ub": 1.001
+                "lb": 1.0,
+                "ub": 1.0,
+                "closed_upper_bound": true
             },
-            "label": "all"
+            "label": "any"
         },
         {
             "name": "r_Sv",
             "interval": {
-                "lb": 9999.0,
-                "ub": 10001.0
+                "lb": 10000.0,
+                "ub": 10000.0,
+                "closed_upper_bound": true
             },
-            "label": "all"
+            "label": "any"
         },
         {
             "name": "r_EI",
             "interval": {
-                "lb": 0.1,
-                "ub": 0.25
+                "lb": 0.12,
+                "ub": 0.155
             },
             "label": "all"
         },
         {
             "name": "r_IH_u",
             "interval": {
-                "lb": 0.004,
+                "lb": 0.0042,
                 "ub": 0.0045
             },
             "label": "all"
@@ -54,7 +115,7 @@
         {
             "name": "r_IH_v",
             "interval": {
-                "lb": 0.001,
+                "lb": 0.0012,
                 "ub": 0.0015
             },
             "label": "all"
@@ -62,7 +123,7 @@
         {
             "name": "r_HR",
             "interval": {
-                "lb": 0.12,
+                "lb": 0.15,
                 "ub": 0.2
             },
             "label": "all"
@@ -70,7 +131,7 @@
         {
             "name": "r_HD",
             "interval": {
-                "lb": 0.0095,
+                "lb": 0.01,
                 "ub": 0.012
             },
             "label": "all"
@@ -78,7 +139,7 @@
         {
             "name": "r_IR_u",
             "interval": {
-                "lb": 0.1,
+                "lb": 0.17,
                 "ub": 0.2
             },
             "label": "all"
@@ -86,7 +147,7 @@
         {
             "name": "r_IR_v",
             "interval": {
-                "lb": 0.15,
+                "lb": 0.17,
                 "ub": 0.2
             },
             "label": "all"

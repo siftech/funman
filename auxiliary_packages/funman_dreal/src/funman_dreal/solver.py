@@ -443,7 +443,10 @@ class DRealNative(
         self.model = None
         self.log_level = dreal.LogLevel.OFF
         if "solver_options" in options:
-            if "preferred" in options["solver_options"]:
+            if (
+                "preferred" in options["solver_options"]
+                and len(options["solver_options"]["preferred"]) > 0
+            ):
                 self.config.preferred = options["solver_options"]["preferred"]
             if "dreal_precision" in options["solver_options"]:
                 self.config.precision = options["solver_options"][
