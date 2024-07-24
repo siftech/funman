@@ -117,7 +117,8 @@ class AnalysisScenario(ABC, BaseModel):
         ]
 
         self._set_normalization(config)
-        self._normalize_parameters()
+        if config.normalize:
+            self._normalize_parameters()
 
         if config.use_compartmental_constraints:
             capacity = self.normalization_constant

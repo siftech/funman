@@ -152,7 +152,15 @@ def to_sympy(
 
 def substitute(str_expr: str, values: Dict[str, Union[float, str]]):
     # Set which substrings are symbols
-    symbols = {s: Symbol(s) for s in values}
+    symbols = {
+        s: Symbol(
+            s,
+            typename=(
+                types.BOOL if isinstance(values[s], bool) else types.REAL
+            ),
+        )
+        for s in values
+    }
 
     # Get expression
     expr = to_sympy(str_expr, list(values.values()))

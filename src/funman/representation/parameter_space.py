@@ -116,7 +116,7 @@ class ParameterSpace(BaseModel):
             lb = NEG_INFINITY
             ub = POS_INFINITY
 
-        return Interval(lb=lb, ub=ub)
+        return Interval(lb=lb, ub=ub, closed_upper_bound=(lb == ub))
 
     def explain(self) -> "ParameterSpaceExplanation":
         from .explanation import ParameterSpaceExplanation

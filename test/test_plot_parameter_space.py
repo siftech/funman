@@ -29,7 +29,9 @@ class TestPlotParameterSpace(unittest.TestCase):
                     json.load(f)
                 )
                 ParameterSpacePlotter(
-                    results.parameter_space, plot_points=True
+                    results.parameter_space, 
+                    parameters=["gamma", "beta_c"],
+                    plot_points=True
                 ).plot(show=False)
                 plt.savefig(f"{out_dir}/{results.id}.png")
                 plt.close()

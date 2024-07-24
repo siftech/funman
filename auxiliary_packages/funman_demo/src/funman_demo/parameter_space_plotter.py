@@ -38,16 +38,8 @@ class ParameterSpacePlotter:
 
         self.boxes = boxes
 
-        # TODO this should be easier to access
-        values = []
-        true_points = self.ps.true_points()
-        false_points = self.ps.false_points()
-        if len(true_points) > 0:
-            values = true_points[0].values
-        elif len(false_points) > 0:
-            values = false_points[0].values
-
-        self.parameters = [k for k in values if parameters and k in parameters]
+        # Expect that parameters are available in the parameter space
+        self.parameters = parameters  # [k for k in scenario_parameters if parameters and k in parameters]
         self.synthesized_parameters = (
             synthesized_parameters if synthesized_parameters else None
         )
@@ -129,22 +121,28 @@ class ParameterSpacePlotter:
         plt.legend(self.custom_lines, ["true", "false"])
 
     def plot(self, show=False, plot_diagonal=False):
-        self.initialize_figure(plot_diagonal)
+        self.initialize_figure((plot_diagonal or len(self.parameters) == 1))
         t = "true"
         f = "false"
         if self.boxes:
             for b in self.boxes:
                 self.plotNDBox(
-                    b, self.color_map[b.label], plot_diagonal=plot_diagonal
+                    b,
+                    self.color_map[b.label],
+                    plot_diagonal=(plot_diagonal or len(self.parameters) == 1),
                 )
         else:
             for b in self.ps.false_boxes:
                 self.plotNDBox(
-                    b, self.color_map[f], plot_diagonal=plot_diagonal
+                    b,
+                    self.color_map[f],
+                    plot_diagonal=(plot_diagonal or len(self.parameters) == 1),
                 )
             for b in self.ps.true_boxes:
                 self.plotNDBox(
-                    b, self.color_map[t], plot_diagonal=plot_diagonal
+                    b,
+                    self.color_map[t],
+                    plot_diagonal=(plot_diagonal or len(self.parameters) == 1),
                 )
         if self.plot_points:
             for p in self.ps.false_points():
@@ -152,7 +150,7 @@ class ParameterSpacePlotter:
                     p,
                     self.color_map[f],
                     self.shape_map[f],
-                    plot_diagonal=plot_diagonal,
+                    plot_diagonal=(plot_diagonal or len(self.parameters) == 1),
                 )
             true_points = self.ps.true_points()
             for p in true_points:
@@ -160,7 +158,7 @@ class ParameterSpacePlotter:
                     p,
                     self.color_map[t],
                     self.shape_map[t],
-                    plot_diagonal=plot_diagonal,
+                    plot_diagonal=(plot_diagonal or len(self.parameters) == 1),
                 )
         if show:
             plt.show(block=False)
@@ -197,7 +195,9 @@ class ParameterSpacePlotter:
                 # self.fig.canvas.draw()
                 # self.fig.canvas.flush_events()
 
-    def plotNDBox(self, box, color="g", alpha=0.2, plot_diagonal=False):
+    def plotNDBox(
+        self, box, color="g", alpha=0.2, plot_diagonal=False, max_width=100000
+    ):
         for i in range(self.dim):
             for j in range(self.dim):
                 i_coord, j_coord = self.map_param_idx_to_plot_loc(
@@ -229,11 +229,11 @@ class ParameterSpacePlotter:
                 else:
                     # Plot a box
                     if (
-                        abs(float(x_limits.lb)) < 1000
-                        and abs(float(x_limits.ub)) < 1000
+                        abs(float(x_limits.lb)) < max_width
+                        and abs(float(x_limits.ub)) < max_width
                     ):
                         x = np.linspace(
-                            float(x_limits.lb), float(x_limits.ub), 1000
+                            float(x_limits.lb), float(x_limits.ub), max_width
                         )
                         self.axs[i_coord, j_coord].fill_between(
                             x,
