@@ -448,7 +448,6 @@ class Runner:
             l.warn(
                 "Cannot plot a parameter space for zero boxes or zero parameters"
             )
-        
 
 
 def get_args():
