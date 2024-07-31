@@ -7,7 +7,7 @@ import pysmt.operators as op
 import pysmt.typing as types
 import sympy
 from pysmt.formula import FNode, FormulaManager
-from pysmt.shortcuts import GE, GT, LE, LT, REAL
+from pysmt.shortcuts import FALSE, GE, GT, LE, LT, REAL, TRUE
 from pysmt.shortcuts import Abs as pysmt_Abs
 from pysmt.shortcuts import (
     And,
@@ -23,6 +23,7 @@ from pysmt.shortcuts import (
 )
 from pysmt.walkers import IdentityDagWalker
 from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
+from sympy.logic.boolalg import BooleanTrue
 
 l = logging.getLogger(__name__)
 
@@ -151,7 +152,15 @@ def to_sympy(
 
 def substitute(str_expr: str, values: Dict[str, Union[float, str]]):
     # Set which substrings are symbols
-    symbols = {s: Symbol(s) for s in values}
+    symbols = {
+        s: Symbol(
+            s,
+            typename=(
+                types.BOOL if isinstance(values[s], bool) else types.REAL
+            ),
+        )
+        for s in values
+    }
 
     # Get expression
     expr = to_sympy(str_expr, list(values.values()))
@@ -185,6 +194,8 @@ def rate_expr_to_pysmt(expr: Union[str, Expr], state=None):
 
 def sympy_to_pysmt(expr):
     func = expr.func
+    if func.is_Boolean:
+        return TRUE() if isinstance(expr, BooleanTrue) else FALSE()
     if func.is_Mul:
         return sympy_to_pysmt_op(Times, expr)
     elif func.is_Add:
@@ -210,10 +221,24 @@ def sympy_to_pysmt(expr):
             return sympy_to_pysmt_op(GT, expr, explode=True)
         elif func.rel_op == "==":
             return sympy_to_pysmt_op(Equals, expr, explode=True)
+    elif expr.is_Piecewise:
+        return sympy_to_pysmt_piecewise(expr)
     elif expr.is_constant():
         return sympy_to_pysmt_real(expr)
+
     else:
         raise Exception(f"Could not convert expression: {expr}")
+
+
+def sympy_to_pysmt_piecewise(expr):
+    l = list(expr.args)
+    l.reverse()
+    pwf = reduce(
+        lambda x, y: Ite(sympy_to_pysmt(y[1]), sympy_to_pysmt(y[0]), x),
+        l[1:],
+        sympy_to_pysmt(l[0][0]),
+    )
+    return pwf
 
 
 def sympy_to_pysmt_op(op, expr, explode=False):
@@ -234,17 +259,21 @@ def sympy_to_pysmt_pow(expr):
 
 def sympy_to_pysmt_real(expr, numerator_digits=6):
     # check if underflow or overflow
-    if not isinstance(expr, float) and (
-        (expr != 0.0 and float(expr) == 0.0)
-        or (not expr.is_infinite and abs(float(expr)) == math.inf)
-    ):
-        # going from sympy to python to pysmt will lose precision
-        # need to convert to a rational first
-        r_expr = Rational(expr)
-        return Div(Real(r_expr.numerator), Real(r_expr.denominator)).simplify()
-    else:
-        return Real(float(expr))
-
+    try:
+        if not isinstance(expr, float) and (
+            (expr != 0.0 and float(expr) == 0.0)
+            or (not expr.is_infinite and abs(float(expr)) == math.inf)
+        ):
+            # going from sympy to python to pysmt will lose precision
+            # need to convert to a rational first
+            r_expr = Rational(expr)
+            return Div(
+                Real(r_expr.numerator), Real(r_expr.denominator)
+            ).simplify()
+        else:
+            return Real(float(expr))
+    except Exception as e:
+        pass
     # rnd_expr = Float(expr, 5)
     # r_expr = Rational(rnd_expr)
     # f_expr = Fraction(int(r_expr.numerator), int(r_expr.denominator))
@@ -253,7 +282,7 @@ def sympy_to_pysmt_real(expr, numerator_digits=6):
     # try:
     #     trunc_f_expr = f_expr.limit_denominator(max_denominator=max_denominator)
     # except Exception as e:
-    #     l.exception(f"max_denominator = {max_denominator} is not large enough to limit the denominator of {expr} during conversion from sympy to pysmt")
+    #     l.error(f"max_denominator = {max_denominator} is not large enough to limit the denominator of {expr} during conversion from sympy to pysmt")
 
     # r_value = Div(Real(trunc_f_expr.numerator), Real(trunc_f_expr.denominator)).simplify()
 

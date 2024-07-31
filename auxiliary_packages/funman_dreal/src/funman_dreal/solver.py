@@ -20,7 +20,7 @@ from pysmt.exceptions import (
 )
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
-from pysmt.shortcuts import BOOL, Bool, Real, get_env
+from pysmt.shortcuts import BOOL, TRUE, Bool, Real, get_env
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand
 from pysmt.smtlib.solver import SmtLibOptions, SmtLibSolver
@@ -443,6 +443,11 @@ class DRealNative(
         self.model = None
         self.log_level = dreal.LogLevel.OFF
         if "solver_options" in options:
+            if (
+                "preferred" in options["solver_options"]
+                and len(options["solver_options"]["preferred"]) > 0
+            ):
+                self.config.preferred = options["solver_options"]["preferred"]
             if "dreal_precision" in options["solver_options"]:
                 self.config.precision = options["solver_options"][
                     "dreal_precision"
@@ -614,9 +619,12 @@ class DRealNative(
                 isinstance(ub, int) or isinstance(lb, int)
             ):
                 return Real(lb) if isinstance(lb, int) else Real(ub)
-            elif mid == lb or mid == ub:
+            elif mid == lb:
                 # Midpoint is not representable
                 return Real(lb) if ub == 0.0 else Real(ub)
+            elif mid == ub:
+                # Midpoint is not representable
+                return Real(ub) if lb == 0.0 else Real(lb)
             elif not math.isinf(mid):
                 return Real(mid)
             else:

@@ -1,6 +1,7 @@
 """
 This module represents the abstract base classes for models.
 """
+
 import copy
 import uuid
 from abc import ABC
@@ -103,6 +104,16 @@ class FunmanModel(ABC, BaseModel):
             value = Div(value, norm)
         return value
 
+    def _try_float(self, num):
+        """
+        Try to convert a str to a float.
+        """
+        try:
+            n = float(num)
+            return n
+        except Exception:
+            return num
+
     def variables(self, include_next_state=False):
         """
         Get all initial values and parameters.
@@ -129,10 +140,13 @@ class FunmanModel(ABC, BaseModel):
     #         self._normalization_term = Real(self._normalization_constant)
     #     return self._normalization_term
 
-    def compartmental_constraints(self, populuation: int):
+    def compartmental_constraints(self, populuation: int, noise: float):
         return None
 
     def _is_normalized(self, var: str):
+        if var == "N":  # FIXME hack
+            return True
+
         try:
             name, time = var.rsplit("_", 1)
             return name in self._state_var_names()

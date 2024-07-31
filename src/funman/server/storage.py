@@ -59,8 +59,8 @@ class Storage:
                 raise FunmanException(
                     f"Id {id} does not exist in results (is unclaimed)."
                 )
-            if self.results[id] is not None:
-                raise FunmanException(f"Id {id} was already set to a value.")
+            # if self.results[id] is not None:
+            #     raise FunmanException(f"Id {id} was already set to a value.")
             self.results[id] = result
             with open(self.path / f"{id}.json", "w") as f:
                 f.write(result.model_dump_json(by_alias=True))
@@ -72,7 +72,9 @@ class Storage:
                 return self.results[id]
             path = self.path / f"{id}.json"
             if not path.is_file():
-                raise NotFoundFunmanException("Result for id '{id}' not found")
+                raise NotFoundFunmanException(
+                    f"Result for id '{id}' not found"
+                )
             with open(path, "r") as f:
                 result = FunmanResults.model_validate(json.load(f))
             self.results[id] = result

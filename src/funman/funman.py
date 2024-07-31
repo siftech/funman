@@ -2,6 +2,7 @@
 This module defines the Funman class, the primary entry point for FUNMAN
 analysis.
 """
+
 import logging
 import threading
 from typing import Callable, Optional
@@ -63,11 +64,15 @@ class Funman(object):
                 import cProfile
 
                 with cProfile.Profile() as pr:
-                    result = problem.solve(
-                        config,
-                        haltEvent=haltEvent,
-                        resultsCallback=resultsCallback,
-                    )
+                    try:
+                        result = problem.solve(
+                            config,
+                            haltEvent=haltEvent,
+                            resultsCallback=resultsCallback,
+                        )
+                    except Exception as e:
+                        pr.dump_stats("profile.stats")
+                        return None
                     pr.dump_stats("profile.stats")
             else:
                 result = problem.solve(
@@ -77,4 +82,10 @@ class Funman(object):
                 )
             return result
         except Exception as e:
-            l.exception(f"funman.solve() exiting due to exception: {e}")
+            try:
+                l.error(
+                    f"funman.solve() exiting due to exception: {e.backtrace()}"
+                )
+            except:
+                l.error(f"funman.solve() exiting due to exception: {e}")
+            raise e

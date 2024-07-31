@@ -5,7 +5,14 @@ from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
 from pydantic import BaseModel
 
-from ..constants import LABEL_DROPPED, LABEL_FALSE, LABEL_TRUE, LABEL_UNKNOWN
+from ..constants import (
+    LABEL_DROPPED,
+    LABEL_FALSE,
+    LABEL_TRUE,
+    LABEL_UNKNOWN,
+    NEG_INFINITY,
+    POS_INFINITY,
+)
 from . import Interval, Point
 from .box import Box
 from .interval import Interval
@@ -69,6 +76,48 @@ class ParameterSpace(BaseModel):
     def boxes(self) -> List[Box]:
         return self.true_boxes + self.false_boxes
 
+    def last_boxes(self) -> List[Box]:
+        last_step = max(
+            max([b.timestep().ub for b in self.true_boxes] + [0]),
+            max([b.timestep().ub for b in self.false_boxes] + [0]),
+        )
+        return [b for b in self.true_boxes if b.timestep().ub == last_step] + [
+            b for b in self.false_boxes if b.timestep().ub == last_step
+        ]
+
+    def outer_interval(self, param_name: str) -> Interval:
+        """
+        Get the infimum and supremimum values of parameter param_name among all true boxes
+
+        Parameters
+        ----------
+        param_name : str
+            Parameter name
+
+        Returns
+        -------
+        Interval
+            Interval where the lb and ub are the minimum and maximum values taken by parameter among all true boxes.
+        """
+        if len(self.true_boxes) > 0:
+            lb = min(
+                map(
+                    lambda b: b.project([param_name]).bounds[param_name].lb,
+                    self.true_boxes,
+                )
+            )
+            ub = max(
+                map(
+                    lambda b: b.project([param_name]).bounds[param_name].ub,
+                    self.true_boxes,
+                )
+            )
+        else:
+            lb = NEG_INFINITY
+            ub = POS_INFINITY
+
+        return Interval(lb=lb, ub=ub, closed_upper_bound=(lb == ub))
+
     def explain(self) -> "ParameterSpaceExplanation":
         from .explanation import ParameterSpaceExplanation
 
@@ -119,24 +168,6 @@ class ParameterSpace(BaseModel):
     def project() -> "ParameterSpace":
         raise NotImplementedError()
         return ParameterSpace()
-
-    @staticmethod
-    def _intersect_boxes(b1s, b2s):
-        results_list = []
-        for box1 in b1s:
-            for box2 in b2s:
-                subresult = Box.__intersect_two_boxes(box1, box2)
-                if subresult != None:
-                    results_list.append(subresult)
-        return results_list
-
-    # STUB intersect parameters spaces
-    @staticmethod
-    def intersect(ps1, ps2):
-        return ParameterSpace(
-            ParameterSpace._intersect_boxes(ps1.true_boxes, ps2.true_boxes),
-            ParameterSpace._intersect_boxes(ps1.false_boxes, ps2.false_boxes),
-        )
 
     @staticmethod
     def symmetric_difference(ps1: "ParameterSpace", ps2: "ParameterSpace"):
@@ -269,7 +300,7 @@ class ParameterSpace(BaseModel):
         for i1, b1 in enumerate(boxes):
             for i2, b2 in enumerate(boxes[i1 + 1 :]):
                 if b1.intersects(b2):
-                    l.exception(f"Parameter Space Boxes intersect: {b1} {b2}")
+                    l.error(f"Parameter Space Boxes intersect: {b1} {b2}")
                     return False
         for tp in self.true_points():
             if not any([b.contains_point(tp) for b in self.true_boxes]):
@@ -285,6 +316,29 @@ class ParameterSpace(BaseModel):
             return False
         return True
 
+    def intersection(self, ps2: "ParameterSpace") -> "ParameterSpace":
+        """
+        Intersect two parameter spaces.
+        """
+        result = ParameterSpace(num_dimensions=self.num_dimensions)
+        true_result = []
+        false_result = []
+        ps1_boxes = self.true_boxes
+        ps2_boxes = ps2.true_boxes
+        for i1, b1 in enumerate(ps1_boxes):
+            for i2, b2 in enumerate(ps2_boxes):
+                if b1.intersects(b2):
+                    true_result.append(b1.intersection(b2))
+        result.true_boxes = true_result
+        ps1_boxes = self.false_boxes
+        ps2_boxes = ps2.false_boxes
+        for i1, b1 in enumerate(ps1_boxes):
+            for i2, b2 in enumerate(ps2_boxes):
+                if b1.intersects(b2):
+                    false_result.append(b1.intersection(b2))
+        result.false_boxes = false_result
+        return result
+
     def _reassign_point_labels(self) -> None:
         """
         For every point, update the label based on the box that contains it.
@@ -299,7 +353,7 @@ class ParameterSpace(BaseModel):
             for point in iter(
                 pt for pt in points if pt not in assigned_points
             ):
-                if box.contains_point(point):
+                if box.contains_point(point, denormalize_bounds=True):
                     point.label = box.label
                     box.points.append(point)
                     assigned_points.add(point)
@@ -307,6 +361,11 @@ class ParameterSpace(BaseModel):
         self.unknown_points = [
             pt for pt in points if pt not in assigned_points
         ]
+
+    def _denormalize(self):
+        boxes: List[Box] = self.true_boxes + self.false_boxes
+        for box in boxes:
+            box._denormalize()
 
     def _compact(self):
         """

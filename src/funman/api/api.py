@@ -6,13 +6,16 @@ Raises
 HTTPException
     HTTPException description
 """
-import sys
+
+import logging
 import traceback
 import uuid
 from contextlib import asynccontextmanager, contextmanager
 from typing import Optional, Union
 
 import uvicorn
+
+l = logging.getLogger(__name__)
 from fastapi import (
     APIRouter,
     Depends,
@@ -155,7 +158,7 @@ def internal_error_handler():
     except HTTPException:
         raise
     except Exception:
-        print(f"Internal Server Error ({eid}):", file=sys.stderr)
+        l.error(f"Internal Server Error ({eid}):")
         traceback.print_exc()
         raise HTTPException(
             status_code=500, detail=f"Internal Server Error: {eid}"
@@ -199,8 +202,8 @@ async def get_queries(
     with internal_error_handler():
         try:
             return worker.get_results(query_id)
-        except NotFoundFunmanException:
-            raise HTTPException(404)
+        except NotFoundFunmanException as e:
+            raise HTTPException(404, detail=str(e))
 
 
 @api_router.post(

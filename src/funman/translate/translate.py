@@ -1,6 +1,7 @@
 """
 This module defines the abstract base classes for the model encoder classes in funman.translate package.
 """
+
 import logging
 from abc import ABC
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
@@ -20,6 +21,7 @@ from pysmt.shortcuts import (  # type: ignore
     Equals,
     Iff,
     Implies,
+    Minus,
     Plus,
     Real,
     Symbol,
@@ -697,9 +699,9 @@ class Encoder(ABC, BaseModel):
         parameter = constraint.parameter
         if parameter in scenario.model_parameters():
             formula = self.interval_to_smt(
-                parameter.name,
+                parameter._escaped_name,
                 parameter.interval.model_copy(deep=True),
-                closed_upper_bound=False,
+                # closed_upper_bound=False,
                 infinity_constraints=False,
             )
             return (
@@ -723,20 +725,78 @@ class Encoder(ABC, BaseModel):
         timestep = options.schedule.time_at_step(layer_idx)
         parameters = scenario.parameters
         encoded_vars = [
-            self._encode_state_var(v)
-            if len([p for p in parameters if p.name == v]) > 0
-            else self._encode_state_var(v, time=timestep)
+            (
+                self._encode_state_var(v)
+                if len([p for p in parameters if p.name == v]) > 0
+                else self._encode_state_var(v, time=timestep)
+            )
             for v in vars
         ]
-        expression = Plus(
-            [
-                Times(
-                    Real(weights[i]),
-                    encoded_vars[i],
+        if constraint.derivative:
+            next_timestep = constraint.next_timestep(
+                layer_idx, options.schedule
+            )
+            encoded_dt_vars = [
+                (
+                    self._encode_state_var(v)
+                    if len([p for p in parameters if p.name == v]) > 0
+                    else self._encode_state_var(
+                        v, time=options.schedule.time_at_step(next_timestep)
+                    )
                 )
-                for i in range(len(vars))
+                for v in vars
             ]
-        )
+            curr = (
+                encoded_dt_vars if next_timestep < layer_idx else encoded_vars
+            )
+            curr_t = (
+                options.schedule.time_at_step(next_timestep)
+                if next_timestep < layer_idx
+                else timestep
+            )
+            nxt = (
+                encoded_dt_vars if next_timestep > layer_idx else encoded_vars
+            )
+            nxt_t = (
+                options.schedule.time_at_step(next_timestep)
+                if next_timestep > layer_idx
+                else timestep
+            )
+            expression = Div(
+                Minus(
+                    Plus(
+                        [
+                            Times(
+                                Real(weights[i]),
+                                nxt[i],
+                            )
+                            for i in range(len(vars))
+                        ]
+                    ),
+                    Plus(
+                        [
+                            Times(
+                                Real(weights[i]),
+                                curr[i],
+                            )
+                            for i in range(len(vars))
+                        ]
+                    ),
+                ),
+                Minus(Real(nxt_t), Real(curr_t)),
+            ).simplify()
+            pass
+        else:
+            expression = Plus(
+                [
+                    Times(
+                        Real(weights[i]),
+                        encoded_vars[i],
+                    )
+                    for i in range(len(vars))
+                ]
+            )
+
         if bounds.lb != NEG_INFINITY:
             lb = Real(bounds.lb)
         else:
@@ -748,11 +808,11 @@ class Encoder(ABC, BaseModel):
             ub = None
 
         if options.normalize:
-            expression = Div(expression, options.normalization_constant)
+            # expression = Div(expression, Real(options.normalization_constant))
             if lb is not None:
-                lb = Div(lb, options.normalization_constant)
+                lb = Div(lb, Real(options.normalization_constant)).simplify()
             if ub is not None:
-                ub = Div(ub, options.normalization_constant)
+                ub = Div(ub, Real(options.normalization_constant)).simplify()
 
         if lb is not None:
             lbe = GE(expression, lb)
@@ -1056,9 +1116,10 @@ class Encoder(ABC, BaseModel):
                 Interval(
                     lb=lb,
                     ub=ub,
+                    closed_upper_bound=query.interval.closed_upper_bound,
                 ),
                 time=time,
-                closed_upper_bound=False,
+                # closed_upper_bound=query.interval.closed_upper_bound,
                 infinity_constraints=False,
             )
         else:
@@ -1185,7 +1246,7 @@ class Encoder(ABC, BaseModel):
         p: str,
         i: Interval,
         time: int = None,
-        closed_upper_bound: bool = False,
+        # closed_upper_bound: bool = False,
         infinity_constraints=False,
     ) -> FNode:
         """
@@ -1213,7 +1274,7 @@ class Encoder(ABC, BaseModel):
                 if i.lb != NEG_INFINITY or infinity_constraints
                 else TRUE()
             )
-            upper_ineq = LE if closed_upper_bound else LT
+            upper_ineq = LE if i.closed_upper_bound else LT
             upper = (
                 upper_ineq(symbol, Real(i.ub))
                 if i.ub != POS_INFINITY or infinity_constraints
@@ -1256,7 +1317,7 @@ class Encoder(ABC, BaseModel):
                 self.interval_to_smt(
                     p,
                     interval,
-                    closed_upper_bound=closed_upper_bound,
+                    # closed_upper_bound=closed_upper_bound,
                     infinity_constraints=infinity_constraints,
                 )
                 for p, interval in box.bounds.items()

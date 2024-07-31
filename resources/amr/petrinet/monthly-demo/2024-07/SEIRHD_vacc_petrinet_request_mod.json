@@ -1,0 +1,120 @@
+{
+    "constraints": [
+        {
+            "name": "max_H",
+            "variables": [
+                "H"
+            ],
+            "additive_bounds": {
+                "lb": 3000
+            },
+            "timepoints": {
+                "lb": 45,
+                "ub": 70
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.012,
+                "ub": 0.155
+            },
+            "label": "all"
+        },
+        {
+            "name": "NPI_mult",
+            "interval": {
+                "lb": 0.999,
+                "ub": 1.001
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_Sv",
+            "interval": {
+                "lb": 0.0001,
+                "ub": 0.1
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_EI",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.25
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_IH_u",
+            "interval": {
+                "lb": 0.004,
+                "ub": 0.0045
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_IH_v",
+            "interval": {
+                "lb": 0.001,
+                "ub": 0.0015
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_HR",
+            "interval": {
+                "lb": 0.12,
+                "ub": 0.2
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_HD",
+            "interval": {
+                "lb": 0.0095,
+                "ub": 0.012
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_IR_u",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.2
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_IR_v",
+            "interval": {
+                "lb": 0.15,
+                "ub": 0.2
+            },
+            "label": "all"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10,
+                        20
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "normalization_constant": 9830000.0,
+        "normalize": false,
+        "tolerance": 1e-1,
+        "use_compartmental_constraints": true,
+        "dreal_precision": 1e-5
+    }
+}

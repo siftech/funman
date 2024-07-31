@@ -28,10 +28,29 @@ class Interval(BaseModel):
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
     original_width: Optional[Decimal] = None
+    normalized: bool = False
+    unnormalized_lb: Optional[Union[float, str]] = None
+    unnormalized_ub: Optional[Union[float, str]] = None
 
     @field_serializer("original_width")
     def ser_wrap(self, v: Decimal, _info) -> float:
         return float(v)
+
+    def normalize_bounds(self, normalization_constant):
+        assert (
+            not self.normalized
+        ), f"Cannot normalize an interval twice: {self}"
+
+        return Interval(
+            lb=math_utils.div(self.lb, normalization_constant),
+            ub=math_utils.div(self.ub, normalization_constant),
+            normalized=True,
+            unnormalized_lb=self.lb,
+            unnormalized_ub=self.ub,
+            original_width=self.original_width
+            / Decimal(normalization_constant),
+            closed_upper_bound=self.closed_upper_bound,
+        )
 
     @staticmethod
     def from_value(v: Union[float, str]):
@@ -91,7 +110,7 @@ class Interval(BaseModel):
     def normalize(self, normalization_factor: Union[float, int]) -> "Interval":
         return Interval(
             lb=math_utils.div(self.lb, normalization_factor),
-            ub=math_utils.div(self.lb, normalization_factor),
+            ub=math_utils.div(self.ub, normalization_factor),
         )
 
     def __lt__(self, other):
@@ -193,7 +212,7 @@ class Interval(BaseModel):
             )
         )
 
-    def intersection(self, b: "Interval") -> "Interval":
+    def intersection(self, b: "Interval") -> Optional["Interval"]:
         """
         Given an interval b with self = [a0,a1] and b=[b0,b1], check whether they intersect.  If they do, return interval with their intersection.
 
@@ -226,9 +245,12 @@ class Interval(BaseModel):
             if math_utils.gt(
                 minArray.ub, maxArray.lb
             ):  ## has nonempty intersection. return intersection
-                return [float(maxArray.lb), float(minArray.ub)]
+                result = Interval()
+                result.lb = float(maxArray.lb)
+                result.ub = float(minArray.ub)
+                return result
             else:  ## no intersection.
-                return []
+                return None
 
     def subtract(self, b: "Interval") -> "Interval":
         """
@@ -325,7 +347,9 @@ class Interval(BaseModel):
             # ]
             return ans
 
-    def contains_value(self, value: float) -> bool:
+    def contains_value(
+        self, value: float, denormalize_bounds: bool = False
+    ) -> bool:
         """
         Does the interval include a value?
 
@@ -333,22 +357,46 @@ class Interval(BaseModel):
         ----------
         value : float
             value to check for containment
+        denormalize_bounds : bool
+            if true, and self has unnormalized_lb and unormalized_ub, use these insead of lb and ub.
 
         Returns
         -------
         bool
             the value is in the interval
         """
-        lb_sat = math_utils.gte(value, self.lb)
+        lb = (
+            self.lb
+            if not self.unnormalized_lb or not denormalize_bounds
+            else self.unnormalized_lb
+        )
+        ub = (
+            self.ub
+            if not self.unnormalized_ub or not denormalize_bounds
+            else self.unnormalized_ub
+        )
+
+        lb_sat = math_utils.gte(value, lb)
         ub_sat = (
-            math_utils.lte(value, self.ub)
+            math_utils.lte(value, ub)
             if self.closed_upper_bound
-            else math_utils.lt(value, self.ub)
+            else math_utils.lt(value, ub)
         )
         return lb_sat and ub_sat
 
+    def _denormalize(self):
+        self.lb = self.lb if not self.unnormalized_lb else self.unnormalized_lb
+        self.unnormalized_lb = None
+        self.ub = self.ub if not self.unnormalized_ub else self.unnormalized_ub
+        self.unnormalized_ub = None
+
     @model_validator(mode="after")
     def check_interval(self) -> str:
+        if self.lb is None:
+            self.lb = NEG_INFINITY
+        if self.ub is None:
+            self.ub = POS_INFINITY
+
         # Assume that intervals where lb == ub imply closed_upper_bound
         if self.lb == self.ub and not self.closed_upper_bound:
             l.warning(

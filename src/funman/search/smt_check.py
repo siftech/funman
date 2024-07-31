@@ -50,7 +50,11 @@ class SMTCheck(Search):
             episode = SearchEpisode(
                 config=config, problem=problem, schedule=schedule
             )
-            options = EncodingOptions(schedule=schedule)
+            options = EncodingOptions(
+                schedule=schedule,
+                normalize=config.normalize,
+                normalization_constant=config.normalization_constant,
+            )
 
             # self._initialize_encoding(solver, episode, box_timepoint, box)
             model_result, explanation_result = self.expand(
@@ -100,7 +104,7 @@ class SMTCheck(Search):
                 box = Box(
                     bounds={
                         p.name: p.interval.model_copy()
-                        for p in problem.parameters
+                        for p in problem.model_parameters()
                     },
                     label=LABEL_FALSE,  # lack of a point means this must be a false box
                     points=[],
@@ -198,7 +202,7 @@ class SMTCheck(Search):
                 filename=filename,
             )
         l.trace(f"Solving: {formula.serialize()}")
-        result = self.invoke_solver(s)
+        result = self.invoke_solver(s, timeout=episode.config.solver_timeout)
         s.pop(1)
         l.trace(f"Result: {type(result)}")
         return result
@@ -218,6 +222,7 @@ class SMTCheck(Search):
                 "dreal_precision": episode.config.dreal_precision,
                 "dreal_log_level": episode.config.dreal_log_level,
                 "dreal_mcts": episode.config.dreal_mcts,
+                "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in problem.model_parameters()]if episode.config.dreal_prefer_parameters else [],
             }
         else:
             opts = {}

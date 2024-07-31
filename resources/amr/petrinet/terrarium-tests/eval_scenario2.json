@@ -1,0 +1,374 @@
+{
+    "id": "cd7046cc-e512-4320-82f1-e7f01877f434",
+    "model": {
+        "petrinet": {
+            "header": {
+                "name": "s2_1",
+                "schema": "https://github.com/DARPA-ASKEM/Model-Representations/blob/main/petrinet/petrinet_schema.json",
+                "schema_name": "PetriNet",
+                "description": "This is a model from equations",
+                "model_version": "0.1"
+            },
+            "model": {
+                "states": [
+                    {
+                        "id": "D",
+                        "name": "D"
+                    },
+                    {
+                        "id": "H",
+                        "name": "H"
+                    },
+                    {
+                        "id": "I",
+                        "name": "I"
+                    },
+                    {
+                        "id": "R",
+                        "name": "R"
+                    },
+                    {
+                        "id": "S",
+                        "name": "S"
+                    }
+                ],
+                "transitions": [
+                    {
+                        "id": "t0",
+                        "input": [
+                            "I",
+                            "S"
+                        ],
+                        "output": [
+                            "I",
+                            "I"
+                        ]
+                    },
+                    {
+                        "id": "t1",
+                        "input": [
+                            "H"
+                        ],
+                        "output": [
+                            "D"
+                        ]
+                    },
+                    {
+                        "id": "t2",
+                        "input": [
+                            "I"
+                        ],
+                        "output": [
+                            "H"
+                        ]
+                    },
+                    {
+                        "id": "t3",
+                        "input": [
+                            "I"
+                        ],
+                        "output": [
+                            "R"
+                        ]
+                    },
+                    {
+                        "id": "t4",
+                        "input": [
+                            "H"
+                        ],
+                        "output": [
+                            "R"
+                        ]
+                    }
+                ]
+            },
+            "semantics": {
+                "ode": {
+                    "rates": [
+                        {
+                            "target": "t0",
+                            "expression": "N*β*I*S",
+                            "expression_mathml": "<apply><times/><apply><divide/><ci>S</ci><ci>N</ci></apply><ci>β</ci><ci>I</ci></apply>"
+                        },
+                        {
+                            "target": "t1",
+                            "expression": "d*h*H",
+                            "expression_mathml": "<apply><times/><ci>H</ci><ci>d</ci><ci>h</ci></apply>"
+                        },
+                        {
+                            "target": "t2",
+                            "expression": "b*f*I",
+                            "expression_mathml": "<apply><times/><ci>I</ci><ci>b</ci><ci>f</ci></apply>"
+                        },
+                        {
+                            "target": "t3",
+                            "expression": "a*e*I",
+                            "expression_mathml": "<apply><times/><ci>I</ci><ci>a</ci><ci>e</ci></apply>"
+                        },
+                        {
+                            "target": "t4",
+                            "expression": "c*g*H",
+                            "expression_mathml": "<apply><times/><ci>H</ci><ci>c</ci><ci>g</ci></apply>"
+                        }
+                    ],
+                    "initials": [
+                        {
+                            "target": "S",
+                            "expression": "25550375",
+                            "expression_mathml": "<cn>25550375</cn>"
+                        },
+                        {
+                            "target": "I",
+                            "expression": "48722998",
+                            "expression_mathml": "<cn>48722998</cn>"
+                        },
+                        {
+                            "target": "D",
+                            "expression": "781182",
+                            "expression_mathml": "<cn>781182</cn>"
+                        },
+                        {
+                            "target": "H",
+                            "expression": "27003629",
+                            "expression_mathml": "<cn>27003629</cn>"
+                        },
+                        {
+                            "target": "R",
+                            "expression": "47941816",
+                            "expression_mathml": "<cn>47941816</cn>"
+                        }
+                    ],
+                    "parameters": [
+                        {
+                            "id": "N",
+                            "name": "N",
+                            "description": "Total population",
+                            "value": 1.5E8
+                        },
+                        {
+                            "id": "a",
+                            "name": "a",
+                            "description": "rate from I to R",
+                            "value": 0.07
+                        },
+                        {
+                            "id": "b",
+                            "name": "b",
+                            "description": "rate from I to H",
+                            "value": 0.07
+                        },
+                        {
+                            "id": "c",
+                            "name": "c",
+                            "description": "rate from H to R",
+                            "value": 0.07
+                        },
+                        {
+                            "id": "d",
+                            "name": "d",
+                            "description": "rate from H to D",
+                            "value": 0.30000000000000004
+                        },
+                        {
+                            "id": "e",
+                            "name": "e",
+                            "description": "prob of moving from I to R",
+                            "value": 0.09000000000000001
+                        },
+                        {
+                            "id": "f",
+                            "name": "f",
+                            "description": "prob of moving from I to H",
+                            "value": 0.01
+                        },
+                        {
+                            "id": "g",
+                            "name": "g",
+                            "description": "prob of moving from H to R",
+                            "value": 0.8700000000000001
+                        },
+                        {
+                            "id": "h",
+                            "name": "h",
+                            "description": "prob of moving from H to D",
+                            "value": 0.13
+                        },
+                        {
+                            "id": "β",
+                            "name": "β",
+                            "description": "Number of infections per infected person per day",
+                            "value": 0.18000000000000002
+                        }
+                    ]
+                }
+            },
+            "metadata": {
+                "timeseries": {},
+                "initials": {
+                    "S": {
+                        "name": "Susceptible"
+                    },
+                    "I": {
+                        "name": "Infected"
+                    },
+                    "D": {
+                        "name": "Dead"
+                    },
+                    "H": {
+                        "name": "Hospitalized"
+                    },
+                    "R": {
+                        "name": "Recovered"
+                    }
+                },
+                "parameters": {}
+            },
+            "id": "54478092-dd24-46f8-bcac-eba3af2cf018",
+            "name": "s2_1",
+            "createdOn": "2024-03-25T18:10:58.624+00:00",
+            "updatedOn": "2024-03-25T18:28:48.613+00:00",
+            "temporary": false,
+            "publicAsset": false
+        }
+    },
+    "request": {
+        "constraints": [
+            {
+                "name": "c1",
+                "additive_bounds": {
+                    "lb": -9.9999999999E10,
+                    "ub": 0.0,
+                    "original_width": 9.9999999999E10
+                },
+                "variables": [
+                    "S"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": true
+            }
+        ],
+        "parameters": [
+            {
+                "name": "N",
+                "interval": {
+                    "lb": 1.5E8,
+                    "ub": 1.5E8,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
+            },
+            {
+                "name": "a",
+                "interval": {
+                    "lb": 0,
+                    "ub": 0.05,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                },
+                "label": "all"
+            },
+            {
+                "name": "b",
+                "interval": {
+                    "lb": 0.05,
+                    "ub": 0.15,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                },
+                "label": "all"
+            },
+            {
+                "name": "c",
+                "interval": {
+                    "lb": 0.07,
+                    "ub": 0.07,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
+            },
+            {
+                "name": "d",
+                "interval": {
+                    "lb": 0.30000000000000004,
+                    "ub": 0.30000000000000004,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
+            },
+            {
+                "name": "e",
+                "interval": {
+                    "lb": 0.09,
+                    "ub": 0.09,
+                    "closed_upper_bound": true
+                },
+                "label": "all"
+            },
+            {
+                "name": "f",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.01,
+                    "closed_upper_bound": true
+                },
+                "label": "all"
+            },
+            {
+                "name": "g",
+                "interval": {
+                    "lb": 0.8700000000000001,
+                    "ub": 0.8700000000000001,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
+            },
+            {
+                "name": "h",
+                "interval": {
+                    "lb": 0.13,
+                    "ub": 0.13,
+                    "closed_upper_bound": true,
+                    "original_width": 0.0
+                }
+            },
+            {
+                "name": "β",
+                "interval": {
+                    "lb": 0.18,
+                    "ub": 0.22,
+                    "closed_upper_bound": true
+                },
+                "label": "all"
+            }
+        ],
+        "config": {
+            "tolerance": 0.05,
+            "normalization_constant": 1.5E8,
+            "use_compartmental_constraints": true
+        },
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            10,
+                            20,
+                            30,
+                            40,
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            100
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

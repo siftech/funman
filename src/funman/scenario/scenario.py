@@ -117,10 +117,14 @@ class AnalysisScenario(ABC, BaseModel):
         ]
 
         self._set_normalization(config)
+        if config.normalize:
+            self._normalize_parameters()
 
         if config.use_compartmental_constraints:
+            capacity = self.normalization_constant
+            # 1.0 if config.normalize else self.normalization_constant
             ccs = self.model.compartmental_constraints(
-                self.normalization_constant
+                capacity, config.compartmental_constraint_noise
             )
             if ccs is not None:
                 self.constraints += ccs
@@ -153,6 +157,9 @@ class AnalysisScenario(ABC, BaseModel):
         for schedule in self._smt_encoder._timed_model_elements[
             "schedules"
         ].schedules:
+            assert (
+                0 in schedule.timepoints
+            ), "Schedule for encoding does not include a timepoint 0"
             encoding = self._smt_encoder.initialize_encodings(
                 self, len(schedule.timepoints)
             )
@@ -221,6 +228,9 @@ class AnalysisScenario(ABC, BaseModel):
 
     def model_parameters(self):
         return self.parameters_of_type(ModelParameter)
+
+    def synthesized_model_parameters(self):
+        return [p for p in self.model_parameters() if p.is_synthesized()]
 
     def synthesized_parameters(self):
         return [p for p in self.parameters if p.is_synthesized()]
@@ -310,6 +320,11 @@ class AnalysisScenario(ABC, BaseModel):
                 or isinstance(p, StructureParameter)
             ]
             self.parameters = filtered_parameters
+
+    def _normalize_parameters(self):
+        for p in self.parameters:
+            if p.name == "N":
+                p.normalize_bounds(self.normalization_constant)
 
     def _set_normalization(self, config):
         if config.normalization_constant is not None:

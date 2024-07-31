@@ -88,28 +88,47 @@ class CoreLexer(HRLexer):
 
         self.identifier_map = {"and": "&", "or": "|", "==": "="}
 
-        self.rules = [
-            Rule(r"(pow)", PowOpAdapter(self.mgr.Pow, 80), False),  # pow
-            Rule(
-                r"(and)", InfixOpAdapter(self.AndOrBVAnd, 40), False
-            ),  # conjunction
-            Rule(
-                r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
-            ),  # disjunction
-            Rule(
-                r"(abs)", UnaryOpAdapter(self.mgr.Abs, 50), False
-            ),  # absolute value
-            Rule(
-                r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
-            ),  # b()
-            Rule(r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False),  # eq
-            Rule(
-                r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
-            ),  # decimals scientific
-            Rule(
-                r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
-            ),  # decimals scientific
-        ] + self.rules
+        self.rules = (
+            [
+                Rule(r"(pow)", PowOpAdapter(self.mgr.Pow, 80), False),  # pow
+                Rule(
+                    r"(and)", InfixOpAdapter(self.AndOrBVAnd, 40), False
+                ),  # conjunction
+                Rule(
+                    r"(or)", InfixOpAdapter(self.OrOrBVOr, 30), False
+                ),  # disjunction
+                Rule(
+                    r"(abs)", UnaryOpAdapter(self.mgr.Abs, 50), False
+                ),  # absolute value
+                Rule(
+                    r"(b\()", BinaryLiteralExpr(self.BinaryLiteral, 50), False
+                ),  # b()
+                Rule(
+                    r"(==)", InfixOpAdapter(self.mgr.Equals, 60), False
+                ),  # eq
+                Rule(
+                    r"(-?\d+e\+?\d+)", self.real_constant, True
+                ),  # decimals scientific
+                Rule(
+                    r"(-?\d+?e-?\d+)", self.real_constant, True
+                ),  # decimals scientific
+                Rule(
+                    r"(-?\d+\.\d+e\+?\d+)", self.real_constant, True
+                ),  # decimals scientific
+                Rule(
+                    r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
+                ),  # decimals scientific
+            ]
+            + self.rules[0:-1]
+            + [
+                Rule(
+                    r"(([A-Za-z_]|[^\u0000-\u007F])([A-Za-z_]|[^\u0000-\u007F])*)",
+                    self.identifier,
+                    True,
+                ),  # unicode identifiers
+            ]
+            + self.rules[-1:]
+        )
         self.compile()
 
     def BinaryLiteral(self, x):
@@ -184,7 +203,7 @@ class DRealConverter(Converter, DagWalker):
         return str_formula
 
     def create_dreal_symbols(self, rewritten_formula: str) -> List[Symbol]:
-        patterns = ["(disj[0-9]+)", "(conj[0-9]+)", "neg"]
+        patterns = ["(disj[0-9]+)", "(conj[0-9]+)", "neg", "ITE[0-9]*"]
         symbol_names = [
             q for p in patterns for q in list(re.findall(p, rewritten_formula))
         ]
@@ -219,6 +238,22 @@ class DRealConverter(Converter, DagWalker):
 
     def walk_implies(self, formula, args, **kwargs):
         res = dreal.Implies(args[0], args[1])
+        # self._check_term_result(res)
+        return res
+
+    def walk_ite(self, formula, args, **kwargs):
+        converted_args = []
+        for arg in args:
+            if isinstance(arg, Fraction):
+                converted_args.append(float(arg))
+            elif isinstance(arg, dreal.Variable):
+                converted_args.append(dreal.Expression(arg))
+            else:
+                converted_args.append(arg)
+
+        res = dreal.if_then_else(
+            converted_args[0], converted_args[1], converted_args[2]
+        )
         # self._check_term_result(res)
         return res
 
@@ -272,7 +307,8 @@ class DRealConverter(Converter, DagWalker):
 
     def walk_pow(self, formula, args, **kwargs):
         exponent = float(args[1]) if isinstance(args[1], Fraction) else args[1]
-        res = dreal.pow(args[0], exponent)
+        base = float(args[0]) if isinstance(args[0], Fraction) else args[0]
+        res = dreal.pow(base, exponent)
         return res
 
     def walk_abs(self, formula, args, **kwargs):

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import json
-import sys
+import logging
 
 import requests
 from post_query import QUERIES_ENDPOINT
+
+l = logging.getLogger(__name__)
 
 
 def make_status_endpoint(work_id):
@@ -30,9 +32,9 @@ if __name__ == "__main__":
     parser.add_argument("uuid", type=str, help="the uuid of the request")
     args = parser.parse_args()
 
-    print(f"Getting status for query: {args.uuid}", file=sys.stderr)
+    l.info(f"Getting status for query: {args.uuid}")
     results = get_status(args.url, args.uuid)
 
     results["model"] = "Removed for brevity"
     results["request"] = "Removed for brevity"
-    print(json.dumps(results, indent=2), file=sys.stdout)
+    l.info(json.dumps(results, indent=2))

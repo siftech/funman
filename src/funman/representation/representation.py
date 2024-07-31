@@ -2,6 +2,7 @@
 This submodule contains definitions for the classes used
 during the configuration and execution of a search.
 """
+
 import logging
 import math
 from typing import Dict, Literal, Optional, Set
@@ -29,7 +30,7 @@ class Point(BaseModel):
     #     self.values = kw['values']
 
     def timestep(self) -> int:
-        return int(self.values["timestep"])
+        return int(self.values["timestep"]) if "timestep" in self.values else 0
 
     def __str__(self):
         return f"Point({self.model_dump()})"
@@ -71,6 +72,7 @@ class Point(BaseModel):
                 values=denormalized_values,
                 normalized_values=self.values,
                 type=self.type,
+                schedule=self.schedule,
             )
             return denormalized_point
         else:

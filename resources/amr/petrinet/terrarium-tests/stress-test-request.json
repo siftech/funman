@@ -1,0 +1,119 @@
+{
+    "constraints": [],
+    "parameters": [
+        {
+            "name": "N",
+            "interval": {
+                "lb": 19340000,
+                "ub": 19340000
+            },
+            "label": "any"
+        },
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.8,
+                "ub": 0.8
+            },
+            "label": "any"
+        },
+        {
+            "name": "r_E_to_I",
+            "interval": {
+                "lb": 0.2,
+                "ub": 0.2
+            },
+            "label": "all"
+        },
+        {
+            "name": "p_I_to_R",
+            "interval": {
+                "lb": 0.9,
+                "ub": 0.9
+            },
+            "label": "all"
+        },
+        {
+            "name": "r_I_to_R",
+            "interval": {
+                "lb": 0.07,
+                "ub": 0.07
+            },
+            "label": "any"
+        },
+        {
+            "name": "p_I_to_H",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.1
+            },
+            "label": "any"
+        },
+        {
+            "name": "r_I_to_H",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.1
+            },
+            "label": "any"
+        },
+        {
+            "name": "p_H_to_R",
+            "interval": {
+                "lb": 0.85,
+                "ub": 0.85
+            },
+            "label": "any"
+        },
+        {
+            "name": "r_H_to_R",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.1
+            },
+            "label": "any"
+        },
+        {
+            "name": "p_H_to_D",
+            "interval": {
+                "lb": 0.15,
+                "ub": 0.15
+            },
+            "label": "any"
+        },
+        {
+            "name": "r_H_to_D",
+            "interval": {
+                "lb": 0.1,
+                "ub": 0.1
+            },
+            "label": "any"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "schedules",
+            "schedules": [
+                {
+                    "timepoints": [
+                        0,
+                        10,
+                        20,
+                        30,
+                        40,
+                        50,
+                        60,
+                        70,
+                        80,
+                        90,
+                        100
+                    ]
+                }
+            ]
+        }
+    ],
+    "config": {
+        "normalization_constant": 1,
+        "tolerance": 0.4
+    }
+}

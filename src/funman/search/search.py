@@ -9,17 +9,63 @@ from typing import Callable, List, Optional, Union
 
 import pysmt
 from pydantic import BaseModel, ConfigDict
-from pysmt.shortcuts import Solver
+from pysmt.shortcuts import TRUE, Solver
 from pysmt.solvers.solver import Model as pysmtModel
 
 from funman import Box, Interval, ModelParameter
 from funman.translate.translate import EncodingSchedule
 
 from ..config import FUNMANConfig
-from ..representation.explanation import BoxExplanation
+from ..representation.explanation import BoxExplanation, TimeoutExplanation
 from ..scenario.scenario import AnalysisScenario
 
 l = logging.getLogger(__name__)
+
+import queue
+from multiprocessing import JoinableQueue, Process
+
+
+def run_with_limited_time(func, args, kwargs, time):
+    p = Process(target=func, args=args, kwargs=kwargs)
+    l.debug(f"start: {datetime.datetime.now()}, with timout: {time}")
+    p.start()
+    # p.join(timeout=time)
+    try:
+        result = args[-1].get(timeout=time)
+
+    except queue.Empty:
+        l.debug("empty queue")
+        result = None
+        # l.debug("get timedout or done")
+        # try:
+        #     args[-1].task_done()
+        #     l.debug("signaled q task done")
+        # except ValueError:
+        #     pass
+
+    try:
+        args[-1].task_done()
+        l.debug("signaled q task done")
+    except ValueError:
+        pass
+
+    l.debug("Awaiting join ...")
+    p.join(timeout=time)
+    l.debug("joined process")
+
+    # print(f"exitcode: {p.exitcode}, return: {r}")
+    # print(args)
+    if p.is_alive():
+        l.debug(f"kill: {datetime.datetime.now()}")
+        p.terminate()
+        # sys.exit(1)
+        return None
+    # p.join()
+    l.debug(f"end: {datetime.datetime.now()}")
+    # print(args[-1].get())
+    # sys.exit(1)
+    return result
+    # return True
 
 
 class SearchStatistics(BaseModel):
@@ -117,14 +163,49 @@ class Search(ABC):
     ) -> SearchEpisode:
         pass
 
-    def invoke_solver(self, s: Solver) -> Union[pysmtModel, BoxExplanation]:
-        l.trace("Invoking solver ...")
+    def invoke_solver(
+        self, s: Solver, timeout: int = None
+    ) -> Union[pysmtModel, BoxExplanation]:
+        l.debug("Invoking solver ...")
+        q = JoinableQueue()
+
+        if timeout is not None:
+            result = run_with_limited_time(
+                Search._internal_invoke_solver, (self, s, q), {}, timeout
+            )
+            # print(f"get from q, empty?: {q.empty()} ")
+
+            if result is None:
+                result = TimeoutExplanation()
+                result.set_expression(TRUE())
+        else:
+            result = self._internal_invoke_solver(s, None)
+        # print(f"invoke_solver, result: [{result}]")
+        return result
+
+    # @timeout_decorator.timeout(1)
+    def _internal_invoke_solver(self, s: Solver, q):
+        l.debug("Solver started")
         result = s.solve()
         l.trace(f"Solver result = {result}")
-        if result:
-            result = s.get_model()
-        else:
-            result = BoxExplanation()
-            result._expression = s.get_unsat_core()
 
+        try:
+            if result:
+                # print(f"put: {s.get_model()}")
+                result = s.get_model()
+                if q:
+                    q.put(result)
+            else:
+
+                result = BoxExplanation()
+                result.set_expression(s.get_unsat_core())
+                # print(f"put: {result}")
+                if q:
+                    q.put(result)
+
+        except RecursionError:
+            l.error("Recursion error pickling solver result in queue.")
+            pass
+        l.debug("Solver completed")
+        # print(result)
         return result

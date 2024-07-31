@@ -158,6 +158,8 @@ class Runner:
         parameters_to_plot: Optional[List[str]] = None,
         point_plot_config: Dict = {},
         num_points: Optional[int] = None,
+        dump_results: bool = True,
+        print_last_time: bool = False,
     ) -> FunmanResults:
         """
         Run a FUNMAN scenario.
@@ -180,6 +182,8 @@ class Runner:
             Matplotlib flags and special key "variables" to select variables to plot , by default {}
         num_points : Optional[int], optional
             The number of points to plot in the trace plot, by default None
+        print_last_time: bool
+            Only print parameter space for last time
 
         Returns
         -------
@@ -194,6 +198,8 @@ class Runner:
             parameters_to_plot=parameters_to_plot,
             point_plot_config=point_plot_config,
             num_points=num_points,
+            dump_results=dump_results,
+            print_last_time=print_last_time,
         )
         return results
         # ParameterSpacePlotter(
@@ -211,6 +217,8 @@ class Runner:
         parameters_to_plot=None,
         point_plot_config={},
         num_points=None,
+        dump_results=True,
+        print_last_time: bool = False,
     ):
         if not os.path.exists(case_out_dir):
             os.mkdir(case_out_dir)
@@ -229,6 +237,8 @@ class Runner:
             parameters_to_plot=parameters_to_plot,
             point_plot_config=point_plot_config,
             num_points=num_points,
+            dump_results=dump_results,
+            print_last_time=print_last_time,
         )
 
         self._worker.stop()
@@ -236,40 +246,84 @@ class Runner:
 
         return results
 
-    def get_model(self, model_file: str):
+    def get_model(
+        self, model_file: Union[str, Dict]
+    ) -> Tuple[FunmanModel, Optional[FunmanWorkRequest]]:
+        m = None
+        req = None
         for model in models:
             try:
-                with open(model_file, "r") as mf:
-                    j = json.load(mf)
-                    m = _wrap_with_internal_model(model(**j))
-                return m
+                if isinstance(model_file, str):
+                    with open(model_file, "r") as mf:
+                        j = json.load(mf)
+                else:
+                    j = model_file
+
+                if "model" in j and "request" in j:
+                    req = j["request"]
+                    if "petrinet" in j["model"]:
+                        mod = j["model"]["petrinet"]
+                    else:
+                        mod = j["model"]
+                else:
+                    mod = j
+                    req = None
+                m = _wrap_with_internal_model(model(**mod))
+                break
+
             except Exception as e:
                 pass
-        raise Exception(f"Could not determine the Model type of {model_file}")
+
+        if m is None:
+            raise Exception(
+                f"Could not determine the Model type of {model_file}"
+            )
+
+        r = (
+            (
+                FunmanWorkRequest.model_validate(req)
+                if req is not None
+                else None
+            )
+            if req is not None
+            else None
+        )
+
+        return m, r
 
     def run_instance(
         self,
-        case: Tuple[str, Union[str, Dict], str],
+        case: Tuple[Union[str, Dict], Union[str, Dict], str],
         out_dir=".",
         dump_plot=False,
         parameters_to_plot=None,
         point_plot_config={},
         num_points=None,
+        dump_results=False,
+        print_last_time: bool = False,
     ):
         killer = GracefulKiller()
         (model_file, request_file, description) = case
 
-        model = self.get_model(model_file)
+        model, request = self.get_model(model_file)
 
-        try:
-            with open(request_file, "r") as rf:
-                request = FunmanWorkRequest(**json.load(rf))
-        except TypeError as te:
-            # request_file may not be a path, could be a dict
+        assert request is None or (
+            request_file is None or request_file == ""
+        ), f"Ambiguous Requests specified, both in model file and as a requests file"
+
+        if request is None and request_file is not None and request_file != "":
             try:
-                request = FunmanWorkRequest.model_validate(request_file)
-            except Exception as e:
-                raise e
+                with open(request_file, "r") as rf:
+                    request = FunmanWorkRequest(**json.load(rf))
+            except TypeError as te:
+                # request_file may not be a path, could be a dict
+                try:
+                    request = FunmanWorkRequest.model_validate(request_file)
+                except Exception as e:
+                    raise e
+
+        if request is None:
+            request = {}
 
         work_unit: FunmanWorkUnit = self._worker.enqueue_work(
             model=model, request=request
@@ -279,7 +333,7 @@ class Runner:
         outfile = f"{out_dir}/{work_unit.id}.json"
         plotted = False
         while not killer.kill_now:
-            if self._worker.is_processing_id(work_unit.id):
+            if dump_results and self._worker.is_processing_id(work_unit.id):
                 l.info(f"Dumping results to {outfile}")
                 results = self._worker.get_results(work_unit.id)
                 with open(outfile, "w") as f:
@@ -295,9 +349,11 @@ class Runner:
                         num_points,
                         point_plot_config,
                         parameters_to_plot,
+                        print_last_time,
                     )
+
                 sleep(10)
-            else:
+            elif not self._worker.is_processing_id(work_unit.id):
                 results = self._worker.get_results(work_unit.id)
                 break
 
@@ -309,6 +365,7 @@ class Runner:
                 num_points,
                 point_plot_config,
                 parameters_to_plot,
+                print_last_time,
             )
 
         if killer.kill_now:
@@ -334,6 +391,7 @@ class Runner:
         num_points,
         point_plot_config,
         parameters_to_plot,
+        print_last_time,
     ):
         points = results.parameter_space.points()
         if len(points) > 0:
@@ -362,26 +420,34 @@ class Runner:
             plt.savefig(point_plot_filename)
             plt.close()
 
-        boxes = results.parameter_space.boxes()
+        boxes = (
+            results.parameter_space.boxes()
+            if not print_last_time
+            else results.parameter_space.last_boxes()
+        )
         if parameters_to_plot is None:
-            parameters_to_plot = results.model._parameter_names() + [
-                "timestep"
-            ]
-        assert (
-            len(parameters_to_plot) > 1
-        ), "Cannot plot a parameter space for one parameter"
-        if len(boxes) > 0 and len(parameters_to_plot) > 1:
+            parameters_to_plot = results.model._parameter_names()
+            if not print_last_time:
+                parameters_to_plot += ["timestep"]
+
+        if len(boxes) > 0 and len(parameters_to_plot) > 0:
             space_plot_filename = (
                 f"{out_dir}/{work_unit.id}_parameter_space.png"
             )
             l.info(f"Creating plot of parameter space: {space_plot_filename}")
             ParameterSpacePlotter(
                 results.parameter_space,
+                boxes=boxes,
                 plot_points=False,
                 parameters=parameters_to_plot,
+                synthesized_parameters=parameters_to_plot,
             ).plot(show=True)
             plt.savefig(space_plot_filename)
-        plt.close()
+            plt.close()
+        else:
+            l.warn(
+                "Cannot plot a parameter space for zero boxes or zero parameters"
+            )
 
 
 def get_args():
@@ -392,9 +458,7 @@ def get_args():
         help=f"model json file",
     )
     parser.add_argument(
-        "request",
-        type=str,
-        help=f"request json file",
+        "request", type=str, help=f"request json file", default=None, nargs="?"
     )
     parser.add_argument(
         "-o",
@@ -406,10 +470,18 @@ def get_args():
     parser.add_argument(
         "-p",
         "--plot",
+        # action="store_true",
+        nargs="*",
+        help=f"Write plots in outdir. Optionally list parameters to plot",
+    )
+    parser.add_argument(
+        "-l",
+        "--last-time",
         action="store_true",
         default=False,
-        help=f"Write plots in outdir.",
+        help=f"Create parameter space plot with only the last timestep.",
     )
+
     parser.set_defaults(plot=False)
     return parser.parse_args()
 
@@ -419,8 +491,18 @@ def main() -> int:
     if not os.path.exists(args.outdir):
         os.mkdir(args.outdir)
 
+    to_plot = (
+        args.plot + (["timestep"] if not args.last_time else [])
+        if args.plot
+        else None
+    )
     results = Runner().run(
-        args.model, args.request, case_out_dir=args.outdir, dump_plot=args.plot
+        args.model,
+        args.request,
+        case_out_dir=args.outdir,
+        dump_plot=args.plot is not None,
+        parameters_to_plot=to_plot,
+        print_last_time=args.last_time,
     )
     print(results.model_dump_json(indent=4))
 

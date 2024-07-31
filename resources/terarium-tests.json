@@ -1,24 +1,112 @@
 {
     "tests": [
         {
-            "name": "petrinet-sir",
+            "name": "sidarthe-bug",
+            "model-path": "amr/petrinet/terrarium-tests/sidarthe_bug_model.json",
+            "request-path": "amr/petrinet/terrarium-tests/sidarthe_bug_request.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": false
+        },
+        {
+            "name": "petrinet-stress-test",
+            "model-path": "amr/petrinet/terrarium-tests/stress-test-model.json",
+            "request-path": "amr/petrinet/terrarium-tests/stress-test-request.json",
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
+            "name": "mar_19",
+            "model-path": "amr/petrinet/terrarium-tests/mar_19.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
+            "name": "mar_25",
+            "model-path": "amr/petrinet/terrarium-tests/funman-mar-25.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
+            "name": "norm_test",
+            "model-path": "amr/petrinet/terrarium-tests/eval_scenario2_norm.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
+            "name": "eval_scenario_2",
+            "model-path": "amr/petrinet/terrarium-tests/eval_scenario2_model.json",
+            "request-path": "amr/petrinet/terrarium-tests/eval_scenario2_request.json",
+            "expected-outcome": {
+                "true-boxes": 0
+            },
+            "regression": false
+        },
+        {
+            "name": "sir",
             "model-path": "amr/petrinet/terrarium-tests/sir.json",
-            "request-path": "amr/petrinet/terrarium-tests/sir_request.json"
+            "request-path": "amr/petrinet/terrarium-tests/sir_request.json",
+            "expected-outcome": {
+                "true-boxes": 49
+            },
+            "regression": false
+        },
+        {
+            "name": "sir_request_constraint_no_ub",
+            "model-path": "amr/petrinet/terrarium-tests/sir.json",
+            "request-path": "amr/petrinet/terrarium-tests/sir_request_constraint_no_ub.json",
+            "expected-outcome": {
+                "true-boxes": 5
+            },
+            "regression": false
+        },
+        {
+            "name": "stratified-seird",
+            "model-path": "amr/petrinet/terrarium-tests/stratified_seird_model.json",
+            "request-path": "amr/petrinet/terrarium-tests/stratified_seird_request.json",
+            "expected-outcome": {
+                "true-boxes": 52
+            },
+            "regression": false
         },
         {
             "name": "petrinet-query-default",
             "model-path": "amr/petrinet/mira/models/scenario1_a.json",
-            "request-path": null
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": true
         },
         {
             "name": "petrinet-query-with-basic-request",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
-            "request-path": "amr/petrinet/mira/requests/request2_b_default_wo_compartmental_constrs.json"
+            "request-path": "amr/petrinet/mira/requests/request2_b_default_wo_compartmental_constrs.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": true
         },
         {
             "name": "petrinet-query-parameter-synthesis",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
-            "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json"
+            "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json",
+            "expected-outcome": {
+                "true-boxes": 3
+            },
+            "regression": true
         }
     ]
 }

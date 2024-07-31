@@ -209,6 +209,7 @@ class BoxPlotter(object):
                     linewidth=1,
                     edgecolor=color,
                     facecolor="none",
+                    zorder=box.timestep().lb * box.timestep().lb,
                 )
 
                 # Add the patch to the Axes
@@ -235,6 +236,7 @@ class BoxPlotter(object):
                     marker=shape,
                     alpha=alpha,
                     s=3,
+                    zorder=point.timestep(),
                 )
                 self.fig.canvas.draw()
                 self.fig.canvas.flush_events()
@@ -311,6 +313,7 @@ class BoxPlotter(object):
                             y_limits.ub,
                             color=color,
                             alpha=alpha,
+                            zorder=box.timestep().lb * box.timestep().lb,
                         )
         plt.show(block=False)
 

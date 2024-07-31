@@ -1,7 +1,6 @@
 import copy
 import logging
 import queue
-import sys
 import threading
 import traceback
 from enum import Enum
@@ -75,12 +74,17 @@ class FunmanWorker:
     def enqueue_work(
         self, model: FunmanModel, request: FunmanWorkRequest
     ) -> FunmanWorkUnit:
-        if not self.in_state(WorkerState.RUNNING):
-            raise FunmanWorkerException(
-                f"FunmanWorker must be starting or running to enqueue work: {self.get_state()}"
-            )
         id = self.storage.claim_id()
         work = FunmanWorkUnit(id=id, model=model, request=request)
+
+        self.storage.add_result(
+            FunmanResults(
+                id=id,
+                model=work.model,
+                request=work.request,
+                parameter_space=ParameterSpace(),
+            )
+        )
         self.queue.put(work)
         with self._set_lock:
             self.queued_ids.add(work.id)
@@ -142,14 +146,15 @@ class FunmanWorker:
             return self.current_id == id
 
     def get_results(self, id: str):
-        if not self.in_state(WorkerState.RUNNING):
-            raise FunmanWorkerException(
-                f"FunmanWorker must be running to get results: {self.get_state()}"
-            )
-        with self._id_lock:
-            if self.current_id == id:
-                return copy.copy(self.current_results)
+        if not self.in_state(WorkerState.RUNNING) or self.current_id != id:
+            # raise FunmanWorkerException(
+            #     f"FunmanWorker must be running to get results: {self.get_state()}"
+            # )
             return self.storage.get_result(id)
+        with self._id_lock:
+            # if self.current_id == id:
+            return copy.copy(self.current_results)
+            # return self.storage.get_result(id)
 
     def halt(self, id: str):
         if not self.in_state(WorkerState.RUNNING):
@@ -215,15 +220,13 @@ class FunmanWorker:
 
                 with self._id_lock:
                     self.current_id = work.id
-                    self.current_results = FunmanResults(
-                        id=work.id,
-                        model=work.model,
-                        request=work.request,
-                        parameter_space=ParameterSpace(),
+                    self.current_results = self.storage.get_result(
+                        self.current_id
                     )
 
                 l.info(f"Starting work on: {work.id}")
                 try:
+                    self.current_results.start()
                     # convert to scenario
                     scenario = work.to_scenario()
 
@@ -246,25 +249,30 @@ class FunmanWorker:
                         self.current_results.finalize_result(scenario, result)
                     l.info(f"Completed work on: {work.id}")
                 except Exception as e:
-                    l.exception(
-                        f"Internal Server Error ({work.id}):", file=sys.stderr
-                    )
+                    l.error(f"Internal Server Error ({work.id}):")
                     traceback.print_exc()
                     with self._results_lock:
-                        self.current_results.finalize_result_as_error()
-                    l.exception(f"Aborting work on: {work.id}")
+                        self.current_results.finalize_result_as_error(
+                            message=str(e)
+                        )
+                    l.error(f"Aborting work on: {work.id}")
                 finally:
+                    self.current_results.stop()
                     self.storage.add_result(self.current_results)
                     self.queue.task_done()
                     with self._id_lock:
                         self.current_id = None
                         self.current_results = None
-        except Exception:
-            l.exception("Fatal error in worker!", file=sys.stderr)
+        except Exception as e:
+            l.error("Fatal error in worker!")
             traceback.print_exc()
             # Only mark the state as errored if the thread
             # has not yet been told to stop
             if not stop_event.is_set():
                 with self._state_lock:
                     self._state = WorkerState.ERRORED
+                    result = self.storage.get_result(work.id)
+                    result.error = True
+                    result.done = True
+                    # self.storage.add_result(result)
         l.info("FunmanWorker exiting...")

@@ -5,9 +5,10 @@ import sympy
 from pydantic import BaseModel, ConfigDict
 from pysmt.shortcuts import REAL, Div, Real, Symbol
 
-from funman.utils.sympy_utils import substitute, to_sympy
+from funman.utils.sympy_utils import substitute, sympy_to_pysmt, to_sympy
 
 from ..representation.interval import Interval
+from .generated_models.petrinet import Distribution
 from .generated_models.petrinet import Model as GeneratedPetrinet
 from .generated_models.petrinet import State, Transition
 from .model import FunmanModel
@@ -148,7 +149,7 @@ class AbstractPetriNetModel(FunmanModel):
             )
 
     def compartmental_constraints(
-        self, population: Union[float, int]
+        self, population: Union[float, int], noise: float
     ) -> List["Constraint"]:
         from funman.representation.constraint import LinearConstraint
 
@@ -157,8 +158,8 @@ class AbstractPetriNetModel(FunmanModel):
             LinearConstraint(
                 name="compartmental_constraint_population",
                 additive_bounds={
-                    "lb": population - 1e-5,
-                    "ub": population + 1e-5,
+                    "lb": population - noise,
+                    "ub": population + noise,
                     "closed_upper_bound": True,
                 },
                 variables=vars,
@@ -244,7 +245,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         if isinstance(value, int):
             value = Real(float(value))
         elif isinstance(value, str):
-            value = Symbol(value, REAL)
+            expr = to_sympy(value, self._symbols())
+            if expr.is_symbol:
+                value = Symbol(value, REAL)
+            else:
+                value = sympy_to_pysmt(expr)
 
         if scenario.normalization_constant and config.normalize:
             value = Div(value, Real(scenario.normalization_constant))
@@ -254,7 +259,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _parameter_lb(self, param_name: str):
         return next(
             (
-                p.distribution.parameters["minimum"]
+                self._try_float(p.distribution.parameters["minimum"])
                 if p.distribution
                 else p.value
             )
@@ -265,7 +270,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _parameter_ub(self, param_name: str):
         return next(
             (
-                p.distribution.parameters["maximum"]
+                self._try_float(p.distribution.parameters["maximum"])
                 if p.distribution
                 else p.value
             )
@@ -303,10 +308,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 t_rates = [
                     (
                         to_sympy(r.expression, self._symbols())
-                        if not any(
-                            p == r.expression for p in self._parameter_names()
-                        )
-                        else r.expression
+                        # if not any(
+                        #     p == r.expression for p in self._parameter_names()
+                        # )
+                        # else r.expression
                     )
                     for r in self.petrinet.semantics.ode.rates
                     if r.target == transition.id
@@ -362,6 +367,31 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     pass
 
         return values
+
+    def contract_parameters(
+        self, parameter_bounds: Dict[str, Interval]
+    ) -> GeneratedPetrinet:
+        contracted_model = self.petrinet.copy(deep=True)
+
+        for param in contracted_model.semantics.ode.parameters:
+            new_bounds = parameter_bounds[param.id]
+            if param.distribution:
+                param.distribution.parameters["minimum"] = max(
+                    new_bounds.lb, param.distribution.parameters["minimum"]
+                )
+                param.distribution.parameters["maximum"] = min(
+                    new_bounds.ub, param.distribution.parameters["maximum"]
+                )
+            else:
+                param.distribution = Distribution(
+                    parameters={
+                        "minimum": new_bounds.lb,
+                        "maximum": new_bounds.ub,
+                    },
+                    type="StandardUniform1",
+                )
+
+        return contracted_model
 
 
 class PetrinetDynamics(BaseModel):
