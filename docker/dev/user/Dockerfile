@@ -69,7 +69,7 @@ WORKDIR /home/$UNAME
 RUN pip install --no-cache-dir z3-solver
 RUN pip install --no-cache-dir graphviz
 
-RUN pip install /dreal4/dreal-*.whl
+# RUN pip install /dreal4/dreal-*.whl
 
 # Install funman dev packages
 COPY --chown=$UID:$GID . funman

@@ -47,6 +47,6 @@ RUN pip install --no-cache-dir fastapi>=0.103.1
 RUN pip install --no-cache-dir --upgrade setuptools pip
 RUN pip install --no-cache-dir wheel
 
-RUN pip install /dreal4/dreal-*.whl
+# RUN pip install /dreal4/dreal-*.whl
 
 CMD [ "/bin/bash" ]
