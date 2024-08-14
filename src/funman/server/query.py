@@ -381,7 +381,9 @@ class FunmanResults(BaseModel):
             # df = df.reindex(range(max_time+1), fill_value=None)
 
             if interpolate:
-                df = df.interpolate(method=interpolate)
+                df = df.infer_objects(copy=False).interpolate(
+                    method=interpolate
+                )
             if time_var and any("timer_t" in x for x in df.columns):
                 df = (
                     df.rename(columns={"timer_t": "time"})
