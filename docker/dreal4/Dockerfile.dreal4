@@ -75,7 +75,7 @@ RUN cd /dreal4 \
       && pip3 install --upgrade setuptools \
       && pip3 install --upgrade pip \
       && python3 setup.py bdist_wheel \
-      && DREAL_WHEEL=dreal-$(python setup.py --version)-cp38-none-manylinux_$(ldd --version | grep '^ldd' | sed -E 's/^ldd.*([0-9]+)\.([0-9]+)$/\1_\2/')_$(arch).whl \
+      && DREAL_WHEEL=dreal-$(python setup.py --version)-cp310-none-manylinux_$(ldd --version | grep '^ldd' | sed -E 's/^ldd.*([0-9]+)\.([0-9]+)$/\1_\2/')_$(arch).whl \
       && cp ./dist/$DREAL_WHEEL /tmp/$DREAL_WHEEL \
       && pip3 install ./dist/$DREAL_WHEEL \
       && bazel clean --expunge \
