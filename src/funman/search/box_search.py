@@ -332,9 +332,15 @@ class BoxSearchEpisode(SearchEpisode):
         point = Point(
             values={
                 p[0].symbol_name(): (
-                    float(p[1].constant_value())
-                    if p[1].is_real_constant()
-                    else p[1].constant_value()
+                    (
+                        (
+                            float(p[1].constant_value())
+                            if p[1].is_real_constant()
+                            else p[1].constant_value()
+                        )
+                        if p[1] is not None
+                        else None
+                    )
                 )
                 for p in model
             },
@@ -1215,15 +1221,15 @@ class BoxSearch(Search):
                                 l.trace(f"+++ True:\n{box}")
 
                                 if episode.config.corner_points:
-                                    corner_points: List[Point] = (
-                                        self.get_box_corners(
-                                            solver,
-                                            episode,
-                                            curr_step_box,
-                                            rval,
-                                            options,
-                                            my_solver,
-                                        )
+                                    corner_points: List[
+                                        Point
+                                    ] = self.get_box_corners(
+                                        solver,
+                                        episode,
+                                        curr_step_box,
+                                        rval,
+                                        options,
+                                        my_solver,
                                     )
 
                                 # Advance a true box to be considered for later timesteps
@@ -1269,15 +1275,15 @@ class BoxSearch(Search):
                             l.debug(f"False @ {box.timestep().lb}")
                             l.trace(f"--- False:\n{box}")
                             if episode.config.corner_points:
-                                corner_points: List[Point] = (
-                                    self.get_box_corners(
-                                        solver,
-                                        episode,
-                                        box,
-                                        rval,
-                                        options,
-                                        my_solver,
-                                    )
+                                corner_points: List[
+                                    Point
+                                ] = self.get_box_corners(
+                                    solver,
+                                    episode,
+                                    box,
+                                    rval,
+                                    options,
+                                    my_solver,
                                 )
                             rval.put(box.model_dump())
                         else:  # Timeout FIXME copy of split code

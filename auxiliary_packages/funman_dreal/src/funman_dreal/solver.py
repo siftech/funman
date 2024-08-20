@@ -600,8 +600,11 @@ class DRealNative(
         for sn in self.symbols:
             s = self.symbols[sn][0]
             if s.is_term():
-                v = self.get_value(self.symbols[sn])
-                assignment[s] = v
+                try:
+                    v = self.get_value(self.symbols[sn])
+                    assignment[s] = v
+                except ValueError as e:
+                    l.error(f"DRealNative.get_model(): {e}")
         return EagerModel(assignment=assignment, environment=self.environment)
 
     def get_value(self, symbol_pair):
@@ -615,7 +618,11 @@ class DRealNative(
             lb = self.model[item].lb()
             mid = (ub - lb) / 2.0
             mid = mid + lb
-            if not isinstance(mid, int) and (
+
+            if math.isnan(lb) and math.isnan(ub):
+                # Value was not assigned
+                return None
+            elif not isinstance(mid, int) and (
                 isinstance(ub, int) or isinstance(lb, int)
             ):
                 return Real(lb) if isinstance(lb, int) else Real(ub)

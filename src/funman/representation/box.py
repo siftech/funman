@@ -206,7 +206,9 @@ class Box(BaseModel):
         """
         bounds = {p: None for p in self.bounds.keys()}
         for p in bounds:
-            if self.bounds[p].meets(other.bounds[p]):
+            if self.bounds[p].meets(other.bounds[p]) or other.bounds[p].meets(
+                self.bounds[p]
+            ):
                 bounds[p] = Interval(
                     lb=min(self.bounds[p].lb, other.bounds[p].lb),
                     ub=max(self.bounds[p].ub, other.bounds[p].ub),
@@ -242,7 +244,10 @@ class Box(BaseModel):
                         continue
 
                     if (
-                        sorted[i].bounds[p].meets(self.bounds[p])
+                        (
+                            sorted[i].bounds[p].meets(self.bounds[p])
+                            or self.bounds[p].meets(sorted[i].bounds[p])
+                        )
                         and sorted[i] not in disqualified_set
                         and sorted[i].schedule == self.schedule
                     ):
@@ -264,9 +269,10 @@ class Box(BaseModel):
                         if sorted[i] in equals_set:
                             equals_set.remove(sorted[i])
                         disqualified_set.add(sorted[i])
-                    if sorted[i].bounds[p].disjoint(
-                        self.bounds[p]
-                    ) and not sorted[i].bounds[p].meets(self.bounds[p]):
+                    if sorted[i].bounds[p].disjoint(self.bounds[p]) and not (
+                        sorted[i].bounds[p].meets(self.bounds[p])
+                        or self.bounds[p].meets(sorted[i].bounds[p])
+                    ):
                         break  # Because sorted, no further checking needed
         if len(boxes.keys()) == 1:  # 1D
             candidates = meets_set
