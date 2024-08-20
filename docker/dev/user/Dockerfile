@@ -44,7 +44,8 @@ RUN pip install --no-cache-dir wheel
 
 RUN pip install --no-cache-dir pytest==7.1.2
 RUN pip install --no-cache-dir sphinx==5.2.2
-RUN pip install --no-cache-dir sphinx-rtd-theme==1.0.0
+RUN pip install --no-cache-dir myst-parser
+RUN pip install --no-cache-dir autodoc-pydantic
 RUN pip install --no-cache-dir twine
 RUN pip install --no-cache-dir build
 RUN pip install --no-cache-dir pylint
