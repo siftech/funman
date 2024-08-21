@@ -321,4 +321,4 @@ notebooks/saved-results/out
 **/*.out
 auxiliary_packages/ibex_tests/num_constraint_test
 auxiliary_packages/ibex_tests/num_constraint_test.o
-**/main.pdf
+
