@@ -34,8 +34,8 @@ ENV PYTHONPYCACHEPREFIX="/.cache/pycache/"
 RUN pip install --no-cache-dir --upgrade setuptools pip
 RUN pip install --no-cache-dir wheel
 
-RUN pip install --no-cache-dir pytest==7.1.2
-RUN pip install --no-cache-dir sphinx==5.2.2
+RUN pip install --no-cache-dir pytest
+RUN pip install --no-cache-dir sphinx
 RUN pip install --no-cache-dir myst-parser
 RUN pip install --no-cache-dir autodoc-pydantic
 RUN pip install --no-cache-dir twine
