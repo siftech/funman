@@ -1,5 +1,6 @@
 import logging
 import random
+import re
 from collections import Counter
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Union
@@ -324,6 +325,9 @@ class FunmanResults(BaseModel):
         scenario = FunmanWorkUnit(
             id=self.id, model=self.model, request=self.request
         ).to_scenario()
+
+        # Needed to extract
+        scenario._process_parameters()
         return scenario
 
     def point_parameters(
@@ -365,6 +369,12 @@ class FunmanResults(BaseModel):
         for i, point in enumerate(points):
             timeseries = self.symbol_timeseries(point, to_plot)
             df = pd.DataFrame.from_dict(timeseries)
+
+            if interpolate:
+                df = df.infer_objects(copy=False).interpolate(
+                    method=interpolate
+                )
+
             df["id"] = i
             parameters = self.point_parameters(point=point, scenario=scenario)
             for p, v in parameters.items():
@@ -375,15 +385,12 @@ class FunmanResults(BaseModel):
                 ):
                     df[p.name] = v
             df["label"] = point.label
+            df["label"] = df["label"].astype(str)
             # if max_time:
             # if time_var:
             #     df = df.at[max_time, :] = None
             # df = df.reindex(range(max_time+1), fill_value=None)
 
-            if interpolate:
-                df = df.infer_objects(copy=False).interpolate(
-                    method=interpolate
-                )
             if time_var and any("timer_t" in x for x in df.columns):
                 df = (
                     df.rename(columns={"timer_t": "time"})
@@ -454,12 +461,17 @@ class FunmanResults(BaseModel):
         return vals
 
     def _symbols(
-        self, point: Point, variables: List[str]
+        self,
+        point: Point,
+        variables: List[str],
+        time_pattern: str = f"_[0-9]+$",
     ) -> Dict[str, Dict[str, str]]:
         symbols = {}
         # vars.sort(key=lambda x: x.symbol_name())
+        vars_pattern = "|".join(variables)
+        pattern = re.compile(f"[{vars_pattern}].*{time_pattern}")
         for var in point.values:
-            if any(f"{v}_" in var for v in variables):
+            if re.match(pattern, var):
                 var_name, timepoint = self._split_symbol(var)
                 if timepoint:
                     if var_name not in symbols:
