@@ -4,7 +4,9 @@ from abc import ABC, abstractclassmethod, abstractmethod
 from decimal import Decimal
 from typing import Dict, List, Optional, Union
 
+import numpy as np
 from pydantic import BaseModel, ConfigDict
+from pysmt.shortcuts import TRUE, And, Solver
 
 from funman import (
     NEG_INFINITY,
@@ -34,9 +36,18 @@ from funman import (
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import FunmanUserConstraint
+from funman.representation import Point
+from funman.representation.constraint import (
+    FunmanUserConstraint,
+    TimeseriesConstraint,
+)
 from funman.representation.parameter import NumSteps, Schedules, StepSize
+from funman.search.simulate import Simulator, Timeseries
+from funman.translate.translate import EncodingOptions
 from funman.utils import math_utils
+from funman.utils.sympy_utils import to_sympy
+
+from ..representation import Point
 
 l = logging.getLogger(__name__)
 
@@ -336,6 +347,97 @@ class AnalysisScenario(ABC, BaseModel):
         else:
             self.normalization_constant = 1.0
             l.warning("Warning: The scenario is not normalized!")
+
+    def check_point_simulation(self, point: Point, tvect) -> Timeseries:
+        init = {
+            var: value
+            for var, value in point.values_at(0).items()
+            if var != "timer_t"
+        }
+        parameters = {
+            p: point.value_of(p) for p in self.model._parameter_names()
+        }
+        simulator = Simulator(
+            model=self.model, init=init, parameters=parameters, tvect=tvect
+        )
+        timeseries = simulator.sim()
+        # timeseries = np.array([[tvect[t], timeseries[t]] for t in range(len(tvect))])
+        return timeseries
+
+    def simulation_tvects(self, config) -> List[Union[float, int]]:
+        num_steps = self.structure_parameter("num_steps")
+        step_size = self.structure_parameter("step_size")
+        schedules = self.structure_parameter("schedules")
+
+        tvects = []
+        if schedules:
+            for s in schedules.schedules:
+                tvects.append(s.timepoints)
+        else:
+            min_steps = num_steps.interval.lb
+            max_steps = num_steps.interval.ub
+            min_size = step_size.interval.lb
+            max_size = step_size.interval.ub
+            for ss in range(int(min_size), int(max_size) + 1):
+                tvects.append(np.arange(0, int(max_steps * ss) + 1, int(ss)))
+
+        return tvects
+
+    def check_simulation(
+        self, config: "FUNMANConfig", results: "AnalysisScenarioResult"
+    ):
+        # Check solution with simulation
+        sim_results = []
+        for point in results.parameter_space.points():
+            timeseries = self.check_point_simulation(
+                point, point.relevant_timepoints()
+            )
+            sim_results.append((point, timeseries))
+
+            for sim_result in sim_results:
+                with Solver() as solver:
+                    sim_encoding = self.encode_timeseries_verification(
+                        *sim_result
+                    )
+                    solver.add_assertion(sim_encoding)
+                    result = solver.solve()
+                    if result:
+                        l.info("simulation passed verification")
+                    else:
+                        l.info("simulation failed verification")
+                    return result
+
+    def encode_timeseries_verification(
+        self, point: Point, timeseries: Timeseries
+    ):
+        # Get constraints needed to check timeseries
+        ts_constraint = TimeseriesConstraint(
+            name="simulation", timeseries=timeseries
+        )
+        timeseries_constraints = [
+            TimeseriesConstraint(name="simulation", timeseries=timeseries)
+        ] + [c for c in self.constraints if not isinstance(c, ModelConstraint)]
+
+        encoded_constraints = []
+        timepoints = timeseries["time"]
+        encoding = self._smt_encoder.initialize_encodings(
+            self, len(point.schedule.timepoints)
+        )
+        for c in timeseries_constraints:
+            for timestep, timepoint in enumerate(timepoints):
+                if c.encodable() and c.relevant_at_time(timepoint):
+                    encoded_constraints.append(
+                        encoding.construct_encoding(
+                            self,
+                            c,
+                            EncodingOptions(schedule=point.schedule),
+                            layers=[timestep],
+                            assumptions=self._assumptions,
+                        )
+                    )
+        formula = And(encoded_constraints)
+
+        return formula
 
 
 class AnalysisScenarioResult(ABC):

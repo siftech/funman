@@ -336,7 +336,11 @@ class FunmanResults(BaseModel):
         if scenario is None:
             scenario = self._scenario()
         parameters = scenario.model_parameters()
-        return {p: point.values[p.name] for p in parameters}
+        return {
+            p: point.values[p.name]
+            for p in parameters
+            if p.name in point.values
+        }
 
     def dataframe(
         self, points: List[Point], interpolate="linear", max_time=None
