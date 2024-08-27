@@ -482,7 +482,7 @@ def get_args():
         help=f"Create parameter space plot with only the last timestep.",
     )
 
-    parser.set_defaults(plot=False)
+    parser.set_defaults(plot=None)
     return parser.parse_args()
 
 

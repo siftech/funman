@@ -212,12 +212,18 @@ class BilayerEncoder(Encoder):
                             for p in timed_parameters
                         }
                     )
+                    parameter_box._prioritize_entropy = (
+                        self.config.prioritize_box_entropy
+                    )
                 else:
                     parameter_box = Box(
                         bounds={
                             p.name: Interval(lb=p.lb, ub=p.ub)
                             for p in parameters
                         }
+                    )
+                    parameter_box._prioritize_entropy = (
+                        self.config.prioritize_box_entropy
                     )
                 parameter_constraints = self.box_to_smt(
                     parameter_box  # , closed_upper_bound=True

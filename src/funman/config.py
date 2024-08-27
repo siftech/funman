@@ -128,6 +128,12 @@ class FUNMANConfig(BaseModel):
     dreal_prefer_parameters: List[str] = []
     """ Prefer to split the listed parameters in dreal """
 
+    point_based_evaluation: bool = False
+    """ Evaluate parameters using point-based simulation over interval-based SMT encoding """
+
+    prioritize_box_entropy: bool = True
+    """ When comparing boxes, prefer those with low entropy """
+
     @field_validator("solver")
     @classmethod
     def import_dreal(cls, v: str) -> str:
