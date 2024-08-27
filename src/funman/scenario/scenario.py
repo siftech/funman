@@ -348,10 +348,12 @@ class AnalysisScenario(ABC, BaseModel):
             self.normalization_constant = 1.0
             l.warning("Warning: The scenario is not normalized!")
 
-    def check_point_simulation(self, point: Point, tvect) -> Timeseries:
+    def check_point_simulation(
+        self, point: Point, tvect
+    ) -> Optional[Timeseries]:
         init = {
             var: value
-            for var, value in point.values_at(0).items()
+            for var, value in point.values_at(0, self.model).items()
             if var != "timer_t"
         }
         parameters = {
@@ -390,22 +392,30 @@ class AnalysisScenario(ABC, BaseModel):
         sim_results = []
         for point in results.parameter_space.points():
             timeseries = self.check_point_simulation(
-                point, point.relevant_timepoints()
+                point, point.relevant_timepoints(results.scenario.model)
             )
             sim_results.append((point, timeseries))
 
-            for sim_result in sim_results:
-                with Solver() as solver:
-                    sim_encoding = self.encode_timeseries_verification(
-                        *sim_result
-                    )
-                    solver.add_assertion(sim_encoding)
-                    result = solver.solve()
-                    if result:
-                        l.info("simulation passed verification")
-                    else:
-                        l.info("simulation failed verification")
-                    return result
+        for point, timeseries in sim_results:
+            if timeseries is None:
+                l.warning(
+                    f"Skipping point validation because there is no timeseries ..."
+                )
+                continue
+
+            with Solver() as solver:
+                sim_encoding = self.encode_timeseries_verification(
+                    point, timeseries
+                )
+                solver.add_assertion(sim_encoding)
+                result = solver.solve()
+                if result:
+                    l.info("simulation passed verification")
+                else:
+                    l.info("simulation failed verification")
+                    return False
+
+        return True
 
     def encode_timeseries_verification(
         self, point: Point, timeseries: Timeseries

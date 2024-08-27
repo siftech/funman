@@ -4,6 +4,7 @@ This submodule defines a consistency scenario.  Consistency scenarios specify an
 
 import logging
 import threading
+from datetime import datetime
 from typing import Callable, Dict, Optional
 
 import matplotlib.pyplot as plt
@@ -88,9 +89,12 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
         )
         scenario_result._models = models
 
+        start_time = datetime.now()
         assert self.check_simulation(
             config, scenario_result
         ), "Simulation of solution is invalid."
+        duration = datetime.now() - start_time
+        l.info(f"Simulation Time: {duration}")
 
         return scenario_result
 

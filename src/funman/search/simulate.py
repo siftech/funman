@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -41,17 +41,21 @@ class Simulator(BaseModel):
         ]
         return tuple(init_state)
 
-    def sim(self):
+    def sim(self) -> Optional[Timeseries]:
         # gradient_fn = partial(self.model.gradient, self.model) # hide the self reference to self.model from odeint
-        timeseries = odeint(
-            self.model.gradient,
-            self.initial_state(),
-            self.tvect,
-            args=self.model_args(),
-        )
 
-        ts = Timeseries(
-            data=[self.tvect] + timeseries.T.tolist(),
-            columns=["time"] + self.model._state_var_names(),
-        )
+        if self.model._is_differentiable:
+            timeseries = odeint(
+                self.model.gradient,
+                self.initial_state(),
+                self.tvect,
+                args=self.model_args(),
+            )
+
+            ts = Timeseries(
+                data=[self.tvect] + timeseries.T.tolist(),
+                columns=["time"] + self.model._state_var_names(),
+            )
+        else:
+            ts = None
         return ts

@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from funman import to_sympy
 from funman.constants import LABEL_UNKNOWN, NEG_INFINITY, POS_INFINITY, Label
+from funman.model.model import FunmanModel, is_state_variable
 
 from . import Timepoint
 
@@ -48,11 +49,11 @@ class Point(BaseModel):
     def __repr__(self) -> str:
         return str(self.model_dump())
 
-    def values_at(self, tp: Timepoint) -> Dict[str, float]:
+    def values_at(self, tp: Timepoint, model: FunmanModel) -> Dict[str, float]:
         v = {
             k.rsplit("_", 1)[0]: v
             for k, v in self.values.items()
-            if self._is_state_variable(k) and int(k.rsplit("_", 1)[-1]) == tp
+            if is_state_variable(k, model) and int(k.rsplit("_", 1)[-1]) == tp
         }
         return v
 
@@ -67,24 +68,19 @@ class Point(BaseModel):
         }
         return steps
 
-    def _is_state_variable(self, s: str) -> bool:
-        return (
-            not s.startswith("solve_step")
-            and not s.startswith("assume_")
-            and "_" in s
-        )
-
     def state_values(self) -> Dict[str, float]:
         return {
-            k: v for k, v in self.values.items() if self._is_state_variable(k)
+            k: v
+            for k, v in self.values.items()
+            if is_state_variable(k, self.problem.model)
         }
 
-    def relevant_timepoints(self) -> List[int]:
+    def relevant_timepoints(self, model: FunmanModel) -> List[int]:
         steps = list(
             {
                 int(k.rsplit("_", 1)[-1])
                 for k, v in self.values.items()
-                if self._is_state_variable(k)
+                if is_state_variable(k, model)
             }
         )
         steps.sort()

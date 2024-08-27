@@ -1,6 +1,5 @@
 import logging
 import random
-import re
 from collections import Counter
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Union
@@ -16,6 +15,7 @@ from funman.model.decapode import DecapodeModel
 from funman.model.encoded import EncodedModel
 from funman.model.ensemble import EnsembleModel
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
+from funman.model.model import is_state_variable
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
@@ -174,6 +174,7 @@ class FunmanResultsTiming(BaseModel):
     solver_time: Optional[timedelta] = None
     encoding_time: Optional[timedelta] = None
     progress_timeseries: List[Tuple[datetime, float]] = []
+    additional_time: Dict[str, timedelta] = {}
 
     def update_progress(
         self, progress, granularity=timedelta(seconds=1)
@@ -465,17 +466,11 @@ class FunmanResults(BaseModel):
         return vals
 
     def _symbols(
-        self,
-        point: Point,
-        variables: List[str],
-        time_pattern: str = f"_[0-9]+$",
+        self, point: Point, variables: List[str]
     ) -> Dict[str, Dict[str, str]]:
         symbols = {}
-        # vars.sort(key=lambda x: x.symbol_name())
-        vars_pattern = "|".join(variables)
-        pattern = re.compile(f"[{vars_pattern}].*{time_pattern}")
         for var in point.values:
-            if re.match(pattern, var):
+            if is_state_variable(var, self.model):
                 var_name, timepoint = self._split_symbol(var)
                 if timepoint:
                     if var_name not in symbols:

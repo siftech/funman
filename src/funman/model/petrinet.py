@@ -15,6 +15,8 @@ from .model import FunmanModel
 
 
 class AbstractPetriNetModel(FunmanModel):
+    _is_differentiable: bool = True
+
     def _num_flow_from_state_to_transition(
         self, state_id: Union[str, int], transition_id: Union[str, int]
     ) -> int:

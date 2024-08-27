@@ -3,6 +3,7 @@ This module represents the abstract base classes for models.
 """
 
 import copy
+import re
 import uuid
 from abc import ABC
 from typing import Dict, List, Optional, Union
@@ -50,6 +51,14 @@ def _wrap_with_internal_model(
         return model
 
 
+def is_state_variable(
+    var_string, model: "FunmanModel", time_pattern: str = f"_[0-9]+$"
+) -> bool:
+    vars_pattern = "|".join(model._state_var_names())
+    pattern = re.compile(f"[{vars_pattern}].*{time_pattern}")
+    return re.match(pattern, var_string)
+
+
 class FunmanModel(ABC, BaseModel):
     """
     The abstract base class for Models.
@@ -63,6 +72,7 @@ class FunmanModel(ABC, BaseModel):
     _normalization_constant: Optional[float] = None
     _extra_constraints: FNode = None
     _normalization_term: Optional[FNode] = None
+    _is_differentiable: bool = False
 
     # @abstractmethod
     # def default_encoder(self, config: "FUNMANConfig") -> "Encoder":
