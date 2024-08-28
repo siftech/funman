@@ -23,7 +23,7 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     install_requires=["funman", "docker", "tenacity", "pyparsing"],
-    extras_require={"dreal": ["dreal"]},
+    # extras_require={"dreal": ["dreal"]},
     tests_require=["unittest"],
     zip_safe=False,
 )

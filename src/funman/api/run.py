@@ -159,6 +159,7 @@ class Runner:
         point_plot_config: Dict = {},
         num_points: Optional[int] = None,
         dump_results: bool = True,
+        print_last_time: bool = False,
     ) -> FunmanResults:
         """
         Run a FUNMAN scenario.
@@ -181,6 +182,8 @@ class Runner:
             Matplotlib flags and special key "variables" to select variables to plot , by default {}
         num_points : Optional[int], optional
             The number of points to plot in the trace plot, by default None
+        print_last_time: bool
+            Only print parameter space for last time
 
         Returns
         -------
@@ -196,6 +199,7 @@ class Runner:
             point_plot_config=point_plot_config,
             num_points=num_points,
             dump_results=dump_results,
+            print_last_time=print_last_time,
         )
         return results
         # ParameterSpacePlotter(
@@ -214,6 +218,7 @@ class Runner:
         point_plot_config={},
         num_points=None,
         dump_results=True,
+        print_last_time: bool = False,
     ):
         if not os.path.exists(case_out_dir):
             os.mkdir(case_out_dir)
@@ -233,6 +238,7 @@ class Runner:
             point_plot_config=point_plot_config,
             num_points=num_points,
             dump_results=dump_results,
+            print_last_time=print_last_time,
         )
 
         self._worker.stop()
@@ -241,25 +247,29 @@ class Runner:
         return results
 
     def get_model(
-        self, model_file: str
+        self, model_file: Union[str, Dict]
     ) -> Tuple[FunmanModel, Optional[FunmanWorkRequest]]:
         m = None
         req = None
         for model in models:
             try:
-                with open(model_file, "r") as mf:
-                    j = json.load(mf)
-                    if "model" in j and "request" in j:
-                        req = j["request"]
-                        if "petrinet" in j["model"]:
-                            mod = j["model"]["petrinet"]
-                        else:
-                            mod = j["model"]
+                if isinstance(model_file, str):
+                    with open(model_file, "r") as mf:
+                        j = json.load(mf)
+                else:
+                    j = model_file
+
+                if "model" in j and "request" in j:
+                    req = j["request"]
+                    if "petrinet" in j["model"]:
+                        mod = j["model"]["petrinet"]
                     else:
-                        mod = j
-                        req = None
-                    m = _wrap_with_internal_model(model(**mod))
-                    break
+                        mod = j["model"]
+                else:
+                    mod = j
+                    req = None
+                m = _wrap_with_internal_model(model(**mod))
+                break
 
             except Exception as e:
                 pass
@@ -283,13 +293,14 @@ class Runner:
 
     def run_instance(
         self,
-        case: Tuple[str, Union[str, Dict], str],
+        case: Tuple[Union[str, Dict], Union[str, Dict], str],
         out_dir=".",
         dump_plot=False,
         parameters_to_plot=None,
         point_plot_config={},
         num_points=None,
         dump_results=False,
+        print_last_time: bool = False,
     ):
         killer = GracefulKiller()
         (model_file, request_file, description) = case
@@ -338,9 +349,11 @@ class Runner:
                         num_points,
                         point_plot_config,
                         parameters_to_plot,
+                        print_last_time,
                     )
+
                 sleep(10)
-            else:
+            elif not self._worker.is_processing_id(work_unit.id):
                 results = self._worker.get_results(work_unit.id)
                 break
 
@@ -352,6 +365,7 @@ class Runner:
                 num_points,
                 point_plot_config,
                 parameters_to_plot,
+                print_last_time,
             )
 
         if killer.kill_now:
@@ -377,6 +391,7 @@ class Runner:
         num_points,
         point_plot_config,
         parameters_to_plot,
+        print_last_time,
     ):
         points = results.parameter_space.points()
         if len(points) > 0:
@@ -405,27 +420,34 @@ class Runner:
             plt.savefig(point_plot_filename)
             plt.close()
 
-        boxes = results.parameter_space.boxes()
+        boxes = (
+            results.parameter_space.boxes()
+            if not print_last_time
+            else results.parameter_space.last_boxes()
+        )
         if parameters_to_plot is None:
-            parameters_to_plot = results.model._parameter_names() + [
-                "timestep"
-            ]
-        assert (
-            len(parameters_to_plot) > 1
-        ), "Cannot plot a parameter space for one parameter"
-        if len(boxes) > 0 and len(parameters_to_plot) > 1:
+            parameters_to_plot = results.model._parameter_names()
+            if not print_last_time:
+                parameters_to_plot += ["timestep"]
+
+        if len(boxes) > 0 and len(parameters_to_plot) > 0:
             space_plot_filename = (
                 f"{out_dir}/{work_unit.id}_parameter_space.png"
             )
             l.info(f"Creating plot of parameter space: {space_plot_filename}")
             ParameterSpacePlotter(
                 results.parameter_space,
+                boxes=boxes,
                 plot_points=False,
                 parameters=parameters_to_plot,
                 synthesized_parameters=parameters_to_plot,
             ).plot(show=True)
             plt.savefig(space_plot_filename)
-        plt.close()
+            plt.close()
+        else:
+            l.warn(
+                "Cannot plot a parameter space for zero boxes or zero parameters"
+            )
 
 
 def get_args():
@@ -452,6 +474,14 @@ def get_args():
         nargs="*",
         help=f"Write plots in outdir. Optionally list parameters to plot",
     )
+    parser.add_argument(
+        "-l",
+        "--last-time",
+        action="store_true",
+        default=False,
+        help=f"Create parameter space plot with only the last timestep.",
+    )
+
     parser.set_defaults(plot=False)
     return parser.parse_args()
 
@@ -461,13 +491,18 @@ def main() -> int:
     if not os.path.exists(args.outdir):
         os.mkdir(args.outdir)
 
-    to_plot = args.plot + ["timestep"] if args.plot else None
+    to_plot = (
+        args.plot + (["timestep"] if not args.last_time else [])
+        if args.plot
+        else None
+    )
     results = Runner().run(
         args.model,
         args.request,
         case_out_dir=args.outdir,
         dump_plot=args.plot is not None,
         parameters_to_plot=to_plot,
+        print_last_time=args.last_time,
     )
     print(results.model_dump_json(indent=4))
 

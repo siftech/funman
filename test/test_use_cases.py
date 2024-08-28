@@ -187,7 +187,7 @@ class TestUseCases(unittest.TestCase):
             config=FUNMANConfig(
                 # solver="dreal",
                 # dreal_mcts=True,
-                save_smtlib="./out",
+                # save_smtlib="./out",
                 # dreal_log_level="info",
                 tolerance=1e-3,
                 number_of_processes=1,

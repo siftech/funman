@@ -76,6 +76,7 @@ def summarize_results(
     parameters_to_plot=None,
     label_color={"true": "g", "false": "r"},
     synthesized_parameters=None,
+    print_last_time=False,
 ) -> str:
     points = results.points()
     boxes = results.parameter_space.boxes()
@@ -104,9 +105,16 @@ def summarize_results(
         {json.dumps(box.explain(), indent=4)}
         """
 
-    boxes = results.parameter_space.boxes()
+    boxes = (
+        results.parameter_space.boxes()
+        if not print_last_time
+        else results.parameter_space.last_boxes()
+    )
+
     if parameters_to_plot is None:
-        parameters_to_plot = results.model._parameter_names() + ["timestep"]
+        parameters_to_plot = results.model._parameter_names()
+        if not print_last_time:
+            parameters_to_plot += ["timestep"]
     if len(boxes) > 0 and len(parameters_to_plot) > 1:
         ParameterSpacePlotter(
             results.parameter_space,

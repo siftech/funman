@@ -8,6 +8,7 @@ from pysmt.shortcuts import REAL, Div, Real, Symbol
 from funman.utils.sympy_utils import substitute, sympy_to_pysmt, to_sympy
 
 from ..representation.interval import Interval
+from .generated_models.petrinet import Distribution
 from .generated_models.petrinet import Model as GeneratedPetrinet
 from .generated_models.petrinet import State, Transition
 from .model import FunmanModel
@@ -148,7 +149,7 @@ class AbstractPetriNetModel(FunmanModel):
             )
 
     def compartmental_constraints(
-        self, population: Union[float, int]
+        self, population: Union[float, int], noise: float
     ) -> List["Constraint"]:
         from funman.representation.constraint import LinearConstraint
 
@@ -157,8 +158,8 @@ class AbstractPetriNetModel(FunmanModel):
             LinearConstraint(
                 name="compartmental_constraint_population",
                 additive_bounds={
-                    "lb": population - 1e-5,
-                    "ub": population + 1e-5,
+                    "lb": population - noise,
+                    "ub": population + noise,
                     "closed_upper_bound": True,
                 },
                 variables=vars,
@@ -366,6 +367,31 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     pass
 
         return values
+
+    def contract_parameters(
+        self, parameter_bounds: Dict[str, Interval]
+    ) -> GeneratedPetrinet:
+        contracted_model = self.petrinet.copy(deep=True)
+
+        for param in contracted_model.semantics.ode.parameters:
+            new_bounds = parameter_bounds[param.id]
+            if param.distribution:
+                param.distribution.parameters["minimum"] = max(
+                    new_bounds.lb, param.distribution.parameters["minimum"]
+                )
+                param.distribution.parameters["maximum"] = min(
+                    new_bounds.ub, param.distribution.parameters["maximum"]
+                )
+            else:
+                param.distribution = Distribution(
+                    parameters={
+                        "minimum": new_bounds.lb,
+                        "maximum": new_bounds.ub,
+                    },
+                    type="StandardUniform1",
+                )
+
+        return contracted_model
 
 
 class PetrinetDynamics(BaseModel):

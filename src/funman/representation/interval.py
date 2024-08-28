@@ -2,7 +2,7 @@ import logging
 from decimal import Decimal
 from typing import List, Optional, Union
 
-from numpy import average, nextafter
+from numpy import average, finfo, nextafter
 from pydantic import (
     BaseModel,
     Field,
@@ -110,7 +110,7 @@ class Interval(BaseModel):
     def normalize(self, normalization_factor: Union[float, int]) -> "Interval":
         return Interval(
             lb=math_utils.div(self.lb, normalization_factor),
-            ub=math_utils.div(self.lb, normalization_factor),
+            ub=math_utils.div(self.ub, normalization_factor),
         )
 
     def __lt__(self, other):
@@ -148,18 +148,31 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        return (
-            (self.ub == other.lb and not self.closed_upper_bound)
-            or (
-                nextafter(self.ub, POS_INFINITY) == other.lb
-                and self.closed_upper_bound
+        l.debug(f"Interval.meets(): {self} {other}")
+        # return self.ub == other.lb or self.lb == other.ub
+        if self.closed_upper_bound:
+            # cannot be equal to other.lb
+            # Make sure that we don't use 0.0 with nextafter
+            self_ub = (
+                finfo("f8").smallest_normal
+                if self.ub == 0.0
+                else nextafter(self.ub, POS_INFINITY)
             )
-            or (self.lb == other.ub and not other.closed_upper_bound)
-            or (
-                self.ub == nextafter(other.lb, POS_INFINITY)
-                and other.closed_upper_bound
-            )
-        )
+            return self.ub == other.lb
+        else:
+            return self.ub == other.lb
+        # return (
+        #     (self.ub == other.lb and not self.closed_upper_bound)
+        #     or (
+        #         nextafter(self.ub, POS_INFINITY) == other.lb
+        #         and self.closed_upper_bound
+        #     )
+        #     or (self.lb == other.ub and not other.closed_upper_bound)
+        #     or (
+        #         self.ub == nextafter(other.lb, POS_INFINITY)
+        #         and other.closed_upper_bound
+        #     )
+        # )
 
     def finite(self) -> bool:
         """

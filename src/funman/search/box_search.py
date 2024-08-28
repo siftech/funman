@@ -46,7 +46,11 @@ from funman import (
 from funman.config import FUNMANConfig
 from funman.representation.assumption import Assumption
 from funman.representation.constraint import ParameterConstraint
-from funman.representation.explanation import Explanation
+from funman.representation.explanation import (
+    BoxExplanation,
+    Explanation,
+    TimeoutExplanation,
+)
 from funman.search import Box, ParameterSpace, Point, Search, SearchEpisode
 from funman.search.search import SearchStaticsMP, SearchStatistics
 from funman.translate.translate import EncodingOptions, EncodingSchedule
@@ -328,9 +332,15 @@ class BoxSearchEpisode(SearchEpisode):
         point = Point(
             values={
                 p[0].symbol_name(): (
-                    float(p[1].constant_value())
-                    if p[1].is_real_constant()
-                    else p[1].constant_value()
+                    (
+                        (
+                            float(p[1].constant_value())
+                            if p[1].is_real_constant()
+                            else p[1].constant_value()
+                        )
+                        if p[1] is not None
+                        else None
+                    )
                 )
                 for p in model
             },
@@ -366,8 +376,11 @@ class BoxSearch(Search):
 
     def _split(self, box: Box, episode: BoxSearchEpisode, points=None):
         normalize = episode.problem._original_parameter_widths
+        split_points = (
+            points if not episode.config.uniform_box_splits else None
+        )
         b1, b2 = box.split(
-            points=points,
+            points=split_points,
             normalize=normalize,
             parameters=episode.problem.model_parameters(),
         )
@@ -521,23 +534,26 @@ class BoxSearch(Search):
                     self._solve_at_step_symbol(t), formula_encoded_constraints
                 )
 
-                # symbols = formula_encoded_constraints.get_free_variables()
-                neg_formula = Implies(
-                    Not(self._solve_at_step_symbol(t)),
-                    And(
-                        [
-                            Equals(
-                                encoding._encoder._encode_state_var(
-                                    s, time=timepoint
-                                ),
-                                Real(0.0),
-                            )
-                            for s in episode.problem.model._state_var_names()
-                        ]  # + [Not(s) for s in symbols if s.symbol_type() == BOOL]
-                    ),
-                )
+                # neg_formula = Implies(
+                #     Not(self._solve_at_step_symbol(t)),
+                #     And(
+                #         [
+                #             Equals(
+                #                 encoding._encoder._encode_state_var(
+                #                     s, time=timepoint
+                #                 ),
+                #                 Real(0.0),
+                #             )
+                #             for s in episode.problem.model._state_var_names()
+                #         ]  # + [Not(s) for s in symbols if s.symbol_type() == BOOL]
+                #     ),
+                # )
 
-                layer_formulas.append(And(formula, neg_formula))
+                layer_formulas.append(
+                    # And(
+                    formula
+                    # , neg_formula)
+                )
 
             for layer, formula in enumerate(layer_formulas):
                 episode._formula_stack.push(1)
@@ -790,7 +806,9 @@ class BoxSearch(Search):
                         f"box_search_{episode._iteration}",
                     )
                 )
-            result = self.invoke_solver(solver)
+            result = self.invoke_solver(
+                solver, timeout=episode.config.solver_timeout
+            )
             if result is not None and isinstance(result, pysmtModel):
                 # If substituted formulas are on the stack, then add the original formulas to compute the values of all variables
                 if (
@@ -893,7 +911,9 @@ class BoxSearch(Search):
         )
         episode._formula_stack.push()
         episode._formula_stack._add_assertion(negated_assumptions)
-        result = self.invoke_solver(solver)
+        result = self.invoke_solver(
+            solver, timeout=episode.config.solver_timeout
+        )
         if result is not None and isinstance(result, pysmtModel):
             # The assumptions are not minimal
             pass
@@ -926,7 +946,9 @@ class BoxSearch(Search):
                         f"wp_{episode._iteration}.smt2",
                     ),
                 )
-            result = self.invoke_solver(solver)
+            result = self.invoke_solver(
+                solver, timeout=episode.config.solver_timeout
+            )
             if result is not None and isinstance(result, pysmtModel):
                 # Record the false point
                 point = episode._extract_point(result, box)
@@ -977,7 +999,9 @@ class BoxSearch(Search):
                     else None
                 ),
             )
-            if len(box.true_points(step=box.timestep().lb)) == 0:
+            if len(box.true_points(step=box.timestep().lb)) == 0 or isinstance(
+                explanation, TimeoutExplanation
+            ):
                 # Could not find a point at the current step, so there won't be any at subsequent steps
                 # fall out of loop, after setting the upper bound on the box timestep
                 # if couldn't find a point, then remove all points from box
@@ -994,6 +1018,17 @@ class BoxSearch(Search):
             else:
                 # lb == ub and have a point, so break
                 break
+
+            # if (
+            #     len(box.false_points(step=box.timestep().lb)) > 0
+            #     and len(box.true_points(step=box.timestep().lb)) > 0
+            # ):
+            #     # Do not continue if there is a true and a false point.  It means we already know we need to split this box.
+            #     break
+
+            # if box.timestep().lb == 0:
+            #     # Don't check for later timepoints when looking at the initial time step.  This helps evaluate parameter constraints that would only apply to the initial time step.
+            #     break
 
         # reinstate the original lower bound on timestep so that we will check
         # whether no false points exist in the main loop of the box search
@@ -1013,7 +1048,9 @@ class BoxSearch(Search):
             ]._encoder.point_to_smt(point)
             episode._formula_stack.push()
             episode._formula_stack.add_assertion(f)
-            result = self.invoke_solver(solver)
+            result = self.invoke_solver(
+                solver, timeout=episode.config.solver_timeout
+            )
             if result is not None and isinstance(result, pysmtModel):
                 corner_point = episode._extract_point(result, box)
                 box.corner_points.append(corner_point)
@@ -1062,13 +1099,14 @@ class BoxSearch(Search):
         """
         process_name = f"Expander_{(idx if idx else 'S')}_p{os.getpid()}"
         # l = self._logger(episode.config, process_name=process_name)
-
+        last_progress = -1.0
         try:
             if episode.config.solver == "dreal":
                 opts = {
                     "dreal_precision": episode.config.dreal_precision,
                     "dreal_log_level": episode.config.dreal_log_level,
                     "dreal_mcts": episode.config.dreal_mcts,
+                    "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in episode.problem.parameters] if episode.config.dreal_prefer_parameters else [],
                 }
             else:
                 opts = {}
@@ -1106,6 +1144,9 @@ class BoxSearch(Search):
                             continue
                     else:
                         l.debug(f"Expanding box: {box}")
+                        l.debug(
+                            f"Evaluating box: +: {len(box.true_points())}, -: {len(box.false_points())}, H: {box.point_entropy()}"
+                        )
                         # Setup the model constraints up to the box.timestep.lb and add box constraints
                         self._initialize_model_for_box(
                             solver, box, episode, options
@@ -1166,7 +1207,9 @@ class BoxSearch(Search):
                                     f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
                                 )
                                 l.trace(f"XXX Split:\n{box}")
-                            else:
+                            elif isinstance(
+                                not_false_explanation, BoxExplanation
+                            ):
                                 # box does not intersect f, so it is in t (true region)
                                 curr_step_box = box.current_step()
                                 episode._add_true(
@@ -1178,22 +1221,42 @@ class BoxSearch(Search):
                                 l.trace(f"+++ True:\n{box}")
 
                                 if episode.config.corner_points:
-                                    corner_points: List[Point] = (
-                                        self.get_box_corners(
-                                            solver,
-                                            episode,
-                                            curr_step_box,
-                                            rval,
-                                            options,
-                                            my_solver,
-                                        )
+                                    corner_points: List[
+                                        Point
+                                    ] = self.get_box_corners(
+                                        solver,
+                                        episode,
+                                        curr_step_box,
+                                        rval,
+                                        options,
+                                        my_solver,
                                     )
 
                                 # Advance a true box to be considered for later timesteps
                                 next_box = box.advance()
                                 if next_box:
                                     episode._add_unknown(next_box)
-                        else:
+                            else:  # Timeout FIXME copy of split code
+                                if self._split(
+                                    box,
+                                    episode,
+                                    points=[true_points, false_points],
+                                ):
+                                    l.trace(f"{process_name} produced work")
+                                else:
+                                    rval.put(box.model_dump())
+                                if episode.config.number_of_processes > 1:
+                                    # FIXME This would only be none when
+                                    # the number of processes is 1. This
+                                    # can be done more cleanly.
+                                    if more_work:
+                                        with more_work:
+                                            more_work.notify_all()
+                                l.debug(
+                                    f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
+                                )
+                                l.trace(f"XXX Split:\n{box}")
+                        elif isinstance(not_true_explanation, BoxExplanation):
                             if len(box.points) == 0:
                                 # If we cannot find a true point, the box is false and we may have not computed any false points, so ensure we have at least one.
                                 self._get_false_points(
@@ -1212,22 +1275,49 @@ class BoxSearch(Search):
                             l.debug(f"False @ {box.timestep().lb}")
                             l.trace(f"--- False:\n{box}")
                             if episode.config.corner_points:
-                                corner_points: List[Point] = (
-                                    self.get_box_corners(
-                                        solver,
-                                        episode,
-                                        box,
-                                        rval,
-                                        options,
-                                        my_solver,
-                                    )
+                                corner_points: List[
+                                    Point
+                                ] = self.get_box_corners(
+                                    solver,
+                                    episode,
+                                    box,
+                                    rval,
+                                    options,
+                                    my_solver,
                                 )
                             rval.put(box.model_dump())
+                        else:  # Timeout FIXME copy of split code
+                            if self._split(
+                                box,
+                                episode,
+                                points=[true_points],
+                            ):
+                                l.trace(f"{process_name} produced work")
+                            else:
+                                rval.put(box.model_dump())
+                            if episode.config.number_of_processes > 1:
+                                # FIXME This would only be none when
+                                # the number of processes is 1. This
+                                # can be done more cleanly.
+                                if more_work:
+                                    with more_work:
+                                        more_work.notify_all()
+                            l.debug(
+                                f"Split @ {box.timestep().lb}, (width: {box.width():.5f} (raw) {box.normalized_width():.5f} (norm))"
+                            )
+                            l.trace(f"XXX Split:\n{box}")
                         episode._formula_stack.pop()  # Remove box constraints from solver
                         episode._on_iteration()
                         if handler:
                             handler(rval, episode.config, all_results)
-                            if "progress" in all_results:
+                            if (
+                                "progress" in all_results
+                                and all_results["progress"].progress
+                                > last_progress
+                            ):
+                                last_progress = all_results[
+                                    "progress"
+                                ].progress
                                 l.info(all_results["progress"])
                         l.trace(f"{process_name} finished work")
                 self._initialize_model_encoding(
@@ -1516,6 +1606,8 @@ class BoxSearch(Search):
             options = EncodingOptions(
                 num_steps=structural_configuration["num_steps"],
                 step_size=structural_configuration["step_size"],
+                normalize=config.normalize,
+                normalization_constant=config.normalization_constant,
             )
             expand_count = processes - 1
             episode._initialize_boxes(expand_count)
