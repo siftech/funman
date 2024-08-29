@@ -34,7 +34,7 @@ RUN git clone --depth=1 https://github.com/danbryce/automates.git automates \
     && git checkout e5fb635757aa57007615a75371f55dd4a24851e0
 RUN pip install -e automates
 
-RUN pip install --no-cache-dir z3-solver
+RUN pip install --no-cache-dir z3-solver==4.12.6
 RUN pip install --no-cache-dir graphviz
 
 # Install funman dev packages
