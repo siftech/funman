@@ -1,10 +1,12 @@
 import logging
 from decimal import Decimal
-from typing import List, Optional, Union
+from math import isinf
+from typing import Any, List, Optional, Union
 
 from numpy import average, finfo, nextafter
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
     SerializerFunctionWrapHandler,
     field_serializer,
@@ -24,6 +26,7 @@ class Interval(BaseModel):
     An interval is a pair [lb, ub) that is open (i.e., an interval specifies all points x where lb <= x and ub < x).
     """
 
+    model_config = ConfigDict(ser_json_inf_nan="constants")
     lb: Optional[Union[float, str]] = NEG_INFINITY
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
@@ -402,6 +405,17 @@ class Interval(BaseModel):
         self.unnormalized_lb = None
         self.ub = self.ub if not self.unnormalized_ub else self.unnormalized_ub
         self.unnormalized_ub = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_original_width_inf(cls, data: Any) -> Any:
+        if (
+            "original_width" in data
+            and isinstance(data["original_width"], float)
+            and isinf(data["original_width"])
+        ):
+            data["original_width"] = None
+        return data
 
     @model_validator(mode="after")
     def check_interval(self) -> str:
