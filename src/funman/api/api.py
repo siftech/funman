@@ -74,7 +74,7 @@ def get_worker():
 def _key_auth(api_key: str, token: str, *, name: str = "API"):
     # bypass key auth if no token is provided
     if api_key is None:
-        print(f"WARNING: Running without {name} token")
+        l.warning(f"WARNING: Running without {name} token")
         return
 
     # ensure the token is a non-empty string

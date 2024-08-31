@@ -7,6 +7,8 @@ import logging
 import math
 from typing import Dict, List, Literal, Optional, Set
 
+import matplotlib.pyplot as plt
+import pandas as pd
 from pydantic import BaseModel
 
 from funman import to_sympy
@@ -28,6 +30,20 @@ class Timeseries(BaseModel):
     def __getitem__(self, key):
         return self.data[self.columns.index(key)]
 
+    def dataframe(self):
+        df = pd.DataFrame(
+            [
+                pd.Series(col, name=self.columns[i + 1], index=self.data[0])
+                for i, col in enumerate(self.data[1:])
+            ]
+        )
+        return df
+
+    def plot(self, **kwargs):
+        data = self.dataframe()
+        ax = data.T.plot(xlabel=self.columns[0], **kwargs)
+        return ax
+
 
 class Point(BaseModel):
     type: Literal["point"] = "point"
@@ -35,6 +51,7 @@ class Point(BaseModel):
     values: Dict[str, PointValue]
     normalized_values: Optional[Dict[str, float]] = None
     schedule: Optional[EncodingSchedule] = None
+    simulation: Optional[Timeseries] = None
 
     # def __init__(self, **kw) -> None:
     #     super().__init__(**kw)

@@ -395,6 +395,7 @@ class AnalysisScenario(ABC, BaseModel):
                 point, point.relevant_timepoints(results.scenario.model)
             )
             sim_results.append((point, timeseries))
+            point.simulation = timeseries
 
         for point, timeseries in sim_results:
             if timeseries is None:

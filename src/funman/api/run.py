@@ -445,7 +445,7 @@ class Runner:
             plt.savefig(space_plot_filename)
             plt.close()
         else:
-            l.warn(
+            l.warning(
                 "Cannot plot a parameter space for zero boxes or zero parameters"
             )
 

@@ -52,11 +52,11 @@ def _wrap_with_internal_model(
 
 
 def is_state_variable(
-    var_string, model: "FunmanModel", time_pattern: str = f"_[0-9]+$"
+    var_string, model: "FunmanModel", time_pattern: str = f"[\\d]+$"
 ) -> bool:
     vars_pattern = "|".join(model._state_var_names())
-    pattern = re.compile(f"[{vars_pattern}].*{time_pattern}")
-    return re.match(pattern, var_string)
+    pattern = re.compile(f"^(?:{vars_pattern}).*_{time_pattern}")
+    return re.match(pattern, var_string) is not None
 
 
 class FunmanModel(ABC, BaseModel):
