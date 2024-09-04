@@ -197,7 +197,12 @@ class FunmanResultsTiming(BaseModel):
 
     def finalize(self):
         """Calculate total time"""
-        self.total_time = self.end_time - self.start_time
+        try:
+            self.total_time = self.end_time - self.start_time
+        except Exception as e:
+            l.exception(
+                f"Exception in FunmanResultsTiming:finalize() start_time: {self.start_time} end_time: {self.end_time}"
+            )
 
 
 class FunmanResults(BaseModel):
@@ -280,7 +285,11 @@ class FunmanResults(BaseModel):
         self.progress.progress = coverage_of_search_space
         self.progress.coverage_of_search_space = coverage_of_search_space
         self.progress.coverage_of_representable_space = coverage_of_repr_space
-        self.timing.update_progress(self.progress.coverage_of_search_space)
+
+        try:
+            self.timing.update_progress(self.progress.coverage_of_search_space)
+        except Exception as e:
+            l.exception(f"Unable to update progress due to exception: {e}")
 
         self.contract_model()
 
@@ -555,7 +564,9 @@ class FunmanResults(BaseModel):
                         **kwargs,
                     )
                 else:
+                    # data = [state_vars[c].tolist() for c in state_vars.columns]
                     ax = plt.plot(
+                        # data, #
                         state_vars,
                         label=label,
                         marker=label_marker[label],
