@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union, Callable
+from typing import Callable, Dict, List, Optional, Union
 
 import graphviz
 import sympy
@@ -179,16 +179,16 @@ class AbstractPetriNetModel(FunmanModel):
             for v in vars
         ]
 
-    def derivative(self, var_name, t, values, params): #var_to_value, param_to_value):
+    def derivative(
+        self, var_name, t, values, params
+    ):  # var_to_value, param_to_value):
         # param_at_t = {p: pv(t).item() for p, pv in param_to_value.items()}
         # FIXME assumes each transition has only one rate
         pos_rates = [
             # self._transition_rate(trans)[0].evalf(
             #     subs={**var_to_value, **param_at_t}
             # )
-            self._transition_rate(trans, getLambda=True)[0](
-                *values, *params
-            )
+            self._transition_rate(trans, getLambda=True)[0](*values, *params)
             for trans in self._transitions()
             for var in trans.output
             if var_name == var
@@ -197,10 +197,7 @@ class AbstractPetriNetModel(FunmanModel):
             # self._transition_rate(trans)[0].evalf(
             #     subs={**var_to_value, **param_at_t}
             # )
-            self._transition_rate(trans, getLambda=True)[0](
-                *values, *params
-            )
-
+            self._transition_rate(trans, getLambda=True)[0](*values, *params)
             for trans in self._transitions()
             for var in trans.input
             if var_name == var
@@ -219,10 +216,14 @@ class AbstractPetriNetModel(FunmanModel):
         # values = [
         #     y[i] for i, _ in enumerate(self._symbols())
         # ]
-        params = [param_to_value[str(p)](t) for p in self._symbols() if str(p) in param_to_value] + [t]
-        
+        params = [
+            param_to_value[str(p)](t)
+            for p in self._symbols()
+            if str(p) in param_to_value
+        ] + [t]
+
         grad = [
-            self.derivative(var, t, y, params) #var_to_value, param_to_value)
+            self.derivative(var, t, y, params)  # var_to_value, param_to_value)
             for var in self._state_var_names()
         ]
         return grad
@@ -377,10 +378,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         )
                         for t in t_rates
                     ]
-                t_rates_lambda = [sympy.lambdify(self._symbols(), t) for t in t_rates]
+                t_rates_lambda = [
+                    sympy.lambdify(self._symbols(), t) for t in t_rates
+                ]
                 self._transition_rates_cache[transition.id] = t_rates
-                self._transition_rates_lambda_cache[transition.id] = t_rates_lambda
-            return self._transition_rates_cache[transition.id] if not getLambda else self._transition_rates_lambda_cache[transition.id]
+                self._transition_rates_lambda_cache[transition.id] = (
+                    t_rates_lambda
+                )
+            return (
+                self._transition_rates_cache[transition.id]
+                if not getLambda
+                else self._transition_rates_lambda_cache[transition.id]
+            )
         else:
             return transition.id
 

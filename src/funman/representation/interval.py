@@ -13,9 +13,9 @@ from pydantic import (
 from pydantic.functional_serializers import WrapSerializer
 from typing_extensions import Annotated
 
-from funman.utils.logging import inherit_level
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
+from funman.utils.logging import inherit_level
 
 l = logging.getLogger(__name__)
 
