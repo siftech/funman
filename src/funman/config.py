@@ -116,7 +116,7 @@ class FUNMANConfig(BaseModel):
     corner_points: bool = False
     """ Compute Corner points of each box """
 
-    verbosity: int = logging.INFO
+    verbosity: int = logging.ERROR
     """ Verbosity (INFO, DEBUG, TRACE, WARN, ERROR)"""
 
     use_transition_symbols: bool = False

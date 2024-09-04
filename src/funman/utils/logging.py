@@ -14,6 +14,10 @@ def set_level(level: int):
     for h in handlers:
         h.setLevel(level)
 
+def inherit_level(subLogger: logging.Logger):
+    rootLogger = logging.getLogger()
+    rootLevel = rootLogger.level
+    subLogger.level = rootLevel
 
 def add_handler():
     logging.basicConfig()

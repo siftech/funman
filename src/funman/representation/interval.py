@@ -13,6 +13,7 @@ from pydantic import (
 from pydantic.functional_serializers import WrapSerializer
 from typing_extensions import Annotated
 
+from funman.utils.logging import inherit_level
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
 
@@ -412,6 +413,7 @@ class Interval(BaseModel):
 
         # Assume that intervals where lb == ub imply closed_upper_bound
         if self.lb == self.ub and not self.closed_upper_bound:
+            inherit_level(l)
             l.warning(
                 f"{self} has equal lower and upper bounds, so assuming the upper bound is closed.  (I.e., [lb, ub) is actually [lb, ub])"
             )

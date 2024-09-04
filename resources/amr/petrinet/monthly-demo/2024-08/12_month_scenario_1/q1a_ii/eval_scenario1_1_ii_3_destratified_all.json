@@ -350,12 +350,12 @@
             "rates": [
                 {
                     "target": "t1_to_4_lb",
-                    "expression": "I_ub*S_lb*beta*(-c_m_ub*eps_m_ub + 1)/N",
+                    "expression": "I_lb*S_lb*beta*(-c_m_ub*eps_m_ub + 1)/N",
                     "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
                 },
                 {
                     "target": "t1_to_4_ub",
-                    "expression": "I_lb*S_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression": "I_ub*S_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
                     "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
                 },
                 {
@@ -390,12 +390,12 @@
                 },
                 {
                     "target": "t11_lb",
-                    "expression": "H_ub*p_H_to_R*r_H_to_R",
+                    "expression": "H_lb*p_H_to_R*r_H_to_R",
                     "expression_mathml": "<apply><times/><ci>H_lb</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
                 },
                 {
                     "target": "t11_ub",
-                    "expression": "H_lb*p_H_to_R*r_H_to_R",
+                    "expression": "H_ub*p_H_to_R*r_H_to_R",
                     "expression_mathml": "<apply><times/><ci>H_ub</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
                 },
                 {
