@@ -1,148 +1,74 @@
-The SIERHD model from the July monthly demo uses the model summarized by the Petrinet diagram in Figure \ref{fig:seirhd}.
+The SIERHD model from the August monthly demo uses the model summarized by the Petrinet diagram in Figure \ref{fig:seirhd}.
 
 \begin{figure}
-    \includegraphics[width=\linewidth]{fig/seirhd}
+    \includegraphics[width=\linewidth]{fig/seirhd-aug}
     \caption{\label{fig:seirhd} SEIRHD Model Petrinet}
 \end{figure}
 
-The following transitions connect the variables $S_u$, $S_v$, $E_u$, $E_v$, $I_u$, and $I_v$:
+The following transitions connect the variables $S_c$, $S_{nc}$, $E_c$, $E_{nc}$, $I_c$, and $I_{nc}$, $R$, $H$, $D$:
 
 \begin{eqnarray*}
-    (I_u, S_u) &\xrightarrow[]{r_1}& (I_u, E_u)\\
-    (I_u, S_v) &\xrightarrow[]{r_2}& (I_u, E_v)\\
-    (I_v, S_u) &\xrightarrow[]{r_3}& (I_v, E_u)\\
-    (I_v, S_v) &\xrightarrow[]{r_4}& (I_v, E_v)\\
-    (S_u) &\xrightarrow[]{r_5}& (S_v)\\
-    (S_v) &\xrightarrow[]{r_6}& (S_u)\\
-    (E_u) &\xrightarrow[]{r_7}& (I_u)\\
-    (E_v) &\xrightarrow[]{r_8}& (I_v)
+    t_1: (I_c, S_c) &\xrightarrow[]{r_1}& (I_c, E_c) \\
+    t_2: (I_{nc}, S_c) &\xrightarrow[]{r_2}& (I_{nc}, E_c)\\
+    t_3: (I_{nc}, S_{nc}) &\xrightarrow[]{r_3}& (I_{nc}, E_{nc})\\
+    t_4: (I_c, S_{nc}) &\xrightarrow[]{r_4}& (I_c, E_{nc})\\
+    t_5: (E_c) &\xrightarrow[]{r_5}& (I_c)\\
+    t_6:(E_{nc}) &\xrightarrow[]{r_6}& (I_{nc})\\
+    t_7:(I_c) &\xrightarrow[]{r_7}& (R)\\
+    t_8: (I_{nc}) &\xrightarrow[]{r_8}& (R)\\
+    t_9:(I_c) &\xrightarrow[]{r_9}& (H)\\
+    t_{10}:(I_{nc}) &\xrightarrow[]{r_{10}}& (H)\\
+    t_{11}:(H) &\xrightarrow[]{r_{11}}& (R)\\
+    t_{12}:(H) &\xrightarrow[]{r_{12}}& (D)\\
+    t_{13}:(S_{nc}) &\xrightarrow[]{r_{13}}& (S_c)\\
+    t_{14}:(S_c) &\xrightarrow[]{r_{14}}& (S_{nc})\\
+    t_{15}:(E_{nc}) &\xrightarrow[]{r_{15}}& (E_c)\\
+    t_{16}:(E_c) &\xrightarrow[]{r_{16}}& (E_{nc})\\
+    t_{17}:(I_{nc}) &\xrightarrow[]{r_{17}}& (I_c)\\
+    t_{18}:(I_c) &\xrightarrow[]{r_{18}}& (I_{nc})
 \end{eqnarray*}
 
-Recovering the original, unstratified model corresponds to an abstraction where $S = (S_u, S_v)$, $I = (I_u, I_v)$, and $E = (E_u, E_v)$: 
+Abstracting this base model involves merging variables, such as $S_c$ and $S_{nc}$ into a composite variable $S$ where $S = S_c + S_{nc}$.  In this approach, a composite variable can represent any number of stratified copies of a variable (e.g., $S$ stratified by ten age groups). We also abstract the base model transitions so that their source and target variables are composite variables.  For example, if we define composite variables $S$, $I$, and $E$ for the corresponding stratified variables in the base model, then transitions $t_1$ to $t_4$ become the composite transition $t_{1:4}$:
 
 \begin{eqnarray*}
-    (I, S) &\xrightarrow[]{r_1}& (I, E)\\
-    (I, S) &\xrightarrow[]{r_2}& (I, E)\\
-    (I, S) &\xrightarrow[]{r_3}& (I, E)\\
-    (I, S) &\xrightarrow[]{r_4}& (I, E)\\
-    (S) &\xrightarrow[]{r_5}& (S)\\
-    (S) &\xrightarrow[]{r_6}& (S)\\
-    (E) &\xrightarrow[]{r_7}& (I)\\
-    (E) &\xrightarrow[]{r_8}& (I)
+    t_{1:4}:(I, S) &\xrightarrow[]{r_{1:4}}& (I, E)
 \end{eqnarray*}
 
-In order for the abstraction to preserve the semantics of the stratified model, it must define $S^t = S_u^t + S_v^t$, $I^t = I_u^t + I_v^t$, and $E^t = E_u^t + E_v^t$ for all time points $t$.  If we look at the definitions for these terms, we have:
+\noindent where $r_{1:4}$ is the composite rate of flow and $r_{1:4} = \sum_{i=1}^4 r_i$.  The composite rate of flow $r_{1:4}$ between the base variables due to the base transitions becomes difficult to track because we no longer separately model each base variable.  For example $r_1 = \frac{I_c S_c \beta(-c_{m_0}*\epsilon_{m_0} + 1)}{N}$, depends upon $I_c$ and $S_c$, and they are no longer variables in the abstract model.  We express $r_{1:4}$ in terms of the abstract variables by bounding it.  Bounding the rate expressions implies that we must also bound each of the variables.  We denote the upper and lower bounds with the $ub$ and $lb$ superscripts. 
+
+For example, we express the rate $r_{1:4}$ with a pair of rates $r^{lb}_{1:4}$ and $r^{ub}_{1:4}$.  If we assume that the composite rate preserves the total flow between base model variables, we define bounds on the rate as follows: 
 
 \begin{eqnarray*}
-    \frac{\partial S_u}{\partial t} &=& - I_u S_u r_1 - I_v S_u r_3 - S_u r_5 + S_v r_6\\
-    \frac{\partial S_v}{\partial t} &=& - I_u S_v r_2 - I_v S_v r_4 + S_u r_5 - S_v r_6\\ 
-    \frac{\partial S}{\partial t} &=& \frac{\partial S_u}{\partial t}  + \frac{\partial S_v}{\partial t} \\
-    &=& - I_u S_u r_1 - I_v S_u r_3 - S_u r_5 + S_v r_6 - I_u S_v r_2 - I_v S_v r_4 + S_u r_5 - S_v r_6\\
-    &=& - I_u S_u r_1 - I_v S_u r_3 - I_u S_v r_2 - I_v S_v r_4 \\
+    S(t+dt) &=& S_c(t+dt) + S_{nc}(t+dt)\\
+    &=& S_c(t) - (r_1+ r_2)dt  + S_{nc}(t) - (r_3+ r_4)dt\\
+    &=& S(t) - (r_1+ r_2 +r_3+ r_4)dt\\
+    &=& S(t) - \biggl(\frac{I_c S_c \beta(1-c_{m_0}\epsilon_{m_0})}{N}+\frac{I_{nc} S_c \beta(1-c_{m_1}\epsilon_{m_1} )}{N}+\\
+    &&\qquad\qquad\frac{I_{nc} S_{nc} \beta(1-c_{m_2}\epsilon_{m_2} )}{N}+\frac{I_c S_{nc} \beta(1-c_{m_3}\epsilon_{m_3} )}{N}\biggl)dt\\
+    &\leq& S(t) - \biggl(\frac{I_c S_c \beta(1-c^{ub}_{m}\epsilon^{ub}_{m}  )}{N}+\frac{I_{nc} S_c \beta(1-c^{ub}_{m}\epsilon^{ub}_{m})}{N}+\\
+    &&\qquad\qquad\frac{I_{nc} S_{nc} \beta(1-c^{ub}_{m}\epsilon^{ub}_{m})}{N}+\frac{I_c S_{nc} \beta(1-c^{ub}_{m}\epsilon^{ub}_{m} )}{N}\biggl)dt\\
+    &=& S(t) - \frac{\beta(1-c^{ub}_{m}\epsilon^{ub}_{m} )}{N}(I_c S_c +I_{nc} S_c +I_{nc} S_{nc} +I_c S_{nc} )dt\\
+    &=& S(t) - \frac{\beta(1-c^{ub}_{m}\epsilon^{ub}_{m} )}{N}((I_c+I_{nc}) (S_c + S_{nc}) )dt\\
+    &=& S(t) - \frac{\beta(1-c^{ub}_{m}\epsilon^{ub}_{m} )}{N}(IS)dt\\
+    &\leq& S^{ub}(t) - \frac{I^{lb}S^{lb}\beta(1-c^{ub}_{m}\epsilon^{ub}_{m} )}{N}dt\\
+    &=& S^{ub}(t+dt)
+    % &&
 \end{eqnarray*}
 
-\begin{eqnarray*}
-    \frac{\partial I_u}{\partial t} &=& I_u S_u r_1 - I_u S_u r_1 + I_u S_v r_2 - I_u S_v r_2 + E_u r_7\\
-    &=&  E_u r_7\\
-    \frac{\partial I_v}{\partial t} &=& I_v S_u r_3 - I_v S_u r_3 + I_v S_v r_4 - I_v S_v r_4 + E_v r_8\\ 
-    &=& E_v r_8\\ 
-    \frac{\partial I}{\partial t} &=& \frac{\partial I_u}{\partial t}  + \frac{\partial I_v}{\partial t} \\
-    &=& E_u r_7 + E_v r_8
-\end{eqnarray*}
+\noindent where the upper bound $S^{ub}(t+dt)$ assumes that the negative rate terms have minimal magnitude (i.e., the upper bound decreases by the least amount). The terms are minimal when they are replaced by the appropriate bounds $I^{lb}$, $S^{lb}$, $c^{ub}_{m}$, $\epsilon^{ub}_{m}$.  The lower bound $S^{ub}(t+dt)$ uses a similar approach, instead selecting bounds with a maximum magnitude and decreasing the lower bound by greatest amount.  Positive rate terms are handled similarly so that they are maximal when used to compute upper bounds and minimal for lower bounds.
 
-\begin{eqnarray*}
-    \frac{\partial E_u}{\partial t} &=& I_u S_u r_1 + I_v S_u r_3 - E_u r_7\\
-    \frac{\partial E_v}{\partial t} &=& I_u S_v r_2 + I_v S_v r_4 - E_v r_8\\ 
-    \frac{\partial E}{\partial t} &=& \frac{\partial E_u}{\partial t}  + \frac{\partial E_v}{\partial t} \\
-    &=& I_u S_u r_1 + I_v S_u r_3 - E_u r_7 + I_u S_v r_2 + I_v S_v r_4 - E_v r_8
-\end{eqnarray*}
+The abstract model that de-stratifies the base model defines 12 compartments (lower and upper bound for each variable after defining the composite variables), and 12 transitions (lower and upper bound for each composite transition).  While the resulting model has fewer transitions, it has more compartments.  However, we would have constructed the same size abstraction for a stratified model with an arbitrary number of levels.  For example, if the base model used ten levels instead of two, then it would have 33 compartments and significantly more transitions.  
 
-Abstraction implies that we allow additional behaviors in the more abstract model (i.e., overapproximate).  In Petrinet models, overapproximation corresponds to cases where the abstract compartment may take on additional values beyond those possible when aggregating the corresponding refined compartments.
+We developed two abstract models from the base model.  The first, as described above, de-stratifies the $S$, $E$, and $I$ variables.  The second, de-stratifies only $S$ and $E$, allowing $I$ to remain stratified.  
 
+\begin{figure}
+    \includegraphics[width=\linewidth]{fig/seirhd_bounds.pdf}
+    \caption{\label{fig:seirhd-bounds} SEIRHD Model Bounds}
+\end{figure}
 
-
-\begin{eqnarray*}
-    \underline{\frac{\partial S_u}{\partial t}} &\geq&  - \overline{I_u} \overline{S_u} r_1 - \overline{I_v} \overline{S_u} r_3 - \overline{S_u} r_5 + \underline{S_v} r_6\\
-    &=&  - N^2 r_1 - N^2 r_3 - N r_5 + 0 r_6\\
-    &=&  - S_u^0 (N  r_1 + N r_3 + r_5)\\
-    \\
-    \overline{\frac{\partial S_u}{\partial t}} &\leq&  - \underline{I_u} \underline{S_u} r_1 - \underline{I_v} \underline{S_u} r_3 - \underline{S_u} r_5 + \overline{S_v} r_6\\
-    &=&   - 0 0 r_1 - 0 0 r_3 - 0 r_5 + S_v^0 r_6\\
-    &=&  S_v^0 r_6\\
-    \\
-    \underline{\frac{\partial S_v}{\partial t}} &\geq&  - \overline{I_u} \overline{S_v} r_2 - \overline{I_v} \overline{S_v} r_4 + \underline{S_u} r_5 +-\overline{S_v} r_6\\
-    &=&  - N S_v^0 r_1 - N S_v^0 r_4 - 0 r_5 + S_v^0 r_6\\
-    &=&  - S_v^0 (N  r_1 + N r_4 + r_6)\\
-    \\
-    \overline{\frac{\partial S_v}{\partial t}} &\leq&  - \underline{I_u} \underline{S_v} r_2 - \underline{I_v} \underline{S_v} r_4 + \overline{S_u} r_5 -\underline{S_v} r_6\\
-    &=&  - 0 0 r_1 -0 0 r_4 + S_u^0 r_5 - 0 r_6\\
-    &=&  S_u^0 r_5\\
-    \\
-    \frac{\partial S}{\partial t} &\leq& \overline{\frac{\partial S_u}{\partial t}}  + \overline{\frac{\partial S_v}{\partial t}}\\
-    &\leq& S_v^0 r_6 + S_u^0 r_5\\
-    \frac{\partial S}{\partial t} &\geq& \underline{\frac{\partial S_u}{\partial t}}  + \underline{\frac{\partial S_v}{\partial t}}\\
-    &\geq& - S_u^0 (N  r_1 + N r_3 + r_5) - S_v^0 (N  r_1 + N r_4 + r_6)
-    \\
-\end{eqnarray*}
-
-\begin{eqnarray*}
-    \underline{\frac{\partial I_u}{\partial t}} &\geq&   \underline{I_u} \underline{S_u} r_1 - \overline{I_u} \overline{S_u} r_1 + \underline{I_u} \underline{S_v} r_2 - \overline{I_u} \overline{S_v} r_2 + \underline{E_u} r_7\\
-    &=&  0 0 r_1 - N S_u^0 r_1 + 0 0 r_2 - N S_v^0 r_2 + 0 r_7\\
-    &=&  - N (S_u^0 r_1 + S_v^0 r_2)\\
-    \\
-    \overline{\frac{\partial I_u}{\partial t}} &\leq& \overline{I_u} \overline{S_u} r_1 - \underline{I_u} \underline{S_u} r_1 + \overline{I_u} \overline{S_v} r_2 - \underline{I_u} \underline{S_v} r_2 + \overline{E_u} r_7\\
-    &=&  N S_u^0 r_1 - 0 0 r_1 + N S_v^0 r_2 - 0 0 r_2 + N r_7\\
-    &=&  N (S_u^0 r_1 + S_v^0 r_2 + r_7)\\
-    \\
-    \underline{\frac{\partial I_v}{\partial t}} &\geq&  \underline{I_v} \underline{S_u} r_3 - \overline{I_v} \overline{S_u} r_3 + \underline{I_v} \underline{S_v} r_4 - \overline{I_v} \overline{S_v} r_4 + \underline{E_v} r_8\\
-    &=&  0 0 r_3 - N S_u^0 r_3 + 0 0  r_4 - N S_v^0 r_4 + 0 r_8\\
-    &=&  - N (S_u^0 r_3 + S_v^0 r_4)\\
-    \\
-    \overline{\frac{\partial I_v}{\partial t}} &\leq&  \overline{I_v} \overline{S_u} r_3 - \underline{I_v} \underline{S_u} r_3 + \overline{I_v} \overline{S_v} r_4 - \underline{I_v} \underline{S_v} r_4 + \overline{E_v} r_8\\
-    &=&  N S_u^0 r_3 - 0 0 r_3 + N S_v^0 r_4 - 0 0 r_4 + N r_8\\
-    &=&  N (S_u^0 r_3 + S_v^0 r_4 + r_8)\\
-    \\
-    \frac{\partial I}{\partial t} &\leq& \overline{\frac{\partial I_u}{\partial t}}  + \overline{\frac{\partial I_v}{\partial t}}\\
-    &\leq& N (S_u^0 r_1 + S_v^0 r_2 + r_7) + N (S_u^0 r_3 + S_v^0 r_4 + r_8)\\
-    &=& N (S_u^0 r_1 + S_v^0 r_2 + r_7 + S_u^0 r_3 + S_v^0 r_4 + r_8)\\
-    \frac{\partial I}{\partial t} &\geq& \underline{\frac{\partial I_u}{\partial t}}  + \underline{\frac{\partial I_v}{\partial t}}\\
-    &\geq& - N (S_u^0 r_1 + S_v^0 r_2 + S_u^0 r_3 + S_v^0 r_4)
-    \\
-\end{eqnarray*}
-
-\begin{eqnarray*}
-    \underline{\frac{\partial E_u}{\partial t}} &\geq&   \underline{I_u} \underline{S_u} r_1 + \underline{I_v} \underline{S_u} r_3 - \overline{E_u} r_7\\
-    &=&  0 0  r_1 + 0 0 r_3 - N r_7\\
-    &=&  - N r_7\\
-    \\
-    \overline{\frac{\partial E_u}{\partial t}} &\leq& \overline{I_u} \overline{S_u} r_1 + \overline{I_v} \overline{S_u} r_3 - \underline{E_u} r_7\\
-    &=&  N S_u^0 r_1 + N S_u^0 r_3 - 0 r_7\\
-    &=&  N S_u^0 (r_1 + r_3)\\
-    \\
-    \underline{\frac{\partial E_v}{\partial t}} &\geq&  \underline{I_u} \underline{S_v} r_2 + \underline{I_v} \underline{S_v} r_4 - \overline{E_v} r_8\\
-    &=&  0 0 r_2 + 0 0  r_4 -N r_8\\
-    &=&  -N r_8\\
-    \\
-    \overline{\frac{\partial E_v}{\partial t}} &\leq&  \overline{I_u} \overline{S_v} r_2 + \overline{I_v} \overline{S_v} r_4 - \underline{E_v} r_8\\
-    &=&  N S_v^0 r_2 +N S_v^0 r_4 - 0 r_8\\
-    &=&  N S_v^0 (r_2 + r_4)\\
-    \\
-    \frac{\partial E}{\partial t} &\leq& \overline{\frac{\partial E_u}{\partial t}}  + \overline{\frac{\partial E_v}{\partial t}}\\
-    &\leq& N S_u^0 (r_1 + r_3) +N S_v^0 (r_2 + r_4)\\
-    \frac{\partial E}{\partial t} &\geq& \underline{\frac{\partial E_u}{\partial t}}  + \underline{\frac{\partial E_v}{\partial t}}\\
-    &\geq& - N (r_7 + r_8)\\
-    \\
-\end{eqnarray*}
-
-\begin{eqnarray*}
-    S^{t+dt} &=& S^t + \frac{\partial S}{\partial t}dt\\
-    S^{t+dt} &\leq& S^t + \overline{\frac{\partial S}{\partial t}}dt\\
-    &=& S^t + (- \underline{I_u} \underline{S_u} r_1 - \underline{I_v} \underline{S_u} r_3 - \underline{S_u} r_5 + \overline{S_v} r_6)dt
-\end{eqnarray*}
-
-Assume that all compartments are population constrained.  Use information about monotonicity.
-
-\[\frac{\partial S_u}{\partial t} \leq 0, 0 \leq S_u \leq N\]
-\[\frac{\partial S_v}{\partial t} \leq 0, 0 \leq S_v \leq N\]
-\[ 0 \leq I_u \leq N\]
-\[ 0 \leq I_v \leq N\]
+Figure \ref{fig:seirhd-bounds} illustrates the bounds computed by simulating the base and abstract models with FUNMAN.  Each subplot is one compartment variable, and each series is one of the bounds or base model value.  For example, the second plot illustrates $I$, which includes:
+\begin{itemize}
+    \item Base model: $I$\_compliant and $I$\_\text{noncompliant}, 
+    \item De-stratified $S$, $E$, and $I$:  $I$\_\text{lb} and $I$\_\text{ub},
+     \item De-stratified $S$, and $E$:  $I$\_compliant\_lb, $I$\_compliant\_ub,$I$\_noncompliant\_lb and $I$\_noncompliant\_ub,
+\end{itemize}
+The abstractions provide different bounds for each variable.  In general, as abstraction increases, the model will provide looser bounds, but with a smaller model.  Using abstraction refinement techniques, it is possible to start with an abstract model and only refine the relevant variables.  Selectively refining models will trade off multiple abstract model simulations against a single, potentially large model simulation.  In cases where the bounds are enough to answer a query (or check a constraint), the abstract model simulation can lead to significant scale up.  
