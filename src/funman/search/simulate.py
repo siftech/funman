@@ -33,11 +33,11 @@ class Simulator(BaseModel):
     def initial_state(self) -> List[float]:
         init_state = [
             (
-                sympy.sympify(v).evalf(subs=self.parameters)
-                if isinstance(v, str)
-                else v
+                sympy.sympify(self.init[var]).evalf(subs=self.parameters)
+                if isinstance(self.init[var], str)
+                else self.init[var]
             )
-            for var, v in self.init.items()
+            for var in self.model._state_var_names()
         ]
         return tuple(init_state)
 

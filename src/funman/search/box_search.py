@@ -408,7 +408,7 @@ class BoxSearch(Search):
         else:
             if not process_name:
                 process_name = "BoxSearch"
-            l = logging.Logger(process_name)
+            l = logging.getLogger(process_name)
         return l
 
     def _handle_empty_queue(

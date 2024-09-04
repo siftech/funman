@@ -16,7 +16,7 @@ from typing_extensions import Annotated
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
 
-l = logging.Logger(__name__)
+l = logging.getLogger(__name__)
 
 
 class Interval(BaseModel):
