@@ -9,6 +9,7 @@ from typing import List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
+from funman.constants import MODE_ODEINT, Mode
 from funman.utils.handlers import (
     NoopResultHandler,
     ResultCombinedHandler,
@@ -133,6 +134,9 @@ class FUNMANConfig(BaseModel):
 
     prioritize_box_entropy: bool = True
     """ When comparing boxes, prefer those with low entropy """
+
+    mode: Mode = MODE_ODEINT
+    """ Mode to run FUNMAN, either funman.constants.MODE_ODEINT or funman.constants.MODE_SMT """
 
     @field_validator("solver")
     @classmethod

@@ -13,6 +13,8 @@ from pydantic import BaseModel, ConfigDict
 from pysmt.solvers.solver import Model as pysmt_Model
 
 from funman import Point
+from funman.constants import MODE_ODEINT, MODE_SMT
+from funman.representation.box import Box
 from funman.scenario import AnalysisScenario, AnalysisScenarioResult
 from funman.translate import Encoding
 
@@ -73,29 +75,39 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
         """
         search = self.initialize(config)
 
-        parameter_space, models, consistent = search.search(
-            self,
-            config=config,
-            haltEvent=haltEvent,
-            resultsCallback=resultsCallback,
-        )
+        if config.mode == MODE_SMT:
+            parameter_space, models, consistent = search.search(
+                self,
+                config=config,
+                haltEvent=haltEvent,
+                resultsCallback=resultsCallback,
+            )
 
-        parameter_space.num_dimensions = len(self.parameters)
-        l.info(parameter_space)
-        scenario_result = ConsistencyScenarioResult(
-            scenario=self,
-            consistent=consistent,
-            parameter_space=parameter_space,
-        )
-        scenario_result._models = models
+            parameter_space.num_dimensions = len(self.parameters)
+            l.info(parameter_space)
+            scenario_result = ConsistencyScenarioResult(
+                scenario=self,
+                consistent=consistent,
+                parameter_space=parameter_space,
+            )
+            scenario_result._models = models
 
-        start_time = datetime.now()
-        assert self.check_simulation(
-            config, scenario_result
-        ), "Simulation of solution is invalid."
-        duration = datetime.now() - start_time
-        l.info(f"Simulation Time: {duration}")
-
+            start_time = datetime.now()
+            assert self.check_simulation(
+                config, scenario_result
+            ), "Simulation of solution is invalid."
+            duration = datetime.now() - start_time
+            l.info(f"Simulation Time: {duration}")
+        elif config.mode == MODE_ODEINT:
+            point = self.simulate_scenario(config)
+            parameter_space = ParameterSpace(
+                num_dimensions=len(self.parameters)
+            )
+            parameter_space.true_boxes.append(Box.from_point(point))
+            scenario_result = ConsistencyScenarioResult(
+                scenario=self, consistent={}, parameter_space=parameter_space
+            )
+            resultsCallback(parameter_space)
         return scenario_result
 
 

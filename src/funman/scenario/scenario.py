@@ -33,6 +33,7 @@ from funman import (
     QueryTrue,
     StructureParameter,
 )
+from funman.constants import LABEL_TRUE, LABEL_UNKNOWN
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
@@ -348,7 +349,16 @@ class AnalysisScenario(ABC, BaseModel):
             self.normalization_constant = 1.0
             l.warning("Warning: The scenario is not normalized!")
 
-    def check_point_simulation(
+    def run_scenario_simulation(
+        self, init, parameters, tvect
+    ) -> Optional[Timeseries]:
+        simulator = Simulator(
+            model=self.model, init=init, parameters=parameters, tvect=tvect
+        )
+        timeseries = simulator.sim()
+        return timeseries
+
+    def run_point_simulation(
         self, point: Point, tvect
     ) -> Optional[Timeseries]:
         init = {
@@ -385,14 +395,71 @@ class AnalysisScenario(ABC, BaseModel):
 
         return tvects
 
+    def simulate_scenario(self, config: "FUNMANConfig") -> Point:
+
+        init = {
+            var: float(
+                self.model._get_init_value(var, self, config).constant_value()
+            )
+            for var in self.model._state_var_names()
+        }
+        parameters = {
+            p: pm.interval.lb
+            for p in self.model._parameter_names()
+            for pm in self.parameters
+            if pm.name == p
+        }
+        # parameters = {
+        #     p.name: p.interval.lb
+        #     for p in self.parameters
+        #     }
+        # timestamped_variables ={f"{var}_{tp}": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()}
+        schedule = self.structure_parameter("schedules").schedules[0]
+        timepoints = schedule.timepoints
+
+        timeseries = self.run_scenario_simulation(init, parameters, timepoints)
+        values = {
+            **{
+                f"{var}_{int(timepoint)}": timeseries.data[var_idx][timestep]
+                for var_idx, var in enumerate(timeseries.columns[1:])
+                for timestep, timepoint in enumerate(timeseries.data[0])
+            },
+            **parameters,
+            **{"timestep": len(timepoints) - 1},
+        }
+        point = Point(
+            values=values,
+            label=LABEL_TRUE,
+            schedule=schedule,
+            simulation=timeseries,
+        )
+
+        # with Solver() as solver:
+        #         sim_encoding = self.encode_timeseries_verification(
+        #             point, timeseries
+        #         )
+        #         solver.add_assertion(sim_encoding)
+        #         result = solver.solve()
+        #         if result:
+        #             l.info("simulation passed verification")
+        #         else:
+        #             l.info("simulation failed verification")
+        #             return False
+
+        return point
+
     def check_simulation(
         self, config: "FUNMANConfig", results: "AnalysisScenarioResult"
     ):
         # Check solution with simulation
         sim_results = []
-        for point in results.parameter_space.points():
-            timeseries = self.check_point_simulation(
-                point, point.relevant_timepoints(results.scenario.model)
+
+        points = results.parameter_space.points()
+        # [Point(label=LABEL_UNKNOWN, values={**{p.name: p.interval.lb for p in self.parameters}, **{f"{var}_0": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()},**{f"{var}_{tp}": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()}})] if results is None else
+
+        for point in points:
+            timeseries = self.run_point_simulation(
+                point, point.relevant_timepoints(self.model)
             )
             sim_results.append((point, timeseries))
             point.simulation = timeseries
