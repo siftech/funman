@@ -12,6 +12,10 @@ from ..representation.representation import Timeseries
 
 numeric = Union[int, float]
 
+import logging
+
+l = logging.getLogger(__name__)
+
 
 class Simulator(BaseModel):
     model: FunmanModel
@@ -45,12 +49,20 @@ class Simulator(BaseModel):
         # gradient_fn = partial(self.model.gradient, self.model) # hide the self reference to self.model from odeint
 
         if self.model._is_differentiable:
+            full_output = 1
             timeseries = odeint(
                 self.model.gradient,
                 self.initial_state(),
                 self.tvect,
                 args=self.model_args(),
+                full_output=full_output,
+                rtol=1,
+                atol=1,
             )
+            if full_output == 1:
+                timeseries, output = timeseries
+
+            l.debug(f"odeint output: {output}")
 
             ts = Timeseries(
                 data=[self.tvect] + timeseries.T.tolist(),
