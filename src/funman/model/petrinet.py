@@ -184,6 +184,7 @@ class AbstractPetriNetModel(FunmanModel):
     ):  # var_to_value, param_to_value):
         # param_at_t = {p: pv(t).item() for p, pv in param_to_value.items()}
         # FIXME assumes each transition has only one rate
+        # print(f"Calling with args {var_name}; {t}; {values}; {params}")
         pos_rates = [
             # self._transition_rate(trans)[0].evalf(
             #     subs={**var_to_value, **param_at_t}
@@ -202,14 +203,16 @@ class AbstractPetriNetModel(FunmanModel):
             for var in trans.input
             if var_name == var
         ]
+        # print(f"Got rates {pos_rates} {neg_rates}")
 
         return sum(pos_rates) - sum(neg_rates)
 
-    def gradient(self, y, t, *p):
+    def gradient(self, t, y, *p):
         # FIXME support time varying paramters by treating parameters as a function
-        var_to_value = {
-            var: y[i] for i, var in enumerate(self._state_var_names())
-        }
+        # var_to_value = {
+        #     var: y[i] for i, var in enumerate(self._state_var_names())
+        # }
+        print(f"y: {y}; t: {t}")
         param_to_value = {
             param: p[i] for i, param in enumerate(self._parameter_names())
         }
@@ -226,6 +229,8 @@ class AbstractPetriNetModel(FunmanModel):
             self.derivative(var, t, y, params)  # var_to_value, param_to_value)
             for var in self._state_var_names()
         ]
+        print(f"vars: {self._state_var_names()}")
+        print(f"gradient: {grad}")
         return grad
 
 

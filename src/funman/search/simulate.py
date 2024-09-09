@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import sympy
 from pydantic import BaseModel
-from scipy.integrate import odeint
+from scipy.integrate import odeint, solve_ivp
 
 from funman import FunmanModel
 
@@ -50,19 +50,34 @@ class Simulator(BaseModel):
 
         if self.model._is_differentiable:
             full_output = 1
-            timeseries = odeint(
-                self.model.gradient,
-                self.initial_state(),
-                self.tvect,
-                args=self.model_args(),
-                full_output=full_output,
-                rtol=1,
-                atol=1,
-            )
-            if full_output == 1:
-                timeseries, output = timeseries
+            use_odeint = False
+            if use_odeint:
+                timeseries = odeint(
+                    self.model.gradient,
+                    self.tvect,
+                    self.initial_state(),
+                    args=self.model_args(),
+                    full_output=full_output,
+                    tfirst=True,
+                    rtol=1,
+                    atol=1,
+                )
+                if full_output == 1:
+                    timeseries, output = timeseries
 
-            l.debug(f"odeint output: {output}")
+                l.debug(f"odeint output: {output}")
+            else:
+                timseries = solve_ivp(
+                    self.model.gradient,
+                    (self.tvect[0], self.tvect[-1]),
+                    self.initial_state(),
+                    args=self.model_args(),
+                    t_eval=self.tvect,
+                    first_step=1.0,
+                    max_step=1.0,
+                    rtol=1.0,
+                    atol=1.0,
+                )
 
             ts = Timeseries(
                 data=[self.tvect] + timeseries.T.tolist(),

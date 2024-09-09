@@ -545,7 +545,7 @@
                 },
                 {
                     "id": "eps_m_0",
-                    "value": 0.5,
+                    "value": 0.4,
                     "units": {
                         "expression": "1",
                         "expression_mathml": "<cn>1</cn>"
@@ -553,7 +553,7 @@
                 },
                 {
                     "id": "c_m_1",
-                    "value": 0.5,
+                    "value": 0.4,
                     "units": {
                         "expression": "1",
                         "expression_mathml": "<cn>1</cn>"
@@ -561,7 +561,7 @@
                 },
                 {
                     "id": "eps_m_1",
-                    "value": 0.5,
+                    "value": 0.6,
                     "units": {
                         "expression": "1",
                         "expression_mathml": "<cn>1</cn>"
@@ -569,7 +569,7 @@
                 },
                 {
                     "id": "c_m_2",
-                    "value": 0.5,
+                    "value": 0.6,
                     "units": {
                         "expression": "1",
                         "expression_mathml": "<cn>1</cn>"
