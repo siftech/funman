@@ -276,7 +276,30 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
     petrinet: GeneratedPetrinet
     _transition_rates_cache: Dict[str, Union[sympy.Expr, str]] = {}
+    _observables_cache: Dict[str, Union[sympy.Expr, str]] = {}
     _transition_rates_lambda_cache: Dict[str, Union[Callable, str]] = {}
+
+    def observables(self):
+        return self.petrinet.semantics.ode.observables
+
+    def is_timed_observable(self, observation_id):
+        (_, e) = self.observable_expression(observation_id)
+        vars = [str(e) for e in e.get_free_variables()]
+        obs_state_vars = [v for v in vars if v in self._state_var_names()]
+        return any(obs_state_vars)
+
+    def observable_expression(self, observation_id):
+        if observation_id not in self._observables_cache:
+            observable = next(
+                iter([o for o in self.observables() if o.id == observation_id])
+            )
+            self._observables_cache[observation_id] = (
+                observable.expression,
+                sympy_to_pysmt(
+                    to_sympy(observable.expression, self._symbols())
+                ),
+            )
+        return self._observables_cache[observation_id]
 
     def default_encoder(
         self, config: "FUNMANConfig", scenario: "AnalysisScenario"

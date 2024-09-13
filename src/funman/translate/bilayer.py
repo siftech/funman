@@ -90,6 +90,14 @@ class BilayerEncoder(Encoder):
 
         return And(transition, measurements).simplify(), substitutions
 
+    def encode_observation(
+        self, scenario: "AnalysisScenario", step: int, substitutions={}
+    ):
+        l.warning(
+            f"Bilayer model does not support observations.  Results omit observations."
+        )
+        return TRUE()
+
     def _encode_untimed_constraints(
         self, scenario: "AnalysisScenario"
     ) -> FNode:

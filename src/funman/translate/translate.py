@@ -405,15 +405,22 @@ class Encoder(ABC, BaseModel):
         assumptions: List[Assumption],
     ) -> EncodedFormula:
         if layer_idx == 0:
-            return self.encode_init_layer()
+            return self.encode_init_layer(scenario)
         else:
             return self.encode_transition_layer(scenario, layer_idx, options)
 
-    def encode_init_layer(self) -> EncodedFormula:
+    def encode_init_layer(
+        self, scenario: "AnalysisScenario"
+    ) -> EncodedFormula:
         initial_state = self._timed_model_elements["init"]
         initial_symbols = initial_state.get_free_variables()
 
-        return (initial_state, {s.symbol_name(): s for s in initial_symbols})
+        observations = self.encode_observation(scenario, 0, substitutions={})
+
+        return (
+            And(initial_state, observations),
+            {s.symbol_name(): s for s in initial_symbols},
+        )
 
     def encode_transition_layer(
         self,

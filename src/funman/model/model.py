@@ -138,6 +138,11 @@ class FunmanModel(ABC, BaseModel):
 
         return vars
 
+    def observables(self):
+        raise NotImplementedError(
+            f"FunmanModel.observables() is abstract and needs to be implemented by subclass: {type(self)}"
+        )
+
     def calculate_normalization_constant(
         self, scenario: "AnalysisScenario", config: "FUNMANConfig"
     ) -> float:
