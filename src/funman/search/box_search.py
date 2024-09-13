@@ -346,11 +346,11 @@ class BoxSearchEpisode(SearchEpisode):
             },
             schedule=box.schedule,
         )
-        # Timestep is not in the model (implicit)
-        point.values["timestep"] = box.timestep().lb
         point.remove_irrelevant_steps(
             self.problem._smt_encoder._untimed_symbols
         )
+        # Timestep is not in the model (implicit)
+        point.values["timestep"] = box.timestep().lb
         return point
 
 
@@ -1312,6 +1312,7 @@ class BoxSearch(Search):
                             handler(rval, episode.config, all_results)
                             if (
                                 "progress" in all_results
+                                and all_results["progress"] is not None
                                 and all_results["progress"].progress
                                 > last_progress
                             ):

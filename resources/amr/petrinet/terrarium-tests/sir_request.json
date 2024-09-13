@@ -81,6 +81,7 @@
     "config": {
         "use_compartmental_constraints": true,
         "normalization_constant": 1,
-        "tolerance": 0.02
+        "tolerance": 0.02,
+        "normalize": false
     }
 }

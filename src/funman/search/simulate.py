@@ -59,28 +59,37 @@ class Simulator(BaseModel):
                     args=self.model_args(),
                     full_output=full_output,
                     tfirst=True,
-                    rtol=1,
-                    atol=1,
                 )
                 if full_output == 1:
                     timeseries, output = timeseries
 
                 l.debug(f"odeint output: {output}")
+                data = (
+                    timeseries.T.tolist()
+                    if len(timeseries) > 0
+                    else [[v] for v in self.initial_state()]
+                )
             else:
-                timseries = solve_ivp(
+                result = solve_ivp(
                     self.model.gradient,
                     (self.tvect[0], self.tvect[-1]),
                     self.initial_state(),
                     args=self.model_args(),
                     t_eval=self.tvect,
-                    first_step=1.0,
-                    max_step=1.0,
-                    rtol=1.0,
-                    atol=1.0,
+                    # first_step=1.0,
+                    # max_step=1.0,
+                    # rtol=1.0,
+                    # atol=1.0,
                 )
+                timeseries = result.y
 
+                data = (
+                    timeseries.tolist()
+                    if len(timeseries) > 0
+                    else [[v] for v in self.initial_state()]
+                )
             ts = Timeseries(
-                data=[self.tvect] + timeseries.T.tolist(),
+                data=[self.tvect] + data,
                 columns=["time"] + self.model._state_var_names(),
             )
         else:

@@ -5,7 +5,12 @@ import sympy
 from pydantic import BaseModel, ConfigDict
 from pysmt.shortcuts import REAL, Div, Real, Symbol
 
-from funman.utils.sympy_utils import substitute, sympy_to_pysmt, to_sympy
+from funman.utils.sympy_utils import (
+    replace_reserved,
+    substitute,
+    sympy_to_pysmt,
+    to_sympy,
+)
 
 from ..representation.interval import Interval
 from .generated_models.petrinet import Distribution
@@ -180,53 +185,85 @@ class AbstractPetriNetModel(FunmanModel):
         ]
 
     def derivative(
-        self, var_name, t, values, params
+        self,
+        var_name,
+        t,
+        values,
+        params,
+        var_to_value,
+        param_to_value,
+        get_lambda=False,
     ):  # var_to_value, param_to_value):
         # param_at_t = {p: pv(t).item() for p, pv in param_to_value.items()}
         # FIXME assumes each transition has only one rate
         # print(f"Calling with args {var_name}; {t}; {values}; {params}")
-        pos_rates = [
-            # self._transition_rate(trans)[0].evalf(
-            #     subs={**var_to_value, **param_at_t}
-            # )
-            self._transition_rate(trans, getLambda=True)[0](*values, *params)
-            for trans in self._transitions()
-            for var in trans.output
-            if var_name == var
-        ]
-        neg_rates = [
-            # self._transition_rate(trans)[0].evalf(
-            #     subs={**var_to_value, **param_at_t}
-            # )
-            self._transition_rate(trans, getLambda=True)[0](*values, *params)
-            for trans in self._transitions()
-            for var in trans.input
-            if var_name == var
-        ]
+        if get_lambda:
+            pos_rates = [
+                self._transition_rate(trans, get_lambda=get_lambda)[0](
+                    *values, *params
+                )
+                for trans in self._transitions()
+                for var in trans.output
+                if var_name == var
+            ]
+            neg_rates = [
+                self._transition_rate(trans, get_lambda=get_lambda)[0](
+                    *values, *params
+                )
+                for trans in self._transitions()
+                for var in trans.input
+                if var_name == var
+            ]
+        else:
+            pos_rates = [
+                self._transition_rate(trans)[0].evalf(
+                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=5
+                )
+                for trans in self._transitions()
+                for var in trans.output
+                if var_name == var
+            ]
+            neg_rates = [
+                self._transition_rate(trans)[0].evalf(
+                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=5
+                )
+                for trans in self._transitions()
+                for var in trans.input
+                if var_name == var
+            ]
         # print(f"Got rates {pos_rates} {neg_rates}")
 
         return sum(pos_rates) - sum(neg_rates)
 
     def gradient(self, t, y, *p):
         # FIXME support time varying paramters by treating parameters as a function
-        # var_to_value = {
-        #     var: y[i] for i, var in enumerate(self._state_var_names())
-        # }
+        var_to_value = {
+            var: y[i] for i, var in enumerate(self._state_var_names())
+        }
         print(f"y: {y}; t: {t}")
         param_to_value = {
-            param: p[i] for i, param in enumerate(self._parameter_names())
+            param: p[i](t)[()]
+            for i, param in enumerate(self._parameter_names())
         }
         # values = [
         #     y[i] for i, _ in enumerate(self._symbols())
         # ]
         params = [
-            param_to_value[str(p)](t)
+            param_to_value[str(p)]
             for p in self._symbols()
             if str(p) in param_to_value
         ] + [t]
 
         grad = [
-            self.derivative(var, t, y, params)  # var_to_value, param_to_value)
+            self.derivative(
+                var,
+                t,
+                y,
+                params,
+                var_to_value,
+                param_to_value,
+                get_lambda=True,
+            )  # var_to_value, param_to_value)
             for var in self._state_var_names()
         ]
         print(f"vars: {self._state_var_names()}")
@@ -359,7 +396,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _output_edges(self):
         return [(t.id, o) for t in self._transitions() for o in t.output]
 
-    def _transition_rate(self, transition, sympify=False, getLambda=False):
+    def _transition_rate(self, transition, sympify=False, get_lambda=False):
         if hasattr(self.petrinet.semantics, "ode"):
             if transition.id not in self._transition_rates_cache:
                 t_rates = [
@@ -383,8 +420,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         )
                         for t in t_rates
                     ]
+                unreserved_symbols = [
+                    replace_reserved(s) for s in self._symbols()
+                ]
+                # convert "t" to "timer_t"
+                unreserved_symbols[-1] = self._time_var_id(self._time_var())
                 t_rates_lambda = [
-                    sympy.lambdify(self._symbols(), t) for t in t_rates
+                    sympy.lambdify(unreserved_symbols, t) for t in t_rates
                 ]
                 self._transition_rates_cache[transition.id] = t_rates
                 self._transition_rates_lambda_cache[transition.id] = (
@@ -392,7 +434,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 )
             return (
                 self._transition_rates_cache[transition.id]
-                if not getLambda
+                if not get_lambda
                 else self._transition_rates_lambda_cache[transition.id]
             )
         else:
@@ -444,10 +486,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             new_bounds = parameter_bounds[param.id]
             if param.distribution:
                 param.distribution.parameters["minimum"] = max(
-                    new_bounds.lb, param.distribution.parameters["minimum"]
+                    new_bounds.lb,
+                    float(param.distribution.parameters["minimum"]),
                 )
                 param.distribution.parameters["maximum"] = min(
-                    new_bounds.ub, param.distribution.parameters["maximum"]
+                    new_bounds.ub,
+                    float(param.distribution.parameters["maximum"]),
                 )
             else:
                 param.distribution = Distribution(

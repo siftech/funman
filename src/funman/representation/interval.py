@@ -152,7 +152,7 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        l.debug(f"Interval.meets(): {self} {other}")
+        l.trace(f"Interval.meets(): {self} {other}")
         # return self.ub == other.lb or self.lb == other.ub
         if self.closed_upper_bound:
             # cannot be equal to other.lb

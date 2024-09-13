@@ -243,7 +243,7 @@ class FunmanResults(BaseModel):
 
         """
         if not isinstance(self.model, GeneratedPetriNetModel):
-            raise NotImplemented(
+            raise NotImplementedError(
                 f"Cannot contract model of type {type(self.model)}"
             )
 
@@ -291,7 +291,12 @@ class FunmanResults(BaseModel):
         except Exception as e:
             l.exception(f"Unable to update progress due to exception: {e}")
 
-        self.contract_model()
+        try:
+            self.contract_model()
+        except NotImplementedError as e:
+            l.info(
+                f"Bypassing output of contracted model because it is not implmented for this model type: {type(self.model)}"
+            )
 
         return self.progress
 
