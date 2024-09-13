@@ -816,7 +816,6 @@ class Encoder(ABC, BaseModel):
                 ),
                 Minus(Real(nxt_t), Real(curr_t)),
             ).simplify()
-            pass
         else:
             expression = Plus(
                 [
@@ -1112,44 +1111,84 @@ class Encoder(ABC, BaseModel):
     def _encode_state_variable_constraint(
         self,
         scenario: "AnalysisScenario",
-        query: StateVariableConstraint,
+        constraint: StateVariableConstraint,
         layer_idx: int,
         options: EncodingOptions,
         assumptions: List[Assumption],
     ):
         time = options.schedule.time_at_step(layer_idx)
 
-        if query.contains_time(time):
+        if (
+            scenario.model.is_timed_observable(constraint.variable)
+            or constraint.variable in scenario.model._state_var_names()
+        ) and constraint.contains_time(time):
             bounds = (
-                query.interval.normalize(options.normalization_constant)
+                constraint.interval.normalize(options.normalization_constant)
                 if options.normalize
-                else query.interval
+                else constraint.interval
             )
-            symbol = self._encode_state_var(var=query.variable, time=time)
+            symbol = self._encode_state_var(var=constraint.variable, time=time)
 
             norm = (
                 scenario.normalization_constant if options.normalize else 1.0
             )
 
             lb = (
-                math_utils.div(query.interval.lb, norm)
-                if query.interval.lb != NEG_INFINITY
-                else query.interval.lb
+                math_utils.div(constraint.interval.lb, norm)
+                if constraint.interval.lb != NEG_INFINITY
+                else constraint.interval.lb
             )
             ub = (
-                math_utils.div(query.interval.ub, norm)
-                if query.interval.ub != POS_INFINITY
-                else query.interval.ub
+                math_utils.div(constraint.interval.ub, norm)
+                if constraint.interval.ub != POS_INFINITY
+                else constraint.interval.ub
             )
 
             formula = self.interval_to_smt(
-                query.variable,
+                constraint.variable,
                 Interval(
                     lb=lb,
                     ub=ub,
-                    closed_upper_bound=query.interval.closed_upper_bound,
+                    closed_upper_bound=constraint.interval.closed_upper_bound,
                 ),
                 time=time,
+                # closed_upper_bound=query.interval.closed_upper_bound,
+                infinity_constraints=False,
+            )
+        elif (
+            not scenario.model.is_timed_observable(constraint.variable)
+            and not constraint.variable in scenario.model._state_var_names()
+        ) and layer_idx == 0:
+            bounds = (
+                constraint.interval.normalize(options.normalization_constant)
+                if options.normalize
+                else constraint.interval
+            )
+            symbol = self._encode_state_var(var=constraint.variable)
+
+            norm = (
+                scenario.normalization_constant if options.normalize else 1.0
+            )
+
+            lb = (
+                math_utils.div(constraint.interval.lb, norm)
+                if constraint.interval.lb != NEG_INFINITY
+                else constraint.interval.lb
+            )
+            ub = (
+                math_utils.div(constraint.interval.ub, norm)
+                if constraint.interval.ub != POS_INFINITY
+                else constraint.interval.ub
+            )
+
+            formula = self.interval_to_smt(
+                constraint.variable,
+                Interval(
+                    lb=lb,
+                    ub=ub,
+                    closed_upper_bound=constraint.interval.closed_upper_bound,
+                ),
+                time=None,
                 # closed_upper_bound=query.interval.closed_upper_bound,
                 infinity_constraints=False,
             )
