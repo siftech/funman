@@ -12,7 +12,7 @@ from funman.utils.sympy_utils import (
     to_sympy,
 )
 
-from ..representation.interval import Interval
+from ..representation import Interval
 from .generated_models.petrinet import Distribution
 from .generated_models.petrinet import Model as GeneratedPetrinet
 from .generated_models.petrinet import State, Transition
@@ -217,7 +217,7 @@ class AbstractPetriNetModel(FunmanModel):
         else:
             pos_rates = [
                 self._transition_rate(trans)[0].evalf(
-                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=5
+                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=10
                 )
                 for trans in self._transitions()
                 for var in trans.output
@@ -225,7 +225,7 @@ class AbstractPetriNetModel(FunmanModel):
             ]
             neg_rates = [
                 self._transition_rate(trans)[0].evalf(
-                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=5
+                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=10
                 )
                 for trans in self._transitions()
                 for var in trans.input
@@ -242,7 +242,7 @@ class AbstractPetriNetModel(FunmanModel):
         }
         print(f"y: {y}; t: {t}")
         param_to_value = {
-            param: p[i](t)[()]
+            replace_reserved(param): p[i](t)[()]
             for i, param in enumerate(self._parameter_names())
         }
         # values = [
@@ -262,7 +262,7 @@ class AbstractPetriNetModel(FunmanModel):
                 params,
                 var_to_value,
                 param_to_value,
-                get_lambda=True,
+                get_lambda=False,
             )  # var_to_value, param_to_value)
             for var in self._state_var_names()
         ]
