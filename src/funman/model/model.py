@@ -58,6 +58,14 @@ def is_state_variable(
     pattern = re.compile(f"^(?:{vars_pattern}).*_{time_pattern}")
     return re.match(pattern, var_string) is not None
 
+def is_observable(
+    var_string, model: "FunmanModel", time_pattern: str = f"[\\d]+$"
+) -> bool:
+    vars_pattern = "|".join(model._observable_names())
+    pattern = re.compile(f"^(?:{vars_pattern}).*")
+    return re.match(pattern, var_string) is not None
+
+
 
 class FunmanModel(ABC, BaseModel):
     """
@@ -225,6 +233,9 @@ class FunmanModel(ABC, BaseModel):
         return []
 
     def _state_var_names(self) -> List[str]:
+        return []
+
+    def _observable_names(self) -> List[str]:
         return []
 
     def _parameter_names(self):

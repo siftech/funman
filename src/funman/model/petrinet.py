@@ -4,6 +4,7 @@ import graphviz
 import sympy
 from pydantic import BaseModel, ConfigDict
 from pysmt.shortcuts import REAL, Div, Real, Symbol
+from pysmt.formula import FNode
 
 from funman.utils.sympy_utils import (
     replace_reserved,
@@ -13,7 +14,7 @@ from funman.utils.sympy_utils import (
 )
 
 from ..representation import Interval
-from .generated_models.petrinet import Distribution
+from .generated_models.petrinet import Distribution, Observable
 from .generated_models.petrinet import Model as GeneratedPetrinet
 from .generated_models.petrinet import State, Transition
 from .model import FunmanModel
@@ -200,7 +201,7 @@ class AbstractPetriNetModel(FunmanModel):
         if get_lambda:
             pos_rates = [
                 self._transition_rate(trans, get_lambda=get_lambda)[0](
-                    *values, *params
+                    *values, *params, t
                 )
                 for trans in self._transitions()
                 for var in trans.output
@@ -208,7 +209,7 @@ class AbstractPetriNetModel(FunmanModel):
             ]
             neg_rates = [
                 self._transition_rate(trans, get_lambda=get_lambda)[0](
-                    *values, *params
+                    *values, *params, t
                 )
                 for trans in self._transitions()
                 for var in trans.input
@@ -240,7 +241,7 @@ class AbstractPetriNetModel(FunmanModel):
         var_to_value = {
             var: y[i] for i, var in enumerate(self._state_var_names())
         }
-        print(f"y: {y}; t: {t}")
+        # print(f"y: {y}; t: {t}")
         param_to_value = {
             replace_reserved(param): p[i](t)[()]
             for i, param in enumerate(self._parameter_names())
@@ -262,12 +263,12 @@ class AbstractPetriNetModel(FunmanModel):
                 params,
                 var_to_value,
                 param_to_value,
-                get_lambda=False,
+                get_lambda=True,
             )  # var_to_value, param_to_value)
             for var in self._state_var_names()
         ]
-        print(f"vars: {self._state_var_names()}")
-        print(f"gradient: {grad}")
+        # print(f"vars: {self._state_var_names()}")
+        # print(f"gradient: {grad}")
         return grad
 
 
@@ -276,14 +277,14 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
     petrinet: GeneratedPetrinet
     _transition_rates_cache: Dict[str, Union[sympy.Expr, str]] = {}
-    _observables_cache: Dict[str, Union[sympy.Expr, str]] = {}
+    _observables_cache: Dict[str, Union[str, FNode, sympy.Expr]] = {}
     _transition_rates_lambda_cache: Dict[str, Union[Callable, str]] = {}
 
     def observables(self):
         return self.petrinet.semantics.ode.observables
 
     def is_timed_observable(self, observation_id):
-        (_, e) = self.observable_expression(observation_id)
+        (_, e, _) = self.observable_expression(observation_id)
         vars = [str(e) for e in e.get_free_variables()]
         obs_state_vars = [v for v in vars if v in self._state_var_names()]
         return any(obs_state_vars)
@@ -293,11 +294,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             observable = next(
                 iter([o for o in self.observables() if o.id == observation_id])
             )
+            sympy_expr = to_sympy(observable.expression, self._symbols())
             self._observables_cache[observation_id] = (
                 observable.expression,
                 sympy_to_pysmt(
-                    to_sympy(observable.expression, self._symbols())
+                    sympy_expr
                 ),
+                sympy_expr
             )
         return self._observables_cache[observation_id]
 
@@ -400,12 +403,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
     def _state_var_names(self) -> List[str]:
         return [self._state_var_name(s) for s in self._state_vars()]
+    
+    def _observable_names(self) -> List[str]:
+        return [self._observable_name(s) for s in self.observables()]
 
     def _transitions(self) -> List[Transition]:
         return self.petrinet.model.transitions
 
     def _state_var_name(self, state_var: State) -> str:
         return state_var.id
+    
+    def _observable_name(self, observable: Observable) -> str:
+        return observable.id
 
     def _input_edges(self):
         return [(i, t.id) for t in self._transitions() for i in t.input]
@@ -449,7 +458,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 # convert "t" to "timer_t"
                 unreserved_symbols[-1] = self._time_var_id(self._time_var())
                 t_rates_lambda = [
-                    sympy.lambdify(unreserved_symbols, t) for t in t_rates
+                    sympy.lambdify(unreserved_symbols, t, cse=True) for t in t_rates
                 ]
                 self._transition_rates_cache[transition.id] = t_rates
                 self._transition_rates_lambda_cache[transition.id] = (

@@ -46,7 +46,8 @@ from funman.representation.parameter import NumSteps, Schedules, StepSize
 from funman.search.simulate import Simulator, Timeseries
 from funman.translate.translate import EncodingOptions
 from funman.utils import math_utils
-from funman.utils.sympy_utils import to_sympy
+from funman.utils.sympy_utils import replace_reserved, to_sympy
+import sympy
 
 from ..representation import Point
 
@@ -394,7 +395,31 @@ class AnalysisScenario(ABC, BaseModel):
                 tvects.append(np.arange(0, int(max_steps * ss) + 1, int(ss)))
 
         return tvects
-
+    
+    
+    def compute_observables(self, timeseries, parameters):
+        observables = self.model.observables()
+        timepoints = timeseries.data[0]
+        data = {}
+        unreseved_parameters = {replace_reserved(k): v for k,v in parameters.items() }
+        for o in observables:
+            o_name = self.model._observable_name(o)
+            # o_fn = o.expression
+            o_fn = self.model.observable_expression(o_name)
+            # Evaluate o_fn for each time in timeseries
+            if self.model.is_timed_observable(o_name):
+                values = []
+                for ti, t in enumerate(timepoints):
+                    # state_at_t = [timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns)]
+                    state_at_t = {c: timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns) if c != "time"}
+                    value = o_fn[2].evalf(subs={**state_at_t, **parameters})
+                    values.append(float(value))
+                data[o_name] = values
+            else:
+                value = o_fn[2].evalf(subs={**unreseved_parameters})
+                data[o_name] = float(value)
+        return data
+                
     def simulate_scenario(self, config: "FUNMANConfig") -> Point:
 
         init = {
@@ -418,11 +443,24 @@ class AnalysisScenario(ABC, BaseModel):
         timepoints = schedule.timepoints
 
         timeseries = self.run_scenario_simulation(init, parameters, timepoints)
+        
+        observable_timeseries = self.compute_observables(timeseries, parameters)
+        for k,v in observable_timeseries.items():
+            timeseries.data.append(v)
+            timeseries.columns.append(k)
+        
         values = {
             **{
-                f"{var}_{int(timepoint)}": timeseries.data[var_idx][timestep]
+                f"{var}_{int(timepoint)}": timeseries.data[var_idx+1][timestep]
                 for var_idx, var in enumerate(timeseries.columns[1:])
                 for timestep, timepoint in enumerate(timeseries.data[0])
+                if isinstance(timeseries.data[var_idx+1], list)
+            },
+            **{
+                var: timeseries.data[var_idx+1]
+                for var_idx, var in enumerate(timeseries.columns[1:])
+                for timestep, timepoint in enumerate(timeseries.data[0])
+                if not isinstance(timeseries.data[var_idx+1], list)
             },
             **parameters,
             **{"timestep": len(timepoints) - 1},

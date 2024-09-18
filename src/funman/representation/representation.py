@@ -5,7 +5,7 @@ during the configuration and execution of a search.
 
 import logging
 import math
-from typing import Dict, List, Literal, Optional, Set
+from typing import Dict, List, Literal, Optional, Set, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -24,7 +24,7 @@ from . import EncodingSchedule, PointValue
 
 
 class Timeseries(BaseModel):
-    data: List[List[float]]
+    data: List[Union[float, List[float]]]
     columns: List[str]
 
     def __getitem__(self, key):
