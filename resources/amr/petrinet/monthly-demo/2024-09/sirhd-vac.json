@@ -373,47 +373,47 @@
             "initials": [
                 {
                     "target": "S_u",
-                    "expression": "-D0/2 - H0/2 - I0/2 + N/2 - R0/2",
+                    "expression": "74608773.0",
                     "expression_mathml": "<apply><plus/><apply><minus/><apply><minus/><apply><minus/><apply><divide/><ci>D0</ci><cn>2</cn></apply></apply><apply><divide/><ci>H0</ci><cn>2</cn></apply></apply><apply><divide/><ci>I0</ci><cn>2</cn></apply></apply><apply><minus/><apply><divide/><ci>N</ci><cn>2</cn></apply><apply><divide/><ci>R0</ci><cn>2</cn></apply></apply></apply>"
                 },
                 {
                     "target": "I_u",
-                    "expression": "I0/2",
+                    "expression": "500",
                     "expression_mathml": "<apply><divide/><ci>I0</ci><cn>2</cn></apply>"
                 },
                 {
                     "target": "I_v",
-                    "expression": "I0/2",
+                    "expression": "500",
                     "expression_mathml": "<apply><divide/><ci>I0</ci><cn>2</cn></apply>"
                 },
                 {
                     "target": "S_v",
-                    "expression": "-D0/2 - H0/2 - I0/2 + N/2 - R0/2",
+                    "expression": "74608773.0",
                     "expression_mathml": "<apply><plus/><apply><minus/><apply><minus/><apply><minus/><apply><divide/><ci>D0</ci><cn>2</cn></apply></apply><apply><divide/><ci>H0</ci><cn>2</cn></apply></apply><apply><divide/><ci>I0</ci><cn>2</cn></apply></apply><apply><minus/><apply><divide/><ci>N</ci><cn>2</cn></apply><apply><divide/><ci>R0</ci><cn>2</cn></apply></apply></apply>"
                 },
                 {
                     "target": "R_u",
-                    "expression": "R0/2",
+                    "expression": "0.0",
                     "expression_mathml": "<apply><divide/><ci>R0</ci><cn>2</cn></apply>"
                 },
                 {
                     "target": "R_v",
-                    "expression": "R0/2",
+                    "expression": "0.0",
                     "expression_mathml": "<apply><divide/><ci>R0</ci><cn>2</cn></apply>"
                 },
                 {
                     "target": "H_u",
-                    "expression": "H0/2",
+                    "expression": "0.0",
                     "expression_mathml": "<apply><divide/><ci>H0</ci><cn>2</cn></apply>"
                 },
                 {
                     "target": "H_v",
-                    "expression": "H0/2",
+                    "expression": "0.0",
                     "expression_mathml": "<apply><divide/><ci>H0</ci><cn>2</cn></apply>"
                 },
                 {
                     "target": "D",
-                    "expression": "D0",
+                    "expression": "781454.0",
                     "expression_mathml": "<ci>D0</ci>"
                 }
             ],
@@ -587,43 +587,11 @@
                     }
                 },
                 {
-                    "id": "rhi",
+                    "id": "rir",
                     "value": 0.07,
                     "units": {
                         "expression": "1/day",
                         "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
-                    }
-                },
-                {
-                    "id": "I0",
-                    "value": 1000.0,
-                    "units": {
-                        "expression": "person",
-                        "expression_mathml": "<ci>person</ci>"
-                    }
-                },
-                {
-                    "id": "R0",
-                    "value": 0.0,
-                    "units": {
-                        "expression": "person",
-                        "expression_mathml": "<ci>person</ci>"
-                    }
-                },
-                {
-                    "id": "H0",
-                    "value": 0.0,
-                    "units": {
-                        "expression": "person",
-                        "expression_mathml": "<ci>person</ci>"
-                    }
-                },
-                {
-                    "id": "D0",
-                    "value": 781454.0,
-                    "units": {
-                        "expression": "person",
-                        "expression_mathml": "<ci>person</ci>"
                     }
                 }
             ],

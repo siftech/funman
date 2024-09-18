@@ -271,6 +271,7 @@ class AbstractPetriNetModel(FunmanModel):
         ]
         # print(f"vars: {self._state_var_names()}")
         # print(f"gradient: {grad}")
+        assert not any([not isinstance(v, float) for v in grad]), f"Gradient has a non-float element: {grad}"
         return grad
 
 
