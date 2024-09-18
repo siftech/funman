@@ -379,7 +379,10 @@ class FunmanResults(BaseModel):
             fails if scenario is not consistent
         """
         scenario = self._scenario()
-        to_plot = scenario.model._state_var_names() + scenario.model._observable_names()
+        to_plot = (
+            scenario.model._state_var_names()
+            + scenario.model._observable_names()
+        )
         time_var = scenario.model._time_var()
         if time_var:
             to_plot += ["timer_t"]
@@ -441,7 +444,7 @@ class FunmanResults(BaseModel):
 
         a_series["index"] = list(range(0, max_t + 1))
         for var, tps in series.items():
-            
+
             if isinstance(tps, dict):
                 vals = [None] * (int(max_t) + 1)
                 for t, v in tps.items():
@@ -449,7 +452,7 @@ class FunmanResults(BaseModel):
                         vals[int(t)] = v
                 a_series[var] = vals
             else:
-                a_series[var] = [tps]*(int(max_t) + 1)
+                a_series[var] = [tps] * (int(max_t) + 1)
         return a_series
 
     def symbol_values(
@@ -491,7 +494,9 @@ class FunmanResults(BaseModel):
     ) -> Dict[str, Dict[str, str]]:
         symbols = {}
         for var in point.values:
-            if is_state_variable(var, self.model) or is_observable(var, self.model):
+            if is_state_variable(var, self.model) or is_observable(
+                var, self.model
+            ):
                 var_name, timepoint = self._split_symbol(var)
                 if timepoint:
                     if var_name not in symbols:

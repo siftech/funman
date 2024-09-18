@@ -3,8 +3,8 @@ from typing import Callable, Dict, List, Optional, Union
 import graphviz
 import sympy
 from pydantic import BaseModel, ConfigDict
-from pysmt.shortcuts import REAL, Div, Real, Symbol
 from pysmt.formula import FNode
+from pysmt.shortcuts import REAL, Div, Real, Symbol
 
 from funman.utils.sympy_utils import (
     replace_reserved,
@@ -14,9 +14,9 @@ from funman.utils.sympy_utils import (
 )
 
 from ..representation import Interval
-from .generated_models.petrinet import Distribution, Observable
+from .generated_models.petrinet import Distribution
 from .generated_models.petrinet import Model as GeneratedPetrinet
-from .generated_models.petrinet import State, Transition
+from .generated_models.petrinet import Observable, State, Transition
 from .model import FunmanModel
 
 
@@ -297,10 +297,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             sympy_expr = to_sympy(observable.expression, self._symbols())
             self._observables_cache[observation_id] = (
                 observable.expression,
-                sympy_to_pysmt(
-                    sympy_expr
-                ),
-                sympy_expr
+                sympy_to_pysmt(sympy_expr),
+                sympy_expr,
             )
         return self._observables_cache[observation_id]
 
@@ -403,7 +401,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
     def _state_var_names(self) -> List[str]:
         return [self._state_var_name(s) for s in self._state_vars()]
-    
+
     def _observable_names(self) -> List[str]:
         return [self._observable_name(s) for s in self.observables()]
 
@@ -412,7 +410,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
     def _state_var_name(self, state_var: State) -> str:
         return state_var.id
-    
+
     def _observable_name(self, observable: Observable) -> str:
         return observable.id
 
@@ -458,7 +456,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 # convert "t" to "timer_t"
                 unreserved_symbols[-1] = self._time_var_id(self._time_var())
                 t_rates_lambda = [
-                    sympy.lambdify(unreserved_symbols, t, cse=True) for t in t_rates
+                    sympy.lambdify(unreserved_symbols, t, cse=True)
+                    for t in t_rates
                 ]
                 self._transition_rates_cache[transition.id] = t_rates
                 self._transition_rates_lambda_cache[transition.id] = (

@@ -486,7 +486,7 @@ def get_args():
         "--verbose",
         help="Write result to console",
         default=False,
-        action="store_true"
+        action="store_true",
     )
 
     parser.set_defaults(plot=None)
@@ -512,7 +512,7 @@ def main() -> int:
         print_last_time=args.last_time,
     )
     if args.verbose:
-        print(results.model_dump_json(indent=4,by_alias=True))
+        print(results.model_dump_json(indent=4, by_alias=True))
 
 
 if __name__ == "__main__":
