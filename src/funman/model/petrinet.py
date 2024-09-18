@@ -201,7 +201,7 @@ class AbstractPetriNetModel(FunmanModel):
         if get_lambda:
             pos_rates = [
                 self._transition_rate(trans, get_lambda=get_lambda)[0](
-                    *values, *params, t
+                    *values, *params
                 )
                 for trans in self._transitions()
                 for var in trans.output
@@ -209,7 +209,7 @@ class AbstractPetriNetModel(FunmanModel):
             ]
             neg_rates = [
                 self._transition_rate(trans, get_lambda=get_lambda)[0](
-                    *values, *params, t
+                    *values, *params
                 )
                 for trans in self._transitions()
                 for var in trans.input
@@ -218,7 +218,7 @@ class AbstractPetriNetModel(FunmanModel):
         else:
             pos_rates = [
                 self._transition_rate(trans)[0].evalf(
-                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=10
+                    subs={**var_to_value, **param_to_value}, n=10
                 )
                 for trans in self._transitions()
                 for var in trans.output
@@ -226,7 +226,7 @@ class AbstractPetriNetModel(FunmanModel):
             ]
             neg_rates = [
                 self._transition_rate(trans)[0].evalf(
-                    subs={**var_to_value, **param_to_value, "timer_t": t}, n=10
+                    subs={**var_to_value, **param_to_value}, n=10
                 )
                 for trans in self._transitions()
                 for var in trans.input
@@ -246,14 +246,16 @@ class AbstractPetriNetModel(FunmanModel):
             replace_reserved(param): p[i](t)[()]
             for i, param in enumerate(self._parameter_names())
         }
+        param_to_value["timer_t"] = t
         # values = [
         #     y[i] for i, _ in enumerate(self._symbols())
         # ]
+        unreserved_symols = [replace_reserved(s) for s in self._symbols()]
         params = [
             param_to_value[str(p)]
-            for p in self._symbols()
+            for p in unreserved_symols
             if str(p) in param_to_value
-        ] + [t]
+        ]
 
         grad = [
             self.derivative(
@@ -339,7 +341,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _symbols(self):
         symbols = self._state_var_names() + self._parameter_names()
         if self._time_var():
-            symbols += [self._time_var().id]
+            symbols += [f"timer_{self._time_var().id}"]
         return symbols
 
     def _get_init_value(
