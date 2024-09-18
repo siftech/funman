@@ -481,6 +481,13 @@ def get_args():
         default=False,
         help=f"Create parameter space plot with only the last timestep.",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Write result to console",
+        default=False,
+        action="store_true"
+    )
 
     parser.set_defaults(plot=None)
     return parser.parse_args()
@@ -504,7 +511,8 @@ def main() -> int:
         parameters_to_plot=to_plot,
         print_last_time=args.last_time,
     )
-    print(results.model_dump_json(indent=4))
+    if args.verbose:
+        print(results.model_dump_json(indent=4,by_alias=True))
 
 
 if __name__ == "__main__":
