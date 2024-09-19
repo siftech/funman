@@ -47,6 +47,7 @@ from funman.representation.constraint import (
     ParameterConstraint,
     QueryConstraint,
     StateVariableConstraint,
+    TimeseriesConstraint,
 )
 from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils import math_utils
@@ -225,6 +226,7 @@ class Encoder(ABC, BaseModel):
             StateVariableConstraint: self.encode_query_layer,
             QueryConstraint: self.encode_query_layer,
             LinearConstraint: self.encode_linear_constraint,
+            TimeseriesConstraint: self.encode_timeseries,
         }
 
     def step_size_index(self, step_size: int) -> int:
@@ -403,15 +405,22 @@ class Encoder(ABC, BaseModel):
         assumptions: List[Assumption],
     ) -> EncodedFormula:
         if layer_idx == 0:
-            return self.encode_init_layer()
+            return self.encode_init_layer(scenario)
         else:
             return self.encode_transition_layer(scenario, layer_idx, options)
 
-    def encode_init_layer(self) -> EncodedFormula:
+    def encode_init_layer(
+        self, scenario: "AnalysisScenario"
+    ) -> EncodedFormula:
         initial_state = self._timed_model_elements["init"]
         initial_symbols = initial_state.get_free_variables()
 
-        return (initial_state, {s.symbol_name(): s for s in initial_symbols})
+        observations = self.encode_observation(scenario, 0, substitutions={})
+
+        return (
+            And(initial_state, observations),
+            {s.symbol_name(): s for s in initial_symbols},
+        )
 
     def encode_transition_layer(
         self,
@@ -711,6 +720,28 @@ class Encoder(ABC, BaseModel):
         else:
             return None
 
+    def encode_timeseries(
+        self,
+        scenario: "AnalysisScenario",
+        constraint: TimeseriesConstraint,
+        layer_idx: int,
+        options: EncodingOptions,
+        assumptions: List[Assumption],
+    ) -> Optional[EncodedFormula]:
+        timepoint = constraint.timeseries["time"][layer_idx]
+        formulas = []
+        for sv in constraint.timeseries.columns:
+            if sv == "time":
+                continue
+
+            sv_formula = Equals(
+                self._encode_state_var(sv, time=int(timepoint)),
+                Real(constraint.timeseries[sv][layer_idx]),
+            )
+            formulas.append(sv_formula)
+        formula = And(formulas)
+        return (formula, {str(s): s for s in formula.get_free_variables()})
+
     def encode_linear_constraint(
         self,
         scenario: "AnalysisScenario",
@@ -785,7 +816,6 @@ class Encoder(ABC, BaseModel):
                 ),
                 Minus(Real(nxt_t), Real(curr_t)),
             ).simplify()
-            pass
         else:
             expression = Plus(
                 [
@@ -1081,44 +1111,84 @@ class Encoder(ABC, BaseModel):
     def _encode_state_variable_constraint(
         self,
         scenario: "AnalysisScenario",
-        query: StateVariableConstraint,
+        constraint: StateVariableConstraint,
         layer_idx: int,
         options: EncodingOptions,
         assumptions: List[Assumption],
     ):
         time = options.schedule.time_at_step(layer_idx)
 
-        if query.contains_time(time):
+        if (
+            scenario.model.is_timed_observable(constraint.variable)
+            or constraint.variable in scenario.model._state_var_names()
+        ) and constraint.contains_time(time):
             bounds = (
-                query.interval.normalize(options.normalization_constant)
+                constraint.interval.normalize(options.normalization_constant)
                 if options.normalize
-                else query.interval
+                else constraint.interval
             )
-            symbol = self._encode_state_var(var=query.variable, time=time)
+            symbol = self._encode_state_var(var=constraint.variable, time=time)
 
             norm = (
                 scenario.normalization_constant if options.normalize else 1.0
             )
 
             lb = (
-                math_utils.div(query.interval.lb, norm)
-                if query.interval.lb != NEG_INFINITY
-                else query.interval.lb
+                math_utils.div(constraint.interval.lb, norm)
+                if constraint.interval.lb != NEG_INFINITY
+                else constraint.interval.lb
             )
             ub = (
-                math_utils.div(query.interval.ub, norm)
-                if query.interval.ub != POS_INFINITY
-                else query.interval.ub
+                math_utils.div(constraint.interval.ub, norm)
+                if constraint.interval.ub != POS_INFINITY
+                else constraint.interval.ub
             )
 
             formula = self.interval_to_smt(
-                query.variable,
+                constraint.variable,
                 Interval(
                     lb=lb,
                     ub=ub,
-                    closed_upper_bound=query.interval.closed_upper_bound,
+                    closed_upper_bound=constraint.interval.closed_upper_bound,
                 ),
                 time=time,
+                # closed_upper_bound=query.interval.closed_upper_bound,
+                infinity_constraints=False,
+            )
+        elif (
+            not scenario.model.is_timed_observable(constraint.variable)
+            and not constraint.variable in scenario.model._state_var_names()
+        ) and layer_idx == 0:
+            bounds = (
+                constraint.interval.normalize(options.normalization_constant)
+                if options.normalize
+                else constraint.interval
+            )
+            symbol = self._encode_state_var(var=constraint.variable)
+
+            norm = (
+                scenario.normalization_constant if options.normalize else 1.0
+            )
+
+            lb = (
+                math_utils.div(constraint.interval.lb, norm)
+                if constraint.interval.lb != NEG_INFINITY
+                else constraint.interval.lb
+            )
+            ub = (
+                math_utils.div(constraint.interval.ub, norm)
+                if constraint.interval.ub != POS_INFINITY
+                else constraint.interval.ub
+            )
+
+            formula = self.interval_to_smt(
+                constraint.variable,
+                Interval(
+                    lb=lb,
+                    ub=ub,
+                    closed_upper_bound=constraint.interval.closed_upper_bound,
+                ),
+                time=None,
                 # closed_upper_bound=query.interval.closed_upper_bound,
                 infinity_constraints=False,
             )

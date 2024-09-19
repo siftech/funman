@@ -3,6 +3,7 @@ This module represents the abstract base classes for models.
 """
 
 import copy
+import re
 import uuid
 from abc import ABC
 from typing import Dict, List, Optional, Union
@@ -50,6 +51,22 @@ def _wrap_with_internal_model(
         return model
 
 
+def is_state_variable(
+    var_string, model: "FunmanModel", time_pattern: str = f"[\\d]+$"
+) -> bool:
+    vars_pattern = "|".join(model._state_var_names())
+    pattern = re.compile(f"^(?:{vars_pattern}).*_{time_pattern}")
+    return re.match(pattern, var_string) is not None
+
+
+def is_observable(
+    var_string, model: "FunmanModel", time_pattern: str = f"[\\d]+$"
+) -> bool:
+    vars_pattern = "|".join(model._observable_names())
+    pattern = re.compile(f"^(?:{vars_pattern}).*")
+    return re.match(pattern, var_string) is not None
+
+
 class FunmanModel(ABC, BaseModel):
     """
     The abstract base class for Models.
@@ -63,6 +80,7 @@ class FunmanModel(ABC, BaseModel):
     _normalization_constant: Optional[float] = None
     _extra_constraints: FNode = None
     _normalization_term: Optional[FNode] = None
+    _is_differentiable: bool = False
 
     # @abstractmethod
     # def default_encoder(self, config: "FUNMANConfig") -> "Encoder":
@@ -127,6 +145,11 @@ class FunmanModel(ABC, BaseModel):
         vars.update(self.parameter_bounds)
 
         return vars
+
+    def observables(self):
+        raise NotImplementedError(
+            f"FunmanModel.observables() is abstract and needs to be implemented by subclass: {type(self)}"
+        )
 
     def calculate_normalization_constant(
         self, scenario: "AnalysisScenario", config: "FUNMANConfig"
@@ -210,6 +233,9 @@ class FunmanModel(ABC, BaseModel):
         return []
 
     def _state_var_names(self) -> List[str]:
+        return []
+
+    def _observable_names(self) -> List[str]:
         return []
 
     def _parameter_names(self):

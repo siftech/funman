@@ -442,6 +442,7 @@ class DRealNative(
         # self.context.config.use_worklist_fixpoint = True
         self.model = None
         self.log_level = dreal.LogLevel.OFF
+        self.config.random_seed = 0
         if "solver_options" in options:
             if (
                 "preferred" in options["solver_options"]
