@@ -180,7 +180,7 @@ class FunmanWorker:
             return self.current_id
 
     def _update_current_results(
-        self, scenario: AnalysisScenario, results: ParameterSpace
+        self, scenario: AnalysisScenario, parameter_space: ParameterSpace
     ) -> FunmanProgress:
         with self._results_lock:
             if self.current_results is None:
@@ -194,7 +194,7 @@ class FunmanWorker:
                     "Cannot update current_results as it is already finalized"
                 )
             return self.current_results.update_parameter_space(
-                scenario, results
+                scenario, parameter_space
             )
 
     def _run(self, stop_event: threading.Event):
@@ -246,7 +246,9 @@ class FunmanWorker:
                         ),
                     )
                     with self._results_lock:
-                        self.current_results.finalize_result(scenario, result)
+                        self.current_results.finalize_result(
+                            result.scenario, result
+                        )
                     l.info(f"Completed work on: {work.id}")
                 except Exception as e:
                     l.error(f"Internal Server Error ({work.id}):")

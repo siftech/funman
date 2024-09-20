@@ -109,6 +109,7 @@ class SMTCheck(Search):
                     label=LABEL_FALSE,  # lack of a point means this must be a false box
                     points=[],
                 )
+                box._prioritize_entropy = episode.config.prioritize_box_entropy
                 box.bounds["timestep"] = Interval(
                     lb=timestep, ub=timestep, closed_upper_bound=True
                 )

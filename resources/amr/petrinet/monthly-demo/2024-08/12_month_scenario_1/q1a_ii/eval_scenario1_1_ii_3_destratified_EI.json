@@ -10,8 +10,8 @@
     "model": {
         "states": [
             {
-                "id": "S_compliant",
-                "name": "S_compliant",
+                "id": "S_compliant_lb",
+                "name": "S_compliant_lb",
                 "grounding": {
                     "identifiers": {
                         "ido": "0000514"
@@ -26,8 +26,24 @@
                 }
             },
             {
-                "id": "I_compliant",
-                "name": "I_compliant",
+                "id": "S_compliant_ub",
+                "name": "S_compliant_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_lb",
+                "name": "I_lb",
                 "grounding": {
                     "identifiers": {
                         "ido": "0000511"
@@ -42,8 +58,8 @@
                 }
             },
             {
-                "id": "E_compliant",
-                "name": "E_compliant",
+                "id": "E_lb",
+                "name": "E_lb",
                 "grounding": {
                     "identifiers": {
                         "apollosv": "0000154"
@@ -58,8 +74,8 @@
                 }
             },
             {
-                "id": "I_noncompliant",
-                "name": "I_noncompliant",
+                "id": "I_ub",
+                "name": "I_ub",
                 "grounding": {
                     "identifiers": {
                         "ido": "0000511"
@@ -74,8 +90,8 @@
                 }
             },
             {
-                "id": "S_noncompliant",
-                "name": "S_noncompliant",
+                "id": "S_noncompliant_lb",
+                "name": "S_noncompliant_lb",
                 "grounding": {
                     "identifiers": {
                         "ido": "0000514"
@@ -90,8 +106,24 @@
                 }
             },
             {
-                "id": "E_noncompliant",
-                "name": "E_noncompliant",
+                "id": "S_noncompliant_ub",
+                "name": "S_noncompliant_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {
+                        "masking": "noncompliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "E_ub",
+                "name": "E_ub",
                 "grounding": {
                     "identifiers": {
                         "apollosv": "0000154"
@@ -106,8 +138,8 @@
                 }
             },
             {
-                "id": "R",
-                "name": "R",
+                "id": "R_lb",
+                "name": "R_lb",
                 "grounding": {
                     "identifiers": {
                         "ido": "0000592"
@@ -120,8 +152,22 @@
                 }
             },
             {
-                "id": "H",
-                "name": "H",
+                "id": "R_ub",
+                "name": "R_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "H_lb",
+                "name": "H_lb",
                 "grounding": {
                     "identifiers": {
                         "ido": "0000511"
@@ -136,8 +182,38 @@
                 }
             },
             {
-                "id": "D",
-                "name": "D",
+                "id": "H_ub",
+                "name": "H_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "property": "ncit:C25179"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D_lb",
+                "name": "D_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ncit": "C28554"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D_ub",
+                "name": "D_ub",
                 "grounding": {
                     "identifiers": {
                         "ncit": "C28554"
@@ -152,227 +228,227 @@
         ],
         "transitions": [
             {
-                "id": "t1",
+                "id": "t1_to_2_lb",
                 "input": [
-                    "I_compliant",
-                    "S_compliant"
+                    "I_ub",
+                    "S_compliant_ub"
                 ],
                 "output": [
-                    "I_compliant",
-                    "E_compliant"
+                    "I_ub",
+                    "E_lb"
                 ],
                 "properties": {
-                    "name": "t1"
+                    "name": "t1_to_2_lb"
                 }
             },
             {
-                "id": "t2",
+                "id": "t1_to_2_ub",
                 "input": [
-                    "I_noncompliant",
-                    "S_compliant"
+                    "I_lb",
+                    "S_compliant_lb"
                 ],
                 "output": [
-                    "I_noncompliant",
-                    "E_compliant"
+                    "I_lb",
+                    "E_ub"
                 ],
                 "properties": {
-                    "name": "t2"
+                    "name": "t1_to_2_ub"
                 }
             },
             {
-                "id": "t3",
+                "id": "t3_to_4_lb",
                 "input": [
-                    "I_noncompliant",
-                    "S_noncompliant"
+                    "I_ub",
+                    "S_noncompliant_ub"
                 ],
                 "output": [
-                    "I_noncompliant",
-                    "E_noncompliant"
+                    "I_ub",
+                    "E_lb"
                 ],
                 "properties": {
-                    "name": "t3"
+                    "name": "t3_to_4_lb"
                 }
             },
             {
-                "id": "t4",
+                "id": "t3_to_4_ub",
                 "input": [
-                    "I_compliant",
-                    "S_noncompliant"
+                    "I_lb",
+                    "S_noncompliant_lb"
                 ],
                 "output": [
-                    "I_compliant",
-                    "E_noncompliant"
+                    "I_lb",
+                    "E_ub"
                 ],
                 "properties": {
-                    "name": "t4"
+                    "name": "t3_to_4_ub"
                 }
             },
             {
-                "id": "t5",
+                "id": "t5_to_6_lb",
                 "input": [
-                    "E_compliant"
+                    "E_ub"
                 ],
                 "output": [
-                    "I_compliant"
+                    "I_lb"
                 ],
                 "properties": {
-                    "name": "t5"
+                    "name": "t5_to_6_lb"
                 }
             },
             {
-                "id": "t6",
+                "id": "t5_to_6_ub",
                 "input": [
-                    "E_noncompliant"
+                    "E_lb"
                 ],
                 "output": [
-                    "I_noncompliant"
+                    "I_ub"
                 ],
                 "properties": {
-                    "name": "t6"
+                    "name": "t5_to_6_ub"
                 }
             },
             {
-                "id": "t7",
+                "id": "t7_to_8_lb",
                 "input": [
-                    "I_compliant"
+                    "I_ub"
                 ],
                 "output": [
-                    "R"
+                    "R_lb"
                 ],
                 "properties": {
-                    "name": "t7"
+                    "name": "t7_to_8_lb"
                 }
             },
             {
-                "id": "t8",
+                "id": "t7_to_8_ub",
                 "input": [
-                    "I_noncompliant"
+                    "I_lb"
                 ],
                 "output": [
-                    "R"
+                    "R_ub"
                 ],
                 "properties": {
-                    "name": "t8"
+                    "name": "t7_to_8_ub"
                 }
             },
             {
-                "id": "t9",
+                "id": "t9_to_10_lb",
                 "input": [
-                    "I_compliant"
+                    "I_ub"
                 ],
                 "output": [
-                    "H"
+                    "H_lb"
                 ],
                 "properties": {
-                    "name": "t9"
+                    "name": "t9_to_10_lb"
                 }
             },
             {
-                "id": "t10",
+                "id": "t9_to_10_ub",
                 "input": [
-                    "I_noncompliant"
+                    "I_lb"
                 ],
                 "output": [
-                    "H"
+                    "H_ub"
                 ],
                 "properties": {
-                    "name": "t10"
+                    "name": "t9_to_10_ub"
                 }
             },
             {
-                "id": "t11",
+                "id": "t11_lb",
                 "input": [
-                    "H"
+                    "H_ub"
                 ],
                 "output": [
-                    "R"
+                    "R_lb"
                 ],
                 "properties": {
-                    "name": "t11"
+                    "name": "t11_lb"
                 }
             },
             {
-                "id": "t12",
+                "id": "t11_ub",
                 "input": [
-                    "H"
+                    "H_lb"
                 ],
                 "output": [
-                    "D"
+                    "R_ub"
                 ],
                 "properties": {
-                    "name": "t12"
+                    "name": "t11_ub"
                 }
             },
             {
-                "id": "t13",
+                "id": "t12_lb",
                 "input": [
-                    "S_noncompliant"
+                    "H_lb"
                 ],
                 "output": [
-                    "S_compliant"
+                    "D_lb"
                 ],
                 "properties": {
-                    "name": "t13"
+                    "name": "t12_lb"
                 }
             },
             {
-                "id": "t14",
+                "id": "t12_ub",
                 "input": [
-                    "S_compliant"
+                    "H_ub"
                 ],
                 "output": [
-                    "S_noncompliant"
+                    "D_ub"
                 ],
                 "properties": {
-                    "name": "t14"
+                    "name": "t12_ub"
                 }
             },
             {
-                "id": "t15",
+                "id": "t13_lb",
                 "input": [
-                    "E_noncompliant"
+                    "S_noncompliant_ub"
                 ],
                 "output": [
-                    "E_compliant"
+                    "S_compliant_lb"
                 ],
                 "properties": {
-                    "name": "t15"
+                    "name": "t13_lb"
                 }
             },
             {
-                "id": "t16",
+                "id": "t13_ub",
                 "input": [
-                    "E_compliant"
+                    "S_noncompliant_lb"
                 ],
                 "output": [
-                    "E_noncompliant"
+                    "S_compliant_ub"
                 ],
                 "properties": {
-                    "name": "t16"
+                    "name": "t13_ub"
                 }
             },
             {
-                "id": "t17",
+                "id": "t14_lb",
                 "input": [
-                    "I_noncompliant"
+                    "S_compliant_ub"
                 ],
                 "output": [
-                    "I_compliant"
+                    "S_noncompliant_lb"
                 ],
                 "properties": {
-                    "name": "t17"
+                    "name": "t14_lb"
                 }
             },
             {
-                "id": "t18",
+                "id": "t14_ub",
                 "input": [
-                    "I_compliant"
+                    "S_compliant_lb"
                 ],
                 "output": [
-                    "I_noncompliant"
+                    "S_noncompliant_ub"
                 ],
                 "properties": {
-                    "name": "t18"
+                    "name": "t14_ub"
                 }
             }
         ]
@@ -381,139 +457,164 @@
         "ode": {
             "rates": [
                 {
-                    "target": "t1",
-                    "expression": "I_compliant*S_compliant*beta*(-c_m_0*eps_m_0 + 1)/N",
-                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_compliant</ci><ci>S_compliant</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_0</ci><ci>eps_m_0</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                    "target": "t1_to_2_lb",
+                    "expression": "I_lb*S_compliant_lb*beta*(-c_m_ub*eps_m_ub + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
                 },
                 {
-                    "target": "t2",
-                    "expression": "I_noncompliant*S_compliant*beta*(-c_m_1*eps_m_1 + 1)/N",
-                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_noncompliant</ci><ci>S_compliant</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_1</ci><ci>eps_m_1</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                    "target": "t1_to_2_ub",
+                    "expression": "I_ub*S_compliant_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
                 },
                 {
-                    "target": "t3",
-                    "expression": "I_noncompliant*S_noncompliant*beta*(-c_m_2*eps_m_2 + 1)/N",
-                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_noncompliant</ci><ci>S_noncompliant</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_2</ci><ci>eps_m_2</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                    "target": "t3_to_4_lb",
+                    "expression": "I_lb*S_noncompliant_lb*beta*(-c_m_ub*eps_m_ub + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
                 },
                 {
-                    "target": "t4",
-                    "expression": "I_compliant*S_noncompliant*beta*(-c_m_3*eps_m_3 + 1)/N",
-                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_compliant</ci><ci>S_noncompliant</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_3</ci><ci>eps_m_3</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                    "target": "t3_to_4_ub",
+                    "expression": "I_ub*S_noncompliant_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
                 },
                 {
-                    "target": "t5",
-                    "expression": "E_compliant*r_E_to_I",
-                    "expression_mathml": "<apply><times/><ci>E_compliant</ci><ci>r_E_to_I</ci></apply>"
+                    "target": "t5_to_6_lb",
+                    "expression": "E_lb*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E_lb</ci><ci>r_E_to_I</ci></apply>"
                 },
                 {
-                    "target": "t6",
-                    "expression": "E_noncompliant*r_E_to_I",
-                    "expression_mathml": "<apply><times/><ci>E_noncompliant</ci><ci>r_E_to_I</ci></apply>"
+                    "target": "t5_to_6_ub",
+                    "expression": "E_ub*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E_ub</ci><ci>r_E_to_I</ci></apply>"
                 },
                 {
-                    "target": "t7",
-                    "expression": "I_compliant*p_I_to_R*r_I_to_R",
-                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                    "target": "t7_to_8_lb",
+                    "expression": "I_lb*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I_lb</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
                 },
                 {
-                    "target": "t8",
-                    "expression": "I_noncompliant*p_I_to_R*r_I_to_R",
-                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                    "target": "t7_to_8_ub",
+                    "expression": "I_ub*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I_ub</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
                 },
                 {
-                    "target": "t9",
-                    "expression": "I_compliant*p_I_to_H*r_I_to_H",
-                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                    "target": "t9_to_10_lb",
+                    "expression": "I_lb*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I_lb</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
                 },
                 {
-                    "target": "t10",
-                    "expression": "I_noncompliant*p_I_to_H*r_I_to_H",
-                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                    "target": "t9_to_10_ub",
+                    "expression": "I_ub*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I_ub</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
                 },
                 {
-                    "target": "t11",
-                    "expression": "H*p_H_to_R*r_H_to_R",
-                    "expression_mathml": "<apply><times/><ci>H</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
+                    "target": "t11_lb",
+                    "expression": "H_lb*p_H_to_R*r_H_to_R",
+                    "expression_mathml": "<apply><times/><ci>H_lb</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
                 },
                 {
-                    "target": "t12",
-                    "expression": "H*p_H_to_D*r_H_to_D",
+                    "target": "t11_ub",
+                    "expression": "H_ub*p_H_to_R*r_H_to_R",
+                    "expression_mathml": "<apply><times/><ci>H_ub</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
+                },
+                {
+                    "target": "t12_lb",
+                    "expression": "H_lb*p_H_to_D*r_H_to_D",
                     "expression_mathml": "<apply><times/><ci>H</ci><ci>p_H_to_D</ci><ci>r_H_to_D</ci></apply>"
                 },
                 {
-                    "target": "t13",
-                    "expression": "S_noncompliant*p_noncompliant_compliant",
+                    "target": "t12_ub",
+                    "expression": "H_ub*p_H_to_D*r_H_to_D",
+                    "expression_mathml": "<apply><times/><ci>H_ub</ci><ci>p_H_to_D</ci><ci>r_H_to_D</ci></apply>"
+                },
+                {
+                    "target": "t13_lb",
+                    "expression": "S_noncompliant_lb*p_noncompliant_compliant",
                     "expression_mathml": "<apply><times/><ci>S_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
                 },
                 {
-                    "target": "t14",
-                    "expression": "S_compliant*p_compliant_noncompliant",
+                    "target": "t13_ub",
+                    "expression": "S_noncompliant_ub*p_noncompliant_compliant",
+                    "expression_mathml": "<apply><times/><ci>S_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
+                },
+                {
+                    "target": "t14_lb",
+                    "expression": "S_compliant_lb*p_compliant_noncompliant",
                     "expression_mathml": "<apply><times/><ci>S_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
                 },
                 {
-                    "target": "t15",
-                    "expression": "E_noncompliant*p_noncompliant_compliant",
-                    "expression_mathml": "<apply><times/><ci>E_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
-                },
-                {
-                    "target": "t16",
-                    "expression": "E_compliant*p_compliant_noncompliant",
-                    "expression_mathml": "<apply><times/><ci>E_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
-                },
-                {
-                    "target": "t17",
-                    "expression": "I_noncompliant*p_noncompliant_compliant",
-                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
-                },
-                {
-                    "target": "t18",
-                    "expression": "I_compliant*p_compliant_noncompliant",
-                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
+                    "target": "t14_ub",
+                    "expression": "S_compliant_ub*p_compliant_noncompliant",
+                    "expression_mathml": "<apply><times/><ci>S_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
                 }
             ],
             "initials": [
                 {
-                    "target": "S_compliant",
+                    "target": "S_compliant_lb",
                     "expression": "9669997.50000000",
                     "expression_mathml": "<cn>9669997.5</cn>"
                 },
                 {
-                    "target": "I_compliant",
-                    "expression": "2.00000000000000",
-                    "expression_mathml": "<cn>2.0</cn>"
-                },
-                {
-                    "target": "E_compliant",
-                    "expression": "0.500000000000000",
-                    "expression_mathml": "<cn>0.5</cn>"
-                },
-                {
-                    "target": "I_noncompliant",
-                    "expression": "2.00000000000000",
-                    "expression_mathml": "<cn>2.0</cn>"
-                },
-                {
-                    "target": "S_noncompliant",
+                    "target": "S_noncompliant_lb",
                     "expression": "9669997.50000000",
                     "expression_mathml": "<cn>9669997.5</cn>"
                 },
                 {
-                    "target": "E_noncompliant",
-                    "expression": "0.500000000000000",
-                    "expression_mathml": "<cn>0.5</cn>"
+                    "target": "I_lb",
+                    "expression": "4.00000000000000",
+                    "expression_mathml": "<cn>4.0</cn>"
                 },
                 {
-                    "target": "R",
+                    "target": "E_lb",
+                    "expression": "1.000000000000000",
+                    "expression_mathml": "<cn>1.0</cn>"
+                },
+                {
+                    "target": "R_lb",
                     "expression": "0.0",
                     "expression_mathml": "<cn>0.0</cn>"
                 },
                 {
-                    "target": "H",
+                    "target": "H_lb",
                     "expression": "0.0",
                     "expression_mathml": "<cn>0.0</cn>"
                 },
                 {
-                    "target": "D",
+                    "target": "D_lb",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "S_compliant_ub",
+                    "expression": "9669997.50000000",
+                    "expression_mathml": "<cn>9669997.5</cn>"
+                },
+                {
+                    "target": "S_noncompliant_ub",
+                    "expression": "9669997.50000000",
+                    "expression_mathml": "<cn>9669997.5</cn>"
+                },
+                {
+                    "target": "I_ub",
+                    "expression": "4.00000000000000",
+                    "expression_mathml": "<cn>4.0</cn>"
+                },
+                {
+                    "target": "E_ub",
+                    "expression": "1.000000000000000",
+                    "expression_mathml": "<cn>1.0</cn>"
+                },
+                {
+                    "target": "R_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "H_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "D_ub",
                     "expression": "0.0",
                     "expression_mathml": "<cn>0.0</cn>"
                 }
@@ -536,15 +637,7 @@
                     }
                 },
                 {
-                    "id": "c_m_0",
-                    "value": 0.5,
-                    "units": {
-                        "expression": "1",
-                        "expression_mathml": "<cn>1</cn>"
-                    }
-                },
-                {
-                    "id": "eps_m_0",
+                    "id": "eps_m_lb",
                     "value": 0.4,
                     "units": {
                         "expression": "1",
@@ -552,7 +645,15 @@
                     }
                 },
                 {
-                    "id": "c_m_1",
+                    "id": "eps_m_ub",
+                    "value": 0.6,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "c_m_lb",
                     "value": 0.4,
                     "units": {
                         "expression": "1",
@@ -560,40 +661,8 @@
                     }
                 },
                 {
-                    "id": "eps_m_1",
+                    "id": "c_m_ub",
                     "value": 0.6,
-                    "units": {
-                        "expression": "1",
-                        "expression_mathml": "<cn>1</cn>"
-                    }
-                },
-                {
-                    "id": "c_m_2",
-                    "value": 0.6,
-                    "units": {
-                        "expression": "1",
-                        "expression_mathml": "<cn>1</cn>"
-                    }
-                },
-                {
-                    "id": "eps_m_2",
-                    "value": 0.5,
-                    "units": {
-                        "expression": "1",
-                        "expression_mathml": "<cn>1</cn>"
-                    }
-                },
-                {
-                    "id": "c_m_3",
-                    "value": 0.5,
-                    "units": {
-                        "expression": "1",
-                        "expression_mathml": "<cn>1</cn>"
-                    }
-                },
-                {
-                    "id": "eps_m_3",
-                    "value": 0.5,
                     "units": {
                         "expression": "1",
                         "expression_mathml": "<cn>1</cn>"

@@ -9,6 +9,7 @@ from typing import List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
+from funman.constants import MODE_ODEINT, MODE_SMT, Mode
 from funman.utils.handlers import (
     NoopResultHandler,
     ResultCombinedHandler,
@@ -116,8 +117,8 @@ class FUNMANConfig(BaseModel):
     corner_points: bool = False
     """ Compute Corner points of each box """
 
-    verbosity: int = logging.INFO
-    """ Verbosity (INFO, DEBUG, WARN, ERROR)"""
+    verbosity: int = logging.ERROR
+    """ Verbosity (INFO, DEBUG, TRACE, WARN, ERROR)"""
 
     use_transition_symbols: bool = False
     """ Use transition symbols in encoding transition functions """
@@ -127,6 +128,15 @@ class FUNMANConfig(BaseModel):
 
     dreal_prefer_parameters: List[str] = []
     """ Prefer to split the listed parameters in dreal """
+
+    point_based_evaluation: bool = False
+    """ Evaluate parameters using point-based simulation over interval-based SMT encoding """
+
+    prioritize_box_entropy: bool = True
+    """ When comparing boxes, prefer those with low entropy """
+
+    mode: Mode = MODE_SMT
+    """ Mode to run FUNMAN, either funman.constants.MODE_ODEINT or funman.constants.MODE_SMT """
 
     @field_validator("solver")
     @classmethod

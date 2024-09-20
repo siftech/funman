@@ -305,10 +305,64 @@ class PetrinetEncoder(Encoder):
         #     for var in state_vars
         #     ])
 
+        next_observations = self.encode_observation(
+            scenario, next_step, substitutions=substitutions
+        )
+
         return (
-            And(var_updates + [time_update, normalization_constraint]),
+            And(
+                var_updates
+                + [time_update, normalization_constraint, next_observations]
+            ),
             substitutions,
         )
+
+    def encode_observation(
+        self, scenario: "AnalysisScenario", step: int, substitutions={}
+    ):
+        model = scenario.model
+        observables = model.observables()
+
+        state_vars = scenario.model._state_vars()
+
+        state = {
+            scenario.model._state_var_id(s): self._encode_state_var(
+                scenario.model._state_var_name(s), time=0
+            )
+            for s in state_vars
+        }
+
+        timed_observations = And(
+            [
+                Equals(
+                    self._encode_state_var(o.id, time=step),
+                    rate_expr_to_pysmt(
+                        model.observable_expression(o.id)[0], state=state
+                    ),
+                )
+                for o in observables
+                if model.is_timed_observable(o.id)
+            ]
+        )
+        untimed_observations = And(
+            [
+                Equals(
+                    self._encode_state_var(o.id),
+                    rate_expr_to_pysmt(
+                        model.observable_expression(o.id)[0], state=state
+                    ),
+                )
+                for o in observables
+                if step == 0 and not model.is_timed_observable(o.id)
+            ]
+        )
+
+        # f = And([
+        #     Equals(self._encode_state_var(o.id, time=step), rate_expr_to_pysmt(model.observable_expression(o.id)[0], state=state))
+        #     for o in observables
+        #     if step == 0 or model.is_timed_observable(o.id)
+        # ])
+        return And(timed_observations, untimed_observations)
 
     def _define_init(
         self, scenario: "AnalysisScenario", init_time: int = 0

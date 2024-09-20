@@ -125,3 +125,6 @@ class EnsembleModel(FunmanModel):
             dot.subgraph(m.to_dot(), values=values)
 
         return dot
+
+    def gradient(self, y, t, *p):
+        raise NotImplementedError

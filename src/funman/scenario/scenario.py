@@ -4,7 +4,10 @@ from abc import ABC, abstractclassmethod, abstractmethod
 from decimal import Decimal
 from typing import Dict, List, Optional, Union
 
+import numpy as np
+import sympy
 from pydantic import BaseModel, ConfigDict
+from pysmt.shortcuts import TRUE, And, Solver
 
 from funman import (
     NEG_INFINITY,
@@ -31,12 +34,22 @@ from funman import (
     QueryTrue,
     StructureParameter,
 )
+from funman.constants import LABEL_TRUE, LABEL_UNKNOWN
 from funman.model.ensemble import EnsembleModel
 from funman.model.petrinet import GeneratedPetriNetModel
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
-from funman.representation.constraint import FunmanUserConstraint
+from funman.representation import Point
+from funman.representation.constraint import (
+    FunmanUserConstraint,
+    TimeseriesConstraint,
+)
 from funman.representation.parameter import NumSteps, Schedules, StepSize
+from funman.search.simulate import Simulator, Timeseries
+from funman.translate.translate import EncodingOptions
 from funman.utils import math_utils
+from funman.utils.sympy_utils import replace_reserved, to_sympy
+
+from ..representation import Point
 
 l = logging.getLogger(__name__)
 
@@ -336,6 +349,220 @@ class AnalysisScenario(ABC, BaseModel):
         else:
             self.normalization_constant = 1.0
             l.warning("Warning: The scenario is not normalized!")
+
+    def run_scenario_simulation(
+        self, init, parameters, tvect
+    ) -> Optional[Timeseries]:
+        simulator = Simulator(
+            model=self.model, init=init, parameters=parameters, tvect=tvect
+        )
+        timeseries = simulator.sim()
+        return timeseries
+
+    def run_point_simulation(
+        self, point: Point, tvect
+    ) -> Optional[Timeseries]:
+        init = {
+            var: value
+            for var, value in point.values_at(0, self.model).items()
+            if var != "timer_t"
+        }
+        parameters = {
+            p: point.value_of(p) for p in self.model._parameter_names()
+        }
+        simulator = Simulator(
+            model=self.model, init=init, parameters=parameters, tvect=tvect
+        )
+        timeseries = simulator.sim()
+        # timeseries = np.array([[tvect[t], timeseries[t]] for t in range(len(tvect))])
+        return timeseries
+
+    def simulation_tvects(self, config) -> List[Union[float, int]]:
+        num_steps = self.structure_parameter("num_steps")
+        step_size = self.structure_parameter("step_size")
+        schedules = self.structure_parameter("schedules")
+
+        tvects = []
+        if schedules:
+            for s in schedules.schedules:
+                tvects.append(s.timepoints)
+        else:
+            min_steps = num_steps.interval.lb
+            max_steps = num_steps.interval.ub
+            min_size = step_size.interval.lb
+            max_size = step_size.interval.ub
+            for ss in range(int(min_size), int(max_size) + 1):
+                tvects.append(np.arange(0, int(max_steps * ss) + 1, int(ss)))
+
+        return tvects
+
+    def compute_observables(self, timeseries, parameters):
+        observables = self.model.observables()
+        timepoints = timeseries.data[0]
+        data = {}
+        unreseved_parameters = {
+            replace_reserved(k): v for k, v in parameters.items()
+        }
+        for o in observables:
+            o_name = self.model._observable_name(o)
+            # o_fn = o.expression
+            o_fn = self.model.observable_expression(o_name)
+            # Evaluate o_fn for each time in timeseries
+            if self.model.is_timed_observable(o_name):
+                values = []
+                for ti, t in enumerate(timepoints):
+                    # state_at_t = [timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns)]
+                    state_at_t = {
+                        c: timeseries.data[ci][ti]
+                        for ci, c in enumerate(timeseries.columns)
+                        if c != "time"
+                    }
+                    value = o_fn[2].evalf(subs={**state_at_t, **parameters})
+                    values.append(float(value))
+                data[o_name] = values
+            else:
+                value = o_fn[2].evalf(subs={**unreseved_parameters})
+                data[o_name] = float(value)
+        return data
+
+    def simulate_scenario(self, config: "FUNMANConfig") -> Point:
+
+        init = {
+            var: float(
+                self.model._get_init_value(var, self, config).constant_value()
+            )
+            for var in self.model._state_var_names()
+        }
+        parameters = {
+            p: pm.interval.lb
+            for p in self.model._parameter_names()
+            for pm in self.parameters
+            if pm.name == p
+        }
+        # parameters = {
+        #     p.name: p.interval.lb
+        #     for p in self.parameters
+        #     }
+        # timestamped_variables ={f"{var}_{tp}": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()}
+        schedule = self.structure_parameter("schedules").schedules[0]
+        timepoints = schedule.timepoints
+
+        timeseries = self.run_scenario_simulation(init, parameters, timepoints)
+
+        observable_timeseries = self.compute_observables(
+            timeseries, parameters
+        )
+        for k, v in observable_timeseries.items():
+            timeseries.data.append(v)
+            timeseries.columns.append(k)
+
+        values = {
+            **{
+                f"{var}_{int(timepoint)}": timeseries.data[var_idx + 1][
+                    timestep
+                ]
+                for var_idx, var in enumerate(timeseries.columns[1:])
+                for timestep, timepoint in enumerate(timeseries.data[0])
+                if isinstance(timeseries.data[var_idx + 1], list)
+            },
+            **{
+                var: timeseries.data[var_idx + 1]
+                for var_idx, var in enumerate(timeseries.columns[1:])
+                for timestep, timepoint in enumerate(timeseries.data[0])
+                if not isinstance(timeseries.data[var_idx + 1], list)
+            },
+            **parameters,
+            **{"timestep": len(timepoints) - 1},
+        }
+        point = Point(
+            values=values,
+            label=LABEL_TRUE,
+            schedule=schedule,
+            simulation=timeseries,
+        )
+
+        # with Solver() as solver:
+        #         sim_encoding = self.encode_timeseries_verification(
+        #             point, timeseries
+        #         )
+        #         solver.add_assertion(sim_encoding)
+        #         result = solver.solve()
+        #         if result:
+        #             l.info("simulation passed verification")
+        #         else:
+        #             l.info("simulation failed verification")
+        #             return False
+
+        return point
+
+    def check_simulation(
+        self, config: "FUNMANConfig", results: "AnalysisScenarioResult"
+    ):
+        # Check solution with simulation
+        sim_results = []
+
+        points = results.parameter_space.points()
+        # [Point(label=LABEL_UNKNOWN, values={**{p.name: p.interval.lb for p in self.parameters}, **{f"{var}_0": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()},**{f"{var}_{tp}": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()}})] if results is None else
+
+        for point in points:
+            timeseries = self.run_point_simulation(
+                point, point.relevant_timepoints(self.model)
+            )
+            sim_results.append((point, timeseries))
+            point.simulation = timeseries
+
+        for point, timeseries in sim_results:
+            if timeseries is None:
+                l.warning(
+                    f"Skipping point validation because there is no timeseries ..."
+                )
+                continue
+
+            with Solver() as solver:
+                sim_encoding = self.encode_timeseries_verification(
+                    point, timeseries
+                )
+                solver.add_assertion(sim_encoding)
+                result = solver.solve()
+                if result:
+                    l.info("simulation passed verification")
+                else:
+                    l.info("simulation failed verification")
+                    return False
+
+        return True
+
+    def encode_timeseries_verification(
+        self, point: Point, timeseries: Timeseries
+    ):
+        # Get constraints needed to check timeseries
+        ts_constraint = TimeseriesConstraint(
+            name="simulation", timeseries=timeseries
+        )
+        timeseries_constraints = [
+            TimeseriesConstraint(name="simulation", timeseries=timeseries)
+        ] + [c for c in self.constraints if not isinstance(c, ModelConstraint)]
+
+        encoded_constraints = []
+        timepoints = timeseries["time"]
+        encoding = self._smt_encoder.initialize_encodings(
+            self, len(point.schedule.timepoints)
+        )
+        for c in timeseries_constraints:
+            for timestep, timepoint in enumerate(timepoints):
+                if c.encodable() and c.relevant_at_time(timepoint):
+                    encoded_constraints.append(
+                        encoding.construct_encoding(
+                            self,
+                            c,
+                            EncodingOptions(schedule=point.schedule),
+                            layers=[timestep],
+                            assumptions=self._assumptions,
+                        )
+                    )
+        formula = And(encoded_constraints)
+
+        return formula
 
 
 class AnalysisScenarioResult(ABC):

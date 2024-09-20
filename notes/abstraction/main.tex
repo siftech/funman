@@ -1,0 +1,51 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath}
+% \usepackage[amsmath]{ntheorem}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{fullpage}
+
+
+\newcommand{\funman}{FUNMAN}
+\newcommand{\region}{\bf X}
+\newcommand{\posregion}{{\region}^+}
+\newcommand{\negregion}{{\region}^-}
+\newcommand{\irrelevantregion}{{\region}^\oslash}
+\newcommand{\point}{{\bf x}}
+\newcommand{\model}{{\bf M}}
+\newcommand{\query}{{\bf Q}}
+\newcommand{\bounds}{{\bf B}}
+\newcommand{\parameters}{{\bf p}}
+\newcommand{\parameterbox}{{\bf p}^{[]}}
+\newcommand{\reals}{{\mathbb{R}}}
+
+\title{\funman Abstraction}
+\author{Dan Bryce}
+\begin{document}
+\maketitle
+
+\section{Stratification Abstraction}
+\input{stratify-example}
+
+% \section{Parameter Synthesis as Abstraction Refinement}
+
+% Parameter synthesis involves labeling regions of a parameter space as safe or unsafe.  This can be formulated as an expression:
+
+% \begin{align}
+%     \label{eqn:formulation1}\tag{F1}
+%      & \exists \posregion \subseteq \reals^n \forall \point \in \posregion. \model(\point) \wedge \query(\point)         & // & \text{true}  \\
+%     \label{eqn:formulation2}\tag{F2}
+%      & \exists \negregion \subseteq \reals^n \forall \point \in \negregion. \neg \model(\point) \vee \neg \query(\point) & // & \text{false}
+%     % \label{eqn:formulation3}
+%     %  & \exists \irrelevantregion \subseteq \reals^n \forall \point \in \irrelevantregion. \neg \model(\point)         & // & \text{irrelevant}
+% \end{align}
+% \noindent where each point $\point$ is an $n$-dimensional vector.  We refer to $\posregion$ and $\negregion$ as the respective ``true'' and ``false'' sets.  We call the pair $(\posregion, \negregion)$ the parameter space of $\model$ and $\query$.
+
+
+
+% In addition to the parameters comprising the parameter space, the model includes a set of state variables $V$.  The model defines (via ODE or PDE equations) the state $S$ at various points in time and space.  We augment the state to include the (constant or piece-wise constant) model parameters, as well as structural parameters describing the time horizon and step size.
+
+% An abstraction of the state space groups states into abstract states, and defines abstract transitions between abstract states.  An abstract transition between abstract states indicates that there exists at least one transition between states of the respective abstract states.  
+
+\end{document}

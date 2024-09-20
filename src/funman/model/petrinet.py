@@ -1,20 +1,28 @@
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import graphviz
 import sympy
 from pydantic import BaseModel, ConfigDict
+from pysmt.formula import FNode
 from pysmt.shortcuts import REAL, Div, Real, Symbol
 
-from funman.utils.sympy_utils import substitute, sympy_to_pysmt, to_sympy
+from funman.utils.sympy_utils import (
+    replace_reserved,
+    substitute,
+    sympy_to_pysmt,
+    to_sympy,
+)
 
-from ..representation.interval import Interval
+from ..representation import Interval
 from .generated_models.petrinet import Distribution
 from .generated_models.petrinet import Model as GeneratedPetrinet
-from .generated_models.petrinet import State, Transition
+from .generated_models.petrinet import Observable, State, Transition
 from .model import FunmanModel
 
 
 class AbstractPetriNetModel(FunmanModel):
+    _is_differentiable: bool = True
+
     def _num_flow_from_state_to_transition(
         self, state_id: Union[str, int], transition_id: Union[str, int]
     ) -> int:
@@ -177,12 +185,125 @@ class AbstractPetriNetModel(FunmanModel):
             for v in vars
         ]
 
+    def derivative(
+        self,
+        var_name,
+        t,
+        values,
+        params,
+        var_to_value,
+        param_to_value,
+        get_lambda=False,
+    ):  # var_to_value, param_to_value):
+        # param_at_t = {p: pv(t).item() for p, pv in param_to_value.items()}
+        # FIXME assumes each transition has only one rate
+        # print(f"Calling with args {var_name}; {t}; {values}; {params}")
+        if get_lambda:
+            pos_rates = [
+                self._transition_rate(trans, get_lambda=get_lambda)[0](
+                    *values, *params
+                )
+                for trans in self._transitions()
+                for var in trans.output
+                if var_name == var
+            ]
+            neg_rates = [
+                self._transition_rate(trans, get_lambda=get_lambda)[0](
+                    *values, *params
+                )
+                for trans in self._transitions()
+                for var in trans.input
+                if var_name == var
+            ]
+        else:
+            pos_rates = [
+                self._transition_rate(trans)[0].evalf(
+                    subs={**var_to_value, **param_to_value}, n=10
+                )
+                for trans in self._transitions()
+                for var in trans.output
+                if var_name == var
+            ]
+            neg_rates = [
+                self._transition_rate(trans)[0].evalf(
+                    subs={**var_to_value, **param_to_value}, n=10
+                )
+                for trans in self._transitions()
+                for var in trans.input
+                if var_name == var
+            ]
+        # print(f"Got rates {pos_rates} {neg_rates}")
+
+        return sum(pos_rates) - sum(neg_rates)
+
+    def gradient(self, t, y, *p):
+        # FIXME support time varying paramters by treating parameters as a function
+        var_to_value = {
+            var: y[i] for i, var in enumerate(self._state_var_names())
+        }
+        # print(f"y: {y}; t: {t}")
+        param_to_value = {
+            replace_reserved(param): p[i](t)[()]
+            for i, param in enumerate(self._parameter_names())
+        }
+        param_to_value["timer_t"] = t
+        # values = [
+        #     y[i] for i, _ in enumerate(self._symbols())
+        # ]
+        unreserved_symols = [replace_reserved(s) for s in self._symbols()]
+        params = [
+            param_to_value[str(p)]
+            for p in unreserved_symols
+            if str(p) in param_to_value
+        ]
+
+        grad = [
+            self.derivative(
+                var,
+                t,
+                y,
+                params,
+                var_to_value,
+                param_to_value,
+                get_lambda=True,
+            )  # var_to_value, param_to_value)
+            for var in self._state_var_names()
+        ]
+        # print(f"vars: {self._state_var_names()}")
+        # print(f"gradient: {grad}")
+        assert not any([not isinstance(v, float) for v in grad]), f"Gradient has a non-float element: {grad}"
+        return grad
+
 
 class GeneratedPetriNetModel(AbstractPetriNetModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     petrinet: GeneratedPetrinet
     _transition_rates_cache: Dict[str, Union[sympy.Expr, str]] = {}
+    _observables_cache: Dict[str, Union[str, FNode, sympy.Expr]] = {}
+    _transition_rates_lambda_cache: Dict[str, Union[Callable, str]] = {}
+
+    def observables(self):
+        return self.petrinet.semantics.ode.observables
+
+    def is_timed_observable(self, observation_id):
+        (_, e, _) = self.observable_expression(observation_id)
+        vars = [str(e) for e in e.get_free_variables()]
+        obs_state_vars = [v for v in vars if v in self._state_var_names()]
+        return any(obs_state_vars)
+
+    def observable_expression(self, observation_id):
+        if observation_id not in self._observables_cache:
+            observable = next(
+                iter([o for o in self.observables() if o.id == observation_id])
+            )
+            sympy_expr = to_sympy(observable.expression, self._symbols())
+            self._observables_cache[observation_id] = (
+                observable.expression,
+                sympy_to_pysmt(sympy_expr),
+                sympy_expr,
+            )
+        return self._observables_cache[observation_id]
 
     def default_encoder(
         self, config: "FUNMANConfig", scenario: "AnalysisScenario"
@@ -221,7 +342,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _symbols(self):
         symbols = self._state_var_names() + self._parameter_names()
         if self._time_var():
-            symbols += [self._time_var().id]
+            symbols += [f"timer_{self._time_var().id}"]
         return symbols
 
     def _get_init_value(
@@ -284,11 +405,17 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _state_var_names(self) -> List[str]:
         return [self._state_var_name(s) for s in self._state_vars()]
 
+    def _observable_names(self) -> List[str]:
+        return [self._observable_name(s) for s in self.observables()]
+
     def _transitions(self) -> List[Transition]:
         return self.petrinet.model.transitions
 
     def _state_var_name(self, state_var: State) -> str:
         return state_var.id
+
+    def _observable_name(self, observable: Observable) -> str:
+        return observable.id
 
     def _input_edges(self):
         return [(i, t.id) for t in self._transitions() for i in t.input]
@@ -302,7 +429,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def _output_edges(self):
         return [(t.id, o) for t in self._transitions() for o in t.output]
 
-    def _transition_rate(self, transition, sympify=False):
+    def _transition_rate(self, transition, sympify=False, get_lambda=False):
         if hasattr(self.petrinet.semantics, "ode"):
             if transition.id not in self._transition_rates_cache:
                 t_rates = [
@@ -326,8 +453,24 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         )
                         for t in t_rates
                     ]
+                unreserved_symbols = [
+                    replace_reserved(s) for s in self._symbols()
+                ]
+                # convert "t" to "timer_t"
+                unreserved_symbols[-1] = self._time_var_id(self._time_var())
+                t_rates_lambda = [
+                    sympy.lambdify(unreserved_symbols, t, cse=True)
+                    for t in t_rates
+                ]
                 self._transition_rates_cache[transition.id] = t_rates
-            return self._transition_rates_cache[transition.id]
+                self._transition_rates_lambda_cache[transition.id] = (
+                    t_rates_lambda
+                )
+            return (
+                self._transition_rates_cache[transition.id]
+                if not get_lambda
+                else self._transition_rates_lambda_cache[transition.id]
+            )
         else:
             return transition.id
 
@@ -377,10 +520,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             new_bounds = parameter_bounds[param.id]
             if param.distribution:
                 param.distribution.parameters["minimum"] = max(
-                    new_bounds.lb, param.distribution.parameters["minimum"]
+                    new_bounds.lb,
+                    float(param.distribution.parameters["minimum"]),
                 )
                 param.distribution.parameters["maximum"] = min(
-                    new_bounds.ub, param.distribution.parameters["maximum"]
+                    new_bounds.ub,
+                    float(param.distribution.parameters["maximum"]),
                 )
             else:
                 param.distribution = Distribution(

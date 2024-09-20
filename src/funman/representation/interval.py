@@ -17,8 +17,9 @@ from typing_extensions import Annotated
 
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
+from funman.utils.logging import inherit_level
 
-l = logging.Logger(__name__)
+l = logging.getLogger(__name__)
 
 
 class Interval(BaseModel):
@@ -151,7 +152,7 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        l.debug(f"Interval.meets(): {self} {other}")
+        l.trace(f"Interval.meets(): {self} {other}")
         # return self.ub == other.lb or self.lb == other.ub
         if self.closed_upper_bound:
             # cannot be equal to other.lb
@@ -426,6 +427,7 @@ class Interval(BaseModel):
 
         # Assume that intervals where lb == ub imply closed_upper_bound
         if self.lb == self.ub and not self.closed_upper_bound:
+            inherit_level(l)
             l.warning(
                 f"{self} has equal lower and upper bounds, so assuming the upper bound is closed.  (I.e., [lb, ub) is actually [lb, ub])"
             )
