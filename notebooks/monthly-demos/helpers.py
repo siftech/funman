@@ -71,7 +71,7 @@ def run(funman_request,  model, models, plot=False, SAVED_RESULTS_DIR="./out"):
     )
     return results
 
-def setup_common(funman_request, timepoints, synthesize=False, debug=False, dreal_precision=1e-1, mode=MODE_SMT):
+def setup_common(funman_request, timepoints, synthesize=False, debug=False, dreal_precision=1e-3, mode=MODE_SMT):
     set_timepoints(funman_request, timepoints)
     if not synthesize:
         unset_all_labels(funman_request)

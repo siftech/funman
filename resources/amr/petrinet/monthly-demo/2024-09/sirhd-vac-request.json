@@ -1,0 +1,42 @@
+{
+   "constraints": [],
+   "parameters": [
+      {
+         "name": "v_a",
+         "interval": {
+            "lb": 0.25,
+            "ub": 0.45
+         },
+         "label": "all"
+      },
+      {
+         "name": "v_b",
+         "interval": {
+            "lb": 0.95,
+            "ub": 1.05
+         },
+         "label": "all"
+      }
+   ],
+   "structure_parameters": [
+      {
+         "name": "schedules",
+         "schedules": [
+            {
+               "timepoints": [
+                  0,
+                  10,
+                  20
+               ]
+            }
+         ]
+      }
+   ],
+   "config": {
+      "tolerance": 1e-2,
+      "dreal_precision": 0.001,
+      "normalization_constant": 150000000.0,
+      "normalize": false,
+      "use_compartmental_constraints": true
+   }
+}
