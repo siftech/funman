@@ -2,7 +2,7 @@
     A Petrinet $\Omega$ is a directed graph $(V, E)$ with vertices $V=(V_x,
     V_z)$ partitioned into sets $V_x$ of state vertices and $V_z$ of transition
     vertices, and edges $E=(E_{in}, E_{out})$ partitioned into collections $E_{out}$ of
-    flow-out and $E_{in}$ flow-in edges. 
+    flow-out and $E_{in}$ flow-in edges (relative to state vertices). 
 \end{definition}
 
 
@@ -48,7 +48,7 @@ flow is directed from $v_x$ to $v_z$.
         \item ${\cal Z}: Z \rightarrow V_z$ assigns transtions to transition
         vertices; and
         \item ${\cal R}: {\bf P} \times {\bf X} \times Z \rightarrow \reals$
-        defines the rate of each transition in $x \in X$ in terms of the set of
+        defines the rate of each transition  $z \in Z$ in terms of the set of
         parameter vectors ${\bf P}$ and state variable vectors ${\bf X}$.  
     \end{itemize}
     The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
