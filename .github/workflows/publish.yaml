@@ -120,9 +120,9 @@ jobs:
   merge-images:
     name: Merge AMD64 and ARM64 images under one manifest
     needs:
-      - image-tag
+      - tag-generator
       - amd64
-      - arm64-emulation
+      - arm64
     uses: ./.github/workflows/merge-images.yml
     with:
-      name: ${{ needs.image-tag.outputs.tagged-image-name }}
+      name: ${{ needs.tag-generator.outputs.tag }}
