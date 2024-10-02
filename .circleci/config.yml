@@ -68,8 +68,8 @@ jobs:
       - run:
           name: "Base Build"
           command: |
-            export VERSION=${IMAGE_TAG}-${EXECUTOR}
-            echo "Building image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${VERSION}"
+            export VERSION=${IMAGE_TAG}
+            echo "Building image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${VERSION}--${EXECUTOR}"
             docker buildx bake -f docker/docker-bake.hcl ${PACKAGE_NAME}-${EXECUTOR}
 
   create-manifest:
