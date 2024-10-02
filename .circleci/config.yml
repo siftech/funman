@@ -1,0 +1,113 @@
+version: 2.1
+
+executors:
+  amd64:
+    docker:
+      - image: cimg/base:current
+    resource_class: large
+    environment:
+      PLATFORM: "linux/amd64"
+      EXECUTOR: "amd64"
+  arm64:
+    docker:
+      - image: cimg/base:current
+    resource_class: arm.large
+    environment:
+      PLATFORM: "linux/arm64"
+      EXECUTOR: "arm64"
+
+commands:
+  configure-ghcr:
+    description: Configure GHCR access
+    steps:
+      - run:
+          name: Configure GHCR
+          command: |
+            [ -z "$GHCR_TOKEN" ] && exit 0
+            [ -z "$GHCR_USER" ] && exit 0
+            for i in $(seq 1 5); do
+              echo "Logging into GHCR, attempt $i"
+              echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin && break
+              sleep 1
+            done
+
+  tag-generator:
+    description: Format CIRCLE_TAG
+    steps:
+      - run:
+          name: Generate environment variables for build
+          command: |
+            if [ -n "${CIRCLE_TAG}" ]; then
+              SEMVER=$( echo ${CIRCLE_TAG} | sed -nre 's/^v[^0-9]*(([0-9]+\.)*[0-9]+(-[a-z]+)?).*/\1/p')
+              if [[ -n $SEMVER ]]; then
+                IMAGE_TAG=${SEMVER}
+              else
+                IMAGE_TAG=${CIRCLE_TAG}
+              fi
+            else
+              IMAGE_TAG=latest
+            fi
+            
+            echo -e "export DOCKER_REGISTRY=ghcr.io\n" >> $BASH_ENV
+            echo -e "export DOCKER_ORG=darpa-askem\n" >> $BASH_ENV
+            echo -e "export PACKAGE_NAME=funman-base\n" >> $BASH_ENV
+            echo -e "export IMAGE_TAG=${IMAGE_TAG}\n" >> $BASH_ENV
+            source $BASH_ENV
+
+jobs:
+  build-push:
+    parameters:
+      platform:
+        type: executor
+    executor: << parameters.platform >>
+    steps:
+      - checkout
+      - setup_remote_docker
+      - configure-ghcr
+      - tag-generator
+      - run:
+          name: "Base Build"
+          command: |
+            export VERSION=${IMAGE_TAG}-${EXECUTOR}
+            echo "Building image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${VERSION}"
+            docker buildx bake -f docker/docker-bake.hcl ${PACKAGE_NAME}-${EXECUTOR}
+
+  create-manifest:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - checkout
+      - setup_remote_docker
+      - configure-ghcr
+      - tag-generator
+      - run:
+          name: Create and push manifest for multiarch
+          command: |
+            echo "Creating manifest for image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${IMAGE_TAG}"
+            docker manifest create \
+            ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${IMAGE_TAG} \
+            --amend ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${IMAGE_TAG}--amd64 \
+            --amend ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${IMAGE_TAG}--arm64
+            docker manifest push ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${IMAGE_TAG}
+
+workflows:
+  build-publish:
+    jobs:
+      - build-push-light:
+          matrix:
+            parameters:
+              platform: [ amd64, arm64 ]
+          filters:
+            branches:
+              only: develop
+            tags:
+              only: /.*/
+      - create-manifest:
+          requires:
+            - build-push
+          filters:
+            branches:
+              only: develop
+            tags:
+              only: /.*/
