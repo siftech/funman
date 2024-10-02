@@ -94,7 +94,7 @@ jobs:
 workflows:
   build-publish:
     jobs:
-      - build-push-light:
+      - build-push:
           matrix:
             parameters:
               platform: [ amd64, arm64 ]
