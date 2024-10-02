@@ -213,17 +213,26 @@ target "_arm64" {
 }
 target "funman-ibex-arm64" {
   inherits = ["_arm64", "funman-ibex"]
+  args = {
+    TARGETARCH = "arm64"
+  }
 }
 target "funman-dreal4-arm64" {
   inherits = ["_arm64", "funman-dreal4"]
   contexts = {
     "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-ibex:${VERSION}-${IBEX_BRANCH}" = "target:funman-ibex-arm64"
   }
+  args = {
+    TARGETARCH = "arm64"
+  }
 }
 target "funman-base-arm64" {
   inherits = ["_arm64", "funman-base"]
   contexts = {
     "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-dreal4:${VERSION}-${DREAL_COMMIT_TAG}" = "target:funman-dreal4-arm64"
+  }
+  args = {
+    TARGETARCH = "arm64"
   }
   tags = tag("funman-base", "", "-arm64")
 }
