@@ -128,4 +128,4 @@ jobs:
       - arm64
     uses: ./.github/workflows/merge-images.yml
     with:
-      name: ${{ needs.tag-generator.outputs.tag }}
+      name: ghcr.io/darpa-askem/funman-base:${{ needs.tag-generator.outputs.tag }}
