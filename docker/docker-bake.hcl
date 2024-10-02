@@ -17,7 +17,7 @@ variable "TARGET_ARCH" {
   default = "amd64"
 }
 variable "BAZEL_VERSION" {
-  default = "6.0.0"
+  default = "6.5.0"
 }
 variable "DREAL_REPO_URL" {
   default = "https://github.com/danbryce/dreal4.git"
@@ -186,33 +186,44 @@ target "funman-dev-as-root" {
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-target "_platforms" {
+target "_amd64" {
   platforms = ["linux/amd64"]
 }
-target "funman-ibex-multiplatform" {
-  inherits = ["_platforms", "funman-ibex"]
+target "funman-ibex-amd64" {
+  inherits = ["_amd64", "funman-ibex"]
 }
-target "funman-dreal4-multiplatform" {
-  inherits = ["_platforms", "funman-dreal4"]
+target "funman-dreal4-amd64" {
+  inherits = ["_amd64", "funman-dreal4"]
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-ibex:${VERSION}-${IBEX_BRANCH}" = "target:funman-ibex-multiplatform"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-ibex:${VERSION}-${IBEX_BRANCH}" = "target:funman-ibex-amd64"
   }
 }
-target "funman-base-multiplatform" {
-  inherits = ["_platforms", "funman-base"]
+target "funman-base-amd64" {
+  inherits = ["_amd64", "funman-base"]
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-dreal4:${VERSION}-${DREAL_COMMIT_TAG}" = "target:funman-dreal4-multiplatform"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-dreal4:${VERSION}-${DREAL_COMMIT_TAG}" = "target:funman-dreal4-amd64"
+  }
+  tags = tag("funman-base", "", "-amd64")
+}
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+target "_arm64" {
+  platforms = ["linux/arm64"]
+}
+target "funman-ibex-arm64" {
+  inherits = ["_arm64", "funman-ibex"]
+}
+target "funman-dreal4-arm64" {
+  inherits = ["_arm64", "funman-dreal4"]
+  contexts = {
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-ibex:${VERSION}-${IBEX_BRANCH}" = "target:funman-ibex-arm64"
   }
 }
-target "funman-git-multiplatform" {
-  inherits = ["_platforms", "funman-git"]
+target "funman-base-arm64" {
+  inherits = ["_arm64", "funman-base"]
   contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-base:${VERSION}" = "target:funman-base-multiplatform"
+    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-dreal4:${VERSION}-${DREAL_COMMIT_TAG}" = "target:funman-dreal4-arm64"
   }
-}
-target "funman-api-multiplatform" {
-  inherits = ["_platforms", "funman-api"]
-  contexts = {
-    "${DOCKER_REGISTRY}/${DOCKER_ORG}/funman-git:${VERSION}-git" = "target:funman-git-multiplatform"
-  }
+  tags = tag("funman-base", "", "-arm64")
 }

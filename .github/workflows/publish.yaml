@@ -23,8 +23,8 @@ jobs:
     with:
       branch: 'develop'
 
-  publish:
-    name: sequence-build-deploy
+  amd64:
+    name: build-amd64
     runs-on: ubuntu-22.04
     needs:
       - tag-generator
@@ -52,9 +52,52 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2.4 - Setup QEMU for platform emulation
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+      # 2.5 - Setup Docker BuildX for multi platform building
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 2.6 - Build and push Docker Images
+      - name: Build Images using BuildX Bake
+        uses: docker/bake-action@v3.1.0
+        with:
+          files: |
+            ./docker/docker-bake.hcl
+          targets: funman-base-amd64
+          push: true
+          sbom: false
+          provenance: false
+          set: |
+            *.cache-from=type=gha
+            *.cache-to=type=gha,mode=max
+
+  arm64:
+    name: build-arm64
+    runs-on: macos-latest-xl
+    needs:
+      - tag-generator
+
+    steps:
+      - name: Set env variables for bakefiles
+        run: |
+          # Lowercase the inputs for Docker image naming conventions
+          TAG=${{ needs.tag-generator.outputs.tag }}
+          ORG=${{ github.repository_owner }}
+          # REG=${{ inputs.registry }}
+
+          echo "VERSION=${TAG,,}" >> ${GITHUB_ENV}
+          echo "DOCKER_ORG=${ORG,,}" >> ${GITHUB_ENV}
+          echo "BUILDX_NO_DEFAULT_ATTESTATIONS=1" >> ${GITHUB_ENV}
+          # echo "DOCKER_REGISTRY=${REG,,}" >> ${GITHUB_ENV}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Login to registry
+        uses: docker/login-action@v2
+        with:
+          registry: 'ghcr.io'
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # 2.5 - Setup Docker BuildX for multi platform building
       - name: Set up Docker Buildx
@@ -66,7 +109,7 @@ jobs:
         with:
           files: |
             ./docker/docker-bake.hcl
-          targets: funman-base-multiplatform
+          targets: funman-base-arm64
           push: true
           sbom: false
           provenance: false
@@ -74,17 +117,12 @@ jobs:
             *.cache-from=type=gha
             *.cache-to=type=gha,mode=max
 
-  # # Build and Publish all targets associated with specified group
-  # bake:
-  #   needs:
-  #     - tag-generator
-  #   uses: darpa-askem/.github/.github/workflows/bake-publish.yml@main
-  #   with:
-  #     file: 'docker-bake.hcl'
-  #     group: 'prod'
-  #     registry: 'ghcr.io'
-  #     organization: ${{ github.repository_owner }}
-  #     tag: ${{ needs.tag-generator.outputs.tag }}
-  #   secrets:
-  #     username: ${{ github.repository_owner }}
-  #     password: ${{ secrets.GITHUB_TOKEN }}
+  merge-images:
+    name: Merge AMD64 and ARM64 images under one manifest
+    needs:
+      - image-tag
+      - amd64
+      - arm64-emulation
+    uses: ./.github/workflows/merge-images.yml
+    with:
+      name: ${{ needs.image-tag.outputs.tagged-image-name }}
