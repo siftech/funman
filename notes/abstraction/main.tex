@@ -1,11 +1,15 @@
 \documentclass[10pt]{article}
 
 \usepackage{amsmath}
+\usepackage{}
+% \usepackage{mathbb}
 % \usepackage[amsmath]{ntheorem}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage{fullpage}
 
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
 
 \newcommand{\funman}{FUNMAN}
 \newcommand{\region}{\bf X}
@@ -25,8 +29,17 @@
 \begin{document}
 \maketitle
 
-\section{Stratification Abstraction}
-\input{stratify-example}
+\section{Background}
+\input{background}
+
+\section{Abstraction}
+\input{abstraction}
+
+\section{Bounded Abstraction}
+\input{bounded-abstraction}
+
+% \section{Stratification Abstraction}
+% \input{stratify-example}
 
 % \section{Parameter Synthesis as Abstraction Refinement}
 
