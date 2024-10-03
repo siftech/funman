@@ -70,7 +70,7 @@ jobs:
           command: |
             export VERSION=${IMAGE_TAG}
             echo "Building image: ${DOCKER_REGISTRY}/${DOCKER_ORG}/${PACKAGE_NAME}:${VERSION}--${EXECUTOR}"
-            docker buildx bake -f docker/docker-bake.hcl ${PACKAGE_NAME}-${EXECUTOR}
+            docker buildx bake -f docker/docker-bake.hcl ${PACKAGE_NAME}-${EXECUTOR} --push
 
   create-manifest:
     docker:
