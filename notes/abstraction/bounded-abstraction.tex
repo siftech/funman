@@ -1,20 +1,18 @@
 We modify the abstraction in what we call a \emph{bounded abstraction}, so that
 it refers to the abstract, and not the base, Petrinet and semantics.  This
 bounded abstraction replaces base elements with corresponding bounded elements.
-For example, if $A(x_1) = x'$ and $A(x_2) = x'$ ($x_1$ and $x_2$ are base
-variables represented by $x'$ in the abstraction), a possible transition rate
-could be of the form
-${\cal R}'({\bf p}', {\bf x}', z') = p_1 x_1 + p_2 x_2$.  By construction, we
-know that $x_1 + x_2 = x'$.  However, in general $p_1 \not= p_2$, and we cannot
-say that $p_1 x_1 + p_2 x_2 = p'x'$ for some $p'$.  Yet, if we replace $p_1$ and
-$p_2$ by $p^{ub} = \max(p_1, p_2)$, then $p^{ub} x_1 + p^{ub} x_2 \geq p'x'$.  Simplifying, we
-get $p^{ub} x_1 + p^{ub} x_2 = p^{ub}(x_1 + x_2) = p^{ub} x' \geq p'x'$.  A
-similar argument can be made where $p^{lb} = \min(p_1, p_2)$ and we find that
-$p^{lb} x' \leq p'x'$.  
+For example, if $A(S_1) = S$ and $A(S_2) = S$ ($S_1$ and $S_2$ are base
+variables represented by $S$ in the abstraction), the transition rate associated with the $inf$ transition is
+ ${\cal R}'({\bf p}', {\bf x}', z_{inf}) = \beta_1 S_1 I +  \beta_2 S_2 I$.
+By construction, we know that $S_1 + S_2 = S$.  However, in general $\beta_1 \not=
+\beta_2$, and we cannot say that $\beta_1 S_1 I + \beta_2 S_2 I = \beta S I$ for some definition of $\beta$.  Yet, if
+we replace $\beta_1$ and $\beta_2$ by $\beta^{ub} = \max(\beta_1, \beta_2)$, then $\beta^{ub} S_1 I +
+\beta^{ub} S_2 I \geq \beta S I$.  Simplifying, we get $\beta^{ub} S_1 I + \beta^{ub} S_2 I =
+\beta^{ub}(S_1 + S_2)I = \beta^{ub} S I \geq \beta S I$.  A similar argument can be made for the lower bound where
+$\beta^{lb} = \min(\beta_1, \beta_2)$ and we find that $\beta^{lb} S I \leq \beta S I$.  
 
-By introducing the bounded parameters, we no longer
-rely upon the base state variables or parameters.  However, in tracking the
-effect of the bounded
+By introducing the bounded parameters, we no longer rely upon the base state
+variables or parameters.  However, in tracking the effect of the bounded
 parameters, the bounded abstraction must also track bounded rates and bounded
 state variables.  The resulting bounded abstraction thus over-approximates the
 abstraction and base model, wherein we can derive bounds on the state variables
@@ -23,51 +21,51 @@ state trajectories.
 
 \begin{definition}
 A bounded abstraction $(\Theta^B, \Omega^B)$ of an abstraction $(\Theta',
-\Omega')$ of $(\Theta, \Omega)$ replaces each element of $(\Theta',
-\Omega')$ by a pair of elements denoting the lower and upper bound of that
-element (and referred to with the ``$lb$'' and ``$ub$'' superscripts).  The
-bounded abstraction defines:
+\Omega')$ of $(\Theta, \Omega)$ replaces each element of $(\Theta', \Omega')$ by
+a pair of elements denoting the lower and upper bound of that element (and
+referred to with the ``$lb$'' and ``$ub$'' superscripts).  The bounded
+abstraction defines:
 \begin{itemize}
     \item State: For each $x' \in X'$,  $x^{lb}, x^{ub} \in X^B$.  For each
-    $v_{x'}' \in V_x'$, ${\cal X}^B(x^{lb}) = v_{x^{lb}}^B$ and ${\cal X}^B(x^{ub}) =
-    v_x^{ub}$.   For each $x^{lb}, x^{ub} \in X^B$, ${\cal I}^B(x^{lb}) = {\cal
-    I}^B(x^{ub}) = {\cal I}'(x')$.
-        \item Parameters: For each $p' \in P'$,
-        let ${\cal P}^B(p^{lb}) = \min\limits_{p \in P: A(p) = p'} {\cal P}(p)$ and ${\cal P}^B(p^{ub}) = \max\limits_{p \in P: A(p) = p'} {\cal P}(p)$. 
+    $v_{x'}' \in V_x'$, ${\cal X}^B(x^{lb}) = v_{x^{lb}}^B$ and ${\cal
+    X}^B(x^{ub}) = v_{x^{ub}}^B$.   For each $x^{lb}, x^{ub} \in X^B$, ${\cal
+    I}^B(x^{lb}) = {\cal I}^B(x^{ub}) = {\cal I}'(x')$.
+        \item Parameters: For each $p' \in P'$, let ${\cal P}^B(p^{lb}) =
+        \min\limits_{p \in P: A(p) = p'} {\cal P}(p)$ and ${\cal P}^B(p^{ub}) =
+        \max\limits_{p \in P: A(p) = p'} {\cal P}(p)$. 
         
 
-        \item Transitions: For each $z' \in Z'$, $z^{lb}, z^{ub} \in Z^B$.
-        For each vertex $v_z \in V_z$, $v_{z^{lb}}, v_{z^{ub}} \in V_z^B$.
+        \item Transitions: For each $z' \in Z'$, $z^{lb}, z^{ub} \in Z^B$. For
+        each vertex $v_z \in V_z$, if $A(v_z)=v_z'$ then $v_{z^{lb}}^B, v_{z^{ub}}^B \in V_z^B$.
         
-        \item In Edges: For each edge $(v_{z'}, v_{x'}) \in E_{in}'$, $(v_{z^{lb}},
-        v_{x^{lb}}), (v_{z^{ub}},
-        v_{x^{ub}}) \in E^B_{in}$.
-        \item Out Edges: For each edge $(v_{x'}, v_{z'}) \in E_{out}'$, $(v_{x^{ub}},
-        v_{z^{lb}}), (v_{x^{lb}},
-        v_{z^{ub}}) \in E^B_{out}$.
+        \item In Edges: For each edge $(v_{z'}^B, v_{x'}^B) \in E_{in}'$,
+        $(v_{z^{lb}}^B, v_{x^{lb}}^B), (v_{z^{ub}}^B, v_{x^{ub}}^B) \in E^B_{in}$.
+        \item Out Edges: For each edge $(v_{x'}^B, v_{z'}^B) \in E_{out}'$,
+        $(v_{x^{ub}}^B, v_{z^{lb}}^B), (v_{x^{lb}}^B, v_{z^{ub}}^B) \in E^B_{out}$.
 
         
-        \item Transition Rates: For each $z^{lb} \in Z^B$, ${\cal R}^B({\bf p}^B, {\bf
-        x}^B, z^{lb}) = \min\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf
-        x}, z)$ (replacing ${\bf p}$ and $[\bf x]$ of the minimal rate by the 
-        elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which minimize the
-        rate), and ${\cal R}^B({\bf p}^B,
-        {\bf
-        x}^B, z^{ub}) = \max\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf
-        x}, z)$ (similarly replacing ${\bf p}$ and ${\bf x}$ of the maximal rate by the 
-        elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which maximize the
-        rate).
+        \item Transition Rates: For each $z^{lb} \in Z^B$, ${\cal R}^B({\bf
+        p}^B, {\bf x}^B, z^{lb}) = \min\limits_{z \in Z: A(z)=z'} {\cal R}({\bf
+        p}, {\bf x}, z)$ (replacing ${\bf p}$ and ${\bf x}$ of the minimal rate
+        by the elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which
+        minimize the rate), and ${\cal R}^B({\bf p}^B, {\bf x}^B, z^{ub}) =
+        \max\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf x}, z)$ (similarly
+        replacing ${\bf p}$ and ${\bf x}$ of the maximal rate by the elements in
+        ${\bf p}^B$ and ${\bf x}^B$ respectively, which maximize the rate).
 \end{itemize}
     
 \end{definition}
 
 \begin{example}
-    The bounded abstraction $(\Theta^B, \Omega^B)$ of the stratified SIR model defines:
+    The bounded abstraction $(\Theta^B, \Omega^B)$ of the stratified SIR model
+    defines:
     \begin{eqnarray*}
-        V^B_x &=& \{v_{S}^{lb}, v_{S}^{ub}, v_{I}^{lb}, v_{I}^{ub},v_{R}^{lb}, v_{R}^{ub},\}\\
+        V^B_x &=& \{v_{S}^{lb}, v_{S}^{ub}, v_{I}^{lb}, v_{I}^{ub},v_{R}^{lb},
+        v_{R}^{ub},\}\\
         V^B_z &=& \{v_{inf}^{lb}, v_{inf}^{ub}, v_{rec}^{lb}, v_{rec}^{ub}\}\\
         E^B_{in} &=& ((v_{inf}^{lb}, v_{S}^{lb}), (v_{inf}^{lb},
-        v_{I}^{lb}),(v_{inf}^{lb}, v_{I}^{lb}), (v_{rec}^{lb}, v_{R}^{lb}),(v_{inf}^{ub}, v_{S}^{ub}), (v_{inf}^{ub},
+        v_{I}^{lb}),(v_{inf}^{lb}, v_{I}^{lb}), (v_{rec}^{lb},
+        v_{R}^{lb}),(v_{inf}^{ub}, v_{S}^{ub}), (v_{inf}^{ub},
         v_{I}^{ub}),(v_{inf}^{ub}, v_{I}^{ub}), (v_{rec}^{ub}, v_{R}^{ub})\\
         E^B_{out} &=& ((v_{S}^{lb}, v_{inf}^{ub}),(v_{I}^{lb}, v_{inf}^{ub}),
         (v_{I}^{lb}, v_{rec}^{ub}), (v_{S}^{ub}, v_{inf}^{lb}),(v_{I}^{ub},
@@ -82,8 +80,7 @@ bounded abstraction defines:
                 0.1& :I^{lb}\\
                 0.1& :I^{ub}\\
                 0.0& :R^{lb}\\
-                0.0& :R^{ub}
-            \end{array}\right.\\
+                0.0& :R^{ub} \end{array}\right.\\
         {\cal P}^B&=& \left\{ 
             \begin{array}{ll}
                 1e{-7}& :\beta^{lb}\\
@@ -95,41 +92,36 @@ bounded abstraction defines:
         {\cal X}^B &=& \left\{ 
             \begin{array}{ll}
                 v^{lb}_{x} & : x^{lb} \in X^B\\
-                v^{ub}_{x} & : x^{ub} \in X^B
-            \end{array}\right.\\
+                v^{ub}_{x} & : x^{ub} \in X^B \end{array}\right.\\
         {\cal Z}^B &=& \left\{ 
             \begin{array}{ll}
                 v_{z}^{lb} & : z^{lb} \in Z^B\\
-                v_{z}^{ub} & : z^{ub} \in Z^B
-            \end{array}\right.\\
+                v_{z}^{ub} & : z^{ub} \in Z^B \end{array}\right.\\
         {\cal R}^{B} &=& \left\{ 
             \begin{array}{ll}
                 \beta^{lb} S^{lb} I^{lb} & : z^{lb}_{inf}\\
                 \beta^{ub} S^{ub} I^{ub} & : z^{ub}_{inf}\\
                 \gamma^{lb} I^{lb} R^{lb} & : z^{lb}_{rec}\\
-                \gamma^{ub} I^{ub} R^{ub} & : z^{ub}_{rec}
-            \end{array}\right.\\
+                \gamma^{ub} I^{ub} R^{ub} & : z^{ub}_{rec} \end{array}\right.\\
     \end{eqnarray*}
 
     The gradient for the bounded abstraction defines:
     \begin{eqnarray}
-        \nabla_{\Theta^B, \Omega^B} = \begin{bmatrix}
-                \frac{dS^{lb}}{dt}\\
+        \nabla_{\Theta^B, \Omega^B} = \begin{bmatrix} \frac{dS^{lb}}{dt}\\
                 \frac{dS^{ub}}{dt}\\
                 \frac{dI^{lb}}{dt}\\
                 \frac{dI^{ub}}{dt}\\
                 \frac{dR^{lb}}{dt}\\
-                \frac{dR^{ub}}{dt}
-            \end{bmatrix} = \begin{bmatrix}
-            -{\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub})\\
+                \frac{dR^{ub}}{dt} \end{bmatrix} = \begin{bmatrix} -{\cal
+            R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub})\\
             -{\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb})\\
-             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb}) - {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub})\\
+             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb}) - {\cal
+             R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub})\\
              {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub}) - {\cal
              R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{lb})\\
              {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{lb})\\
-             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub})
-    \end{bmatrix} = \begin{bmatrix}
-        -\beta^{ub} S^{ub} I^{ub}\\
+             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub}) \end{bmatrix} =
+    \begin{bmatrix} -\beta^{ub} S^{ub} I^{ub}\\
         -\beta^{lb} S^{lb} I^{lb}\\
         \beta^{lb} S^{lb} I^{lb}-\gamma^{ub} I^{ub} R^{ub}\\
         \beta^{ub} S^{ub} I^{ub}-\gamma^{lb} I^{lb} R^{lb}\\
@@ -139,3 +131,13 @@ bounded abstraction defines:
    \end{eqnarray}
 
 \end{example}
+
+The bounded abstraction defines lower and upper bounds on the abstract state variables, for example:
+
+\begin{eqnarray*}
+    \frac{dS^{lb}}{dt} &\leq \frac{dS}{dt} &\leq \frac{dS^{ub}}{dt}\\
+    -\beta^{ub} S^{ub} I^{ub} &\leq \frac{dS}{dt} &\leq -\beta^{lb} S^{lb} I^{lb}\\
+    -\max(\beta_1, \beta_2) S^{ub} I^{ub} &\leq \frac{d (S_1+S_2)}{dt} &\leq -\min(\beta_1, \beta_2) S^{lb} I^{lb}\\
+    -\max(\beta_1, \beta_2) S^{ub} I^{ub} \leq -\max(\beta_1, \beta_2) (S_1+S_2) I^{ub} &\leq \frac{d S_1}{dt} +\frac{d S_2}{dt}&\leq -\min(\beta_1, \beta_2) (S_1+S_2) I^{lb}\leq -\min(\beta_1, \beta_2) S^{lb} I^{lb}\\
+    -\max(\beta_1, \beta_2) S^{ub} I^{ub} \leq -\max(\beta_1, \beta_2) (S_1+S_2) I^{ub} &\leq \frac{d S_1}{dt} +\frac{d S_2}{dt}&\leq -\min(\beta_1, \beta_2) (S_1+S_2) I\leq -\min(\beta_1, \beta_2) (S_1+S_2) I^{lb}\leq -\min(\beta_1, \beta_2) S^{lb} I^{lb}
+\end{eqnarray*}
