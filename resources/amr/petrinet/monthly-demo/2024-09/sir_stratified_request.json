@@ -1,0 +1,49 @@
+{
+  "constraints": [],
+  "parameters": [
+    {
+      "name": "beta_1",
+      "interval": {
+        "lb": 2.6e-4,
+        "ub": 3.8e-4
+      },
+      "label": "all"
+    },
+    {
+      "name": "beta_2",
+      "interval": {
+        "lb": 2.6e-4,
+        "ub": 3.8e-4
+      },
+      "label": "all"
+    },
+    {
+      "name": "gamma",
+      "interval": {
+        "lb": 0.1,
+        "ub": 0.12
+      },
+      "label": "all"
+    }
+  ],
+  "structure_parameters": [
+    {
+      "name": "schedules",
+      "schedules": [
+        {
+          "timepoints": [
+            0,
+            10,
+            20
+          ]
+        }
+      ]
+    }
+  ],
+  "config": {
+    "tolerance": 1e-2,
+    "normalization_constant": 1001,
+    "normalize": false,
+    "use_compartmental_constraints": true
+  }
+}

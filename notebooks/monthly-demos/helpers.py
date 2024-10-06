@@ -52,6 +52,7 @@ def set_config_options(funman_request, debug=False, dreal_precision=1e-3, mode=M
     funman_request.config.verbosity = logging.ERROR
     funman_request.config.mode = mode
     funman_request.config.normalize=False
+    funman_request.config.random_seed = 3
     # funman_request.config.dreal_log_level = "debug"
     # funman_request.config.dreal_prefer_parameters = ["beta","NPI_mult","r_Sv","r_EI","r_IH_u","r_IH_v","r_HR","r_HD","r_IR_u","r_IR_v"]
 
