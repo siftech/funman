@@ -453,6 +453,10 @@ class DRealNative(
                 self.config.precision = options["solver_options"][
                     "dreal_precision"
                 ]
+            if "random_seed" in options["solver_options"]:
+                self.config.random_seed = options["solver_options"][
+                    "random_seed"
+                ]
             if "dreal_log_level" in options["solver_options"]:
                 if options["solver_options"]["dreal_log_level"] == "debug":
                     dreal.set_log_level(dreal.LogLevel.DEBUG)
