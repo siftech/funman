@@ -138,6 +138,9 @@ class FUNMANConfig(BaseModel):
     mode: Mode = MODE_SMT
     """ Mode to run FUNMAN, either funman.constants.MODE_ODEINT or funman.constants.MODE_SMT """
 
+    random_seed: int = 0
+    """ Random seed """
+
     @field_validator("solver")
     @classmethod
     def import_dreal(cls, v: str) -> str:
