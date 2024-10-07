@@ -132,7 +132,7 @@ abstraction defines:
 
 \end{example}
 
-The bounded abstraction defines lower and upper bounds on the abstract state variables.  For example, we derive the upper bound on $\frac{dS}{dt}$ in Equation \ref{eqn:dsdt}:
+% The bounded abstraction defines lower and upper bounds on the abstract state variables.  For example, we derive the upper bound on $\frac{dS}{dt}$ in Equation \ref{eqn:dsdt}:
 
 % \begin{eqnarray*}
 %     \frac{dS^{lb}}{dt} &\leq \frac{dS}{dt} &\leq \frac{dS^{ub}}{dt}\\
@@ -142,15 +142,15 @@ The bounded abstraction defines lower and upper bounds on the abstract state var
 %     -\max(\beta_1, \beta_2) S^{ub} I^{ub} \leq -\max(\beta_1, \beta_2) (S_1+S_2) I^{ub} &\leq \frac{d S_1}{dt} +\frac{d S_2}{dt}&\leq -\min(\beta_1, \beta_2) (S_1+S_2) I\leq -\min(\beta_1, \beta_2) (S_1+S_2) I^{lb}\leq -\min(\beta_1, \beta_2) S^{lb} I^{lb}
 % \end{eqnarray*}
 
-\begin{eqnarray}
-    \frac{dS}{dt} &=& \frac{d S_1}{dt} +\frac{d S_2}{dt} & Stratify: S\\
-    &=& -\beta_1 S_1 I  -   \beta_2 S_2 I& Stratified Rates\\
-    &\leq& -  \min(\beta_1, \beta_2)S_1 I - \min(\beta_1, \beta_2) S_2 I & Upper bound parameters\\
-    &=& - \min(\beta_1, \beta_2)(S_1 + S_2)I   & Factor: $-I \min(\beta_1, \beta_2) $ \\
-    &=& - \min(\beta_1, \beta_2)S I  & Abstract: ${\cal X}(S_1) = {\cal X}(S_2) = S$ \\
-    &\leq& - \beta^{ub}S^{ub}I^{ub}    & Bound \\
-    &=& \frac{d S^{ub}}{dt}\label{eqn:dsdt}
-\end{eqnarray}
+% \begin{eqnarray}
+%     \frac{dS}{dt} &=& \frac{d S_1}{dt} +\frac{d S_2}{dt} & Stratify: S\\
+%     &=& -\beta_1 S_1 I  -   \beta_2 S_2 I& Stratified Rates\\
+%     &\leq& -  \min(\beta_1, \beta_2)S_1 I - \min(\beta_1, \beta_2) S_2 I & Upper bound parameters\\
+%     &=& - \min(\beta_1, \beta_2)(S_1 + S_2)I   & Factor: $-I \min(\beta_1, \beta_2) $ \\
+%     &=& - \min(\beta_1, \beta_2)S I  & Abstract: ${\cal X}(S_1) = {\cal X}(S_2) = S$ \\
+%     &\leq& - \beta^{ub}S^{ub}I^{ub}    & Bound \\
+%     &=& \frac{d S^{ub}}{dt}\label{eqn:dsdt}
+% \end{eqnarray}
 
 % \begin{eqnarray*}
 %     \frac{dI}{dt} &=& I S_1 \beta_1 + I S_2 \beta_2 - I\gamma & Stratified Rates\\
