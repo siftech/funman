@@ -1,36 +1,11 @@
 {
-  "constraints": [
-    {
-      "name": "compartmental_lb",
-      "variables": [
-        "S_lb",
-        "I_lb",
-        "R_lb"
-      ],
-      "additive_bounds": {
-        "lb": -1001.1,
-        "ub": 1010.1
-      }
-    },
-    {
-      "name": "compartmental_ub",
-      "variables": [
-        "S_ub",
-        "I_ub",
-        "R_ub"
-      ],
-      "additive_bounds": {
-        "lb": -1001.1,
-        "ub": 1010.1
-      }
-    }
-  ],
+  "constraints": [],
   "parameters": [
     {
       "name": "beta",
       "interval": {
-        "lb": 2.6e-4,
-        "ub": 3.8e-4
+        "lb": 0.000315,
+        "ub": 0.000315
       },
       "label": "all"
     },
@@ -38,7 +13,7 @@
       "name": "gamma",
       "interval": {
         "lb": 0.1,
-        "ub": 0.12
+        "ub": 0.1
       },
       "label": "all"
     }
