@@ -50,12 +50,12 @@ class Simulator(BaseModel):
 
         if self.model._is_differentiable:
             full_output = 1
-            use_odeint = False
+            use_odeint = True
             if use_odeint:
                 timeseries = odeint(
                     self.model.gradient,
-                    self.tvect,
                     self.initial_state(),
+                    self.tvect,
                     args=self.model_args(),
                     full_output=full_output,
                     tfirst=True,
