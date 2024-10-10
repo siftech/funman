@@ -83,5 +83,8 @@ class TestUseCases(unittest.TestCase):
                 ), f"Failed to create the expected expression: [{test['expected_output']}], got [{test_output}]"
 
 
+    def test_stratify(self):
+        pass
+
 if __name__ == "__main__":
     unittest.main()
