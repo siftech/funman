@@ -59,7 +59,7 @@ class AnalysisScenario(ABC, BaseModel):
     Abstract class for Analysis Scenarios.
     """
 
-    parameters: List[Parameter]
+    parameters: List[Union[Parameter, ModelParameter, StructureParameter]]
     normalization_constant: Optional[float] = None
     constraints: Optional[List[Union[FunmanUserConstraint]]] = None
     """True if its okay when the volume of the search space is empty (e.g., when it is a point)"""

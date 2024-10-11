@@ -1,0 +1,309 @@
+{
+    "model": {
+        "id": "48b325c0-0702-4b22-ac82-0a29b9ee9e51",
+        "createdOn": "2024-08-28T00:38:18.290+00:00",
+        "updatedOn": "2024-10-01T19:23:02.560+00:00",
+        "name": "aaaaa",
+        "fileNames": [],
+        "temporary": false,
+        "publicAsset": false,
+        "header": {
+            "name": "aaaaa",
+            "description": "SIR model 4",
+            "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+            "schema_name": "petrinet",
+            "model_version": "0.1"
+        },
+        "model": {
+            "transitions": [
+                {
+                    "id": "inf",
+                    "input": [
+                        "I",
+                        "S"
+                    ],
+                    "output": [
+                        "I",
+                        "I"
+                    ],
+                    "properties": {
+                        "name": "inf"
+                    }
+                },
+                {
+                    "id": "rec",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "properties": {
+                        "name": "rec"
+                    }
+                }
+            ],
+            "states": [
+                {
+                    "id": "S",
+                    "name": "Susceptible",
+                    "grounding": {
+                        "identifiers": {
+                            "ido": "0000514"
+                        },
+                        "modifiers": {}
+                    },
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "I",
+                    "name": "Infected",
+                    "grounding": {
+                        "identifiers": {
+                            "ido": "0000511"
+                        },
+                        "modifiers": {}
+                    },
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "R",
+                    "name": "Recovered",
+                    "grounding": {
+                        "identifiers": {
+                            "ido": "0000592"
+                        },
+                        "modifiers": {}
+                    },
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                }
+            ]
+        },
+        "properties": {},
+        "semantics": {
+            "ode": {
+                "rates": [
+                    {
+                        "target": "inf",
+                        "expression": "0.004*I*S*beta",
+                        "expression_mathml": "<apply><times/><cn>0.0040000000000000001</cn><ci>I</ci><ci>S</ci><ci>beta</ci></apply>"
+                    },
+                    {
+                        "target": "rec",
+                        "expression": "I*gamma",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>gamma</ci></apply>"
+                    }
+                ],
+                "initials": [
+                    {
+                        "target": "S",
+                        "expression": "S0",
+                        "expression_mathml": "<ci>S0</ci>"
+                    },
+                    {
+                        "target": "I",
+                        "expression": "I0",
+                        "expression_mathml": "<ci>I0</ci>"
+                    },
+                    {
+                        "target": "R",
+                        "expression": "R0",
+                        "expression_mathml": "<ci>R0</ci>"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "id": "beta",
+                        "name": "β",
+                        "description": "infection rate",
+                        "value": 0.04,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.03,
+                                "maximum": 0.05
+                            }
+                        },
+                        "units": {
+                            "expression": "1/(day*person)",
+                            "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>day</ci><ci>person</ci></apply></apply>"
+                        }
+                    },
+                    {
+                        "id": "gamma",
+                        "name": "γ",
+                        "description": "recovery rate",
+                        "value": 0.02,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.01,
+                                "maximum": 0.03
+                            }
+                        },
+                        "units": {
+                            "expression": "1/day",
+                            "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                        }
+                    },
+                    {
+                        "id": "S0",
+                        "name": "S₀",
+                        "description": "Total susceptible population at timestep 0",
+                        "value": 2000
+                    },
+                    {
+                        "id": "I0",
+                        "name": "I₀",
+                        "description": "Total infected population at timestep 0",
+                        "value": 1
+                    },
+                    {
+                        "id": "R0",
+                        "name": "R₀",
+                        "description": "Total recovered population at timestep 0",
+                        "value": 0
+                    },
+                    {
+                        "id": "zeta",
+                        "name": "zeta",
+                        "value": 999
+                    }
+                ],
+                "observables": [
+                    {
+                        "id": "noninf",
+                        "name": "Non-infectious",
+                        "expression": "R + S",
+                        "expression_mathml": "<apply><plus/><ci>R</ci><ci>S</ci></apply>"
+                    }
+                ],
+                "time": {
+                    "id": "t",
+                    "units": {
+                        "expression": "day",
+                        "expression_mathml": "<ci>day</ci>"
+                    }
+                }
+            },
+            "typing": null
+        },
+        "metadata": {
+            "annotations": {
+                "authors": [],
+                "references": [],
+                "locations": [],
+                "pathogens": [],
+                "diseases": [],
+                "hosts": [],
+                "model_types": []
+            },
+            "source": null,
+            "gollmCard": null,
+            "gollmExtractions": null,
+            "templateCard": null
+        }
+    },
+    "request": {
+        "constraints": [
+            {
+                "name": "Constraint 1",
+                "variables": [
+                    "S",
+                    "R"
+                ],
+                "weights": [
+                    1,
+                    1
+                ],
+                "additive_bounds": {
+                    "lb": 1000
+                },
+                "timepoints": {
+                    "lb": 0,
+                    "ub": 100,
+                    "closed_upper_bound": true
+                }
+            }
+        ],
+        "parameters": [
+            {
+                "name": "beta",
+                "interval": {
+                    "lb": 0.03,
+                    "ub": 0.05
+                },
+                "label": "all"
+            },
+            {
+                "name": "gamma",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.03
+                },
+                "label": "all"
+            },
+            {
+                "name": "S0",
+                "interval": {
+                    "lb": 2000,
+                    "ub": 2000
+                },
+                "label": "any"
+            },
+            {
+                "name": "I0",
+                "interval": {
+                    "lb": 1,
+                    "ub": 1
+                },
+                "label": "any"
+            },
+            {
+                "name": "R0",
+                "interval": {
+                    "lb": 0,
+                    "ub": 0
+                },
+                "label": "any"
+            },
+            {
+                "name": "zeta",
+                "interval": {
+                    "lb": 999,
+                    "ub": 999
+                },
+                "label": "any"
+            }
+        ],
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            10,
+                            20
+                        ]
+                    }
+                ]
+            }
+        ],
+        "config": {
+            "use_compartmental_constraints": true,
+            "normalization_constant": 2001,
+            "normalize": false,
+            "tolerance": 0.2
+        }
+    }
+}
