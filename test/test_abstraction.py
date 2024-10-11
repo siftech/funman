@@ -1,9 +1,11 @@
 import logging
+import os
 import sys
 import unittest
 
 import sympy
 
+from funman.api.run import Runner
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
 
 
@@ -82,9 +84,56 @@ class TestUseCases(unittest.TestCase):
                     str(test_output) == test["expected_output"]
                 ), f"Failed to create the expected expression: [{test['expected_output']}], got [{test_output}]"
 
-
     def test_stratify(self):
-        pass
+        RESOURCES = os.path.join("resources")
+        EXAMPLE_DIR = os.path.join(
+            RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
+        )
+        REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
+        BASE_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
+        runner = Runner()
+        base_result = runner.run(BASE_MODEL_PATH, REQUEST_PATH)
+
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+
+        (base_model, _) = runner.get_model(BASE_MODEL_PATH)
+
+        # Stratify Base model
+        stratified_model = base_model  # FIXME
+
+        stratified_result = runner.run(stratified_model, REQUEST_PATH)
+
+        assert (
+            stratified_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+
+        # Abstract and bound stratified Base model
+        abstract_model = stratified_model  # FIXME
+        bounded_abstract_model = abstract_model  # FIXME
+
+        bounded_abstract_result = runner.run(
+            bounded_abstract_model, REQUEST_PATH
+        )
+
+        assert (
+            bounded_abstract_result
+        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+
+        # # Modify request parameters
+        # request_parameters = stratified_request.parameters
+        # req_beta_1 = next(p for p in request_parameters if p.name == "beta_1")
+        # req_beta_2 = next(p for p in request_parameters if p.name == "beta_2")
+        # req_beta_1.interval = Interval(lb=beta_1.value, ub = beta_1.value, closed_upper_bound = True)
+        # req_beta_2.interval = Interval(lb=beta_2.value, ub = beta_2.value, closed_upper_bound = True)
+
+        # # stratified_request = FunmanWorkRequest()
+        # setup_common(stratified_request, timepoints, debug=True, mode=MODE, synthesize=False,dreal_precision=1)
+        # results = run(stratified_request, stratified_model_str, models)
+        # report(results, stratified_model_str, stratified_model._state_var_names() + stratified_model._observable_names(), request_results, request_params)
+        # stratified_model.to_dot()
+
 
 if __name__ == "__main__":
     unittest.main()
