@@ -38,22 +38,23 @@ class SympyBoundedSubstituter(BaseModel):
     str_to_symbol: Dict[str, sympy.Symbol] = {}
 
     def _prepare_expression(
-        self, derivative_variable: str, expr: str, bound: str
+        self, derivative_variables: List[str], expr: str, bound: str
     ) -> sympy.Expr:
-        deriv_var_symbol = self.str_to_symbol[derivative_variable]
+        # deriv_var_symbols = [self.str_to_symbol[s] for s in derivative_variables]
         sym_expr = to_sympy(expr, self.str_to_symbol)
         # substitute lb for deriv_var_symbol in sym_expr
-        lb_symbol = self.bound_symbols[derivative_variable][bound]
-        sym_expr = sym_expr.subs({derivative_variable: lb_symbol})
+        sym_expr = sym_expr.subs(
+            {s: self.bound_symbols[s][bound] for s in derivative_variables}
+        )
         return sym_expr
 
-    def maximize(self, derivative_variable: str, expr: str) -> str:
-        sym_expr = self._prepare_expression(derivative_variable, expr, "ub")
+    def maximize(self, derivative_variables: List[str], expr: str) -> str:
+        sym_expr = self._prepare_expression(derivative_variables, expr, "ub")
         m_expr = self._substitute(sym_expr, False)
         return m_expr
 
-    def minimize(self, derivative_variable: str, expr: str) -> str:
-        sym_expr = self._prepare_expression(derivative_variable, expr, "lb")
+    def minimize(self, derivative_variables: List[str], expr: str) -> str:
+        sym_expr = self._prepare_expression(derivative_variables, expr, "lb")
         m_expr = self._substitute(sym_expr, True)
         return m_expr
 

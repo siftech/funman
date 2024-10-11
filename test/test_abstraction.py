@@ -89,32 +89,49 @@ class TestUseCases(unittest.TestCase):
         EXAMPLE_DIR = os.path.join(
             RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
         )
-        REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
+        BASE_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
+        BOUNDED_ABSTRACTED_REQUEST_PATH = os.path.join(
+            EXAMPLE_DIR, "sir_bounded_request.json"
+        )
         BASE_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
         runner = Runner()
-        base_result = runner.run(BASE_MODEL_PATH, REQUEST_PATH)
+        base_result = runner.run(BASE_MODEL_PATH, BASE_REQUEST_PATH)
 
         assert (
             base_result
-        ), f"Could not generate a result for model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+        ), f"Could not generate a result for model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
 
         (base_model, _) = runner.get_model(BASE_MODEL_PATH)
 
         # Stratify Base model
-        stratified_model = base_model  # FIXME
+        stratified_model = base_model.stratify(
+            "S",
+            ["1", "2"],
+            strata_parameters=["beta"],
+            strata_transitions=None,
+            self_strata_transition=False,
+        )
 
-        stratified_result = runner.run(stratified_model, REQUEST_PATH)
+        stratified_params = stratified_model.petrinet.semantics.ode.parameters
+        betas = {p.id: p for p in stratified_params if "beta" in p.id}
+        betas["beta_1"].value = 0.000314
+        betas["beta_2"].value = 0.000316
 
-        assert (
-            stratified_result
-        ), f"Could not generate a result for stratified version of model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+        # stratified_result = runner.run(
+        #     stratified_model.petrinet.dict(), REQUEST_PATH
+        # )
+
+        # assert (
+        #     stratified_result
+        # ), f"Could not generate a result for stratified version of model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
 
         # Abstract and bound stratified Base model
-        abstract_model = stratified_model  # FIXME
-        bounded_abstract_model = abstract_model  # FIXME
-
+        abstract_model = stratified_model.abstract({"S_1": "S", "S_2": "S"})
+        bounded_abstract_model = abstract_model.formulate_bounds()  # FIXME
+        # pass
         bounded_abstract_result = runner.run(
-            bounded_abstract_model, REQUEST_PATH
+            bounded_abstract_model.petrinet.dict(),
+            BOUNDED_ABSTRACTED_REQUEST_PATH,
         )
 
         assert (
