@@ -554,6 +554,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     },
                     type="StandardUniform1",
                 )
+            if param.distribution.parameters["minimum"] == param.distribution.parameters["maximum"]:
+                param.value = param.distribution.parameters["minimum"]
+                param.distribution = None
+                
 
         return contracted_model
 
