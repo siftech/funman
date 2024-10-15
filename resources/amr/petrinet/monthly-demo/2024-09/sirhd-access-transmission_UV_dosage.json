@@ -1,0 +1,1380 @@
+{
+  "id": "7f3b8fa8-b001-484c-942f-049f668ad6b7",
+  "createdOn": "2024-09-25T20:08:12.623+00:00",
+  "updatedOn": "2024-09-25T20:08:26.071+00:00",
+  "name": "sirhd-access-transmission_UV_dosage",
+  "fileNames": [],
+  "temporary": false,
+  "publicAsset": true,
+  "header": {
+    "name": "sirhd-access-transmission_UV_dosage",
+    "description": "This is a model from equations",
+    "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+    "schema_name": "petrinet",
+    "model_version": "0.1"
+  },
+  "model": {
+    "states": [
+      {
+        "id": "S_Vaccinated_1dose",
+        "name": "S",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "1dose"
+          }
+        }
+      },
+      {
+        "id": "I_Vaccinated_1dose",
+        "name": "I",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "1dose"
+          }
+        }
+      },
+      {
+        "id": "I_Vaccinated_2dose",
+        "name": "I",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "2dose"
+          }
+        }
+      },
+      {
+        "id": "S_Vaccinated_2dose",
+        "name": "S",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "2dose"
+          }
+        }
+      },
+      {
+        "id": "I_Unvaccinated",
+        "name": "I",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Unvaccinated"
+          }
+        }
+      },
+      {
+        "id": "S_Unvaccinated",
+        "name": "S",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Unvaccinated"
+          }
+        }
+      },
+      {
+        "id": "R_Vaccinated_1dose",
+        "name": "R",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "1dose"
+          }
+        }
+      },
+      {
+        "id": "R_Vaccinated_2dose",
+        "name": "R",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "2dose"
+          }
+        }
+      },
+      {
+        "id": "R_Unvaccinated",
+        "name": "R",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Unvaccinated"
+          }
+        }
+      },
+      {
+        "id": "H_Vaccinated_1dose",
+        "name": "H",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "1dose"
+          }
+        }
+      },
+      {
+        "id": "H_Vaccinated_2dose",
+        "name": "H",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "2dose"
+          }
+        }
+      },
+      {
+        "id": "H_Unvaccinated",
+        "name": "H",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Unvaccinated"
+          }
+        }
+      },
+      {
+        "id": "D_Vaccinated_1dose",
+        "name": "D",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "1dose"
+          }
+        }
+      },
+      {
+        "id": "D_Vaccinated_2dose",
+        "name": "D",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Vaccinated",
+            "Dosage": "2dose"
+          }
+        }
+      },
+      {
+        "id": "D_Unvaccinated",
+        "name": "D",
+        "grounding": {
+          "identifiers": {},
+          "modifiers": {
+            "Vaccination": "Unvaccinated"
+          }
+        }
+      }
+    ],
+    "transitions": [
+      {
+        "id": "t0_Vaccinated_Vaccinated_1dose_1dose",
+        "input": [
+          "I_Vaccinated_1dose",
+          "S_Vaccinated_1dose"
+        ],
+        "output": [
+          "I_Vaccinated_1dose",
+          "I_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Vaccinated_1dose_1dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Vaccinated_1dose_2dose",
+        "input": [
+          "I_Vaccinated_2dose",
+          "S_Vaccinated_1dose"
+        ],
+        "output": [
+          "I_Vaccinated_2dose",
+          "I_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Vaccinated_1dose_2dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Vaccinated_2dose_1dose",
+        "input": [
+          "I_Vaccinated_1dose",
+          "S_Vaccinated_2dose"
+        ],
+        "output": [
+          "I_Vaccinated_1dose",
+          "I_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Vaccinated_2dose_1dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Vaccinated_2dose_2dose",
+        "input": [
+          "I_Vaccinated_2dose",
+          "S_Vaccinated_2dose"
+        ],
+        "output": [
+          "I_Vaccinated_2dose",
+          "I_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Vaccinated_2dose_2dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "I_Unvaccinated",
+          "S_Vaccinated_1dose"
+        ],
+        "output": [
+          "I_Unvaccinated",
+          "I_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "I_Unvaccinated",
+          "S_Vaccinated_1dose"
+        ],
+        "output": [
+          "I_Unvaccinated",
+          "I_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "I_Unvaccinated",
+          "S_Vaccinated_2dose"
+        ],
+        "output": [
+          "I_Unvaccinated",
+          "I_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t0_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "I_Unvaccinated",
+          "S_Vaccinated_2dose"
+        ],
+        "output": [
+          "I_Unvaccinated",
+          "I_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t0_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t0_Unvaccinated_Vaccinated_1dose_1dose",
+        "input": [
+          "I_Vaccinated_1dose",
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "I_Vaccinated_1dose",
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t0_Unvaccinated_Vaccinated_1dose_1dose"
+        }
+      },
+      {
+        "id": "t0_Unvaccinated_Vaccinated_1dose_2dose",
+        "input": [
+          "I_Vaccinated_2dose",
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "I_Vaccinated_2dose",
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t0_Unvaccinated_Vaccinated_1dose_2dose"
+        }
+      },
+      {
+        "id": "t0_Unvaccinated_Vaccinated_2dose_1dose",
+        "input": [
+          "I_Vaccinated_1dose",
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "I_Vaccinated_1dose",
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t0_Unvaccinated_Vaccinated_2dose_1dose"
+        }
+      },
+      {
+        "id": "t0_Unvaccinated_Vaccinated_2dose_2dose",
+        "input": [
+          "I_Vaccinated_2dose",
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "I_Vaccinated_2dose",
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t0_Unvaccinated_Vaccinated_2dose_2dose"
+        }
+      },
+      {
+        "id": "t0_Unvaccinated_Unvaccinated",
+        "input": [
+          "I_Unvaccinated",
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "I_Unvaccinated",
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t0_Unvaccinated_Unvaccinated"
+        }
+      },
+      {
+        "id": "t1_Vaccinated_1dose",
+        "input": [
+          "I_Vaccinated_1dose"
+        ],
+        "output": [
+          "R_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t1_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t1_Vaccinated_2dose",
+        "input": [
+          "I_Vaccinated_2dose"
+        ],
+        "output": [
+          "R_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t1_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t1_Unvaccinated",
+        "input": [
+          "I_Unvaccinated"
+        ],
+        "output": [
+          "R_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t1_Unvaccinated"
+        }
+      },
+      {
+        "id": "t2_Vaccinated_1dose",
+        "input": [
+          "H_Vaccinated_1dose"
+        ],
+        "output": [
+          "R_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t2_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t2_Vaccinated_2dose",
+        "input": [
+          "H_Vaccinated_2dose"
+        ],
+        "output": [
+          "R_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t2_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t2_Unvaccinated",
+        "input": [
+          "H_Unvaccinated"
+        ],
+        "output": [
+          "R_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t2_Unvaccinated"
+        }
+      },
+      {
+        "id": "t3_Vaccinated_1dose",
+        "input": [
+          "I_Vaccinated_1dose"
+        ],
+        "output": [
+          "H_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t3_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t3_Vaccinated_2dose",
+        "input": [
+          "I_Vaccinated_2dose"
+        ],
+        "output": [
+          "H_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t3_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t3_Unvaccinated",
+        "input": [
+          "I_Unvaccinated"
+        ],
+        "output": [
+          "H_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t3_Unvaccinated"
+        }
+      },
+      {
+        "id": "t4_Vaccinated_1dose",
+        "input": [
+          "H_Vaccinated_1dose"
+        ],
+        "output": [
+          "D_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t4_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t4_Vaccinated_2dose",
+        "input": [
+          "H_Vaccinated_2dose"
+        ],
+        "output": [
+          "D_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t4_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t4_Unvaccinated",
+        "input": [
+          "H_Unvaccinated"
+        ],
+        "output": [
+          "D_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t4_Unvaccinated"
+        }
+      },
+      {
+        "id": "t_conv_0_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "S_Vaccinated_1dose"
+        ],
+        "output": [
+          "S_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_0_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_0_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "S_Vaccinated_2dose"
+        ],
+        "output": [
+          "S_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_0_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_0_Unvaccinated_Vaccinated_1dose",
+        "input": [
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "S_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_0_Unvaccinated_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_0_Unvaccinated_Vaccinated_2dose",
+        "input": [
+          "S_Unvaccinated"
+        ],
+        "output": [
+          "S_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_0_Unvaccinated_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_1_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "I_Vaccinated_1dose"
+        ],
+        "output": [
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_1_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_1_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "I_Vaccinated_2dose"
+        ],
+        "output": [
+          "I_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_1_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_1_Unvaccinated_Vaccinated_1dose",
+        "input": [
+          "I_Unvaccinated"
+        ],
+        "output": [
+          "I_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_1_Unvaccinated_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_1_Unvaccinated_Vaccinated_2dose",
+        "input": [
+          "I_Unvaccinated"
+        ],
+        "output": [
+          "I_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_1_Unvaccinated_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_2_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "R_Vaccinated_1dose"
+        ],
+        "output": [
+          "R_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_2_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_2_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "R_Vaccinated_2dose"
+        ],
+        "output": [
+          "R_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_2_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_2_Unvaccinated_Vaccinated_1dose",
+        "input": [
+          "R_Unvaccinated"
+        ],
+        "output": [
+          "R_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_2_Unvaccinated_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_2_Unvaccinated_Vaccinated_2dose",
+        "input": [
+          "R_Unvaccinated"
+        ],
+        "output": [
+          "R_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_2_Unvaccinated_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_3_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "H_Vaccinated_1dose"
+        ],
+        "output": [
+          "H_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_3_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_3_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "H_Vaccinated_2dose"
+        ],
+        "output": [
+          "H_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_3_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_3_Unvaccinated_Vaccinated_1dose",
+        "input": [
+          "H_Unvaccinated"
+        ],
+        "output": [
+          "H_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_3_Unvaccinated_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_3_Unvaccinated_Vaccinated_2dose",
+        "input": [
+          "H_Unvaccinated"
+        ],
+        "output": [
+          "H_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_3_Unvaccinated_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_4_Vaccinated_Unvaccinated_1dose",
+        "input": [
+          "D_Vaccinated_1dose"
+        ],
+        "output": [
+          "D_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_4_Vaccinated_Unvaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_4_Vaccinated_Unvaccinated_2dose",
+        "input": [
+          "D_Vaccinated_2dose"
+        ],
+        "output": [
+          "D_Unvaccinated"
+        ],
+        "properties": {
+          "name": "t_conv_4_Vaccinated_Unvaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_4_Unvaccinated_Vaccinated_1dose",
+        "input": [
+          "D_Unvaccinated"
+        ],
+        "output": [
+          "D_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_4_Unvaccinated_Vaccinated_1dose"
+        }
+      },
+      {
+        "id": "t_conv_4_Unvaccinated_Vaccinated_2dose",
+        "input": [
+          "D_Unvaccinated"
+        ],
+        "output": [
+          "D_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_4_Unvaccinated_Vaccinated_2dose"
+        }
+      },
+      {
+        "id": "t_conv_0_1dose_2dose",
+        "input": [
+          "S_Vaccinated_1dose"
+        ],
+        "output": [
+          "S_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_0_1dose_2dose"
+        }
+      },
+      {
+        "id": "t_conv_0_2dose_1dose",
+        "input": [
+          "S_Vaccinated_2dose"
+        ],
+        "output": [
+          "S_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_0_2dose_1dose"
+        }
+      },
+      {
+        "id": "t_conv_1_1dose_2dose",
+        "input": [
+          "I_Vaccinated_1dose"
+        ],
+        "output": [
+          "I_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_1_1dose_2dose"
+        }
+      },
+      {
+        "id": "t_conv_1_2dose_1dose",
+        "input": [
+          "I_Vaccinated_2dose"
+        ],
+        "output": [
+          "I_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_1_2dose_1dose"
+        }
+      },
+      {
+        "id": "t_conv_4_1dose_2dose",
+        "input": [
+          "R_Vaccinated_1dose"
+        ],
+        "output": [
+          "R_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_4_1dose_2dose"
+        }
+      },
+      {
+        "id": "t_conv_4_2dose_1dose",
+        "input": [
+          "R_Vaccinated_2dose"
+        ],
+        "output": [
+          "R_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_4_2dose_1dose"
+        }
+      },
+      {
+        "id": "t_conv_6_1dose_2dose",
+        "input": [
+          "H_Vaccinated_1dose"
+        ],
+        "output": [
+          "H_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_6_1dose_2dose"
+        }
+      },
+      {
+        "id": "t_conv_6_2dose_1dose",
+        "input": [
+          "H_Vaccinated_2dose"
+        ],
+        "output": [
+          "H_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_6_2dose_1dose"
+        }
+      },
+      {
+        "id": "t_conv_8_1dose_2dose",
+        "input": [
+          "D_Vaccinated_1dose"
+        ],
+        "output": [
+          "D_Vaccinated_2dose"
+        ],
+        "properties": {
+          "name": "t_conv_8_1dose_2dose"
+        }
+      },
+      {
+        "id": "t_conv_8_2dose_1dose",
+        "input": [
+          "D_Vaccinated_2dose"
+        ],
+        "output": [
+          "D_Vaccinated_1dose"
+        ],
+        "properties": {
+          "name": "t_conv_8_2dose_1dose"
+        }
+      }
+    ]
+  },
+  "properties": {},
+  "semantics": {
+    "ode": {
+      "rates": [
+        {
+          "target": "t0_Vaccinated_Vaccinated_1dose_1dose",
+          "expression": "I_Vaccinated_1dose*S_Vaccinated_1dose*b_Vaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_1dose</ci><ci>S_Vaccinated_1dose</ci><ci>b_Vaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Vaccinated_1dose_2dose",
+          "expression": "I_Vaccinated_2dose*S_Vaccinated_1dose*b_Vaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_2dose</ci><ci>S_Vaccinated_1dose</ci><ci>b_Vaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Vaccinated_2dose_1dose",
+          "expression": "I_Vaccinated_1dose*S_Vaccinated_2dose*b_Vaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_1dose</ci><ci>S_Vaccinated_2dose</ci><ci>b_Vaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Vaccinated_2dose_2dose",
+          "expression": "I_Vaccinated_2dose*S_Vaccinated_2dose*b_Vaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_2dose</ci><ci>S_Vaccinated_2dose</ci><ci>b_Vaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Unvaccinated_1dose",
+          "expression": "I_Unvaccinated*S_Vaccinated_1dose*b_Vaccinated_Unvaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Unvaccinated</ci><ci>S_Vaccinated_1dose</ci><ci>b_Vaccinated_Unvaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Unvaccinated_1dose",
+          "expression": "I_Unvaccinated*S_Vaccinated_1dose*b_Vaccinated_Unvaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Unvaccinated</ci><ci>S_Vaccinated_1dose</ci><ci>b_Vaccinated_Unvaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Unvaccinated_2dose",
+          "expression": "I_Unvaccinated*S_Vaccinated_2dose*b_Vaccinated_Unvaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Unvaccinated</ci><ci>S_Vaccinated_2dose</ci><ci>b_Vaccinated_Unvaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Vaccinated_Unvaccinated_2dose",
+          "expression": "I_Unvaccinated*S_Vaccinated_2dose*b_Vaccinated_Unvaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Unvaccinated</ci><ci>S_Vaccinated_2dose</ci><ci>b_Vaccinated_Unvaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Unvaccinated_Vaccinated_1dose_1dose",
+          "expression": "I_Vaccinated_1dose*S_Unvaccinated*b_Unvaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_1dose</ci><ci>S_Unvaccinated</ci><ci>b_Unvaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Unvaccinated_Vaccinated_1dose_2dose",
+          "expression": "I_Vaccinated_2dose*S_Unvaccinated*b_Unvaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_2dose</ci><ci>S_Unvaccinated</ci><ci>b_Unvaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Unvaccinated_Vaccinated_2dose_1dose",
+          "expression": "I_Vaccinated_1dose*S_Unvaccinated*b_Unvaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_1dose</ci><ci>S_Unvaccinated</ci><ci>b_Unvaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Unvaccinated_Vaccinated_2dose_2dose",
+          "expression": "I_Vaccinated_2dose*S_Unvaccinated*b_Unvaccinated_Vaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Vaccinated_2dose</ci><ci>S_Unvaccinated</ci><ci>b_Unvaccinated_Vaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t0_Unvaccinated_Unvaccinated",
+          "expression": "I_Unvaccinated*S_Unvaccinated*b_Unvaccinated_Unvaccinated*(1 - t_a)*(1 - t_d)/N",
+          "expression_mathml": "<apply><divide/><apply><times/><ci>I_Unvaccinated</ci><ci>S_Unvaccinated</ci><ci>b_Unvaccinated_Unvaccinated</ci><apply><minus/><cn>1</cn><ci>t_a</ci></apply><apply><minus/><cn>1</cn><ci>t_d</ci></apply></apply><ci>N</ci></apply>"
+        },
+        {
+          "target": "t1_Vaccinated_1dose",
+          "expression": "I_Vaccinated_1dose*p_{IR}_Vaccinated_1dose*r_{IR}",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_1dose</ci><ci>p_{IR}_Vaccinated_1dose</ci><ci>r_{IR}</ci></apply>"
+        },
+        {
+          "target": "t1_Vaccinated_2dose",
+          "expression": "I_Vaccinated_2dose*p_{IR}_Vaccinated_2dose*r_{IR}",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_2dose</ci><ci>p_{IR}_Vaccinated_2dose</ci><ci>r_{IR}</ci></apply>"
+        },
+        {
+          "target": "t1_Unvaccinated",
+          "expression": "I_Unvaccinated*p_{IR}_Unvaccinated*r_{IR}",
+          "expression_mathml": "<apply><times/><ci>I_Unvaccinated</ci><ci>p_{IR}_Unvaccinated</ci><ci>r_{IR}</ci></apply>"
+        },
+        {
+          "target": "t2_Vaccinated_1dose",
+          "expression": "H_Vaccinated_1dose*p_{HR}_Vaccinated_1dose*r_{HR}",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_1dose</ci><ci>p_{HR}_Vaccinated_1dose</ci><ci>r_{HR}</ci></apply>"
+        },
+        {
+          "target": "t2_Vaccinated_2dose",
+          "expression": "H_Vaccinated_2dose*p_{HR}_Vaccinated_2dose*r_{HR}",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_2dose</ci><ci>p_{HR}_Vaccinated_2dose</ci><ci>r_{HR}</ci></apply>"
+        },
+        {
+          "target": "t2_Unvaccinated",
+          "expression": "H_Unvaccinated*p_{HR}_Unvaccinated*r_{HR}",
+          "expression_mathml": "<apply><times/><ci>H_Unvaccinated</ci><ci>p_{HR}_Unvaccinated</ci><ci>r_{HR}</ci></apply>"
+        },
+        {
+          "target": "t3_Vaccinated_1dose",
+          "expression": "I_Vaccinated_1dose*p_{IH}_Vaccinated_1dose*r_{IH}",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_1dose</ci><ci>p_{IH}_Vaccinated_1dose</ci><ci>r_{IH}</ci></apply>"
+        },
+        {
+          "target": "t3_Vaccinated_2dose",
+          "expression": "I_Vaccinated_2dose*p_{IH}_Vaccinated_2dose*r_{IH}",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_2dose</ci><ci>p_{IH}_Vaccinated_2dose</ci><ci>r_{IH}</ci></apply>"
+        },
+        {
+          "target": "t3_Unvaccinated",
+          "expression": "I_Unvaccinated*p_{IH}_Unvaccinated*r_{IH}",
+          "expression_mathml": "<apply><times/><ci>I_Unvaccinated</ci><ci>p_{IH}_Unvaccinated</ci><ci>r_{IH}</ci></apply>"
+        },
+        {
+          "target": "t4_Vaccinated_1dose",
+          "expression": "H_Vaccinated_1dose*p_{HD}_Vaccinated_1dose*r_{HD}",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_1dose</ci><ci>p_{HD}_Vaccinated_1dose</ci><ci>r_{HD}</ci></apply>"
+        },
+        {
+          "target": "t4_Vaccinated_2dose",
+          "expression": "H_Vaccinated_2dose*p_{HD}_Vaccinated_2dose*r_{HD}",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_2dose</ci><ci>p_{HD}_Vaccinated_2dose</ci><ci>r_{HD}</ci></apply>"
+        },
+        {
+          "target": "t4_Unvaccinated",
+          "expression": "H_Unvaccinated*p_{HD}_Unvaccinated*r_{HD}",
+          "expression_mathml": "<apply><times/><ci>H_Unvaccinated</ci><ci>p_{HD}_Unvaccinated</ci><ci>r_{HD}</ci></apply>"
+        },
+        {
+          "target": "t_conv_0_Vaccinated_Unvaccinated_1dose",
+          "expression": "S_Vaccinated_1dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>S_Vaccinated_1dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_0_Vaccinated_Unvaccinated_2dose",
+          "expression": "S_Vaccinated_2dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>S_Vaccinated_2dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_0_Unvaccinated_Vaccinated_1dose",
+          "expression": "S_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>S_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_0_Unvaccinated_Vaccinated_2dose",
+          "expression": "S_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>S_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_1_Vaccinated_Unvaccinated_1dose",
+          "expression": "I_Vaccinated_1dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_1dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_1_Vaccinated_Unvaccinated_2dose",
+          "expression": "I_Vaccinated_2dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_2dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_1_Unvaccinated_Vaccinated_1dose",
+          "expression": "I_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>I_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_1_Unvaccinated_Vaccinated_2dose",
+          "expression": "I_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>I_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_2_Vaccinated_Unvaccinated_1dose",
+          "expression": "R_Vaccinated_1dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>R_Vaccinated_1dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_2_Vaccinated_Unvaccinated_2dose",
+          "expression": "R_Vaccinated_2dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>R_Vaccinated_2dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_2_Unvaccinated_Vaccinated_1dose",
+          "expression": "R_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>R_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_2_Unvaccinated_Vaccinated_2dose",
+          "expression": "R_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>R_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_3_Vaccinated_Unvaccinated_1dose",
+          "expression": "H_Vaccinated_1dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_1dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_3_Vaccinated_Unvaccinated_2dose",
+          "expression": "H_Vaccinated_2dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_2dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_3_Unvaccinated_Vaccinated_1dose",
+          "expression": "H_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>H_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_3_Unvaccinated_Vaccinated_2dose",
+          "expression": "H_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>H_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_4_Vaccinated_Unvaccinated_1dose",
+          "expression": "D_Vaccinated_1dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>D_Vaccinated_1dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_4_Vaccinated_Unvaccinated_2dose",
+          "expression": "D_Vaccinated_2dose*p_Vaccinated_Unvaccinated",
+          "expression_mathml": "<apply><times/><ci>D_Vaccinated_2dose</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_4_Unvaccinated_Vaccinated_1dose",
+          "expression": "D_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>D_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_4_Unvaccinated_Vaccinated_2dose",
+          "expression": "D_Unvaccinated*p_Unvaccinated_Vaccinated",
+          "expression_mathml": "<apply><times/><ci>D_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+        },
+        {
+          "target": "t_conv_0_1dose_2dose",
+          "expression": "S_Vaccinated_1dose*p_1dose_2dose",
+          "expression_mathml": "<apply><times/><ci>S_Vaccinated_1dose</ci><ci>p_1dose_2dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_0_2dose_1dose",
+          "expression": "S_Vaccinated_2dose*p_2dose_1dose",
+          "expression_mathml": "<apply><times/><ci>S_Vaccinated_2dose</ci><ci>p_2dose_1dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_1_1dose_2dose",
+          "expression": "I_Vaccinated_1dose*p_1dose_2dose",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_1dose</ci><ci>p_1dose_2dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_1_2dose_1dose",
+          "expression": "I_Vaccinated_2dose*p_2dose_1dose",
+          "expression_mathml": "<apply><times/><ci>I_Vaccinated_2dose</ci><ci>p_2dose_1dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_4_1dose_2dose",
+          "expression": "R_Vaccinated_1dose*p_1dose_2dose",
+          "expression_mathml": "<apply><times/><ci>R_Vaccinated_1dose</ci><ci>p_1dose_2dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_4_2dose_1dose",
+          "expression": "R_Vaccinated_2dose*p_2dose_1dose",
+          "expression_mathml": "<apply><times/><ci>R_Vaccinated_2dose</ci><ci>p_2dose_1dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_6_1dose_2dose",
+          "expression": "H_Vaccinated_1dose*p_1dose_2dose",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_1dose</ci><ci>p_1dose_2dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_6_2dose_1dose",
+          "expression": "H_Vaccinated_2dose*p_2dose_1dose",
+          "expression_mathml": "<apply><times/><ci>H_Vaccinated_2dose</ci><ci>p_2dose_1dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_8_1dose_2dose",
+          "expression": "D_Vaccinated_1dose*p_1dose_2dose",
+          "expression_mathml": "<apply><times/><ci>D_Vaccinated_1dose</ci><ci>p_1dose_2dose</ci></apply>"
+        },
+        {
+          "target": "t_conv_8_2dose_1dose",
+          "expression": "D_Vaccinated_2dose*p_2dose_1dose",
+          "expression_mathml": "<apply><times/><ci>D_Vaccinated_2dose</ci><ci>p_2dose_1dose</ci></apply>"
+        }
+      ],
+      "initials": [
+        {
+          "target": "S_Vaccinated_1dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "I_Vaccinated_1dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "I_Vaccinated_2dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "S_Vaccinated_2dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "I_Unvaccinated",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "S_Unvaccinated",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "R_Vaccinated_1dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "R_Vaccinated_2dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "R_Unvaccinated",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "H_Vaccinated_1dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "H_Vaccinated_2dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "H_Unvaccinated",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "D_Vaccinated_1dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "D_Vaccinated_2dose",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        },
+        {
+          "target": "D_Unvaccinated",
+          "expression": "0",
+          "expression_mathml": "<cn>0</cn>"
+        }
+      ],
+      "parameters": [
+        {
+          "id": "N",
+          "name": "N",
+          "value": 1
+        },
+        {
+          "id": "b_Vaccinated_Vaccinated",
+          "name": "b",
+          "value": 1
+        },
+        {
+          "id": "t_a",
+          "name": "t_a",
+          "value": 1
+        },
+        {
+          "id": "t_d",
+          "name": "t_d",
+          "value": 1
+        },
+        {
+          "id": "b_Vaccinated_Unvaccinated",
+          "name": "b",
+          "value": 1
+        },
+        {
+          "id": "b_Unvaccinated_Vaccinated",
+          "name": "b",
+          "value": 1
+        },
+        {
+          "id": "b_Unvaccinated_Unvaccinated",
+          "name": "b",
+          "value": 1
+        },
+        {
+          "id": "p_{IR}_Vaccinated_1dose",
+          "name": "p_{IR}",
+          "value": 1
+        },
+        {
+          "id": "r_{IR}",
+          "name": "r_{IR}",
+          "value": 1
+        },
+        {
+          "id": "p_{IR}_Vaccinated_2dose",
+          "name": "p_{IR}",
+          "value": 1
+        },
+        {
+          "id": "p_{IR}_Unvaccinated",
+          "name": "p_{IR}",
+          "value": 1
+        },
+        {
+          "id": "p_{HR}_Vaccinated_1dose",
+          "name": "p_{HR}",
+          "value": 1
+        },
+        {
+          "id": "r_{HR}",
+          "name": "r_{HR}",
+          "value": 1
+        },
+        {
+          "id": "p_{HR}_Vaccinated_2dose",
+          "name": "p_{HR}",
+          "value": 1
+        },
+        {
+          "id": "p_{HR}_Unvaccinated",
+          "name": "p_{HR}",
+          "value": 1
+        },
+        {
+          "id": "p_{IH}_Vaccinated_1dose",
+          "name": "p_{IH}",
+          "value": 1
+        },
+        {
+          "id": "r_{IH}",
+          "name": "r_{IH}",
+          "value": 1
+        },
+        {
+          "id": "p_{IH}_Vaccinated_2dose",
+          "name": "p_{IH}",
+          "value": 1
+        },
+        {
+          "id": "p_{IH}_Unvaccinated",
+          "name": "p_{IH}",
+          "value": 1
+        },
+        {
+          "id": "p_{HD}_Vaccinated_1dose",
+          "name": "p_{HD}",
+          "value": 1
+        },
+        {
+          "id": "r_{HD}",
+          "name": "r_{HD}",
+          "value": 1
+        },
+        {
+          "id": "p_{HD}_Vaccinated_2dose",
+          "name": "p_{HD}",
+          "value": 1
+        },
+        {
+          "id": "p_{HD}_Unvaccinated",
+          "name": "p_{HD}",
+          "value": 1
+        },
+        {
+          "id": "p_Vaccinated_Unvaccinated",
+          "value": 0.1
+        },
+        {
+          "id": "p_Unvaccinated_Vaccinated",
+          "value": 0.1
+        },
+        {
+          "id": "p_1dose_2dose",
+          "value": 0.1
+        },
+        {
+          "id": "p_2dose_1dose",
+          "value": 0.1
+        }
+      ],
+      "observables": [],
+      "time": {
+        "id": "t"
+      }
+    },
+    "typing": null
+  },
+  "metadata": {
+    "annotations": {
+      "authors": [],
+      "references": [],
+      "locations": [],
+      "pathogens": [],
+      "diseases": [],
+      "hosts": [],
+      "model_types": []
+    },
+    "source": null,
+    "gollmCard": null,
+    "gollmExtractions": null,
+    "templateCard": null
+  }
+}

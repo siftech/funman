@@ -442,7 +442,7 @@ class FunmanResults(BaseModel):
         timestep = point.timestep()
         max_t = point.schedule.timepoints[timestep]
 
-        a_series["index"] = list(range(0, max_t + 1))
+        a_series["index"] = list(range(0, int(max_t) + 1))
         for var, tps in series.items():
 
             if isinstance(tps, dict):

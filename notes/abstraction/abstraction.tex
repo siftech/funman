@@ -1,0 +1,83 @@
+\begin{definition}
+    An abstraction $(\Theta', \Omega')$ of a Petrinet and the associated
+    semantics $(\Theta, \Omega)$ that is produced by the abstraction operator
+    $A$ has the following properties:
+    \begin{itemize}
+        \item State: For each $x \in X$,  $A(x) = x'$, where $x' \in
+        X'$.  For each vertex $v_x \in V_x$,  $A(v_x) = v_x'$ where $v_x' \in
+        V_x'$.   For each $x\in X$ where  ${\cal X}(x) =
+        V_x$, $A(x) = x'$, and $A(v_x) = v_x'$, then ${\cal X}'(x')=
+        v_{x'}'$.  For each $x' \in X'$, ${\cal I}'(x') = \sum\limits_{x \in X: A(x) = x'} {\cal I}(x)$.
+        \item Parameters: For each $p \in P$, $A(p) = p'$, where $p'\in P'$.
+        For each $p' \in P'$, ${\cal P}'(p') = \sum\limits_{p \in P: A(p) = p'} {\cal P}(p)$.
+        \item Transitions: For each $z \in Z$, $A(z) = z'$, where $z' \in Z'$.
+        For each vertex $v_z \in V_z$, $A(v_z) = v_z'$, where $v_z' \in V_z'$.
+        For each $z \in Z$, if ${\cal
+        Z}(z) = v_z$, $A(z) = z'$, and $A(v_z) = v_z'$, then ${\cal
+        Z}'(z') = v_{z'}'$. 
+        \item In Edges: For each edge $(v_z, v_x) \in E_{in}$, $A((v_z, v_x)) =
+        (v_z', v_x')$, $A(v_x) = v_x'$, and $A(v_z) = v_z'$, where $(v_z',
+        v_x')\in E_{in}'$;
+        \item Out Edges: For each edge $(v_x, v_z) \in E_{out}$, $A((v_x, v_z))
+        = (v_x', v_z')$; $A(v_x) = v_x'$, and $A(v_z) = v_z'$, where $(v_x',
+        v_z')\in E_{out}'$;
+
+        
+        \item Transition Rates: For each $z' \in Z'$, 
+        \begin{equation}\label{eqn:agg-flow}
+            {\cal R}'({\bf p}', {\bf
+        x}', z') = \sum\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf
+        x}, z)
+    \end{equation}
+    \end{itemize}
+\end{definition}
+
+\begin{example}\label{ex:abstraction}
+    The abstraction $(\Theta', \Omega')$ of the stratified SIR model defines
+    (with the changed elements highlighted by ``*''):
+    \begin{eqnarray*}
+        A &=& \left\{ 
+            \begin{array}{lll}
+                S &: S_1 &*\\
+                S &: S_2&*\\
+                I &: I\\
+                R &: R\\
+               \beta &: \beta_1&*\\
+               \beta &: \beta_2&*\\
+               \gamma &: \gamma\\
+               inf&: inf_1&*\\
+               inf&: inf_2&*\\
+               rec&: rec\\
+               v_S &: v_{S_1}&*\\
+               v_S &: v_{S_2}&*\\
+               v_I &: v_{I}\\
+               v_R &: v_{R}\\
+               (v_{S}, v_{inf}) &: (v_{S_1}, v_{inf_1})&*\\
+               (v_{S}, v_{inf}) &: (v_{S_2}, v_{inf_2})&*\\
+               (v_{I}, v_{inf}) &: (v_{I}, v_{inf_1})&*\\
+               (v_{I}, v_{inf}) &: (v_{I}, v_{inf_2})&*\\
+               (v_I, v_{rec}) &: (v_I, v_{rec})\\
+               (v_{inf}, v_I) &: (v_{inf_1}, v_I)&*\\
+               (v_{inf}, v_I) &: (v_{inf_2}, v_I)&*\\
+               (v_{rec}, v_R) &: (v_{rec}, v_R)\\
+            \end{array}\right.\\
+            {\cal R} &=& \left\{ 
+            \begin{array}{lll}
+                \beta_1 S_1 I +  \beta_2 S_2 I& : z_{inf}&* \\
+                \gamma I  & : z_{rec}\\
+            \end{array}\right.\\
+    \end{eqnarray*}
+\end{example}
+
+In Example \ref{ex:abstraction}, the abstraction $(\Theta', \Omega')$ maps the $S_1$ and $S_2$ state variables to the $S$ state variable (effectively de-stratifying the base Petrinet).  In combining the state variables, the abstract Petrinet consolidates the transitions $inf_1$ and $inf_2$ and associated rates from susceptible to infected.  
+
+Like the base model, the abstraction $(\Theta', \Omega')$ defines a gradient $\nabla_{\Omega', \Theta'}({\bf p}', {\bf x}', t) = (\frac{dx_1'}{dt},
+\frac{dx_2'}{dt}, \ldots)^T$, in terms of Equation \ref{eqn:flow}.
+Via Equation \ref{eqn:agg-flow}, the abstraction thus expresses the gradient by aggregating terms from the
+base Petrinet and semantics.  It preserves the flow on consolidated transitions, but
+expresses the transition rates in terms of the base states.  As such, the
+abstraction compresses the Petrinet graph structure, but at the cost of
+expanding the expressions for transition rates. Moreover, the transition
+rates refer to state variables and parameters (e.g., $\beta_1$, $\beta_2$, $S_1$, and $S_2$) that are not expressed
+directly by the abstract Petrinet and semantics (e.g., as $\beta$ and $S$), and by extension, the gradient. 
+

@@ -1,11 +1,17 @@
-\documentclass[10pt]{article}
+\documentclass[10pt,letterpaper]{article}
 
 \usepackage{amsmath}
+\usepackage{}
+% \usepackage{mathbb}
 % \usepackage[amsmath]{ntheorem}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage{fullpage}
+% \usepackage[export]{adjustbox}
+\usepackage[caption=false]{subfig}
 
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
 
 \newcommand{\funman}{FUNMAN}
 \newcommand{\region}{\bf X}
@@ -20,13 +26,31 @@
 \newcommand{\parameterbox}{{\bf p}^{[]}}
 \newcommand{\reals}{{\mathbb{R}}}
 
+% \setlength{\floatsep}{ 1.0pt plus 2.0pt minus 2.0pt}
+
 \title{\funman Abstraction}
 \author{Dan Bryce}
 \begin{document}
 \maketitle
 
-\section{Stratification Abstraction}
-\input{stratify-example}
+\section{Introduction}
+
+We describe methods to stratify and abstract (de-stratify) Petrinets for compartmental models.  The motivation for abstracting a Petrinet is to reduce its size, which becomes exponential in the number of stratified variables.  Reducing the size of the model can have a significant impact on runtime, and it is possible to answer useful queries with the abstract model.  The following sections include a background (defining the models), a description of abstraction, an approach needed to bound the abstracted models, and then a comparison of simulation results for several variations of a baseline model that applies stratification, bounding, and abstraction.
+
+\section{Background}
+\input{background}
+
+\section{Abstraction}
+\input{abstraction}
+
+\section{Bounded Abstraction}
+\input{bounded-abstraction}
+
+\section{SIR Example Results}
+\input{results}
+
+% \section{Stratification Abstraction}
+% \input{stratify-example}
 
 % \section{Parameter Synthesis as Abstraction Refinement}
 
