@@ -6,6 +6,7 @@ from typing import Dict, List, Union
 import pysmt.operators as op
 import pysmt.typing as types
 import sympy
+from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode, FormulaManager
 from pysmt.shortcuts import FALSE, GE, GT, LE, LT, REAL, TRUE
 from pysmt.shortcuts import Abs as pysmt_Abs
@@ -26,6 +27,106 @@ from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
 from sympy.logic.boolalg import BooleanTrue
 
 l = logging.getLogger(__name__)
+
+
+class SympyBoundedSubstituter(BaseModel):
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+    )
+
+    bound_symbols: Dict[str, Dict[str, str]] = {}
+    str_to_symbol: Dict[str, sympy.Symbol] = {}
+
+    def _prepare_expression(
+        self, derivative_variables: List[str], expr: str, bound: str
+    ) -> sympy.Expr:
+        # deriv_var_symbols = [self.str_to_symbol[s] for s in derivative_variables]
+        sym_expr = to_sympy(expr, self.str_to_symbol)
+        # substitute lb for deriv_var_symbol in sym_expr
+        sym_expr = sym_expr.subs(
+            {s: self.bound_symbols[s][bound] for s in derivative_variables}
+        )
+        return sym_expr
+
+    def maximize(self, derivative_variables: List[str], expr: str) -> str:
+        sym_expr = self._prepare_expression(derivative_variables, expr, "ub")
+        m_expr = self._substitute(sym_expr, False)
+        return m_expr
+
+    def minimize(self, derivative_variables: List[str], expr: str) -> str:
+        sym_expr = self._prepare_expression(derivative_variables, expr, "lb")
+        m_expr = self._substitute(sym_expr, True)
+        return m_expr
+
+    def _substitute(self, expr: sympy.Expr, sub_min: bool):
+        func = expr.func
+        # if func.is_Boolean:
+        #     return TRUE() if isinstance(expr, BooleanTrue) else FALSE()
+        if func.is_Mul:
+            return self._substitute_op(func, expr, sub_min)
+        elif func.is_Add:
+            return self._substitute_op(func, expr, sub_min)
+        # elif isinstance(expr, Abs):
+        #     return self._substitute_abs(expr)
+        elif func.is_Symbol:
+            return self._substitute_symbol(expr, sub_min, op_type=REAL)
+        elif func.is_Pow:
+            return self._substitute_pow(expr, sub_min)
+        # elif isinstance(expr, exp):
+        #     return Pow(self._substitute_real(math.e), self._substitute(expr.exp))
+        # elif expr.is_Boolean:
+        #     return self._substitute_op(And, expr)
+        # elif func.is_Relational:
+        #     if func.rel_op == "<=":
+        #         return self._substitute_op(LE, expr, explode=True)
+        #     elif func.rel_op == "<":
+        #         return self._substitute_op(LT, expr, explode=True)
+        #     elif func.rel_op == ">=":
+        #         return self._substitute_op(GE, expr, explode=True)
+        #     elif func.rel_op == ">":
+        #         return self._substitute_op(GT, expr, explode=True)
+        #     elif func.rel_op == "==":
+        #         return self._substitute_op(Equals, expr, explode=True)
+        # elif expr.is_Piecewise:
+        #     return self._substitute_piecewise(expr)
+        elif expr.is_constant():
+            return self._substitute_real(expr, sub_min)
+
+        else:
+            raise Exception(f"Could not convert expression: {expr}")
+
+    def _substitute_op(self, op, expr, sub_min: bool, explode=True):
+
+        next_min = (
+            not sub_min if sympy.core.function._coeff_isneg(expr) else sub_min
+        )
+        terms = [self._substitute(arg, next_min) for arg in expr.args]
+        return op(*terms) if explode else op(terms)
+
+    def _substitute_pow(self, expr, sub_min: bool):
+        base = expr.args[0]
+        exponent = expr.args[1]
+        next_min = (
+            not sub_min
+            if sympy.core.function._coeff_isneg(exponent)
+            else sub_min
+        )
+        return sympy.Pow(
+            self._substitute(base, next_min),
+            self._substitute(exponent, sub_min),
+        )
+
+    def _substitute_symbol(self, expr, sub_min: bool, op_type=REAL):
+        sym = str(expr)
+        bound = "lb" if sub_min else "ub"
+        return (
+            sympy.Symbol(self.bound_symbols[sym][bound])
+            if not sym.endswith("_lb") and not sym.endswith("_ub")
+            else expr
+        )
+
+    def _substitute_real(self, expr, sub_min: bool):
+        return expr
 
 
 class SympySerializer(IdentityDagWalker):

@@ -1,0 +1,652 @@
+{
+    "header": {
+        "name": "Model",
+        "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "Model",
+        "model_version": "0.1"
+    },
+    "properties": {},
+    "model": {
+        "states": [
+            {
+                "id": "S_lb",
+                "name": "S_lb",
+                "description": "None lb",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R_lb",
+                "name": "R_lb",
+                "description": "None lb",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "H_lb",
+                "name": "H_lb",
+                "description": "None lb",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D_lb",
+                "name": "D_lb",
+                "description": "None lb",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_lb",
+                "name": "I_lb",
+                "description": "None lb",
+                "grounding": null,
+                "units": null
+            },
+            {
+                "id": "S_ub",
+                "name": "S_ub",
+                "description": "None ub",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R_ub",
+                "name": "R_ub",
+                "description": "None ub",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "H_ub",
+                "name": "H_ub",
+                "description": "None ub",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D_ub",
+                "name": "D_ub",
+                "description": "None ub",
+                "grounding": {
+                    "identifiers": {},
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_ub",
+                "name": "I_ub",
+                "description": "None ub",
+                "grounding": null,
+                "units": null
+            }
+        ],
+        "transitions": [
+            {
+                "id": "t4_lb",
+                "input": [
+                    "H_ub"
+                ],
+                "output": [
+                    "D_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t4_lb",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t5_lb",
+                "input": [
+                    "H_ub"
+                ],
+                "output": [
+                    "R_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t5_lb",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t2_lb",
+                "input": [
+                    "I_ub"
+                ],
+                "output": [
+                    "R_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t2_lb",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t3_lb",
+                "input": [
+                    "I_ub"
+                ],
+                "output": [
+                    "H_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t3_lb",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t1_lb",
+                "input": [
+                    "I_ub",
+                    "S_ub"
+                ],
+                "output": [
+                    "I_lb",
+                    "I_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t1_lb",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t4_ub",
+                "input": [
+                    "H_lb"
+                ],
+                "output": [
+                    "D_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t4_ub",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t5_ub",
+                "input": [
+                    "H_lb"
+                ],
+                "output": [
+                    "R_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t5_ub",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t2_ub",
+                "input": [
+                    "I_lb"
+                ],
+                "output": [
+                    "R_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t2_ub",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t3_ub",
+                "input": [
+                    "I_lb"
+                ],
+                "output": [
+                    "H_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t3_ub",
+                    "description": null,
+                    "grounding": null
+                }
+            },
+            {
+                "id": "t1_ub",
+                "input": [
+                    "I_lb",
+                    "S_lb"
+                ],
+                "output": [
+                    "I_ub",
+                    "I_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "t1_ub",
+                    "description": null,
+                    "grounding": null
+                }
+            }
+        ]
+    },
+    "semantics": {
+        "ode": {
+            "rates": [
+                {
+                    "target": "t4_lb",
+                    "expression": "H_lb*phd_lb*rhd_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t5_lb",
+                    "expression": "H_lb*phr_lb*rhr_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t2_lb",
+                    "expression": "I_lb*pir_lb*rir_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t3_lb",
+                    "expression": "I_lb*pih_lb*rih_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t1_lb",
+                    "expression": "2*I_lb*S_lb*lb_p_I_u_u_beta_v_u_p_I_v_u_beta_u_v_p_I_v_v_beta_u_u_p_I_u_v_beta_v_v**2/N_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t4_ub",
+                    "expression": "H_ub*phd_ub*rhd_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t5_ub",
+                    "expression": "H_ub*phr_ub*rhr_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t2_ub",
+                    "expression": "I_ub*pir_ub*rir_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t3_ub",
+                    "expression": "I_ub*pih_ub*rih_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "t1_ub",
+                    "expression": "2*I_ub*S_ub*ub_p_I_u_u_beta_v_u_p_I_v_u_beta_u_v_p_I_v_v_beta_u_u_p_I_u_v_beta_v_v**2/N_ub",
+                    "expression_mathml": null
+                }
+            ],
+            "initials": [
+                {
+                    "target": "S_lb",
+                    "expression": "149217546.0",
+                    "expression_mathml": "<apply><plus/><apply><minus/><apply><minus/><apply><minus/><ci>D0</ci></apply><ci>H0</ci></apply><ci>I0</ci></apply><apply><minus/><ci>N</ci><ci>R0</ci></apply></apply>"
+                },
+                {
+                    "target": "R_lb",
+                    "expression": "0.0",
+                    "expression_mathml": "<ci>R0</ci>"
+                },
+                {
+                    "target": "H_lb",
+                    "expression": "0.0",
+                    "expression_mathml": "<ci>H0</ci>"
+                },
+                {
+                    "target": "D_lb",
+                    "expression": "781454.0",
+                    "expression_mathml": "<ci>D0</ci>"
+                },
+                {
+                    "target": "I_lb",
+                    "expression": "1000.00000000000",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "S_ub",
+                    "expression": "149217546.0",
+                    "expression_mathml": "<apply><plus/><apply><minus/><apply><minus/><apply><minus/><ci>D0</ci></apply><ci>H0</ci></apply><ci>I0</ci></apply><apply><minus/><ci>N</ci><ci>R0</ci></apply></apply>"
+                },
+                {
+                    "target": "R_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<ci>R0</ci>"
+                },
+                {
+                    "target": "H_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<ci>H0</ci>"
+                },
+                {
+                    "target": "D_ub",
+                    "expression": "781454.0",
+                    "expression_mathml": "<ci>D0</ci>"
+                },
+                {
+                    "target": "I_ub",
+                    "expression": "1000.00000000000",
+                    "expression_mathml": null
+                }
+            ],
+            "parameters": [
+                {
+                    "id": "N_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 150000000.0,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "pir_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.9,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "pih_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.1,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "rih_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.07,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "phd_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.13,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "rhd_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.3,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "phr_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.87,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "rhr_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.07,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "rir_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.07,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "N_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 150000000.0,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "pir_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.9,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "pih_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.1,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "rih_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.07,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "phd_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.13,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "rhd_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.3,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "phr_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.87,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "rhr_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.07,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "rir_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.07,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "lb_p_I_u_u_beta_v_u_p_I_v_u_beta_u_v_p_I_v_v_beta_u_u_p_I_u_v_beta_v_v",
+                    "name": null,
+                    "description": null,
+                    "value": 0.18,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": null
+                },
+                {
+                    "id": "ub_p_I_u_u_beta_v_u_p_I_v_u_beta_u_v_p_I_v_v_beta_u_u_p_I_u_v_beta_v_v",
+                    "name": null,
+                    "description": null,
+                    "value": 0.5,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": null
+                }
+            ],
+            "observables": [],
+            "time": {
+                "id": "t",
+                "units": null
+            }
+        },
+        "typing": null,
+        "span": null
+    },
+    "metadata": {
+        "annotations": {},
+        "abstraction": {
+            "parameters": {
+                "t1": {
+                    "agg_p_I_u_u_beta_v_u_p_I_v_u_beta_u_v_p_I_v_v_beta_u_u_p_I_u_v_beta_v_v": {
+                        "lb": 0.18,
+                        "ub": 0.5
+                    }
+                }
+            }
+        }
+    }
+}

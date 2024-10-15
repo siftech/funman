@@ -1,0 +1,217 @@
+{
+  "id": "4dfbce53-e22f-4ea4-a1dc-d681dd6e3d78",
+  "createdOn": "2024-09-13T21:21:11.132+00:00",
+  "updatedOn": "2024-09-25T17:45:17.838+00:00",
+  "name": "sirhd-base",
+  "fileNames": [],
+  "temporary": false,
+  "publicAsset": true,
+  "header": {
+    "name": "sirhd-base",
+    "description": "This is a model from equations",
+    "schema": "https://github.com/DARPA-ASKEM/Model-Representations/blob/main/petrinet/petrinet_schema.json",
+    "schema_name": "petrinet",
+    "model_version": "0.1"
+  },
+  "model": {
+    "states": [
+      {
+        "id": "D",
+        "name": "D"
+      },
+      {
+        "id": "H",
+        "name": "H"
+      },
+      {
+        "id": "I",
+        "name": "I"
+      },
+      {
+        "id": "R",
+        "name": "R"
+      },
+      {
+        "id": "S",
+        "name": "S"
+      }
+    ],
+    "transitions": [
+      {
+        "id": "t0",
+        "input": [
+          "I",
+          "S"
+        ],
+        "output": [
+          "I",
+          "I"
+        ]
+      },
+      {
+        "id": "t1",
+        "input": [
+          "I"
+        ],
+        "output": [
+          "R"
+        ]
+      },
+      {
+        "id": "t2",
+        "input": [
+          "H"
+        ],
+        "output": [
+          "R"
+        ]
+      },
+      {
+        "id": "t3",
+        "input": [
+          "I"
+        ],
+        "output": [
+          "H"
+        ]
+      },
+      {
+        "id": "t4",
+        "input": [
+          "H"
+        ],
+        "output": [
+          "D"
+        ]
+      }
+    ]
+  },
+  "semantics": {
+    "ode": {
+      "rates": [
+        {
+          "target": "t0",
+          "expression": "(S/N)*b*I",
+          "expression_mathml": "<apply><times/><apply><divide/><ci>S</ci><ci>N</ci></apply><ci>b</ci><ci>I</ci></apply>"
+        },
+        {
+          "target": "t1",
+          "expression": "I*r_{IR}*p_{IR}",
+          "expression_mathml": "<apply><times/><ci>I</ci><ci>r_{IR}</ci><ci>p_{IR}</ci></apply>"
+        },
+        {
+          "target": "t2",
+          "expression": "H*r_{HR}*p_{HR}",
+          "expression_mathml": "<apply><times/><ci>H</ci><ci>r_{HR}</ci><ci>p_{HR}</ci></apply>"
+        },
+        {
+          "target": "t3",
+          "expression": "I*r_{IH}*p_{IH}",
+          "expression_mathml": "<apply><times/><ci>I</ci><ci>r_{IH}</ci><ci>p_{IH}</ci></apply>"
+        },
+        {
+          "target": "t4",
+          "expression": "H*r_{HD}*p_{HD}",
+          "expression_mathml": "<apply><times/><ci>H</ci><ci>r_{HD}</ci><ci>p_{HD}</ci></apply>"
+        }
+      ],
+      "initials": [
+        {
+          "target": "S",
+          "expression": "0",
+          "expression_mathml": "<math></math>"
+        },
+        {
+          "target": "I",
+          "expression": "0",
+          "expression_mathml": "<math></math>"
+        },
+        {
+          "target": "R",
+          "expression": "0",
+          "expression_mathml": "<math></math>"
+        },
+        {
+          "target": "H",
+          "expression": "0",
+          "expression_mathml": "<math></math>"
+        },
+        {
+          "target": "D",
+          "expression": "0",
+          "expression_mathml": "<math></math>"
+        }
+      ],
+      "parameters": [
+        {
+          "id": "N",
+          "name": "N",
+          "value": 1
+        },
+        {
+          "id": "b",
+          "name": "b",
+          "value": 1
+        },
+        {
+          "id": "p_{HD}",
+          "name": "p_{HD}",
+          "value": 1
+        },
+        {
+          "id": "p_{HR}",
+          "name": "p_{HR}",
+          "value": 1
+        },
+        {
+          "id": "p_{IH}",
+          "name": "p_{IH}",
+          "value": 1
+        },
+        {
+          "id": "p_{IR}",
+          "name": "p_{IR}",
+          "value": 1
+        },
+        {
+          "id": "r_{HD}",
+          "name": "r_{HD}",
+          "value": 1
+        },
+        {
+          "id": "r_{HR}",
+          "name": "r_{HR}",
+          "value": 1
+        },
+        {
+          "id": "r_{IH}",
+          "name": "r_{IH}",
+          "value": 1
+        },
+        {
+          "id": "r_{IR}",
+          "name": "r_{IR}",
+          "value": 1
+        }
+      ],
+      "observables": [],
+      "time": null
+    },
+    "typing": null
+  },
+  "metadata": {
+    "annotations": {
+      "authors": [],
+      "references": [],
+      "locations": [],
+      "pathogens": [],
+      "diseases": [],
+      "hosts": [],
+      "model_types": []
+    },
+    "source": null,
+    "gollmCard": null,
+    "gollmExtractions": null,
+    "templateCard": null
+  }
+}

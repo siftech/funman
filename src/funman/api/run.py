@@ -271,7 +271,10 @@ class Runner:
                 m = _wrap_with_internal_model(model(**mod))
                 break
 
+            except FileNotFoundError as fne:
+                l.exception(f"Failed to load model:\n{fne}")
             except Exception as e:
+                l.debug(e)
                 pass
 
         if m is None:

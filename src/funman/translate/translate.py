@@ -1119,7 +1119,10 @@ class Encoder(ABC, BaseModel):
         time = options.schedule.time_at_step(layer_idx)
 
         if (
-            scenario.model.is_timed_observable(constraint.variable)
+            (
+                constraint.variable in scenario.model._observable_names()
+                and scenario.model.is_timed_observable(constraint.variable)
+            )
             or constraint.variable in scenario.model._state_var_names()
         ) and constraint.contains_time(time):
             bounds = (

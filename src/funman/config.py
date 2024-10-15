@@ -99,7 +99,7 @@ class FUNMANConfig(BaseModel):
     compartmental_constraint_noise: float = 0.01
     """Additional factor used to relax compartmental constraint (needed due to floating point imprecision)"""
 
-    normalize: bool = True
+    normalize: bool = False
     """Normalization constant to use for normalization (attempt to compute if None)"""
 
     simplify_query: bool = False
@@ -137,6 +137,9 @@ class FUNMANConfig(BaseModel):
 
     mode: Mode = MODE_SMT
     """ Mode to run FUNMAN, either funman.constants.MODE_ODEINT or funman.constants.MODE_SMT """
+
+    random_seed: int = 0
+    """ Random seed """
 
     @field_validator("solver")
     @classmethod
