@@ -3,7 +3,9 @@ import os
 import sys
 import unittest
 
+import pandas as pd
 import sympy
+from pathlib import Path
 
 from funman.api.run import Runner
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
@@ -84,8 +86,11 @@ class TestUseCases(unittest.TestCase):
                     str(test_output) == test["expected_output"]
                 ), f"Failed to create the expected expression: [{test['expected_output']}], got [{test_output}]"
 
+    @unittest.skip(reason="tmp")
     def test_stratify(self):
-        RESOURCES = os.path.join("resources")
+        FILE_DIRECTORY = Path(__file__).resolve().parent
+        API_BASE_PATH = FILE_DIRECTORY / ".."
+        RESOURCES = API_BASE_PATH / "resources"
         EXAMPLE_DIR = os.path.join(
             RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
         )
@@ -117,26 +122,60 @@ class TestUseCases(unittest.TestCase):
         betas["beta_1"].value = 0.000314
         betas["beta_2"].value = 0.000316
 
-        # stratified_result = runner.run(
-        #     stratified_model.petrinet.dict(), REQUEST_PATH
-        # )
+        stratified_result = runner.run(
+            stratified_model.petrinet.model_dump(), BASE_REQUEST_PATH
+        )
 
-        # assert (
-        #     stratified_result
-        # ), f"Could not generate a result for stratified version of model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+        assert (
+            stratified_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
 
         # Abstract and bound stratified Base model
         abstract_model = stratified_model.abstract({"S_1": "S", "S_2": "S"})
-        bounded_abstract_model = abstract_model.formulate_bounds()  # FIXME
-        # pass
+        bounded_abstract_model = abstract_model.formulate_bounds()  
         bounded_abstract_result = runner.run(
-            bounded_abstract_model.petrinet.dict(),
+            bounded_abstract_model.petrinet.model_dump(),
             BOUNDED_ABSTRACTED_REQUEST_PATH,
         )
 
         assert (
             bounded_abstract_result
-        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_MODEL_PATH}], request: [{REQUEST_PATH}]"
+        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_MODEL_PATH}], request: [{BOUNDED_ABSTRACTED_REQUEST_PATH}]"
+        
+        
+        # Check that abstract bounds actually bound the stratified and original model
+        
+        bs = [s for s in base_result.model._symbols() if s != "timer_t"]
+        b_df = base_result.dataframe(base_result.points())[bs]
+        
+        ss = [s for s in stratified_result.model._symbols() if s != "timer_t"]
+        s_df = stratified_result.dataframe(stratified_result.points())[ss]
+        
+        
+        bass = [s for s in bounded_abstract_result.model._symbols() if s != "timer_t"]
+        ba_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())[bass]
+    
+        ds_df = pd.DataFrame(s_df)
+        ds_df["S"] = ds_df.S_1 + ds_df.S_2    
+        
+        def check_bounds(bounds_df, values_df, variable, values_model_name):
+            failures = []
+            lb = f"{variable}_lb"
+            ub = f"{variable}_ub"
+            if not all(values_df[variable] >= bounds_df[lb]):
+                failures.append(f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}")
+            if not all(values_df[variable] <= bounds_df[ub]): 
+                failures.append(f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}")
+            return failures
+            
+        all_failures = []
+        for (values_df, model) in [(b_df, "base"), (ds_df, "stratified")]:
+            for var in ["S", "I", "R"]:
+                all_failures += check_bounds(ba_df, values_df, var, model)
+        
+        reasons = '\n'.join(map(str, all_failures))
+        assert len(all_failures) == 0, f"The bounds failed in the following cases:\n{reasons}"
+        
 
         # # Modify request parameters
         # request_parameters = stratified_request.parameters

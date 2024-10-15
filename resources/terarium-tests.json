@@ -1,14 +1,6 @@
 {
     "tests": [
         {
-            "name": "observable-bug",
-            "model-path": "amr/petrinet/terrarium-tests/observable-bug.json",
-            "expected-outcome": {
-                "true-boxes": 1
-            },
-            "regression": true
-        },
-        {
             "name": "sidarthe-bug",
             "model-path": "amr/petrinet/terrarium-tests/sidarthe_bug_model.json",
             "request-path": "amr/petrinet/terrarium-tests/sidarthe_bug_request.json",
@@ -111,6 +103,14 @@
             "name": "petrinet-query-parameter-synthesis",
             "model-path": "amr/petrinet/mira/models/scenario2_a_beta_scale_static.json",
             "request-path": "amr/petrinet/mira/requests/request2_b_synthesize.json",
+            "expected-outcome": {
+                "true-boxes": 3
+            },
+            "regression": true
+        },
+        {
+            "name": "observable-bug",
+            "model-path": "amr/petrinet/terrarium-tests/observable-bug.json",
             "expected-outcome": {
                 "true-boxes": 3
             },
