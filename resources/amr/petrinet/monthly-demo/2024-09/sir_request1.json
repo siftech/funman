@@ -25,8 +25,8 @@
         {
           "timepoints": [
             0,
-            10,
-            20
+            1,
+            2
           ]
         }
       ]
@@ -36,6 +36,7 @@
     "tolerance": 1e-2,
     "normalization_constant": 1001,
     "normalize": false,
-    "use_compartmental_constraints": true
+    "use_compartmental_constraints": true,
+    "mode": "mode_odeint"
   }
 }

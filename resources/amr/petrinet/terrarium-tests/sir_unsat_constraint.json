@@ -1,0 +1,200 @@
+{
+    "model": {
+        "id": "a4b419c6-7294-478a-9a73-67abbc996547",
+        "createdOn": "2024-10-08T15:40:35.179+00:00",
+        "updatedOn": "2024-10-08T16:05:18.484+00:00",
+        "name": "Configured SIR",
+        "fileNames": [],
+        "temporary": false,
+        "publicAsset": false,
+        "header": {
+            "name": "Configured SIR",
+            "description": "A configured SIR to the validate configuration operator.",
+            "schema": "https://github.com/DARPA-ASKEM/Model-Representations/blob/main/petrinet/petrinet_schema.json",
+            "schema_name": "petrinet",
+            "model_version": "0.1"
+        },
+        "model": {
+            "transitions": [
+                {
+                    "id": "t0",
+                    "input": [
+                        "I",
+                        "S"
+                    ],
+                    "output": [
+                        "I",
+                        "I"
+                    ]
+                },
+                {
+                    "id": "t1",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "R"
+                    ]
+                }
+            ],
+            "states": [
+                {
+                    "id": "I",
+                    "name": "I"
+                },
+                {
+                    "id": "R",
+                    "name": "R"
+                },
+                {
+                    "id": "S",
+                    "name": "S"
+                }
+            ]
+        },
+        "semantics": {
+            "ode": {
+                "rates": [
+                    {
+                        "target": "t0",
+                        "expression": "I*β*S",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>β</ci><ci>S</ci></apply>"
+                    },
+                    {
+                        "target": "t1",
+                        "expression": "γ*I",
+                        "expression_mathml": "<apply><times/><ci>γ</ci><ci>I</ci></apply>"
+                    }
+                ],
+                "initials": [
+                    {
+                        "target": "S",
+                        "expression": "1000.0",
+                        "expression_mathml": "<math></math>"
+                    },
+                    {
+                        "target": "I",
+                        "expression": "2.0",
+                        "expression_mathml": "<math></math>"
+                    },
+                    {
+                        "target": "R",
+                        "expression": "0.0",
+                        "expression_mathml": "<math></math>"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "id": "β",
+                        "name": "β",
+                        "value": 0.0006,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.00045,
+                                "maximum": 0.00075
+                            }
+                        }
+                    },
+                    {
+                        "id": "γ",
+                        "name": "γ",
+                        "value": 0.2,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.15,
+                                "maximum": 0.25
+                            }
+                        }
+                    }
+                ],
+                "observables": [],
+                "time": null
+            },
+            "typing": null
+        },
+        "metadata": {
+            "annotations": {
+                "authors": [],
+                "references": [],
+                "locations": [],
+                "pathogens": [],
+                "diseases": [],
+                "hosts": [],
+                "model_types": []
+            },
+            "source": null,
+            "gollmCard": null,
+            "gollmExtractions": null,
+            "templateCard": null
+        }
+    },
+    "request": {
+        "constraints": [
+            {
+                "name": "Constraint 1",
+                "variables": [
+                    "I"
+                ],
+                "weights": [
+                    1
+                ],
+                "additive_bounds": {
+                    "lb": 90
+                },
+                "timepoints": {
+                    "lb": 10,
+                    "ub": 20,
+                    "closed_upper_bound": true
+                }
+            }
+        ],
+        "parameters": [
+            {
+                "name": "β",
+                "interval": {
+                    "lb": 0.00045,
+                    "ub": 0.00075
+                },
+                "label": "all"
+            },
+            {
+                "name": "γ",
+                "interval": {
+                    "lb": 0.15,
+                    "ub": 0.25
+                },
+                "label": "all"
+            }
+        ],
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            10,
+                            20,
+                            30,
+                            40,
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            100
+                        ]
+                    }
+                ]
+            }
+        ],
+        "config": {
+            "use_compartmental_constraints": true,
+            "normalization_constant": 1002,
+            "normalize": false,
+            "tolerance": 0.2
+        }
+    }
+}

@@ -115,6 +115,14 @@
                 "true-boxes": 3
             },
             "regression": true
+        },
+        {
+            "name": "sir-unsat-constraint",
+            "model-path": "amr/petrinet/terrarium-tests/sir_unsat_constraint.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": true
         }
     ]
 }
