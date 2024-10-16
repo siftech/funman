@@ -476,7 +476,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     replace_reserved(s) for s in self._symbols()
                 ]
                 # convert "t" to "timer_t"
-                unreserved_symbols[-1] = self._time_var_id(self._time_var())
+                if unreserved_symbols[-1] == "t":
+                    unreserved_symbols[-1] = self._time_var_id(self._time_var())
                 t_rates_lambda = [
                     sympy.lambdify(unreserved_symbols, t, cse=True)
                     for t in t_rates
@@ -634,39 +635,41 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             "inputs": {
                 # Make transition for each input edge
                 t.id: {
-                    bound: {
-                        "transition": Transition(
-                            id=f"{t.id}_in_{bound}",
-                            input=[f"{input}_{bound}" for input in t.input],
-                            output=[],
-                            grounding=t.grounding,
-                            properties=Properties(
-                                name=f"{t.id}_in_{bound}",
-                                description=(
-                                    f"{t.properties.description} in {bound}"
-                                    if t.properties.description
-                                    else t.properties.description
+                    input_id: {
+                        bound: {
+                            "transition": Transition(
+                                id=f"{t.id}_out_{bound}",
+                                input=[f"{input_id}_{bound}"],
+                                output=[ ],
+                                grounding=t.grounding,
+                                properties=Properties(
+                                    name=f"{t.id}_in_{bound}",
+                                    description=(
+                                        f"{t.properties.description} in {bound}"
+                                        if t.properties.description
+                                        else t.properties.description
+                                    ),
                                 ),
                             ),
-                        ),
-                        "rate": Rate(
-                            target=f"{r.target}_in_{bound}",
-                            expression=str(
-                                expression_bound_fn["in"][bound](
-                                    {
-                                        input: f"{input}_{bound}"
-                                        for input in t.input
-                                    },
-                                    r.expression,
-                                    symbols,
-                                    abstraction_metadata.get(
-                                        "parameters", {}
-                                    ).get(r.target, {}),
-                                )
+                            "rate": Rate(
+                                target=f"{r.target}_in_{bound}",
+                                expression=str(
+                                    expression_bound_fn["in"][bound](
+                                        {
+                                            input_id: f"{input_id}_{bound}"
+                                        },
+                                        r.expression,
+                                        symbols,
+                                        abstraction_metadata.get(
+                                            "parameters", {}
+                                        ).get(r.target, {}),
+                                    )
+                                ),
                             ),
-                        ),
+                        }
+                        for bound in ["lb", "ub"]
                     }
-                    for bound in ["lb", "ub"]
+                    for input_id in t.input
                 }
                 for t in self.petrinet.model.transitions
                 for r in self.petrinet.semantics.ode.rates
@@ -675,41 +678,41 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             "outputs": {
                 # Make transition for each output edge
                 t.id: {
-                    bound: {
-                        "transition": Transition(
-                            id=f"{t.id}_out_{bound}",
-                            input=[],
-                            output=[
-                                f"{output}_{bound}" for output in t.output
-                            ],
-                            grounding=t.grounding,
-                            properties=Properties(
-                                name=f"{t.id}_out_{bound}",
-                                description=(
-                                    f"{t.properties.description} in {bound}"
-                                    if t.properties.description
-                                    else t.properties.description
+                    output_id: {
+                        bound: {
+                            "transition": Transition(
+                                id=f"{t.id}_in_{bound}",
+                                input=[],
+                                output=[f"{output_id}_{bound}"],
+                                grounding=t.grounding,
+                                properties=Properties(
+                                    name=f"{t.id}_out_{bound}",
+                                    description=(
+                                        f"{t.properties.description} in {bound}"
+                                        if t.properties.description
+                                        else t.properties.description
+                                    ),
                                 ),
                             ),
-                        ),
-                        "rate": Rate(
-                            target=f"{r.target}_out_{bound}",
-                            expression=str(
-                                expression_bound_fn["out"][bound](
-                                    {
-                                        output: f"{output}_{bound}"
-                                        for output in t.output
-                                    },
-                                    r.expression,
-                                    symbols,
-                                    abstraction_metadata.get(
-                                        "parameters", {}
-                                    ).get(r.target, {}),
-                                )
+                            "rate": Rate(
+                                target=f"{r.target}_out_{bound}",
+                                expression=str(
+                                    expression_bound_fn["out"][bound](
+                                        {
+                                            output_id: f"{output_id}_{bound}"
+                                        },
+                                        r.expression,
+                                        symbols,
+                                        abstraction_metadata.get(
+                                            "parameters", {}
+                                        ).get(r.target, {}),
+                                    )
+                                ),
                             ),
-                        ),
+                        }
+                        for bound in ["lb", "ub"]
                     }
-                    for bound in ["lb", "ub"]
+                    for output_id in t.output
                 }
                 for t in self.petrinet.model.transitions
                 for r in self.petrinet.semantics.ode.rates
@@ -758,14 +761,16 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             bnd["transition"]
             for ts in bounded_transitions.values()
             for tid in ts.values()
-            for bnd in tid.values()
+            for v in tid.values()
+            for bnd in v.values()
         ]
 
         new_rates = [
             bnd["rate"]
             for ts in bounded_transitions.values()
             for tid in ts.values()
-            for bnd in tid.values()
+            for v in tid.values()
+            for bnd in v.values()
         ]
 
         return GeneratedPetriNetModel(
