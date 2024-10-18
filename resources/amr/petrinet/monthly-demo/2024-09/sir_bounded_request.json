@@ -1,39 +1,6 @@
 {
   "constraints": [],
-  "parameters": [
-    {
-      "name": "lb_beta_1_beta_2",
-      "interval": {
-        "lb": 0.000314,
-        "ub": 0.000314
-      },
-      "label": "all"
-    },
-    {
-      "name": "ub_beta_1_beta_2",
-      "interval": {
-        "lb": 0.000316,
-        "ub": 0.000316
-      },
-      "label": "all"
-    },
-    {
-      "name": "gamma_lb",
-      "interval": {
-        "lb": 0.1,
-        "ub": 0.1
-      },
-      "label": "all"
-    },
-    {
-      "name": "gamma_ub",
-      "interval": {
-        "lb": 0.1,
-        "ub": 0.1
-      },
-      "label": "all"
-    }
-  ],
+  "parameters": [],
   "structure_parameters": [
     {
       "name": "schedules",

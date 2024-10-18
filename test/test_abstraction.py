@@ -86,8 +86,9 @@ class TestUseCases(unittest.TestCase):
                     str(test_output) == test["expected_output"]
                 ), f"Failed to create the expected expression: [{test['expected_output']}], got [{test_output}]"
 
-    @unittest.skip(reason="tmp")
+    # @unittest.skip(reason="tmp")
     def test_stratify(self):
+        epsilon = 0.000001
         FILE_DIRECTORY = Path(__file__).resolve().parent
         API_BASE_PATH = FILE_DIRECTORY / ".."
         RESOURCES = API_BASE_PATH / "resources"
@@ -95,9 +96,10 @@ class TestUseCases(unittest.TestCase):
             RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
         )
         BASE_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
-        BOUNDED_ABSTRACTED_REQUEST_PATH = os.path.join(
-            EXAMPLE_DIR, "sir_bounded_request.json"
-        )
+        # STRATIFIED_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_stratified_request.json")
+        # BOUNDED_ABSTRACTED_REQUEST_PATH = os.path.join(
+        #     EXAMPLE_DIR, "sir_bounded_request.json"
+        # )
         BASE_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
         runner = Runner()
         base_result = runner.run(BASE_MODEL_PATH, BASE_REQUEST_PATH)
@@ -119,8 +121,8 @@ class TestUseCases(unittest.TestCase):
 
         stratified_params = stratified_model.petrinet.semantics.ode.parameters
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta_1"].value = 0.000314
-        betas["beta_2"].value = 0.000316
+        betas["beta_1"].value -= epsilon
+        betas["beta_2"].value += epsilon
 
         stratified_result = runner.run(
             stratified_model.petrinet.model_dump(), BASE_REQUEST_PATH
@@ -135,12 +137,12 @@ class TestUseCases(unittest.TestCase):
         bounded_abstract_model = abstract_model.formulate_bounds()  
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet.model_dump(),
-            BOUNDED_ABSTRACTED_REQUEST_PATH,
+            BASE_REQUEST_PATH,
         )
 
         assert (
             bounded_abstract_result
-        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_MODEL_PATH}], request: [{BOUNDED_ABSTRACTED_REQUEST_PATH}]"
+        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
         
         
         # Check that abstract bounds actually bound the stratified and original model

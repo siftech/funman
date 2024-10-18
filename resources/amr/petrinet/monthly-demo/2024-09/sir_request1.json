@@ -1,22 +1,6 @@
 {
   "constraints": [],
   "parameters": [
-    {
-      "name": "beta",
-      "interval": {
-        "lb": 0.000315,
-        "ub": 0.000315
-      },
-      "label": "all"
-    },
-    {
-      "name": "gamma",
-      "interval": {
-        "lb": 0.1,
-        "ub": 0.1
-      },
-      "label": "all"
-    }
   ],
   "structure_parameters": [
     {

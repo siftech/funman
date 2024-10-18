@@ -1,3 +1,4 @@
+from collections import Counter
 from difflib import SequenceMatcher
 from functools import reduce
 from typing import Callable, Dict, List, Optional, Union
@@ -534,7 +535,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def contract_parameters(
         self, parameter_bounds: Dict[str, Interval]
     ) -> GeneratedPetrinet:
-        contracted_model = self.petrinet.copy(deep=True)
+        contracted_model = self.petrinet.model_copy(deep=True)
 
         for param in contracted_model.semantics.ode.parameters:
             new_bounds = parameter_bounds[param.id]
@@ -627,7 +628,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         #   - vice versa wrt. above
 
         expression_bound_fn = {
-            "in": {"lb": ub_expression, "ub": lb_expression},
+            "in": {"lb": lb_expression, "ub": ub_expression},
             "out": {"lb": lb_expression, "ub": ub_expression},
         }
 
@@ -638,12 +639,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     input_id: {
                         bound: {
                             "transition": Transition(
-                                id=f"{t.id}_out_{bound}",
-                                input=[f"{input_id}_{bound}"],
+                                id=f"{t.id}_in_{input_id}_{bound}",
+                                input=[f"{input_id}_{('lb' if bound == 'ub' else 'ub')}" for i in range(num_input)],
                                 output=[ ],
                                 grounding=t.grounding,
                                 properties=Properties(
-                                    name=f"{t.id}_in_{bound}",
+                                    name=f"{t.id}_out_{bound}",
                                     description=(
                                         f"{t.properties.description} in {bound}"
                                         if t.properties.description
@@ -652,11 +653,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                 ),
                             ),
                             "rate": Rate(
-                                target=f"{r.target}_in_{bound}",
+                                target=f"{r.target}_in_{input_id}_{bound}",
                                 expression=str(
                                     expression_bound_fn["in"][bound](
                                         {
-                                            input_id: f"{input_id}_{bound}"
+                                            input_id: f"{input_id}_{('lb' if bound == 'ub' else 'ub')}"
                                         },
                                         r.expression,
                                         symbols,
@@ -669,7 +670,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         }
                         for bound in ["lb", "ub"]
                     }
-                    for input_id in t.input
+                    for input_id, num_input in Counter(t.input).items()
                 }
                 for t in self.petrinet.model.transitions
                 for r in self.petrinet.semantics.ode.rates
@@ -681,12 +682,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     output_id: {
                         bound: {
                             "transition": Transition(
-                                id=f"{t.id}_in_{bound}",
+                                id=f"{t.id}_out_{output_id}_{bound}",
                                 input=[],
-                                output=[f"{output_id}_{bound}"],
+                                output=[f"{output_id}_{bound}" for i in range(num_output)],
                                 grounding=t.grounding,
                                 properties=Properties(
-                                    name=f"{t.id}_out_{bound}",
+                                    name=f"{t.id}_in_{bound}",
                                     description=(
                                         f"{t.properties.description} in {bound}"
                                         if t.properties.description
@@ -695,7 +696,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                 ),
                             ),
                             "rate": Rate(
-                                target=f"{r.target}_out_{bound}",
+                                target=f"{r.target}_out_{output_id}_{bound}",
                                 expression=str(
                                     expression_bound_fn["out"][bound](
                                         {
@@ -712,7 +713,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         }
                         for bound in ["lb", "ub"]
                     }
-                    for output_id in t.output
+                    for output_id, num_output in Counter(t.output).items()
                 }
                 for t in self.petrinet.model.transitions
                 for r in self.petrinet.semantics.ode.rates
