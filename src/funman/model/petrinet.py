@@ -593,7 +593,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         for _, params in abstraction_metadata.get("parameters", {}).items():
             for p in params:
                 bound_symbols[p] = {
-                    bound: p.replace("agg", bound) for bound in ["lb", "ub"]
+                    bound: f"{p}_{bound}" for bound in ["lb", "ub"]
                 }
         substituter = SympyBoundedSubstituter(
             bound_symbols=bound_symbols, str_to_symbol=str_to_symbol
@@ -733,8 +733,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         abstract_bounded_parameters = {
             p: {
-                p.replace("agg_", "lb_"): bounds["lb"],
-                p.replace("agg_", "ub_"): bounds["ub"],
+                f"{p}_lb": bounds["lb"],
+                f"{p}_ub": bounds["ub"],
             }
             for t, params in abstraction_metadata.get("parameters", {}).items()
             for p, bounds in params.items()

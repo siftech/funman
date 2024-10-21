@@ -1,8 +1,11 @@
+import json
 import logging
 import os
 import sys
 import unittest
 
+from funman.server.query import FunmanWorkRequest
+from matplotlib import pyplot as plt
 import pandas as pd
 import sympy
 from pathlib import Path
@@ -10,6 +13,18 @@ from pathlib import Path
 from funman.api.run import Runner
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
 
+FILE_DIRECTORY = Path(__file__).resolve().parent
+API_BASE_PATH = FILE_DIRECTORY / ".."
+RESOURCES = API_BASE_PATH / "resources"
+EXAMPLE_DIR = os.path.join(
+    RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
+)
+BASE_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
+# STRATIFIED_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_stratified_request.json")
+# BOUNDED_ABSTRACTED_REQUEST_PATH = os.path.join(
+#     EXAMPLE_DIR, "sir_bounded_request.json"
+# )
+BASE_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
 
 class TestUseCases(unittest.TestCase):
     l = logging.Logger(__name__)
@@ -89,18 +104,7 @@ class TestUseCases(unittest.TestCase):
     # @unittest.skip(reason="tmp")
     def test_stratify(self):
         epsilon = 0.000001
-        FILE_DIRECTORY = Path(__file__).resolve().parent
-        API_BASE_PATH = FILE_DIRECTORY / ".."
-        RESOURCES = API_BASE_PATH / "resources"
-        EXAMPLE_DIR = os.path.join(
-            RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
-        )
-        BASE_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
-        # STRATIFIED_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_stratified_request.json")
-        # BOUNDED_ABSTRACTED_REQUEST_PATH = os.path.join(
-        #     EXAMPLE_DIR, "sir_bounded_request.json"
-        # )
-        BASE_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
+        
         runner = Runner()
         base_result = runner.run(BASE_MODEL_PATH, BASE_REQUEST_PATH)
 
@@ -192,6 +196,65 @@ class TestUseCases(unittest.TestCase):
         # report(results, stratified_model_str, stratified_model._state_var_names() + stratified_model._observable_names(), request_results, request_params)
         # stratified_model.to_dot()
 
+    def test_param_synth(self):
+        # use a bounded model to define a box, then check constraints on it
+        epsilon = 1e-7
+        runner = Runner()
+        
+        (base_model, _) = runner.get_model(BASE_MODEL_PATH)
+        with open(BASE_REQUEST_PATH, "r") as f:
+            base_request = FunmanWorkRequest.model_validate_json(f.read())
+        base_request.structure_parameters[0].schedules[0].timepoints = list(range(0, 101, 10))
+            
+        base_result = runner.run(base_model.petrinet.model_dump(), base_request)
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
+
+        
+        base_model.petrinet.metadata["abstraction"] = {
+            'parameters': {
+                'inf': {
+                    'beta': {
+                        'lb': 0.000315-epsilon, 
+                        'ub': 0.000315+epsilon
+                        },
+                    'gamma': {
+                        "lb": 0.1-epsilon,
+                        "ub": 0.1+epsilon
+                        }
+                },
+                'rec': {
+                    'gamma': {
+                        "lb": 0.1-epsilon,
+                        "ub": 0.1+epsilon
+                        }
+                }
+                }}
+        
+        bounded_model = base_model.formulate_bounds()
+        bounded_result = runner.run(
+            bounded_model.petrinet.model_dump(),
+            base_request,
+        )
+        assert (
+            bounded_result
+        ), f"Could not generate a result for bounded version of model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
+        
+        b_df = base_result.dataframe(base_result.points())
+        bnd_df = bounded_result.dataframe(bounded_result.points())
+        
+        for var in ["S", "I", "R"]:
+            bnd_df[f"{var}_width"] = bnd_df[f"{var}_ub"]- bnd_df[f"{var}_lb"]
+        width_cols = [f"{var}_width" for var in ["S", "I", "R"]]    
+            
+        print(f"When the beta interval has width {2*epsilon} the width of the state variables is:\n {bnd_df[width_cols]}")
+        
+        bound_cols = [f"{var}_{bound}" for var in ["S", "I", "R"] for bound in ["lb", "ub"]]
+        bnd_df[bound_cols].plot()
+        plt.savefig("sir_bounds")
+        
+        
 
 if __name__ == "__main__":
     unittest.main()
