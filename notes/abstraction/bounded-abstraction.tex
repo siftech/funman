@@ -35,7 +35,7 @@ abstraction defines:
         \max\limits_{p \in P: A(p) = p'} {\cal P}(p)$. 
         
 
-        \item Transitions: For each $z' \in Z'$, $z^{lb}, z^{ub} \in Z^B$. For
+        \item Transitions: For each transition $z' \in Z'$ and state variable $x'\in \{x'\in X' | (v_{z'}, v_{x'}) \in E_{in}\} \cup \{x'\in X' | ( v_{x'}, v_{z'}) \in E_{out}\}$ , $z^{lb}_{x'}, z^{ub}_{x'} \in Z^B$. For
         each vertex $v_z \in V_z$, if $A(v_z)=v_z'$ then $v_{z^{lb}}^B, v_{z^{ub}}^B \in V_z^B$.
         
         \item In Edges: For each edge $(v_{z'}^B, v_{x'}^B) \in E_{in}'$,
@@ -44,7 +44,7 @@ abstraction defines:
         $(v_{x^{ub}}^B, v_{z^{lb}}^B), (v_{x^{lb}}^B, v_{z^{ub}}^B) \in E^B_{out}$.
 
         
-        \item Transition Rates: For each $z^{lb} \in Z^B$, ${\cal R}^B({\bf
+        \item Transition Rates: For each transition $z^{lb} \in Z^B$ and , ${\cal R}^B({\bf
         p}^B, {\bf x}^B, z^{lb}) = \min\limits_{z \in Z: A(z)=z'} {\cal R}({\bf
         p}, {\bf x}, z)$ (replacing ${\bf p}$ and ${\bf x}$ of the minimal rate
         by the elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which
