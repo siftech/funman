@@ -295,7 +295,7 @@ class TestUseCases(unittest.TestCase):
             self_strata_transition=False,
         )
 
-        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+        # stratified_model_SI.to_dot().render("sirhd_strat_SI")
 
         stratified_params = (
             stratified_model_SI.petrinet.semantics.ode.parameters
@@ -323,7 +323,7 @@ class TestUseCases(unittest.TestCase):
         )
         print(abstract_model._state_var_names())
         print(abstract_model._parameter_names())
-        abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
+        # abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
 
         bounded_abstract_model = abstract_model.formulate_bounds()
         bounded_abstract_result = runner.run(
