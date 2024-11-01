@@ -1,16 +1,15 @@
-import json
 import logging
 import os
 import sys
 import unittest
-
-from funman.server.query import FunmanWorkRequest
-from matplotlib import pyplot as plt
-import pandas as pd
-import sympy
 from pathlib import Path
 
+import pandas as pd
+import sympy
+from matplotlib import pyplot as plt
+
 from funman.api.run import Runner
+from funman.server.query import FunmanWorkRequest
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
 
 FILE_DIRECTORY = Path(__file__).resolve().parent
@@ -19,12 +18,12 @@ RESOURCES = API_BASE_PATH / "resources"
 EXAMPLE_DIR = os.path.join(
     RESOURCES, "amr", "petrinet", "monthly-demo", "2024-09"
 )
-BASE_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
-# STRATIFIED_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_stratified_request.json")
-# BOUNDED_ABSTRACTED_REQUEST_PATH = os.path.join(
-#     EXAMPLE_DIR, "sir_bounded_request.json"
-# )
-BASE_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
+BASE_SIR_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
+BASE_SIR_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
+
+BASE_SIRHD_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sirhd_request.json")
+BASE_SIRHD_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sirhd.json")
+
 
 class TestUseCases(unittest.TestCase):
     l = logging.Logger(__name__)
@@ -104,15 +103,15 @@ class TestUseCases(unittest.TestCase):
     # @unittest.skip(reason="tmp")
     def test_stratify(self):
         epsilon = 0.000001
-        
+
         runner = Runner()
-        base_result = runner.run(BASE_MODEL_PATH, BASE_REQUEST_PATH)
+        base_result = runner.run(BASE_SIR_MODEL_PATH, BASE_SIR_REQUEST_PATH)
 
         assert (
             base_result
-        ), f"Could not generate a result for model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
+        ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
-        (base_model, _) = runner.get_model(BASE_MODEL_PATH)
+        (base_model, _) = runner.get_model(BASE_SIR_MODEL_PATH)
 
         # Stratify Base model
         stratified_model = base_model.stratify(
@@ -129,59 +128,68 @@ class TestUseCases(unittest.TestCase):
         betas["beta_2"].value += epsilon
 
         stratified_result = runner.run(
-            stratified_model.petrinet.model_dump(), BASE_REQUEST_PATH
+            stratified_model.petrinet.model_dump(), BASE_SIR_REQUEST_PATH
         )
 
         assert (
             stratified_result
-        ), f"Could not generate a result for stratified version of model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
+        ), f"Could not generate a result for stratified version of model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
         # Abstract and bound stratified Base model
         abstract_model = stratified_model.abstract({"S_1": "S", "S_2": "S"})
-        bounded_abstract_model = abstract_model.formulate_bounds()  
+        bounded_abstract_model = abstract_model.formulate_bounds()
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet.model_dump(),
-            BASE_REQUEST_PATH,
+            BASE_SIR_REQUEST_PATH,
         )
 
         assert (
             bounded_abstract_result
-        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
-        
-        
+        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
+
         # Check that abstract bounds actually bound the stratified and original model
-        
+
         bs = [s for s in base_result.model._symbols() if s != "timer_t"]
         b_df = base_result.dataframe(base_result.points())[bs]
-        
+
         ss = [s for s in stratified_result.model._symbols() if s != "timer_t"]
         s_df = stratified_result.dataframe(stratified_result.points())[ss]
-        
-        
-        bass = [s for s in bounded_abstract_result.model._symbols() if s != "timer_t"]
-        ba_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())[bass]
-    
+
+        bass = [
+            s
+            for s in bounded_abstract_result.model._symbols()
+            if s != "timer_t"
+        ]
+        ba_df = bounded_abstract_result.dataframe(
+            bounded_abstract_result.points()
+        )[bass]
+
         ds_df = pd.DataFrame(s_df)
-        ds_df["S"] = ds_df.S_1 + ds_df.S_2    
-        
+        ds_df["S"] = ds_df.S_1 + ds_df.S_2
+
         def check_bounds(bounds_df, values_df, variable, values_model_name):
             failures = []
             lb = f"{variable}_lb"
             ub = f"{variable}_ub"
             if not all(values_df[variable] >= bounds_df[lb]):
-                failures.append(f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}")
-            if not all(values_df[variable] <= bounds_df[ub]): 
-                failures.append(f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}")
+                failures.append(
+                    f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}"
+                )
+            if not all(values_df[variable] <= bounds_df[ub]):
+                failures.append(
+                    f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}"
+                )
             return failures
-            
+
         all_failures = []
-        for (values_df, model) in [(b_df, "base"), (ds_df, "stratified")]:
+        for values_df, model in [(b_df, "base"), (ds_df, "stratified")]:
             for var in ["S", "I", "R"]:
                 all_failures += check_bounds(ba_df, values_df, var, model)
-        
-        reasons = '\n'.join(map(str, all_failures))
-        assert len(all_failures) == 0, f"The bounds failed in the following cases:\n{reasons}"
-        
+
+        reasons = "\n".join(map(str, all_failures))
+        assert (
+            len(all_failures) == 0
+        ), f"The bounds failed in the following cases:\n{reasons}"
 
         # # Modify request parameters
         # request_parameters = stratified_request.parameters
@@ -200,38 +208,34 @@ class TestUseCases(unittest.TestCase):
         # use a bounded model to define a box, then check constraints on it
         epsilon = 1e-7
         runner = Runner()
-        
-        (base_model, _) = runner.get_model(BASE_MODEL_PATH)
-        with open(BASE_REQUEST_PATH, "r") as f:
+
+        (base_model, _) = runner.get_model(BASE_SIR_MODEL_PATH)
+        with open(BASE_SIR_REQUEST_PATH, "r") as f:
             base_request = FunmanWorkRequest.model_validate_json(f.read())
-        base_request.structure_parameters[0].schedules[0].timepoints = list(range(0, 101, 10))
-            
-        base_result = runner.run(base_model.petrinet.model_dump(), base_request)
+        base_request.structure_parameters[0].schedules[0].timepoints = list(
+            range(0, 101, 10)
+        )
+
+        base_result = runner.run(
+            base_model.petrinet.model_dump(), base_request
+        )
         assert (
             base_result
-        ), f"Could not generate a result for model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
+        ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
-        
         base_model.petrinet.metadata["abstraction"] = {
-            'parameters': {
-                'inf': {
-                    'beta': {
-                        'lb': 0.000315-epsilon, 
-                        'ub': 0.000315+epsilon
-                        },
-                    'gamma': {
-                        "lb": 0.1-epsilon,
-                        "ub": 0.1+epsilon
-                        }
+            "parameters": {
+                "inf": {
+                    "beta": {
+                        "lb": 0.000315 - epsilon,
+                        "ub": 0.000315 + epsilon,
+                    },
+                    "gamma": {"lb": 0.1 - epsilon, "ub": 0.1 + epsilon},
                 },
-                'rec': {
-                    'gamma': {
-                        "lb": 0.1-epsilon,
-                        "ub": 0.1+epsilon
-                        }
-                }
-                }}
-        
+                "rec": {"gamma": {"lb": 0.1 - epsilon, "ub": 0.1 + epsilon}},
+            }
+        }
+
         bounded_model = base_model.formulate_bounds()
         bounded_result = runner.run(
             bounded_model.petrinet.model_dump(),
@@ -239,22 +243,130 @@ class TestUseCases(unittest.TestCase):
         )
         assert (
             bounded_result
-        ), f"Could not generate a result for bounded version of model: [{BASE_MODEL_PATH}], request: [{BASE_REQUEST_PATH}]"
-        
+        ), f"Could not generate a result for bounded version of model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
+
         b_df = base_result.dataframe(base_result.points())
         bnd_df = bounded_result.dataframe(bounded_result.points())
-        
+
         for var in ["S", "I", "R"]:
-            bnd_df[f"{var}_width"] = bnd_df[f"{var}_ub"]- bnd_df[f"{var}_lb"]
-        width_cols = [f"{var}_width" for var in ["S", "I", "R"]]    
-            
-        print(f"When the beta interval has width {2*epsilon} the width of the state variables is:\n {bnd_df[width_cols]}")
-        
-        bound_cols = [f"{var}_{bound}" for var in ["S", "I", "R"] for bound in ["lb", "ub"]]
-        bnd_df[bound_cols].plot()
-        plt.savefig("sir_bounds")
-        
-        
+            bnd_df[f"{var}_width"] = bnd_df[f"{var}_ub"] - bnd_df[f"{var}_lb"]
+        width_cols = [f"{var}_width" for var in ["S", "I", "R"]]
+
+        print(
+            f"When the beta interval has width {2*epsilon} the width of the state variables is:\n {bnd_df[width_cols]}"
+        )
+
+        # bound_cols = [f"{var}_{bound}" for var in ["S", "I", "R"] for bound in ["lb", "ub"]]
+        # bnd_df[bound_cols].plot()
+        # plt.savefig("sir_bounds")
+
+        # FIXME need assert
+
+    def test_sirhd_stratify(self):
+        epsilon = 0.000001
+
+        runner = Runner()
+        base_result = runner.run(
+            BASE_SIRHD_MODEL_PATH, BASE_SIRHD_REQUEST_PATH
+        )
+
+        import matplotlib.pyplot as plt
+
+        base_result.plot()
+        plt.savefig("sirhd")
+
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
+
+        # Stratify Base model
+        stratified_model_S = base_model.stratify(
+            "S",
+            ["vac", "unvac"],
+            strata_parameters=["beta"],
+            self_strata_transition=False,
+        )
+        stratified_model_SI = stratified_model_S.stratify(
+            "I",
+            ["vac", "unvac"],
+            strata_parameters=[],
+            self_strata_transition=False,
+        )
+
+        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+
+        stratified_params = (
+            stratified_model_SI.petrinet.semantics.ode.parameters
+        )
+        betas = {p.id: p for p in stratified_params if "beta" in p.id}
+        betas["beta_vac_unvac_0"].value -= epsilon
+        betas["beta_vac_unvac_1"].value += epsilon
+
+        # stratified_result = runner.run(
+        #     stratified_model_SI.petrinet.model_dump(), BASE_SIRHD_REQUEST_PATH
+        # )
+
+        # assert (
+        #     stratified_result
+        # ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        # Abstract and bound stratified Base model
+        abstract_model = stratified_model_SI.abstract(
+            {
+                "S_vac": "S",
+                "S_unvac": "S",
+                "beta_vac_unvac_0": "agg_beta",
+                "beta_vac_unvac_1": "agg_beta",
+            }
+        )
+        print(abstract_model._state_var_names())
+        print(abstract_model._parameter_names())
+        abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
+
+        bounded_abstract_model = abstract_model.formulate_bounds()
+        bounded_abstract_result = runner.run(
+            bounded_abstract_model.petrinet.model_dump(),
+            BASE_SIR_REQUEST_PATH,
+        )
+
+        assert (
+            bounded_abstract_result
+        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        # Check that abstract bounds actually bound the stratified and original model
+
+        # bs = [s for s in base_result.model._symbols() if s != "timer_t"]
+        # b_df = base_result.dataframe(base_result.points())[bs]
+
+        # ss = [s for s in stratified_result.model._symbols() if s != "timer_t"]
+        # s_df = stratified_result.dataframe(stratified_result.points())[ss]
+
+        # bass = [s for s in bounded_abstract_result.model._symbols() if s != "timer_t"]
+        # ba_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())[bass]
+
+        # ds_df = pd.DataFrame(s_df)
+        # ds_df["S"] = ds_df.S_1 + ds_df.S_2
+
+        # def check_bounds(bounds_df, values_df, variable, values_model_name):
+        #     failures = []
+        #     lb = f"{variable}_lb"
+        #     ub = f"{variable}_ub"
+        #     if not all(values_df[variable] >= bounds_df[lb]):
+        #         failures.append(f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}")
+        #     if not all(values_df[variable] <= bounds_df[ub]):
+        #         failures.append(f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}")
+        #     return failures
+
+        # all_failures = []
+        # for (values_df, model) in [(b_df, "base"), (ds_df, "stratified")]:
+        #     for var in ["S", "I", "R"]:
+        #         all_failures += check_bounds(ba_df, values_df, var, model)
+
+        # reasons = '\n'.join(map(str, all_failures))
+        # assert len(all_failures) == 0, f"The bounds failed in the following cases:\n{reasons}"
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -741,7 +741,12 @@ class BoxSearch(Search):
             for k, v in encoder.encode_assumptions(
                 episode.problem._assumptions, options
             ).items()
-            if any([k.relevant_at_time(box.schedule.time_at_step(t)) for t in range(0, timestep+1)])
+            if any(
+                [
+                    k.relevant_at_time(box.schedule.time_at_step(t))
+                    for t in range(0, timestep + 1)
+                ]
+            )
         }
         formula = And([v for k, v in assumptions.items()])
 
