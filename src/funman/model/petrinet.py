@@ -919,7 +919,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         extended_mapping = mapping + [((i, s1), (o, s2))]
                         i_mappings.append(extended_mapping)
                 for o in free_outputs:
-                    o_labels = strata if o == state_var.name else [None]
+                    o_labels = strata if o == state_var.id else [None]
                     for s2 in o_labels:
                         if strata_transition or s1 == s2 or s2 is None:
                             # Need to check if extension is legal
@@ -931,7 +931,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             i_o_mapping = next_i_o_mapping
         for i in free_inputs:
             next_i_o_mapping = []
-            i_labels = strata if i == state_var.name else [None]
+            i_labels = strata if i == state_var.id else [None]
             for s1 in i_labels:
                 for mapping in i_o_mapping:
                     # find all outputs that i can map to
@@ -942,7 +942,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                             extended_mapping = mapping + [((i, s1), (o, s2))]
                             i_mappings.append(extended_mapping)
                     for o in free_outputs:
-                        o_labels = strata if o == state_var.name else [None]
+                        o_labels = strata if o == state_var.id else [None]
                         for s2 in o_labels:
                             if (
                                 strata_transition

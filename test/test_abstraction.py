@@ -118,14 +118,14 @@ class TestUseCases(unittest.TestCase):
             "S",
             ["1", "2"],
             strata_parameters=["beta"],
-            strata_transitions=None,
+            strata_transitions=[],
             self_strata_transition=False,
         )
 
         stratified_params = stratified_model.petrinet.semantics.ode.parameters
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta_1"].value -= epsilon
-        betas["beta_2"].value += epsilon
+        betas["beta_1_2_0"].value -= epsilon
+        betas["beta_1_2_1"].value += epsilon
 
         stratified_result = runner.run(
             stratified_model.petrinet.model_dump(), BASE_SIR_REQUEST_PATH
