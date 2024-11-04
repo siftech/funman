@@ -81,7 +81,7 @@ class TestUseCases(unittest.TestCase):
         str_symbols = ["S", "I", "R", "beta", "gamma", "N"]
         symbols = {s: sympy.Symbol(s) for s in str_symbols}
         bound_symbols = {
-            s: {"lb": f"{s}_lb", "ub": f"{s}_ub"} for s in str_symbols
+            sympy.Symbol(s): {"lb": sympy.Symbol(f"{s}_lb"), "ub": sympy.Symbol(f"{s}_ub")} for s in str_symbols
         }
         substituter = SympyBoundedSubstituter(
             bound_symbols=bound_symbols, str_to_symbol=symbols
@@ -94,7 +94,8 @@ class TestUseCases(unittest.TestCase):
                     if test["bound"] == "lb"
                     else substituter.maximize
                 )
-                test_output = test_fn(*test["input"])
+                var, expr = test["input"]
+                test_output = test_fn([sympy.Symbol(var)], sympy.sympify(expr, symbols))
                 # self.l.debug(f"Minimized: [{infection_rate}], to get expression: [{test_output}]")
                 assert (
                     str(test_output) == test["expected_output"]
@@ -262,7 +263,7 @@ class TestUseCases(unittest.TestCase):
 
         # FIXME need assert
 
-    # @unittest.skip(reason="WIP")
+    @unittest.skip(reason="WIP")
     def test_sirhd_stratify(self):
         epsilon = 0.000001
         timepoints = list(
