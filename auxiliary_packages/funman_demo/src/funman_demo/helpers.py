@@ -6,6 +6,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 from funman import (
     MODE_ODEINT,
@@ -171,6 +172,9 @@ def plot_last_point(results, states):
         # Get a plot for last point
         df = results.dataframe(points=pts[-1:])
         # pd.options.plotting.backend = "plotly"
+        for s in states:
+            df[s] = df[s].mask(np.isinf)
+
         ax = df[states].plot()
 
         fig = plt.figure()
