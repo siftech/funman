@@ -304,6 +304,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     _observables_cache: Dict[str, Union[str, FNode, sympy.Expr]] = {}
     _transition_rates_lambda_cache: Dict[str, Union[Callable, str]] = {}
 
+    def num_elements(self):
+        num_elts = len(self._state_var_names()) + len(self._parameter_names()) + len(self.observables()) + len(list(self._transitions()))
+        return num_elts
+
     def observables(self):
         return self.petrinet.semantics.ode.observables
 
