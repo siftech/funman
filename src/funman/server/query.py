@@ -74,6 +74,14 @@ class FunmanWorkRequest(BaseModel):
             ] == 0, f"Constraints need names, found {name_counts[None]} constraints without names."
         return constraints
 
+    def time_horizon(self):
+        try:
+            schedules = next(iter([p for p in self.structure_parameters if p.name == "schedules"]))
+        except StopIteration:
+            l.exception("Could not find a Schedule structure parameter.")
+        time_horizon = max([max(s.timepoints) for s in schedules.schedules])
+        return time_horizon
+        
 
 class FunmanProgress(BaseModel):
     progress: float = 0.0
@@ -236,6 +244,9 @@ class FunmanResults(BaseModel):
 
     def is_final(self):
         return self._finalized
+
+    def time_horizon(self):
+        return self.request.time_horizon()
 
     def contract_model(self):
         """
