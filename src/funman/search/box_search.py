@@ -741,7 +741,12 @@ class BoxSearch(Search):
             for k, v in encoder.encode_assumptions(
                 episode.problem._assumptions, options
             ).items()
-            if k.relevant_at_time(timepoint)
+            if any(
+                [
+                    k.relevant_at_time(box.schedule.time_at_step(t))
+                    for t in range(0, timestep + 1)
+                ]
+            )
         }
         formula = And([v for k, v in assumptions.items()])
 
@@ -752,6 +757,7 @@ class BoxSearch(Search):
                         [
                             encoder.encode_assumption(k, options, layer_idx=i)
                             for i in range(timestep + 1)
+                            if k.relevant_at_time(box.schedule.time_at_step(i))
                         ]
                     ),
                     v,
@@ -767,6 +773,7 @@ class BoxSearch(Search):
                     [
                         encoder.encode_assumption(k, options, layer_idx=i)
                         for i in range(timestep + 1)
+                        if k.relevant_at_time(box.schedule.time_at_step(i))
                     ]
                 )
                 for k, v in assumptions.items()
