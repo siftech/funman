@@ -213,7 +213,7 @@ class SimulatorCheck(Search):
         self,
         beta_val,
         gamma_val,
-        query_condition=query_1,
+        query_condition=True,
         plot=False,
         rtol=1,
         atol=1,
@@ -296,7 +296,7 @@ class SimulatorCheck(Search):
             param_assignments, _ = eval_point(
                 point_values["beta"],
                 point_values["gamma"],
-                query_condition=query_condition,
+                # query_condition=query_condition,
                 rtol=rtol,
                 plot=plot,
             )
