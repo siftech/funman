@@ -24,6 +24,26 @@ funman.search.search module
    :undoc-members:
    :show-inheritance:
 
+funman.search.simulate module
+-----------------------------
+.. inheritance-diagram:: funman.search.simulate
+   :parts: 1
+
+.. automodule:: funman.search.simulate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+funman.search.simulator\_check module
+-------------------------------------
+.. inheritance-diagram:: funman.search.simulator_check
+   :parts: 1
+
+.. automodule:: funman.search.simulator_check
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 funman.search.smt\_check module
 -------------------------------
 .. inheritance-diagram:: funman.search.smt_check

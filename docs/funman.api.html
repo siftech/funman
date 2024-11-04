@@ -1,114 +1,58 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>funman.api package &mdash; funman  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-    <script src="_static/js/theme.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>funman.api package &#8212; funman  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=89b800e6" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="funman.model package" href="funman.model.html" />
     <link rel="prev" title="funman package" href="funman.html" /> 
-</head>
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="funman.model.html" title="funman.model package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="funman.html" title="funman package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">funman  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="funman.html" accesskey="U">funman package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">funman.api package</a></li> 
+      </ul>
+    </div>  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> funman
-          </a>
-              <div class="version">
-                1.6.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="use_cases.html">Epidemiology Use Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sw_use_cases.html">Space Weather Use Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classes.html">Class Diagram</a></li>
-<li class="toctree-l1"><a class="reference internal" href="packages.html">Package Diagram</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="funman.html">funman package</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="funman.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">funman.api package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#funman-api-api-module">funman.api.api module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#funman-api-client-module">funman.api.client module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#funman-api-run-module">funman.api.run module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#funman-api-server-module">funman.api.server module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#funman-api-settings-module">funman.api.settings module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-funman.api">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="funman.model.html">funman.model package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="funman.representation.html">funman.representation package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="funman.scenario.html">funman.scenario package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="funman.search.html">funman.search package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="funman.server.html">funman.server package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="funman.translate.html">funman.translate package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="funman.utils.html">funman.utils package</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="funman.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="funman.html#funman-config-module">funman.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="funman.html#funman-constants-module">funman.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="funman.html#funman-funman-module">funman.funman module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="funman.html#module-funman">Module contents</a></li>
-</ul>
-</li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">funman</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="funman.html">funman package</a> &raquo;</li>
-      <li>funman.api package</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/funman.api.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
   <section id="funman-api-package">
-<h1>funman.api package<a class="headerlink" href="#funman-api-package" title="Permalink to this heading"></a></h1>
+<h1>funman.api package<a class="headerlink" href="#funman-api-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="funman-api-api-module">
-<h2>funman.api.api module<a class="headerlink" href="#funman-api-api-module" title="Permalink to this heading"></a></h2>
+<h2>funman.api.api module<a class="headerlink" href="#funman-api-api-module" title="Permalink to this heading">¶</a></h2>
 <span class="target" id="module-funman.api.api"></span><p>Definitions for the REST API endpoints.  Running this file will start a uvicorn server that serves the API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">raises HTTPException<span class="colon">:</span></dt>
@@ -117,160 +61,197 @@
 </dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.custom_openapi">
-<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">custom_openapi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.custom_openapi" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">custom_openapi</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.custom_openapi" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.get_current">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_current" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_current" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.get_queries">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_queries" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_queries" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.get_storage">
-<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_storage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_storage" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_storage</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_storage" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.get_worker">
-<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_worker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_worker" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">get_worker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.get_worker" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.halt">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">halt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.halt" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">halt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.halt" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.internal_error_handler">
-<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">internal_error_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.internal_error_handler" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">internal_error_handler</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.internal_error_handler" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.lifespan">
-<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">lifespan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FastAPI</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.lifespan" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">lifespan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FastAPI</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.lifespan" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.post_queries">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">post_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.petrinet.Model" title="funman.model.generated_models.petrinet.Model"><span class="pre">Model</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.regnet.Model" title="funman.model.generated_models.regnet.Model"><span class="pre">Model</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.regnet.RegnetModel" title="funman.model.regnet.RegnetModel"><span class="pre">RegnetModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.petrinet.PetrinetModel" title="funman.model.petrinet.PetrinetModel"><span class="pre">PetrinetModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.bilayer.BilayerModel" title="funman.model.bilayer.BilayerModel"><span class="pre">BilayerModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.query.FunmanWorkRequest" title="funman.server.query.FunmanWorkRequest"><span class="pre">FunmanWorkRequest</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.post_queries" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">post_queries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.petrinet.Model" title="funman.model.generated_models.petrinet.Model"><span class="pre">Model</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.regnet.Model" title="funman.model.generated_models.regnet.Model"><span class="pre">Model</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.regnet.RegnetModel" title="funman.model.regnet.RegnetModel"><span class="pre">RegnetModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.petrinet.PetrinetModel" title="funman.model.petrinet.PetrinetModel"><span class="pre">PetrinetModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.bilayer.BilayerModel" title="funman.model.bilayer.BilayerModel"><span class="pre">BilayerModel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.query.FunmanWorkRequest" title="funman.server.query.FunmanWorkRequest"><span class="pre">FunmanWorkRequest</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.server.html#funman.server.worker.FunmanWorker" title="funman.server.worker.FunmanWorker"><span class="pre">FunmanWorker</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.post_queries" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.api.read_root">
-<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">read_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.read_root" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.api.</span></span><span class="sig-name descname"><span class="pre">read_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.api.read_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="funman-api-client-module">
-<h2>funman.api.client module<a class="headerlink" href="#funman-api-client-module" title="Permalink to this heading"></a></h2>
+<h2>funman.api.client module<a class="headerlink" href="#funman-api-client-module" title="Permalink to this heading">¶</a></h2>
 <span class="target" id="module-funman.api.client"></span><p>Client API Generation and usage functionality.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.client.get_patched_schema">
-<span class="sig-prename descclassname"><span class="pre">funman.api.client.</span></span><span class="sig-name descname"><span class="pre">get_patched_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.client.get_patched_schema" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.client.</span></span><span class="sig-name descname"><span class="pre">get_patched_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.client.get_patched_schema" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.api.client.make_client">
-<span class="sig-prename descclassname"><span class="pre">funman.api.client.</span></span><span class="sig-name descname"><span class="pre">make_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">install_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'funman-api-client'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">openapi_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'http://0.0.0.0:8190/openapi.json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.client.make_client" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.api.client.</span></span><span class="sig-name descname"><span class="pre">make_client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">install_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'funman-api-client'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">openapi_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'http://0.0.0.0:8190/openapi.json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.client.make_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use openapi-python-client generator to create client.  Adds client package to sys.path.</p>
 </dd></dl>
 
 </section>
 <section id="funman-api-run-module">
-<h2>funman.api.run module<a class="headerlink" href="#funman-api-run-module" title="Permalink to this heading"></a></h2>
+<h2>funman.api.run module<a class="headerlink" href="#funman-api-run-module" title="Permalink to this heading">¶</a></h2>
 <div class="graphviz"><object data="_images/inheritance-0622cbf9395c9543bd5afae1b713b5bd9ca7519b.svg" type="image/svg+xml" class="inheritance graphviz">
 <p class="warning">Inheritance diagram of funman.api.run</p></object></div>
 <span class="target" id="module-funman.api.run"></span><dl class="py class">
 <dt class="sig sig-object py" id="funman.api.run.GracefulKiller">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.run.</span></span><span class="sig-name descname"><span class="pre">GracefulKiller</span></span><a class="headerlink" href="#funman.api.run.GracefulKiller" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.run.</span></span><span class="sig-name descname"><span class="pre">GracefulKiller</span></span><a class="headerlink" href="#funman.api.run.GracefulKiller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.run.GracefulKiller.exit_gracefully">
-<span class="sig-name descname"><span class="pre">exit_gracefully</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.GracefulKiller.exit_gracefully" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">exit_gracefully</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.GracefulKiller.exit_gracefully" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="funman.api.run.GracefulKiller.kill_now">
-<span class="sig-name descname"><span class="pre">kill_now</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#funman.api.run.GracefulKiller.kill_now" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">kill_now</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#funman.api.run.GracefulKiller.kill_now" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="funman.api.run.Runner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.run.</span></span><span class="sig-name descname"><span class="pre">Runner</span></span><a class="headerlink" href="#funman.api.run.Runner" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.run.</span></span><span class="sig-name descname"><span class="pre">Runner</span></span><a class="headerlink" href="#funman.api.run.Runner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt class="sig sig-object py" id="funman.api.run.Runner.create_plots">
+<span class="sig-name descname"><span class="pre">create_plots</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.server.html#funman.server.query.FunmanResults" title="funman.server.query.FunmanResults"><span class="pre">FunmanResults</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_plot_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_to_plot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_last_time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.create_plots" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="funman.api.run.Runner.elapsed_timer">
-<span class="sig-name descname"><span class="pre">elapsed_timer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.elapsed_timer" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">elapsed_timer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.elapsed_timer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.run.Runner.get_model">
-<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.get_model" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.model.html#funman.model.model.FunmanModel" title="funman.model.model.FunmanModel"><span class="pre">FunmanModel</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="funman.server.html#funman.server.query.FunmanWorkRequest" title="funman.server.query.FunmanWorkRequest"><span class="pre">FunmanWorkRequest</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#funman.api.run.Runner.get_model" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.run.Runner.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="funman.server.html#funman.server.query.FunmanResults" title="funman.server.query.FunmanResults"><span class="pre">FunmanResults</span></a></span></span><a class="headerlink" href="#funman.api.run.Runner.run" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.model.html#funman.model.model.FunmanModel" title="funman.model.model.FunmanModel"><span class="pre">FunmanModel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="funman.server.html#funman.server.query.FunmanWorkRequest" title="funman.server.query.FunmanWorkRequest"><span class="pre">FunmanWorkRequest</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_out_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_to_plot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_plot_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_last_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="funman.server.html#funman.server.query.FunmanResults" title="funman.server.query.FunmanResults"><span class="pre">FunmanResults</span></a></span></span><a class="headerlink" href="#funman.api.run.Runner.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a FUNMAN scenario.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>GeneratedPetriNet</em><em>, </em><em>GeneratedRegNet</em><em>, </em><em>Dict</em><em>]</em>) – Model to analyze</p></li>
+<li><p><strong>request</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="funman.server.html#funman.server.query.FunmanWorkRequest" title="funman.server.query.FunmanWorkRequest"><em>FunmanWorkRequest</em></a><em>, </em><em>Dict</em><em>]</em>) – Request to configure analysis</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – Description of the run</p></li>
+<li><p><strong>case_out_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to store output, by default “.”</p></li>
+<li><p><strong>dump_plot</strong> (<em>bool</em><em>, </em><em>optional</em>) – Generate trace and parameter space plots in the case_out_dir, by default False</p></li>
+<li><p><strong>parameters_to_plot</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Parameters/Variables to include in parameter space plot, by default None</p></li>
+<li><p><strong>point_plot_config</strong> (<em>Dict</em><em>, </em><em>optional</em>) – Matplotlib flags and special key “variables” to select variables to plot , by default {}</p></li>
+<li><p><strong>num_points</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – The number of points to plot in the trace plot, by default None</p></li>
+<li><p><strong>print_last_time</strong> (<em>bool</em>) – Only print parameter space for last time</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Analysis results</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="funman.server.html#funman.server.query.FunmanResults" title="funman.server.query.FunmanResults">FunmanResults</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.run.Runner.run_instance">
-<span class="sig-name descname"><span class="pre">run_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.run_instance" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_plot_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_last_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.run_instance" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.run.Runner.run_test_case">
-<span class="sig-name descname"><span class="pre">run_test_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_out_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.run_test_case" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_test_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_out_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters_to_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_plot_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_last_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.Runner.run_test_case" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.api.run.get_args">
+<span class="sig-prename descclassname"><span class="pre">funman.api.run.</span></span><span class="sig-name descname"><span class="pre">get_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.run.get_args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.api.run.main">
+<span class="sig-prename descclassname"><span class="pre">funman.api.run.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#funman.api.run.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="funman-api-server-module">
-<h2>funman.api.server module<a class="headerlink" href="#funman-api-server-module" title="Permalink to this heading"></a></h2>
+<h2>funman.api.server module<a class="headerlink" href="#funman-api-server-module" title="Permalink to this heading">¶</a></h2>
 <div class="graphviz"><object data="_images/inheritance-64d2415c44b6363c9d7e444ca1d1056f327d0f7e.svg" type="image/svg+xml" class="inheritance graphviz">
 <p class="warning">Inheritance diagram of funman.api.server</p></object></div>
 <span class="target" id="module-funman.api.server"></span><p>Server for API</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="funman.api.server.Server">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.server.</span></span><span class="sig-name descname"><span class="pre">Server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.Server" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.server.</span></span><span class="sig-name descname"><span class="pre">Server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.Server" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Server</span></code></p>
 <p>Uvicorn server object</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.server.Server.run_in_thread">
-<span class="sig-name descname"><span class="pre">run_in_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.Server.run_in_thread" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run_in_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.Server.run_in_thread" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the uvicorn method to allow running server in a thread, for example in a notebook.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.api.server.Server.start_in_thread">
-<span class="sig-name descname"><span class="pre">start_in_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.Server.start_in_thread" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">start_in_thread</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.Server.start_in_thread" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="funman.api.server.ServerConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.server.</span></span><span class="sig-name descname"><span class="pre">ServerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'0.0.0.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8190</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.ServerConfig" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.server.</span></span><span class="sig-name descname"><span class="pre">ServerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'0.0.0.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8190</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.api.server.ServerConfig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Config</span></code></p>
 <p>Server configuration</p>
 </dd></dl>
 
 </section>
 <section id="funman-api-settings-module">
-<h2>funman.api.settings module<a class="headerlink" href="#funman-api-settings-module" title="Permalink to this heading"></a></h2>
-<div class="graphviz"><object data="_images/inheritance-c20ba69feefb94fbe3f5c8574fdd3858822b86ef.svg" type="image/svg+xml" class="inheritance graphviz">
+<h2>funman.api.settings module<a class="headerlink" href="#funman-api-settings-module" title="Permalink to this heading">¶</a></h2>
+<div class="graphviz"><object data="_images/inheritance-c6edf8a3fe770983ae7952b29f43ff96b31fc2c3.svg" type="image/svg+xml" class="inheritance graphviz">
 <p class="warning">Inheritance diagram of funman.api.settings</p></object></div>
 <span class="target" id="module-funman.api.settings"></span><dl class="py class pydantic_settings">
 <dt class="sig sig-object py" id="funman.api.settings.Settings">
-<em class="property"><span class="pre">pydantic</span> <span class="pre">settings</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.settings.</span></span><span class="sig-name descname"><span class="pre">Settings</span></span><a class="headerlink" href="#funman.api.settings.Settings" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">pydantic</span> <span class="pre">settings</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">funman.api.settings.</span></span><span class="sig-name descname"><span class="pre">Settings</span></span><a class="headerlink" href="#funman.api.settings.Settings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseSettings</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Fields<span class="colon">:</span></dt>
@@ -284,62 +265,161 @@
 </dl>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="funman.api.settings.Settings.data_path">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.'</span></em><a class="headerlink" href="#funman.api.settings.Settings.data_path" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.'</span></em><a class="headerlink" href="#funman.api.settings.Settings.data_path" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="funman.api.settings.Settings.funman_admin_token">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">funman_admin_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#funman.api.settings.Settings.funman_admin_token" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">funman_admin_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#funman.api.settings.Settings.funman_admin_token" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="funman.api.settings.Settings.funman_api_token">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">funman_api_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#funman.api.settings.Settings.funman_api_token" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">funman_api_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#funman.api.settings.Settings.funman_api_token" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="funman.api.settings.Settings.funman_base_url">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">funman_base_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#funman.api.settings.Settings.funman_base_url" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">funman_base_url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#funman.api.settings.Settings.funman_base_url" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-funman.api">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-funman.api" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-funman.api" title="Permalink to this heading">¶</a></h2>
 <p>This module contains class definitions used to implement the FUNMAN API</p>
 </section>
 </section>
 
 
-           </div>
+            <div class="clearer"></div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="funman.html" class="btn btn-neutral float-left" title="funman package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="funman.model.html" class="btn btn-neutral float-right" title="funman.model package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2023, SIFT.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">funman.api package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#funman-api-api-module">funman.api.api module</a><ul>
+<li><a class="reference internal" href="#funman.api.api.custom_openapi"><code class="docutils literal notranslate"><span class="pre">custom_openapi()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.get_current"><code class="docutils literal notranslate"><span class="pre">get_current()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.get_queries"><code class="docutils literal notranslate"><span class="pre">get_queries()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.get_storage"><code class="docutils literal notranslate"><span class="pre">get_storage()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.get_worker"><code class="docutils literal notranslate"><span class="pre">get_worker()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.halt"><code class="docutils literal notranslate"><span class="pre">halt()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.internal_error_handler"><code class="docutils literal notranslate"><span class="pre">internal_error_handler()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.lifespan"><code class="docutils literal notranslate"><span class="pre">lifespan()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.post_queries"><code class="docutils literal notranslate"><span class="pre">post_queries()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.api.read_root"><code class="docutils literal notranslate"><span class="pre">read_root()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman-api-client-module">funman.api.client module</a><ul>
+<li><a class="reference internal" href="#funman.api.client.get_patched_schema"><code class="docutils literal notranslate"><span class="pre">get_patched_schema()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.client.make_client"><code class="docutils literal notranslate"><span class="pre">make_client()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman-api-run-module">funman.api.run module</a><ul>
+<li><a class="reference internal" href="#funman.api.run.GracefulKiller"><code class="docutils literal notranslate"><span class="pre">GracefulKiller</span></code></a><ul>
+<li><a class="reference internal" href="#funman.api.run.GracefulKiller.exit_gracefully"><code class="docutils literal notranslate"><span class="pre">GracefulKiller.exit_gracefully()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.GracefulKiller.kill_now"><code class="docutils literal notranslate"><span class="pre">GracefulKiller.kill_now</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman.api.run.Runner"><code class="docutils literal notranslate"><span class="pre">Runner</span></code></a><ul>
+<li><a class="reference internal" href="#funman.api.run.Runner.create_plots"><code class="docutils literal notranslate"><span class="pre">Runner.create_plots()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.Runner.elapsed_timer"><code class="docutils literal notranslate"><span class="pre">Runner.elapsed_timer()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.Runner.get_model"><code class="docutils literal notranslate"><span class="pre">Runner.get_model()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.Runner.run"><code class="docutils literal notranslate"><span class="pre">Runner.run()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.Runner.run_instance"><code class="docutils literal notranslate"><span class="pre">Runner.run_instance()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.Runner.run_test_case"><code class="docutils literal notranslate"><span class="pre">Runner.run_test_case()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman.api.run.get_args"><code class="docutils literal notranslate"><span class="pre">get_args()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.run.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman-api-server-module">funman.api.server module</a><ul>
+<li><a class="reference internal" href="#funman.api.server.Server"><code class="docutils literal notranslate"><span class="pre">Server</span></code></a><ul>
+<li><a class="reference internal" href="#funman.api.server.Server.run_in_thread"><code class="docutils literal notranslate"><span class="pre">Server.run_in_thread()</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.server.Server.start_in_thread"><code class="docutils literal notranslate"><span class="pre">Server.start_in_thread()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman.api.server.ServerConfig"><code class="docutils literal notranslate"><span class="pre">ServerConfig</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#funman-api-settings-module">funman.api.settings module</a><ul>
+<li><a class="reference internal" href="#funman.api.settings.Settings"><code class="docutils literal notranslate"><span class="pre">Settings</span></code></a><ul>
+<li><a class="reference internal" href="#funman.api.settings.Settings.data_path"><code class="docutils literal notranslate"><span class="pre">Settings.data_path</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.settings.Settings.funman_admin_token"><code class="docutils literal notranslate"><span class="pre">Settings.funman_admin_token</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.settings.Settings.funman_api_token"><code class="docutils literal notranslate"><span class="pre">Settings.funman_api_token</span></code></a></li>
+<li><a class="reference internal" href="#funman.api.settings.Settings.funman_base_url"><code class="docutils literal notranslate"><span class="pre">Settings.funman_base_url</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-funman.api">Module contents</a></li>
+</ul>
+</li>
+</ul>
 
-</body>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="funman.html"
+                          title="previous chapter">funman package</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="funman.model.html"
+                          title="next chapter">funman.model package</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/funman.api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="funman.model.html" title="funman.model package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="funman.html" title="funman package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">funman  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="funman.html" >funman package</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">funman.api package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, SIFT.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    </div>
+  </body>
 </html>

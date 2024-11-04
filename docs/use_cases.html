@@ -1,96 +1,55 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Epidemiology Use Cases &mdash; funman  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-      <link rel="stylesheet" href="_static/autodoc_pydantic.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
-    <script src="_static/js/theme.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Epidemiology Use Cases &#8212; funman  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css?v=89b800e6" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Space Weather Use Cases" href="sw_use_cases.html" />
+    <link rel="next" title="Class Diagram" href="classes.html" />
     <link rel="prev" title="Welcome to funman’s documentation!" href="index.html" /> 
-</head>
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Class Diagram"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to funman’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">funman  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Epidemiology Use Cases</a></li> 
+      </ul>
+    </div>  
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> funman
-          </a>
-              <div class="version">
-                1.6.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Epidemiology Use Cases</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#compare-bilayer-model-to-simulator">Compare Bilayer Model to Simulator:</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#parameter-synthesis">Parameter Synthesis</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#future-cases">Future Cases</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#compare-translated-fn-to-simulator">Compare Translated FN to Simulator:</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#compare-constant-and-time-dependent-betas">Compare Constant and Time-dependent Betas:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#compare-bi-layer-model-to-bi-layer-simulator">Compare Bi-Layer Model to Bi-Layer Simulator:</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="sw_use_cases.html">Space Weather Use Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="classes.html">Class Diagram</a></li>
-<li class="toctree-l1"><a class="reference internal" href="packages.html">Package Diagram</a></li>
-<li class="toctree-l1"><a class="reference internal" href="funman.html">funman package</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">funman</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Epidemiology Use Cases</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/use_cases.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
   <section id="epidemiology-use-cases">
-<h1>Epidemiology Use Cases<a class="headerlink" href="#epidemiology-use-cases" title="Permalink to this heading"></a></h1>
+<h1>Epidemiology Use Cases<a class="headerlink" href="#epidemiology-use-cases" title="Permalink to this heading">¶</a></h1>
 <p>The following use cases reside in <a class="reference external" href="https://github.com/ml4ai/funman/tree/main/test/test_use_cases.py">test use cases</a>.  The use cases listed under <a class="reference internal" href="#future-cases"><span class="std std-ref">Future Cases (below)</span></a> are use cases identified in previous versions that are work in progress.</p>
 <section id="compare-bilayer-model-to-simulator">
-<h2>Compare Bilayer Model to Simulator:<a class="headerlink" href="#compare-bilayer-model-to-simulator" title="Permalink to this heading"></a></h2>
+<h2>Compare Bilayer Model to Simulator:<a class="headerlink" href="#compare-bilayer-model-to-simulator" title="Permalink to this heading">¶</a></h2>
 <p>This use case involves the simulator and FUNMAN reasoning about the CHIME
 SIR bilayer model.  See test <cite>test_use_case_bilayer_consistency</cite> in the <a class="reference external" href="https://github.com/ml4ai/funman/tree/main/test/test_use_cases.py">test use cases</a>.</p>
 <p>It first uses a SimulationScenario to execute the input simulator
@@ -149,7 +108,7 @@ succeed if the SimulatorScenario and ConsistencyScenario agree on the response t
 </pre></div>
 </div>
 <section id="parameter-synthesis">
-<h3>Parameter Synthesis<a class="headerlink" href="#parameter-synthesis" title="Permalink to this heading"></a></h3>
+<h3>Parameter Synthesis<a class="headerlink" href="#parameter-synthesis" title="Permalink to this heading">¶</a></h3>
 <p>See tests <cite>test_use_case_simple_parameter_synthesis</cite> and <cite>test_use_case_bilayer_parameter_synthesis</cite> in the <a class="reference external" href="https://github.com/ml4ai/funman/tree/main/test/test_use_cases.py">test use cases</a>.</p>
 <p>The base set of types used during Parameter Synthesis include:</p>
 <ul class="simple">
@@ -222,11 +181,11 @@ configuration.</p>
 </div>
 </section>
 <section id="future-cases">
-<span id="id1"></span><h3>Future Cases<a class="headerlink" href="#future-cases" title="Permalink to this heading"></a></h3>
+<span id="id1"></span><h3>Future Cases<a class="headerlink" href="#future-cases" title="Permalink to this heading">¶</a></h3>
 </section>
 </section>
 <section id="compare-translated-fn-to-simulator">
-<h2>Compare Translated FN to Simulator:<a class="headerlink" href="#compare-translated-fn-to-simulator" title="Permalink to this heading"></a></h2>
+<h2>Compare Translated FN to Simulator:<a class="headerlink" href="#compare-translated-fn-to-simulator" title="Permalink to this heading">¶</a></h2>
 <p>This use case involves the simulator and FUNMAN reasoning about the CHIME
 SIR model.</p>
 <p>It first runs the query_simulator function which executes the input simulator
@@ -262,7 +221,7 @@ query.</p>
 </pre></div>
 </div>
 <section id="compare-constant-and-time-dependent-betas">
-<h3>Compare Constant and Time-dependent Betas:<a class="headerlink" href="#compare-constant-and-time-dependent-betas" title="Permalink to this heading"></a></h3>
+<h3>Compare Constant and Time-dependent Betas:<a class="headerlink" href="#compare-constant-and-time-dependent-betas" title="Permalink to this heading">¶</a></h3>
 <dl class="simple">
 <dt>This use case involves two formulations of the CHIME model:</dt><dd><ul class="simple">
 <li><p>the original model where Beta is a epoch-dependent constant over three
@@ -311,7 +270,7 @@ parameter values intersect.</p>
 </div>
 </section>
 <section id="compare-bi-layer-model-to-bi-layer-simulator">
-<h3>Compare Bi-Layer Model to Bi-Layer Simulator:<a class="headerlink" href="#compare-bi-layer-model-to-bi-layer-simulator" title="Permalink to this heading"></a></h3>
+<h3>Compare Bi-Layer Model to Bi-Layer Simulator:<a class="headerlink" href="#compare-bi-layer-model-to-bi-layer-simulator" title="Permalink to this heading">¶</a></h3>
 <p>This use case compares the simulator and FUNMAN reasoning about the CHIME
 SIR model.</p>
 <p>It first runs the query_simulator function which executes the input simulator
@@ -351,36 +310,105 @@ query.</p>
 </section>
 </section>
 </section>
+<section id="climate-use-cases">
+<h1>Climate Use Cases<a class="headerlink" href="#climate-use-cases" title="Permalink to this heading">¶</a></h1>
+<p>We developed use cases for climate models by translating the climate models into petri nets.  The use cases involve both consistency and parameter synthesis problems.  The notebook <a href="#id2"><span class="problematic" id="id3">`pde to petri`_</span></a> demonstrates scenarios for the Halfar ice dome and advection models.  The methodology for translating the PDE models into petri nets is described in the <a class="reference external" href="https://github.com/ml4ai/funman/tree/main/auxiliary_packages/pde2petri/doc/discretization/main.pdf">pde to petri translation</a> documentation.</p>
+<section id="identify-parameters-for-halfar-ice-model">
+<h2>Identify Parameters for Halfar Ice Model<a class="headerlink" href="#identify-parameters-for-halfar-ice-model" title="Permalink to this heading">¶</a></h2>
+<p>We developed multiple formulations of the Halfar Ice dome model that used different differential expressions to compare alternative discretization strategies.  Each model uses a parameter A, which FUNMAN selects to ensure that the ice cap height at each discretized location remained non-negative.  We found that if given the range [1e-20, 1e-12] for the A parameter, FUNMAN is capable of finding a value for A that prevents the ice height from becoming negative.  We also found several differences between the difference methods used to discretize the PDE, namely that centered difference produces symmetric change in the ice dome, and backward and forward difference do not.</p>
+</section>
+<section id="compare-discretization-methods-for-pdes-with-the-advection-model">
+<h2>Compare Discretization Methods for PDEs with the Advection Model<a class="headerlink" href="#compare-discretization-methods-for-pdes-with-the-advection-model" title="Permalink to this heading">¶</a></h2>
+<p>In the case of the Advection Equation, we are able to observe phenomena that is expected from the literature [<a class="reference external" href="https://www.uni-muenster.de/imperia/md/content/physik_tp/lectures/ws2016-2017/num_methods_i/advection.pdf">advection</a>]. For example, for the equation ∂h/∂t + a * ∂h/∂x = 0 where a &gt; 0, we expect different results depending on the choice of discretization.  Since both the solution and stability behavior is known, our next steps will be to validate FUNMAN’s parameter synthesis by comparing FUNMAN’s calculated valid parameter ranges for the advection equation to what is known in the literature in the forward, centered, and backward difference scheme cases.  FUNMAN was able discover how the forward difference scheme violates the non-negativity constraints we placed upon the model, and that the backward scheme does not.</p>
+<p>The following figure (gif) animates a time series computed by FUNMAN for the two dimensional advection equation where the boundary condition is zero for all locations and times.  The initial state models  a dome-like energy variable “a” over a 5x5 grid.  FUNMAN identifies a parameter value “u” that satisfies several constraints. The constraints are that “u” is in [0.5, 1], and that “a” is non-negative for all time steps and locations.  FUNMAN solves this problem with a petri net encoding of the discretized PDE, using a backward derivative for the spatial dimensions and a forward derivative for the temporal dimension.  The solution animated below assigns u = 0.5 and corresponds to a positive velocity that moves the energy in the positive direction in each dimension and diffusion.  The AMR for this instance is available through the ASKEM <a class="reference external" href="https://github.com/DARPA-ASKEM/Model-Representations/pull/77">model representation</a> repo.</p>
+<img alt="_images/advection_backward_2D.gif" src="_images/advection_backward_2D.gif" />
+</section>
+</section>
 
 
-           </div>
+            <div class="clearer"></div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to funman’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sw_use_cases.html" class="btn btn-neutral float-right" title="Space Weather Use Cases" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2023, SIFT.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Epidemiology Use Cases</a><ul>
+<li><a class="reference internal" href="#compare-bilayer-model-to-simulator">Compare Bilayer Model to Simulator:</a><ul>
+<li><a class="reference internal" href="#parameter-synthesis">Parameter Synthesis</a></li>
+<li><a class="reference internal" href="#future-cases">Future Cases</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#compare-translated-fn-to-simulator">Compare Translated FN to Simulator:</a><ul>
+<li><a class="reference internal" href="#compare-constant-and-time-dependent-betas">Compare Constant and Time-dependent Betas:</a></li>
+<li><a class="reference internal" href="#compare-bi-layer-model-to-bi-layer-simulator">Compare Bi-Layer Model to Bi-Layer Simulator:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#climate-use-cases">Climate Use Cases</a><ul>
+<li><a class="reference internal" href="#identify-parameters-for-halfar-ice-model">Identify Parameters for Halfar Ice Model</a></li>
+<li><a class="reference internal" href="#compare-discretization-methods-for-pdes-with-the-advection-model">Compare Discretization Methods for PDEs with the Advection Model</a></li>
+</ul>
+</li>
+</ul>
 
-</body>
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Welcome to funman’s documentation!</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="classes.html"
+                          title="next chapter">Class Diagram</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/use_cases.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Class Diagram"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to funman’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">funman  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Epidemiology Use Cases</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024, SIFT.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    </div>
+  </body>
 </html>
