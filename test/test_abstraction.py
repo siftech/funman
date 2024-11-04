@@ -118,14 +118,14 @@ class TestUseCases(unittest.TestCase):
             "S",
             ["1", "2"],
             strata_parameters=["beta"],
-            strata_transitions=None,
+            strata_transitions=[],
             self_strata_transition=False,
         )
 
         stratified_params = stratified_model.petrinet.semantics.ode.parameters
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta_1"].value -= epsilon
-        betas["beta_2"].value += epsilon
+        betas["beta_1_2_0"].value -= epsilon
+        betas["beta_1_2_1"].value += epsilon
 
         stratified_result = runner.run(
             stratified_model.petrinet.model_dump(), BASE_SIR_REQUEST_PATH
@@ -295,7 +295,7 @@ class TestUseCases(unittest.TestCase):
             self_strata_transition=False,
         )
 
-        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+        # stratified_model_SI.to_dot().render("sirhd_strat_SI")
 
         stratified_params = (
             stratified_model_SI.petrinet.semantics.ode.parameters
@@ -323,7 +323,7 @@ class TestUseCases(unittest.TestCase):
         )
         print(abstract_model._state_var_names())
         print(abstract_model._parameter_names())
-        abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
+        # abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
 
         bounded_abstract_model = abstract_model.formulate_bounds()
         bounded_abstract_result = runner.run(
