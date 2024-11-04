@@ -1,15 +1,120 @@
-We modify the abstraction in what we call a \emph{bounded abstraction}, so that
-it refers to the abstract, and not the base, Petrinet and semantics.  This
-bounded abstraction replaces base elements with corresponding bounded elements.
-For example, if $A(S_1) = S$ and $A(S_2) = S$ ($S_1$ and $S_2$ are base
+We transform the abstraction in what we call a \emph{bounded Petrinet}, so that
+it can refer to the abstract, and not the base, Petrinet and semantics.  The same bounding can be applied to any Petrinet by controlling which parameter bounds and abstracted variables are used in constructing the bounded Petrinet.  Applying bounding to abstract Petrinets allows us to summarize multiple related parameters (e.g., stratified parameters) with an interval containing the parameter values.  The degenerate case of bounding a Petrinet is when the lower and upper bound on each parameter is identical, and thus the lower and upper bounds for each state variable at each time are equal.  
+
+Independent of abstraction, relaxing the parameter bounds so that the lower and upper bound are not equal allows us to perform parameter synthesis.  For example, by computing the upper bound $I^{ub}$ on the number of infected $I$ given that $\beta \in [\beta^{lb}, \beta^{ub}]$ will allow us to conclude that any value of $\beta$ within the bounds will satisfy $I^{ub} < c$ for some threshold $c$.  FUNMAN evaluates the same type of queries by showing their negation $I \geq c$ is unsatisfiable.  In constructing a modestly-larger (polynomial in the original Petrinet), bounded Petrinet, we can use off the shelf simulators to synthesize parameters.
+
+\subsection{Bounding Transformation}
+
+We present a general definition of how to bound a Petrinet and identify the special case where the Petrinet was constructed by abstraction.  The key to bounding a Petrinet is to map each state variable $x$ to a pair of state variables $[x^{lb}, x^{ub}]$.  We ensure that $x^{lb}(t) \leq x(t)$ for all time points $t$ by developing a lower bound on each contribution to the value of $x$, and similarly for upper bounds.  The contributors to the value of $x$ are based upon transitions $z\in Z$, where there is an in-edge $(z, x) \in E_{in}$ or out-edge $(x, z)  \in E_{out}$.  From Equation \ref{eqn:flow}, the in-edges define positive contributions (i.e., increase the value of $x$) and the out-edges define negative contributions (i.e., decrease the value of $x$).  To formulate a lower bound on $x$, we define the derivative $\frac{dx^{lb}}{dt}$ so that  $\frac{dx^{lb}}{dt} \leq \frac{dx}{dt}$, and similarly for upper bounds (i.e., $\frac{dx}{dt} \leq \frac{dx^{ub}}{dt}$).  It relies upon finding a substitution $\sigma$ of the form $[x_1^{*}/x_1, \ldots, x_n^{*}/x_n, p_1^{*}/p_1, \ldots, p_m^{*}/p_m]$ where $* \in \{lb,ub\}$ and may be different for each term.  
+
+
+
+\begin{definition}
+    A bounded Petrinet $(\Theta^B, \Omega^B)$ transforms Petrinet $(\Theta,
+    \Omega)$ by replacing each element of $(\Theta, \Omega)$ by
+    a pair of elements denoting the lower and upper bound of that element (and
+    referred to with the ``$lb$'' and ``$ub$'' superscripts).  The bound transformation defines $(\Theta^B, \Omega^B)$ so Theta:
+    \begin{itemize}
+        \item State: For each $x \in X$,  there exists $x^{lb}, x^{ub} \in X^B$.   For each $x^{lb}, x^{ub} \in X^B$, ${\cal
+        I}^B(x^{lb}) = {\cal I}^B(x^{ub}) = {\cal I}(x)$.
+            \item Parameters: For each $p \in P$, let ${\cal P}^B(p^{lb}) = {\cal P}^B(p^{ub}) = {\cal P}(p)$ if ${\cal P}(p)$ is a single value, or  ${\cal P}^B(p^{lb}) = a$, ${\cal P}^B(p^{ub}) = b$, if ${\cal P}(p)$ is a pair that signifies an interval $[a, b]$. 
+            \item Transitions: For each transition $z \in Z$ and state variable $x\in X$, we define up to four transitions $z^{in}_{x^{lb}}$, $z^{in}_{x^{ub}}$, $z^{out}_{x^{lb}}$, and $z^{out}_{x^{ub}}$, so that $Z^B$ is defined as follows:
+            \begin{eqnarray*}
+                Z^B &=& \{z^{in}_{x^{lb}}, z^{in}_{x^{ub}} | (z, x) \in E_{in} \}\cup\\ 
+                &&\{z^{out}_{x^{lb}}, z^{out}_{x^{ub}} | (x,z) \in E_{out} \}
+            \end{eqnarray*}
+            
+            \item In Edges: For each edge $(z, x) \in E_{in}$, there is a pair of transitions $(z^{in}_{x^{lb}}, x^{lb} ), (z^{in}_{x^{ub}}, x^{ub}) \in E^B_{in}$.
+            \item Out Edges: For each edge $(x, z) \in E_{out}$,there is a pair of transitions $(x^{lb}, z^{out}_{x^{lb}}), (x^{ub}, z^{out}_{x^{ub}}) \in E^B_{in}$.
+    
+            
+            \item Transition Rates: For each transition in $z \in Z^B$, the rate ${\cal R}^B({\bf
+            p}^B, {\bf x}^B, z)$ defines the rate of $z$, expressed in terms of a vector of parameters ${\bf
+            p}^B$ (corresponding to $P^B$) and a vector of state variables ${\bf x}^B$ (corresponding to $X^B$). The rate for each transition in $Z^B$ depends on finding a substitution $\sigma$ (mapping ${\bf
+            p}$ to ${\bf
+            p}^B$ and ${\bf x}$ to ${\bf x}^B$) that obeys the following cases:
+            \begin{eqnarray*}
+                {\cal R}^B({\bf p}^B, {\bf x}^B, z^{in}_{x^{lb}}) &=&  \argmin_{\sigma} (\sigma \circ ([x^{lb}/x] \circ  {\cal R}({\bf p}, {\bf x}, z) ))\\ 
+                {\cal R}^B({\bf p}^B, {\bf x}^B, z^{out}_{x^{lb}}) &=&  \argmax_{\sigma} (\sigma \circ ([x^{lb}/x] \circ  {\cal R}({\bf p}, {\bf x}, z) ))\\
+                {\cal R}^B({\bf p}^B, {\bf x}^B, z^{in}_{x^{ub}}) &=&  \argmax_{\sigma} (\sigma \circ ([x^{ub}/x] \circ  {\cal R}({\bf p}, {\bf x}, z) ))\\
+                {\cal R}^B({\bf p}^B, {\bf x}^B, z^{out}_{x^{ub}}) &=& \argmin_{\sigma} (\sigma \circ ([x^{ub}/x] \circ  {\cal R}({\bf p}, {\bf x}, z) ))
+            \end{eqnarray*}
+            The $\circ$ operator applies a substitution to an expression and returns the resulting expression.  In the rates, we first substitute the lower bound $x^{lb}$ for $x$, and find a substitution $\sigma$ for the remaining state variables and parameters, and similarly for upper bounds.
+
+            The rates capture how each transition either effects $x$ positively by flowing in, or negatively by flowing out.  Propagating a lower bound involves minimizing the positive flow in, and maximizing the negative flow out.  Propagating upper bounds follows similar rationale, maximizing flow in, and minimizing flow out.  
+            
+            % = \min\limits_{z \in Z: A(z)=z'} {\cal R}({\bf
+            % p}, {\bf x}, z)$ (replacing ${\bf p}$ and ${\bf x}$ of the minimal rate
+            % by the elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which
+            % minimize the rate), and ${\cal R}^B({\bf p}^B, {\bf x}^B, z^{ub}) =
+            % \max\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf x}, z)$ (similarly
+            % replacing ${\bf p}$ and ${\bf x}$ of the maximal rate by the elements in
+            % ${\bf p}^B$ and ${\bf x}^B$ respectively, which maximize the rate).
+    \end{itemize}
+        
+    \end{definition}
+
+Equations \ref{eqn:lower-bound-start} to \ref{eqn:lower-bound-end} show how we derive the lower bound $\frac{dx^{lb}}{dt}$.  The primary intuition is that there exists a substitution ${\sigma}$ that minimizes (or maximizes) each expression in brackets, and that by moving the choice of substitution inward we allow each sub-expression a different choice of $\sigma$.  This is a type of independence assumption that allows us to symbolically minimize (or maximize) each rate by choosing an appropriate substitution.
+
+\begin{eqnarray}\label{eqn:lower-bound-start}
+    \frac{dx}{dt} &=&\sum_{z \in Z^{in(x)}} {\cal R}({\bf p}, {\bf x}, z) - \sum_{z \in Z^{out(x)} } {\cal R}({\bf p}, {\bf x}, z)\\
+    &\geq& \argmin_{{ \sigma}}  \sigma\circ\left[\sum_{z \in Z^{in(x)}} {\cal R}({\bf p}, {\bf x}, z) - \sum_{z \in Z^{out(x)} } {\cal R}({\bf p}, {\bf x}, z)\right]\\
+    &\geq& \argmin_{{\sigma}} \sigma\circ\left[\sum_{z \in Z^{in(x)}} {\cal R}({\bf p}, {\bf x}, z)\right] - \argmax_{{\sigma}}\sigma\circ \left[\sum_{z \in Z^{out(x)} } {\cal R}({\bf p}, {\bf x}, z)\right]\\
+    &\geq& \sum_{z \in Z^{in(x)}} \argmin_{{\sigma}}\sigma\circ \left[{\cal R}({\bf p}, {\bf x}, z) \right] - \sum_{z \in Z^{out(x)} } \argmax_{{\sigma}}\sigma\circ\left[{\cal R}({\bf p}, {\bf x}, z)\right]\\
+    &\geq& \sum_{z \in Z^{in(x)}} \argmin_{{\sigma}} \sigma\circ \left[[x^{lb}/x]\circ{\cal R}({\bf p}, {\bf x}, z) \right] - \sum_{z \in Z^{out(x)} } \argmax_{{\sigma}}\sigma\circ\left[[x^{lb}/x]\circ {\cal R}({\bf p}, {\bf x}, z)\right]\\
+    &=& \frac{dx^{lb}}{dt}\label{eqn:lower-bound-end}
+\end{eqnarray}
+
+
+
+For example, in the stratified SIR model from Example \ref{ex:base}, we can derive a lower bound for $I$, as listed in Equations \ref{eqn:I-lower-bound-start} to \ref{eqn:I-lower-bound-end}, and the choice of substitutions listed in Equations \ref{eqn:I-subs-start} to \ref{eqn:I-subs-end}.  As in $\sigma_{rec}$, the substitutions must include $I^{lb}/I$ whenever $I$ is a rate term because we are defining $\frac{dI^{lb}}{dt}$.  
+
+
+\begin{eqnarray}\label{eqn:I-lower-bound-start}
+    \frac{dI}{dt} &=& {\cal R}({\bf p}, {\bf x}, inf_1) + {\cal R}({\bf p}, {\bf x}, inf_2) -  {\cal R}({\bf p}, {\bf x}, rec)\\
+    &\geq& \sigma_1 \circ ([I^{lb}/I] \circ {\cal R}({\bf p}, {\bf x}, inf_{1 I^{lb}})) + \\
+    && \sigma_2 \circ ([I^{lb}/I] \circ {\cal R}({ p}, {\bf x}, inf_{2 I^{lb}})) -  \\
+    && \sigma_3 \circ ([I^{lb}/I] \circ {\cal R}({\bf p}, {\bf x}, rec_{I^{lb}}))\\
+    &=& \frac{dx^{lb}}{dt}\label{eqn:I-lower-bound-end}
+\end{eqnarray}
+
+\begin{eqnarray}\label{eqn:I-subs-start}
+     \sigma_{1} &=& [S_1^{lb}/S_1,  \beta_1^{lb}/\beta_1]\\
+    \sigma_{2} &=& [S_2^{lb}/S_2, \beta_2^{lb}/\beta_2]\\
+    \sigma_{3} &=& [ \gamma^{ub}/\gamma]\label{eqn:I-subs-end}
+\end{eqnarray}
+
+Applying the substitutions to the rate terms,  $\frac{dI}{dt}$ and $\frac{dI^{lb}}{dt}$ are simplified to the expressions in Equations \ref{eqn:I-bounds-start} to \ref{eqn:I-bounds-end}.
+
+\begin{eqnarray}\label{eqn:I-bounds-start}
+    \frac{dI}{dt} &=& {\cal R}({\bf p}, {\bf x}, inf_1) + {\cal R}({\bf p}, {\bf x}, inf_2) -  {\cal R}({\bf p}, {\bf x}, rec)\\
+    &=& S_1I\beta_1 + S_2I\beta_2 - I\gamma\\
+    \frac{dI^{lb}}{dt} &=& [S_1^{lb}/S_1,  \beta_1^{lb}/\beta_1] \circ ([I^{lb}/I] \circ {\cal R}({\bf p}, {\bf x}, inf_{1 I^{lb}})) + \\
+    && [S_2^{lb}/S_2, \beta_2^{lb}/\beta_2] \circ ([I^{lb}/I] \circ {\cal R}({ p}, {\bf x}, inf_{2 I^{lb}})) -  \\
+    && [ \gamma^{ub}/\gamma] \circ ([I^{lb}/I] \circ {\cal R}({\bf p}, {\bf x}, rec_{I^{lb}}))\\
+    &=&S_1^{lb}I^{lb}\beta_1^{lb} + S_2^{lb}I^{lb}\beta_2^{lb} - I^{lb}\gamma^{ub} \label{eqn:I-bounds-end}
+\end{eqnarray}
+
+\subsection{Bounding Abstracted Petrinets}
+
+We previously described how abstracted Petrinets contain state variables and parameters from the previously stratified Petrinet in the transition rates.  For example, if $A(S_1) = S$ and $A(S_2) = S$ ($S_1$ and $S_2$ are stratified
 variables represented by $S$ in the abstraction), the transition rate associated with the $inf$ transition is
- ${\cal R}'({\bf p}', {\bf x}', z_{inf}) = \beta_1 S_1 I +  \beta_2 S_2 I$.
-By construction, we know that $S_1 + S_2 = S$.  However, in general $\beta_1 \not=
-\beta_2$, and we cannot say that $\beta_1 S_1 I + \beta_2 S_2 I = \beta S I$ for some definition of $\beta$.  Yet, if
-we replace $\beta_1$ and $\beta_2$ by $\beta^{ub} = \max(\beta_1, \beta_2)$, then $\beta^{ub} S_1 I +
-\beta^{ub} S_2 I \geq \beta S I$.  Simplifying, we get $\beta^{ub} S_1 I + \beta^{ub} S_2 I =
-\beta^{ub}(S_1 + S_2)I = \beta^{ub} S I \geq \beta S I$.  A similar argument can be made for the lower bound where
-$\beta^{lb} = \min(\beta_1, \beta_2)$ and we find that $\beta^{lb} S I \leq \beta S I$.  
+\[{\cal R}^A({\bf p}^A, {\bf x}^A, {inf}) = \beta_1 S_1 I +  \beta_2 S_2 I\]
+By construction, we know that $S_1 + S_2 = S$. Applying this equivalence to the rate law as a substitution results in:
+\begin{eqnarray*}
+    [S-S_1/S_2]\circ {\cal R}^A({\bf p}^A, {\bf x}^A, {inf}) &=& \beta_1 S_1 I +  \beta_2 (S-S_1) I\\
+     &=& \beta_1 S_1 I +  \beta_2 S I -  \beta_2 S_1 I    
+\end{eqnarray*}
+Furthermore, when bounding this rate to determine ${\cal R}^B({\bf p}^B, {\bf x}^B, inf^{in}_{I_{lb}})$, it is possible to substitute the same term $\min(\beta_1, \beta_2)$ for both parameters $\beta_1$ and $\beta_2$:
+\begin{eqnarray*}
+    {\cal R}^B({\bf p}^B, {\bf x}^B, inf^{out}_{I_{lb}})&=&
+    [\min(\beta_1, \beta_2)/\beta_1, \min(\beta_1, \beta_2)/\beta_2, S^{lb}/S, I/I^{lb}]\circ(  [S-S_1/S_2]\circ {\cal R}^A({\bf p}^A, {\bf x}^A, {inf})) \\
+    &=& \min(\beta_1, \beta_2) S_1 I +   \min(\beta_1, \beta_2) S^{lb} I^{lb} -   \min(\beta_1, \beta_2) S_1 I  \\
+     &=& \min(\beta_1, \beta_2) S^{lb} I^{lb}\\
+     &=& \beta^{lb}S^{lb} I^{lb}
+\end{eqnarray*}
+where we use a new parameter $\beta^{lb}$ and define ${\cal P}^B(\beta^{lb}) = \min(\beta_1, \beta_2)$ .  A similar argument can be made for the upper bound using
+$ \max(\beta_1, \beta_2)$.
 
 By introducing the bounded parameters, we no longer rely upon the base state
 variables or parameters.  However, in tracking the effect of the bounded
@@ -19,60 +124,57 @@ abstraction and base model, wherein we can derive bounds on the state variables
 at each time, which may correspond to a larger (hence over-approximation) set of
 state trajectories.
 
-\begin{definition}
-A bounded abstraction $(\Theta^B, \Omega^B)$ of an abstraction $(\Theta',
-\Omega')$ of $(\Theta, \Omega)$ replaces each element of $(\Theta', \Omega')$ by
-a pair of elements denoting the lower and upper bound of that element (and
-referred to with the ``$lb$'' and ``$ub$'' superscripts).  The bounded
-abstraction defines:
-\begin{itemize}
-    \item State: For each $x' \in X'$,  $x^{lb}, x^{ub} \in X^B$.  For each
-    $v_{x'}' \in V_x'$, ${\cal X}^B(x^{lb}) = v_{x^{lb}}^B$ and ${\cal
-    X}^B(x^{ub}) = v_{x^{ub}}^B$.   For each $x^{lb}, x^{ub} \in X^B$, ${\cal
-    I}^B(x^{lb}) = {\cal I}^B(x^{ub}) = {\cal I}'(x')$.
-        \item Parameters: For each $p' \in P'$, let ${\cal P}^B(p^{lb}) =
-        \min\limits_{p \in P: A(p) = p'} {\cal P}(p)$ and ${\cal P}^B(p^{ub}) =
-        \max\limits_{p \in P: A(p) = p'} {\cal P}(p)$. 
+% \begin{definition}
+% A bounded abstraction $(\Theta^B, \Omega^B)$ of an abstraction $(\Theta',
+% \Omega')$ of $(\Theta, \Omega)$ replaces each element of $(\Theta', \Omega')$ by
+% a pair of elements denoting the lower and upper bound of that element (and
+% referred to with the ``$lb$'' and ``$ub$'' superscripts).  The bounded
+% abstraction defines:
+% \begin{itemize}
+%     \item State: For each $x' \in X'$,  $x^{lb}, x^{ub} \in X^B$.  For each
+%     $v_{x'}' \in V_x'$, ${\cal X}^B(x^{lb}) = v_{x^{lb}}^B$ and ${\cal
+%     X}^B(x^{ub}) = v_{x^{ub}}^B$.   For each $x^{lb}, x^{ub} \in X^B$, ${\cal
+%     I}^B(x^{lb}) = {\cal I}^B(x^{ub}) = {\cal I}'(x')$.
+%         \item Parameters: For each $p' \in P'$, let ${\cal P}^B(p^{lb}) =
+%         \min\limits_{p \in P: A(p) = p'} {\cal P}(p)$ and ${\cal P}^B(p^{ub}) =
+%         \max\limits_{p \in P: A(p) = p'} {\cal P}(p)$. 
         
 
-        \item Transitions: For each transition $z' \in Z'$ and state variable $x'\in \{x'\in X' | (v_{z'}, v_{x'}) \in E_{in}\} \cup \{x'\in X' | ( v_{x'}, v_{z'}) \in E_{out}\}$ , $z^{lb}_{x'}, z^{ub}_{x'} \in Z^B$. For
-        each vertex $v_z \in V_z$, if $A(v_z)=v_z'$ then $v_{z^{lb}}^B, v_{z^{ub}}^B \in V_z^B$.
+%         \item Transitions: For each transition $z' \in Z'$ and state variable $x'\in \{x'\in X' | (v_{z'}, v_{x'}) \in E_{in}\} \cup \{x'\in X' | ( v_{x'}, v_{z'}) \in E_{out}\}$ , $z^{lb}_{x'}, z^{ub}_{x'} \in Z^B$. For
+%         each vertex $v_z \in V_z$, if $A(v_z)=v_z'$ then $v_{z^{lb}}^B, v_{z^{ub}}^B \in V_z^B$.
         
-        \item In Edges: For each edge $(v_{z'}^B, v_{x'}^B) \in E_{in}'$,
-        $(v_{z^{lb}}^B, v_{x^{lb}}^B), (v_{z^{ub}}^B, v_{x^{ub}}^B) \in E^B_{in}$.
-        \item Out Edges: For each edge $(v_{x'}^B, v_{z'}^B) \in E_{out}'$,
-        $(v_{x^{ub}}^B, v_{z^{lb}}^B), (v_{x^{lb}}^B, v_{z^{ub}}^B) \in E^B_{out}$.
+%         \item In Edges: For each edge $(v_{z'}^B, v_{x'}^B) \in E_{in}'$,
+%         $(v_{z^{lb}}^B, v_{x^{lb}}^B), (v_{z^{ub}}^B, v_{x^{ub}}^B) \in E^B_{in}$.
+%         \item Out Edges: For each edge $(v_{x'}^B, v_{z'}^B) \in E_{out}'$,
+%         $(v_{x^{ub}}^B, v_{z^{lb}}^B), (v_{x^{lb}}^B, v_{z^{ub}}^B) \in E^B_{out}$.
 
         
-        \item Transition Rates: For each transition $z^{lb} \in Z^B$ and , ${\cal R}^B({\bf
-        p}^B, {\bf x}^B, z^{lb}) = \min\limits_{z \in Z: A(z)=z'} {\cal R}({\bf
-        p}, {\bf x}, z)$ (replacing ${\bf p}$ and ${\bf x}$ of the minimal rate
-        by the elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which
-        minimize the rate), and ${\cal R}^B({\bf p}^B, {\bf x}^B, z^{ub}) =
-        \max\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf x}, z)$ (similarly
-        replacing ${\bf p}$ and ${\bf x}$ of the maximal rate by the elements in
-        ${\bf p}^B$ and ${\bf x}^B$ respectively, which maximize the rate).
-\end{itemize}
+%         \item Transition Rates: For each transition $z^{lb} \in Z^B$ and , ${\cal R}^B({\bf
+%         p}^B, {\bf x}^B, z^{lb}) = \min\limits_{z \in Z: A(z)=z'} {\cal R}({\bf
+%         p}, {\bf x}, z)$ (replacing ${\bf p}$ and ${\bf x}$ of the minimal rate
+%         by the elements in ${\bf p}^B$ and ${\bf x}^B$ respectively, which
+%         minimize the rate), and ${\cal R}^B({\bf p}^B, {\bf x}^B, z^{ub}) =
+%         \max\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf x}, z)$ (similarly
+%         replacing ${\bf p}$ and ${\bf x}$ of the maximal rate by the elements in
+%         ${\bf p}^B$ and ${\bf x}^B$ respectively, which maximize the rate).
+% \end{itemize}
     
-\end{definition}
+% \end{definition}
+
+\subsection{Bounded Petrinet Example}
 
 \begin{example}
     The bounded abstraction $(\Theta^B, \Omega^B)$ of the stratified SIR model
     defines:
     \begin{eqnarray*}
-        V^B_x &=& \{v_{S}^{lb}, v_{S}^{ub}, v_{I}^{lb}, v_{I}^{ub},v_{R}^{lb},
-        v_{R}^{ub},\}\\
-        V^B_z &=& \{v_{inf}^{lb}, v_{inf}^{ub}, v_{rec}^{lb}, v_{rec}^{ub}\}\\
-        E^B_{in} &=& ((v_{inf}^{lb}, v_{S}^{lb}), (v_{inf}^{lb},
-        v_{I}^{lb}),(v_{inf}^{lb}, v_{I}^{lb}), (v_{rec}^{lb},
-        v_{R}^{lb}),(v_{inf}^{ub}, v_{S}^{ub}), (v_{inf}^{ub},
-        v_{I}^{ub}),(v_{inf}^{ub}, v_{I}^{ub}), (v_{rec}^{ub}, v_{R}^{ub})\\
-        E^B_{out} &=& ((v_{S}^{lb}, v_{inf}^{ub}),(v_{I}^{lb}, v_{inf}^{ub}),
-        (v_{I}^{lb}, v_{rec}^{ub}), (v_{S}^{ub}, v_{inf}^{lb}),(v_{I}^{ub},
-        v_{inf}^{lb}), (v_{I}^{ub}, v_{rec}^{lb}))\\
+        % V^B_x &=& \{v_{S}^{lb}, v_{S}^{ub}, v_{I}^{lb}, v_{I}^{ub},v_{R}^{lb},
+        % v_{R}^{ub},\}\\
+        % V^B_z &=& \{v_{inf}^{lb}, v_{inf}^{ub}, v_{rec}^{lb}, v_{rec}^{ub}\}\\
+        E^B &=& (({S}^{lb}, {inf}^{out}_{S_{lb}} ), ({S}^{ub}, {inf}^{out}_{S_{ub}} ), ({I}^{lb}, {inf}^{out}_{I_{lb}} ), ({I}^{ub}, {inf}^{out}_{I_{ub}} ),({inf}^{in}_{I_{lb}} {I}^{lb} ), ({inf}^{in}_{I_{ub}}, {I}^{ub}), \\
+        &&({I}^{lb}, {rec}^{out}_{I_{lb}} ), ({I}^{ub}, {rec}^{out}_{I_{ub}} ),({rec}^{in}_{R_{lb}}, {R}^{lb} ), ({rec}^{in}_{R_{ub}}, {R}^{ub}))\\
         P^B &=& \{\beta^{lb}, \beta^{ub}, \gamma^{lb}, \gamma^{ub}\}\\
         X^B &=& \{S^{lb},  S^{ub}, I^{lb},I^{ub}, R^{lb},  R^{ub}\}\\
-        Z^B &=& \{inf^{lb}, inf^{ub}, rec^{lb}, rec^{ub}\}\\
+        Z^B &=& \{{inf}^{out}_{S_{lb}}, {inf}^{out}_{S_{ub}}, {inf}^{out}_{I_{lb}}, {inf}^{out}_{I_{ub}}, {inf}^{in}_{I_{lb}}, {inf}^{in}_{I_{ub}},{rec}^{out}_{I_{lb}}, {rec}^{out}_{I_{ub}}, {rec}^{in}_{R_{lb}}, {rec}^{in}_{R_{ub}} \}\\
         {\cal I}^B &=& \left\{ 
             \begin{array}{ll}
                 0.9& :S^{lb}\\
@@ -89,46 +191,45 @@ abstraction defines:
                 1e{-5}& :\gamma^{ub}\\
             \end{array}\right.\\
             \\
-        {\cal X}^B &=& \left\{ 
-            \begin{array}{ll}
-                v^{lb}_{x} & : x^{lb} \in X^B\\
-                v^{ub}_{x} & : x^{ub} \in X^B \end{array}\right.\\
-        {\cal Z}^B &=& \left\{ 
-            \begin{array}{ll}
-                v_{z}^{lb} & : z^{lb} \in Z^B\\
-                v_{z}^{ub} & : z^{ub} \in Z^B \end{array}\right.\\
         {\cal R}^{B} &=& \left\{ 
             \begin{array}{ll}
-                \beta^{lb} S^{lb} I^{lb} & : z^{lb}_{inf}\\
-                \beta^{ub} S^{ub} I^{ub} & : z^{ub}_{inf}\\
-                \gamma^{lb} I^{lb}  & : z^{lb}_{rec}\\
-                \gamma^{ub} I^{ub}  & : z^{ub}_{rec} \end{array}\right.\\
+                \beta^{ub} S^{lb} I^{ub} &: {inf}^{out}_{S_{lb}} \\ 
+                \beta^{lb} S^{ub} I^{lb} &: {inf}^{out}_{S_{ub}} \\ 
+                \beta^{ub} S^{ub} I^{lb}&: {inf}^{out}_{I_{lb}}\\ 
+                \beta^{lb} S^{lb} I^{ub}&: {inf}^{out}_{I_{ub}} \\ 
+                \beta^{lb} S^{lb} I^{lb}&: {inf}^{in}_{I_{lb}}\\ 
+                \beta^{ub} S^{ub} I^{ub}&: {inf}^{in}_{I_{ub}}\\
+                \gamma^{ub} I^{lb}&: {rec}^{out}_{I_{lb}} \\ 
+                \gamma^{lb} I^{ub} &: {rec}^{out}_{I_{ub}} \\ 
+                \gamma^{lb} I^{lb} &: {rec}^{in}_{R_{lb}} \\ 
+                \gamma^{ub} I^{ub} &: {rec}^{in}_{R_{ub}} 
+                 \end{array}\right.\\
     \end{eqnarray*}
 
-    The gradient for the bounded abstraction defines:
-    \begin{eqnarray}
-        \nabla_{\Theta^B, \Omega^B} = \begin{bmatrix} \frac{dS^{lb}}{dt}\\
-                \frac{dS^{ub}}{dt}\\
-                \frac{dI^{lb}}{dt}\\
-                \frac{dI^{ub}}{dt}\\
-                \frac{dR^{lb}}{dt}\\
-                \frac{dR^{ub}}{dt} \end{bmatrix} = \begin{bmatrix} -{\cal
-            R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub})\\
-            -{\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb})\\
-             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb}) - {\cal
-             R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub})\\
-             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub}) - {\cal
-             R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{lb})\\
-             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{lb})\\
-             {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub}) \end{bmatrix} =
-    \begin{bmatrix} -\beta^{ub} S^{ub} I^{ub}\\
-        -\beta^{lb} S^{lb} I^{lb}\\
-        \beta^{lb} S^{lb} I^{lb}-\gamma^{ub} I^{ub} \\
-        \beta^{ub} S^{ub} I^{ub}-\gamma^{lb} I^{lb} \\
-        \gamma^{lb} I^{lb}\\
-        \gamma^{ub} I^{ub}
-    \end{bmatrix} 
-   \end{eqnarray}
+%     The gradient for the bounded abstraction defines:
+%     \begin{eqnarray}
+%         \nabla_{\Theta^B, \Omega^B} = \begin{bmatrix} \frac{dS^{lb}}{dt}\\
+%                 \frac{dS^{ub}}{dt}\\
+%                 \frac{dI^{lb}}{dt}\\
+%                 \frac{dI^{ub}}{dt}\\
+%                 \frac{dR^{lb}}{dt}\\
+%                 \frac{dR^{ub}}{dt} \end{bmatrix} = \begin{bmatrix} -{\cal
+%             R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub})\\
+%             -{\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb})\\
+%              {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{lb}) - {\cal
+%              R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub})\\
+%              {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{inf}^{ub}) - {\cal
+%              R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{lb})\\
+%              {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{lb})\\
+%              {\cal R}^{B}({\bf p}^B, {\bf x}^B, z_{rec}^{ub}) \end{bmatrix} =
+%     \begin{bmatrix} -\beta^{ub} S^{ub} I^{ub}\\
+%         -\beta^{lb} S^{lb} I^{lb}\\
+%         \beta^{lb} S^{lb} I^{lb}-\gamma^{ub} I^{ub} \\
+%         \beta^{ub} S^{ub} I^{ub}-\gamma^{lb} I^{lb} \\
+%         \gamma^{lb} I^{lb}\\
+%         \gamma^{ub} I^{ub}
+%     \end{bmatrix} 
+%    \end{eqnarray}
 
 \end{example}
 
