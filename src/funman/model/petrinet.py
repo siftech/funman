@@ -600,12 +600,15 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         symbols = self._symbols()
         str_to_symbol = {s: sympy.Symbol(s) for s in symbols}
         bound_symbols = {
-            s: {"lb": f"{s}_lb", "ub": f"{s}_ub"} for s in symbols
+            sympy.Symbol(s): {
+                bound: sympy.Symbol(f"{s}_{bound}") for bound in ["lb", "ub"]
+            } 
+            for s in symbols
         }
         for _, params in abstraction_metadata.get("parameters", {}).items():
             for p in params:
-                bound_symbols[p] = {
-                    bound: f"{p}_{bound}" for bound in ["lb", "ub"]
+                bound_symbols[sympy.Symbol(p)] = {
+                    bound: sympy.Symbol(f"{p}_{bound}") for bound in ["lb", "ub"]
                 }
         substituter = SympyBoundedSubstituter(
             bound_symbols=bound_symbols, str_to_symbol=str_to_symbol
@@ -613,18 +616,24 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         def bound_expression(targets, e, bound, metadata):
 
+            targets = {
+                sympy.Symbol(k):sympy.Symbol(v)
+                for k, v in targets.items()
+                }
+            e_s = sympy.sympify(e, substituter.str_to_symbol)
+
             # targets are forced substitutions
-            for k, v in targets.items():
-                e = e.replace(k, v)
+            # for k, v in targets.items():
+            e_s = e_s.subs(targets)
 
             # # substitute abstracted parameters for lower or upper bounds
             # for k, v in metadata.items():
             #     e = e.replace(k, k.replace("agg", bound))
 
             return (
-                substituter.minimize(targets, e)
+                substituter.minimize(targets, e_s)
                 if bound == "lb"
-                else substituter.maximize(targets, e)
+                else substituter.maximize(targets, e_s)
             )
 
         def lb_expression(targets, e, symbols, metadata):
@@ -925,7 +934,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                             # Need to check if extension is legal
                             extended_mapping = mapping + [((i, s1), (o, s2))]
                             i_mappings.append(extended_mapping)
-                            if s1 != s2:
+                            # if s1 != s2:
+                            if s2 is not None:
                                 split_output_strata = True
                 next_i_o_mapping += i_mappings
             i_o_mapping = next_i_o_mapping
@@ -955,7 +965,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                     ((i, s1), (o, s2))
                                 ]
                                 i_mappings.append(extended_mapping)
-                                if s1 != s2 and s2 is not None:
+                                # if s1 != s2 and s2 is not None:
+                                if s2 is not None:
                                     split_output_strata = True
                     next_i_o_mapping += i_mappings
             i_o_mapping = next_i_o_mapping

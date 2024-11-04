@@ -262,18 +262,29 @@ class TestUseCases(unittest.TestCase):
 
         # FIXME need assert
 
+    # @unittest.skip(reason="WIP")
     def test_sirhd_stratify(self):
         epsilon = 0.000001
+        timepoints = list(
+            range(0, 2, 1)
+        )
+
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_base_request = FunmanWorkRequest.model_validate_json(f.read())
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_base_request.config.mode = "mode_odeint"
+        sirhd_base_request.structure_parameters[0].schedules[0].timepoints = timepoints
 
         runner = Runner()
         base_result = runner.run(
-            BASE_SIRHD_MODEL_PATH, BASE_SIRHD_REQUEST_PATH
+            BASE_SIRHD_MODEL_PATH, sirhd_base_request
         )
 
-        import matplotlib.pyplot as plt
+        # import matplotlib.pyplot as plt
 
-        base_result.plot()
-        plt.savefig("sirhd")
+        # base_result.plot()
+        # plt.savefig("sirhd")
 
         assert (
             base_result
@@ -288,6 +299,8 @@ class TestUseCases(unittest.TestCase):
             strata_parameters=["beta"],
             self_strata_transition=False,
         )
+        stratified_model_S.to_dot().render("sirhd_strat_S")
+
         stratified_model_SI = stratified_model_S.stratify(
             "I",
             ["vac", "unvac"],
@@ -295,7 +308,7 @@ class TestUseCases(unittest.TestCase):
             self_strata_transition=False,
         )
 
-        # stratified_model_SI.to_dot().render("sirhd_strat_SI")
+        stratified_model_SI.to_dot().render("sirhd_strat_SI")
 
         stratified_params = (
             stratified_model_SI.petrinet.semantics.ode.parameters
@@ -304,13 +317,21 @@ class TestUseCases(unittest.TestCase):
         betas["beta_vac_unvac_0"].value -= epsilon
         betas["beta_vac_unvac_1"].value += epsilon
 
-        # stratified_result = runner.run(
-        #     stratified_model_SI.petrinet.model_dump(), BASE_SIRHD_REQUEST_PATH
-        # )
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_stratified_request = FunmanWorkRequest.model_validate_json(f.read())
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.structure_parameters[0].schedules[0].timepoints = timepoints
+        
 
-        # assert (
-        #     stratified_result
-        # ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+        stratified_result = runner.run(
+            stratified_model_SI.petrinet.model_dump(), sirhd_stratified_request
+        )
+
+        assert (
+            stratified_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
         # Abstract and bound stratified Base model
         abstract_model = stratified_model_SI.abstract(
@@ -321,14 +342,25 @@ class TestUseCases(unittest.TestCase):
                 "beta_vac_unvac_1": "agg_beta",
             }
         )
-        print(abstract_model._state_var_names())
-        print(abstract_model._parameter_names())
-        # abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
+        # print(abstract_model._state_var_names())
+        # print(abstract_model._parameter_names())
+        abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
 
         bounded_abstract_model = abstract_model.formulate_bounds()
+        bounded_abstract_model.to_dot().render("sirhd_strat_SI_bounded_abstract_S")
+
+        # Setup request by removing compartmental constraint that won't be correct
+        # for a bounded model
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_request = FunmanWorkRequest.model_validate_json(f.read())
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_request.config.mode = "mode_odeint"
+        sirhd_request.structure_parameters[0].schedules[0].timepoints = timepoints
+
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet.model_dump(),
-            BASE_SIR_REQUEST_PATH,
+            sirhd_request,
         )
 
         assert (
@@ -337,36 +369,128 @@ class TestUseCases(unittest.TestCase):
 
         # Check that abstract bounds actually bound the stratified and original model
 
-        # bs = [s for s in base_result.model._symbols() if s != "timer_t"]
-        # b_df = base_result.dataframe(base_result.points())[bs]
+        bs = [s for s in base_result.model._symbols() if s != "timer_t"]
+        base_df = base_result.dataframe(base_result.points())[bs]
 
-        # ss = [s for s in stratified_result.model._symbols() if s != "timer_t"]
-        # s_df = stratified_result.dataframe(stratified_result.points())[ss]
+        ss = [s for s in stratified_result.model._symbols() if s != "timer_t"]
+        stratified_df = stratified_result.dataframe(stratified_result.points())[ss]
 
-        # bass = [s for s in bounded_abstract_result.model._symbols() if s != "timer_t"]
-        # ba_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())[bass]
+        bass = [s for s in bounded_abstract_result.model._symbols() if s != "timer_t"]
+        bounded_abstract_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())[bass]
+        bounded_abstract_df["I_lb"] = bounded_abstract_df.I_vac_lb + bounded_abstract_df.I_unvac_lb
+        bounded_abstract_df["I_ub"] = bounded_abstract_df.I_vac_ub + bounded_abstract_df.I_unvac_ub
 
-        # ds_df = pd.DataFrame(s_df)
-        # ds_df["S"] = ds_df.S_1 + ds_df.S_2
+        destratified_df = pd.DataFrame(stratified_df)
+        destratified_df["S"] = destratified_df.S_vac + destratified_df.S_unvac
+        destratified_df["I"] = destratified_df.I_vac + destratified_df.I_unvac
 
-        # def check_bounds(bounds_df, values_df, variable, values_model_name):
-        #     failures = []
-        #     lb = f"{variable}_lb"
-        #     ub = f"{variable}_ub"
-        #     if not all(values_df[variable] >= bounds_df[lb]):
-        #         failures.append(f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}")
-        #     if not all(values_df[variable] <= bounds_df[ub]):
-        #         failures.append(f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}")
-        #     return failures
+        def check_bounds(bounds_df, values_df, variable, values_model_name):
+            failures = []
+            lb = f"{variable}_lb"
+            ub = f"{variable}_ub"
+            if not all(values_df[variable] >= bounds_df[lb]):
+                failures.append(f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}")
+            if not all(values_df[variable] <= bounds_df[ub]):
+                failures.append(f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}")
+            return failures
 
-        # all_failures = []
-        # for (values_df, model) in [(b_df, "base"), (ds_df, "stratified")]:
-        #     for var in ["S", "I", "R"]:
-        #         all_failures += check_bounds(ba_df, values_df, var, model)
+        all_failures = []
+        for (values_df, model) in [(base_df, "base"), (destratified_df, "stratified")]:
+            for var in ["S", "I", "H", "R", "D"]:
+                all_failures += check_bounds(bounded_abstract_df, values_df, var, model)
 
-        # reasons = '\n'.join(map(str, all_failures))
-        # assert len(all_failures) == 0, f"The bounds failed in the following cases:\n{reasons}"
+        reasons = '\n'.join(map(str, all_failures))
+        assert len(all_failures) == 0, f"The bounds failed in the following cases:\n{reasons}"
 
+# S_ub: 1.492174e+08  S_strat: 1.492175e+08, diff -98.77
+
+# S_ub' = S_ub - IvlbSubBlbp0lb/Nub - IulbSubBlbp1lb/Nub - IvlbSubBlbp0lb/Nub - IulbSubBlbp1lb/Nub
+#       =      - 44.76501510409002 - 44.76501510409002 - 44.76501510409002 - 44.76501510409002
+#   because S = Sv+Su 
+# Stratified: 
+# Sv' = Sv - IvSvB0p0/N - IuSvB0p1/N
+#     =  74608773.0 - (22.38250755204501) - (22.38250755204501)
+#     = 74608728.2349849
+#     = 74608727.79499725
+# Su' = Su - IvSuB1p0/N - IuSuB1p1/N
+#     = 74608728.23448753
+#     = 74608727.79449497
+# Su' + Sv' = 149217456.46947244
+#           = 149217455.58949223
+# I_vac               5.000000e+02
+# I_unvac             5.000000e+02
+# S_vac               7.460877e+07
+# S_unvac             7.460877e+07
+# R                   0.000000e+00
+# H                   0.000000e+00
+# D                   7.814540e+05
+# N                   1.500000e+08
+# pir                 9.000000e-01
+# pih                 1.000000e-01
+# rih                 7.000000e-02
+# phd                 1.300000e-01
+# rhd                 3.000000e-01
+# phr                 8.700000e-01
+# rhr                 7.000000e-02
+# rir                 7.000000e-02
+# beta_vac_unvac_0    1.799990e-01
+# beta_vac_unvac_1    1.800010e-01
+# p_I_vac_unvac_0     5.000000e-01
+# p_I_vac_unvac_1     5.000000e-01
+
+# Rate(target='t1_vac_unvac_0_vac_unvac_0', expression='p_I_vac_unvac_0*I_vac*S_vac*beta_vac_unvac_0/N', expression_mathml=None)
+# Rate(target='t1_vac_unvac_0_vac_unvac_1', expression='p_I_vac_unvac_1*I_unvac*S_vac*beta_vac_unvac_0/N', expression_mathml=None)
+# Rate(target='t1_vac_unvac_1_vac_unvac_0', expression='p_I_vac_unvac_0*I_vac*S_unvac*beta_vac_unvac_1/N', expression_mathml=None)
+# Rate(target='t1_vac_unvac_1_vac_unvac_1', expression='p_I_vac_unvac_1*I_unvac*S_unvac*beta_vac_unvac_1/N', expression_mathml=None)
+
+# Rate(target='t1_vac_unvac_0_vac_unvac_0', expression='I_vac*S*agg_beta*p_I_vac_unvac_0/N', expression_mathml=None)
+# Rate(target='t1_vac_unvac_0_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None)
+# Rate(target='t1_vac_unvac_1_vac_unvac_0', expression='I_vac*S*agg_beta*p_I_vac_unvac_0/N', expression_mathml=None)
+# Rate(target='t1_vac_unvac_1_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None) 
+
+# Abstract Bounded:
+
+#   = 149217356.8112546
+#   = 149217366.93993962
+#  diff = 10.128685027360916
+# I_vac_lb              5.000000e+02
+# I_vac_ub              5.000000e+02
+# I_unvac_lb            5.000000e+02
+# I_unvac_ub            5.000000e+02
+# R_lb                  0.000000e+00
+# R_ub                  0.000000e+00
+# H_lb                  0.000000e+00
+# H_ub                  0.000000e+00
+# D_lb                  7.814540e+05
+# D_ub                  7.814540e+05
+# S_lb                  1.492175e+08
+# S_ub                  1.492175e+08
+# N_lb                  1.500000e+08
+# N_ub                  1.500000e+08
+# pir_lb                9.000000e-01
+# pir_ub                9.000000e-01
+# pih_lb                1.000000e-01
+# pih_ub                1.000000e-01
+# rih_lb                7.000000e-02
+# rih_ub                7.000000e-02
+# phd_lb                1.300000e-01
+# phd_ub                1.300000e-01
+# rhd_lb                3.000000e-01
+# rhd_ub                3.000000e-01
+# phr_lb                8.700000e-01
+# phr_ub                8.700000e-01
+# rhr_lb                7.000000e-02
+# rhr_ub                7.000000e-02
+# rir_lb                7.000000e-02
+# rir_ub                7.000000e-02
+# p_I_vac_unvac_0_lb    5.000000e-01
+# p_I_vac_unvac_0_ub    5.000000e-01
+# p_I_vac_unvac_1_lb    5.000000e-01
+# p_I_vac_unvac_1_ub    5.000000e-01
+# agg_beta_lb           1.799990e-01
+# agg_beta_ub           1.800010e-01
+# I_lb                  1.000000e+03
+# I_ub                  1.000000e+03
 
 if __name__ == "__main__":
     unittest.main()
