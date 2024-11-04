@@ -1,10 +1,12 @@
 import logging
 from decimal import Decimal
-from typing import List, Optional, Union
+from math import isinf
+from typing import Any, List, Optional, Union
 
-from numpy import average, nextafter
+from numpy import average, finfo, nextafter
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
     SerializerFunctionWrapHandler,
     field_serializer,
@@ -15,8 +17,9 @@ from typing_extensions import Annotated
 
 import funman.utils.math_utils as math_utils
 from funman.constants import NEG_INFINITY, POS_INFINITY
+from funman.utils.logging import inherit_level
 
-l = logging.Logger(__name__)
+l = logging.getLogger(__name__)
 
 
 class Interval(BaseModel):
@@ -24,6 +27,7 @@ class Interval(BaseModel):
     An interval is a pair [lb, ub) that is open (i.e., an interval specifies all points x where lb <= x and ub < x).
     """
 
+    model_config = ConfigDict(ser_json_inf_nan="constants")
     lb: Optional[Union[float, str]] = NEG_INFINITY
     ub: Optional[Union[float, str]] = POS_INFINITY
     closed_upper_bound: bool = False
@@ -148,18 +152,31 @@ class Interval(BaseModel):
         bool
             Does self meet other?
         """
-        return (
-            (self.ub == other.lb and not self.closed_upper_bound)
-            or (
-                nextafter(self.ub, POS_INFINITY) == other.lb
-                and self.closed_upper_bound
+        l.trace(f"Interval.meets(): {self} {other}")
+        # return self.ub == other.lb or self.lb == other.ub
+        if self.closed_upper_bound:
+            # cannot be equal to other.lb
+            # Make sure that we don't use 0.0 with nextafter
+            self_ub = (
+                finfo("f8").smallest_normal
+                if self.ub == 0.0
+                else nextafter(self.ub, POS_INFINITY)
             )
-            or (self.lb == other.ub and not other.closed_upper_bound)
-            or (
-                self.ub == nextafter(other.lb, POS_INFINITY)
-                and other.closed_upper_bound
-            )
-        )
+            return self.ub == other.lb
+        else:
+            return self.ub == other.lb
+        # return (
+        #     (self.ub == other.lb and not self.closed_upper_bound)
+        #     or (
+        #         nextafter(self.ub, POS_INFINITY) == other.lb
+        #         and self.closed_upper_bound
+        #     )
+        #     or (self.lb == other.ub and not other.closed_upper_bound)
+        #     or (
+        #         self.ub == nextafter(other.lb, POS_INFINITY)
+        #         and other.closed_upper_bound
+        #     )
+        # )
 
     def finite(self) -> bool:
         """
@@ -390,6 +407,17 @@ class Interval(BaseModel):
         self.ub = self.ub if not self.unnormalized_ub else self.unnormalized_ub
         self.unnormalized_ub = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def check_original_width_inf(cls, data: Any) -> Any:
+        if (
+            "original_width" in data
+            and isinstance(data["original_width"], float)
+            and isinf(data["original_width"])
+        ):
+            data["original_width"] = None
+        return data
+
     @model_validator(mode="after")
     def check_interval(self) -> str:
         if self.lb is None:
@@ -399,6 +427,7 @@ class Interval(BaseModel):
 
         # Assume that intervals where lb == ub imply closed_upper_bound
         if self.lb == self.ub and not self.closed_upper_bound:
+            inherit_level(l)
             l.warning(
                 f"{self} has equal lower and upper bounds, so assuming the upper bound is closed.  (I.e., [lb, ub) is actually [lb, ub])"
             )

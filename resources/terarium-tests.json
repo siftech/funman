@@ -107,6 +107,31 @@
                 "true-boxes": 3
             },
             "regression": true
+        },
+        {
+            "name": "observable-bug",
+            "model-path": "amr/petrinet/terrarium-tests/observable-bug.json",
+            "expected-outcome": {
+                "true-boxes": 3
+            },
+            "regression": true
+        },
+        {
+            "name": "sir-unsat-constraint",
+            "model-path": "amr/petrinet/terrarium-tests/sir_unsat_constraint.json",
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": true
+        },
+        {
+            "name": "less-input-bug",
+            "model-path": "amr/petrinet/terrarium-tests/less-input.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": false
         }
     ]
 }

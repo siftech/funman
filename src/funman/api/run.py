@@ -271,7 +271,10 @@ class Runner:
                 m = _wrap_with_internal_model(model(**mod))
                 break
 
+            except FileNotFoundError as fne:
+                l.exception(f"Failed to load model:\n{fne}")
             except Exception as e:
+                # l.debug(e)
                 pass
 
         if m is None:
@@ -445,7 +448,7 @@ class Runner:
             plt.savefig(space_plot_filename)
             plt.close()
         else:
-            l.warn(
+            l.warning(
                 "Cannot plot a parameter space for zero boxes or zero parameters"
             )
 
@@ -481,8 +484,15 @@ def get_args():
         default=False,
         help=f"Create parameter space plot with only the last timestep.",
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        help="Write result to console",
+        default=False,
+        action="store_true",
+    )
 
-    parser.set_defaults(plot=False)
+    parser.set_defaults(plot=None)
     return parser.parse_args()
 
 
@@ -504,7 +514,8 @@ def main() -> int:
         parameters_to_plot=to_plot,
         print_last_time=args.last_time,
     )
-    print(results.model_dump_json(indent=4))
+    if args.verbose:
+        print(results.model_dump_json(indent=4, by_alias=True))
 
 
 if __name__ == "__main__":

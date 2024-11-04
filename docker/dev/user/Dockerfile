@@ -42,17 +42,18 @@ ENV PYTHONPYCACHEPREFIX="/home/$UNAME/.cache/pycache/"
 RUN pip install --no-cache-dir --upgrade setuptools pip
 RUN pip install --no-cache-dir wheel
 
-RUN pip install --no-cache-dir pytest==7.1.2
-RUN pip install --no-cache-dir sphinx==5.2.2
-RUN pip install --no-cache-dir sphinx-rtd-theme==1.0.0
+RUN pip install --no-cache-dir pytest
+RUN pip install --no-cache-dir sphinx
+RUN pip install --no-cache-dir myst-parser
+RUN pip install --no-cache-dir autodoc-pydantic
 RUN pip install --no-cache-dir twine
 RUN pip install --no-cache-dir build
 RUN pip install --no-cache-dir pylint
 RUN pip install --no-cache-dir black
 RUN pip install --no-cache-dir uvicorn
-RUN pip install --no-cache-dir pydantic==2.3.*
+RUN pip install --no-cache-dir pydantic
 RUN pip install --no-cache-dir pydantic-settings
-RUN pip install --no-cache-dir fastapi==0.103.*
+RUN pip install --no-cache-dir fastapi
 RUN pip install --no-cache-dir pre-commit
 RUN pip install --no-cache-dir pycln
 RUN pip install --no-cache-dir openapi-python-client
@@ -66,7 +67,7 @@ WORKDIR /home/$UNAME
 #     && git checkout e5fb635757aa57007615a75371f55dd4a24851e0
 # RUN pip install -e automates
 
-RUN pip install --no-cache-dir z3-solver
+RUN pip install --no-cache-dir z3-solver==4.12.6
 RUN pip install --no-cache-dir graphviz
 
 RUN pip install /dreal4/dreal-*.whl

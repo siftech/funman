@@ -109,6 +109,7 @@ class SMTCheck(Search):
                     label=LABEL_FALSE,  # lack of a point means this must be a false box
                     points=[],
                 )
+                box._prioritize_entropy = episode.config.prioritize_box_entropy
                 box.bounds["timestep"] = Interval(
                     lb=timestep, ub=timestep, closed_upper_bound=True
                 )
@@ -223,6 +224,7 @@ class SMTCheck(Search):
                 "dreal_log_level": episode.config.dreal_log_level,
                 "dreal_mcts": episode.config.dreal_mcts,
                 "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in problem.model_parameters()]if episode.config.dreal_prefer_parameters else [],
+                "random_seed": episode.config.random_seed,
             }
         else:
             opts = {}

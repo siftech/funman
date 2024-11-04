@@ -332,19 +332,25 @@ class BoxSearchEpisode(SearchEpisode):
         point = Point(
             values={
                 p[0].symbol_name(): (
-                    float(p[1].constant_value())
-                    if p[1].is_real_constant()
-                    else p[1].constant_value()
+                    (
+                        (
+                            float(p[1].constant_value())
+                            if p[1].is_real_constant()
+                            else p[1].constant_value()
+                        )
+                        if p[1] is not None
+                        else None
+                    )
                 )
                 for p in model
             },
             schedule=box.schedule,
         )
-        # Timestep is not in the model (implicit)
-        point.values["timestep"] = box.timestep().lb
         point.remove_irrelevant_steps(
             self.problem._smt_encoder._untimed_symbols
         )
+        # Timestep is not in the model (implicit)
+        point.values["timestep"] = box.timestep().lb
         return point
 
 
@@ -402,7 +408,7 @@ class BoxSearch(Search):
         else:
             if not process_name:
                 process_name = "BoxSearch"
-            l = logging.Logger(process_name)
+            l = logging.getLogger(process_name)
         return l
 
     def _handle_empty_queue(
@@ -735,7 +741,12 @@ class BoxSearch(Search):
             for k, v in encoder.encode_assumptions(
                 episode.problem._assumptions, options
             ).items()
-            if k.relevant_at_time(timepoint)
+            if any(
+                [
+                    k.relevant_at_time(box.schedule.time_at_step(t))
+                    for t in range(0, timestep + 1)
+                ]
+            )
         }
         formula = And([v for k, v in assumptions.items()])
 
@@ -746,6 +757,7 @@ class BoxSearch(Search):
                         [
                             encoder.encode_assumption(k, options, layer_idx=i)
                             for i in range(timestep + 1)
+                            if k.relevant_at_time(box.schedule.time_at_step(i))
                         ]
                     ),
                     v,
@@ -761,6 +773,7 @@ class BoxSearch(Search):
                     [
                         encoder.encode_assumption(k, options, layer_idx=i)
                         for i in range(timestep + 1)
+                        if k.relevant_at_time(box.schedule.time_at_step(i))
                     ]
                 )
                 for k, v in assumptions.items()
@@ -1101,6 +1114,7 @@ class BoxSearch(Search):
                     "dreal_log_level": episode.config.dreal_log_level,
                     "dreal_mcts": episode.config.dreal_mcts,
                     "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in episode.problem.parameters] if episode.config.dreal_prefer_parameters else [],
+                    "random_seed": episode.config.random_seed,
                 }
             else:
                 opts = {}
@@ -1306,6 +1320,7 @@ class BoxSearch(Search):
                             handler(rval, episode.config, all_results)
                             if (
                                 "progress" in all_results
+                                and all_results["progress"] is not None
                                 and all_results["progress"].progress
                                 > last_progress
                             ):

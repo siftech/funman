@@ -1,0 +1,79 @@
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage{amsmath}
+\usepackage{}
+% \usepackage{mathbb}
+% \usepackage[amsmath]{ntheorem}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\usepackage{hyperref}
+% \usepackage[export]{adjustbox}
+\usepackage[caption=false]{subfig}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\newcommand{\funman}{FUNMAN}
+\newcommand{\region}{\bf X}
+\newcommand{\posregion}{{\region}^+}
+\newcommand{\negregion}{{\region}^-}
+\newcommand{\irrelevantregion}{{\region}^\oslash}
+\newcommand{\point}{{\bf x}}
+\newcommand{\model}{{\bf M}}
+\newcommand{\query}{{\bf Q}}
+\newcommand{\bounds}{{\bf B}}
+\newcommand{\parameters}{{\bf p}}
+\newcommand{\parameterbox}{{\bf p}^{[]}}
+\newcommand{\reals}{{\mathbb{R}}}
+
+% \setlength{\floatsep}{ 1.0pt plus 2.0pt minus 2.0pt}
+
+\title{\funman Abstraction}
+\author{Dan Bryce}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+We describe methods to stratify and abstract (de-stratify) Petrinets for compartmental models.  The motivation for abstracting a Petrinet is to reduce its size, which becomes exponential in the number of stratified variables.  Reducing the size of the model can have a significant impact on runtime, and it is possible to answer useful queries with the abstract model.  The following sections include a background (defining the models), a description of abstraction, an approach needed to bound the abstracted models (or to perform parameter synthesis directly in a simulator), and then a comparison of simulation results for several variations of a baseline model that applies stratification, bounding, and abstraction.  
+
+\section{Background}
+\input{background}
+
+\section{Abstraction}
+\input{abstraction}
+
+\section{Bounding Petrinets}
+\input{bounded-abstraction}
+
+\section{SIR Example Results}
+Results are available in this \href{https://github.com/siftech/funman/blob/sep-monthly-demo/notebooks/abstraction-bounding-demo.ipynb}{notebook}.
+% \input{results}
+
+% \section{Stratification Abstraction}
+% \input{stratify-example}
+
+% \section{Parameter Synthesis as Abstraction Refinement}
+
+% Parameter synthesis involves labeling regions of a parameter space as safe or unsafe.  This can be formulated as an expression:
+
+% \begin{align}
+%     \label{eqn:formulation1}\tag{F1}
+%      & \exists \posregion \subseteq \reals^n \forall \point \in \posregion. \model(\point) \wedge \query(\point)         & // & \text{true}  \\
+%     \label{eqn:formulation2}\tag{F2}
+%      & \exists \negregion \subseteq \reals^n \forall \point \in \negregion. \neg \model(\point) \vee \neg \query(\point) & // & \text{false}
+%     % \label{eqn:formulation3}
+%     %  & \exists \irrelevantregion \subseteq \reals^n \forall \point \in \irrelevantregion. \neg \model(\point)         & // & \text{irrelevant}
+% \end{align}
+% \noindent where each point $\point$ is an $n$-dimensional vector.  We refer to $\posregion$ and $\negregion$ as the respective ``true'' and ``false'' sets.  We call the pair $(\posregion, \negregion)$ the parameter space of $\model$ and $\query$.
+
+
+
+% In addition to the parameters comprising the parameter space, the model includes a set of state variables $V$.  The model defines (via ODE or PDE equations) the state $S$ at various points in time and space.  We augment the state to include the (constant or piece-wise constant) model parameters, as well as structural parameters describing the time horizon and step size.
+
+% An abstraction of the state space groups states into abstract states, and defines abstract transitions between abstract states.  An abstract transition between abstract states indicates that there exists at least one transition between states of the respective abstract states.  
+
+\end{document}

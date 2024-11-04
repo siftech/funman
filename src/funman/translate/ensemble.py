@@ -1,3 +1,4 @@
+import logging
 from numbers import Number
 from typing import Dict, Set
 
@@ -8,6 +9,8 @@ from pysmt.solvers.solver import Model as pysmtModel
 from funman.model.model import FunmanModel
 
 from .translate import Encoder, Encoding
+
+l = logging.getLogger(__name__)
 
 
 class EnsembleEncoder(Encoder):
@@ -43,6 +46,14 @@ class EnsembleEncoder(Encoder):
         }
 
         return And(list(model_steps.values()))
+
+    def encode_observation(
+        self, scenario: "AnalysisScenario", step: int, substitutions={}
+    ):
+        l.warning(
+            f"Ensemble model does not support observations.  Results omit observations."
+        )
+        return TRUE()
 
     def _submodel_substitution_map(
         self, model: FunmanModel, step=None, next_step=None

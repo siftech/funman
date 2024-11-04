@@ -442,6 +442,7 @@ class DRealNative(
         # self.context.config.use_worklist_fixpoint = True
         self.model = None
         self.log_level = dreal.LogLevel.OFF
+        self.config.random_seed = 0
         if "solver_options" in options:
             if (
                 "preferred" in options["solver_options"]
@@ -451,6 +452,10 @@ class DRealNative(
             if "dreal_precision" in options["solver_options"]:
                 self.config.precision = options["solver_options"][
                     "dreal_precision"
+                ]
+            if "random_seed" in options["solver_options"]:
+                self.config.random_seed = options["solver_options"][
+                    "random_seed"
                 ]
             if "dreal_log_level" in options["solver_options"]:
                 if options["solver_options"]["dreal_log_level"] == "debug":
@@ -600,8 +605,11 @@ class DRealNative(
         for sn in self.symbols:
             s = self.symbols[sn][0]
             if s.is_term():
-                v = self.get_value(self.symbols[sn])
-                assignment[s] = v
+                try:
+                    v = self.get_value(self.symbols[sn])
+                    assignment[s] = v
+                except ValueError as e:
+                    l.error(f"DRealNative.get_model(): {e}")
         return EagerModel(assignment=assignment, environment=self.environment)
 
     def get_value(self, symbol_pair):
@@ -615,7 +623,11 @@ class DRealNative(
             lb = self.model[item].lb()
             mid = (ub - lb) / 2.0
             mid = mid + lb
-            if not isinstance(mid, int) and (
+
+            if math.isnan(lb) and math.isnan(ub):
+                # Value was not assigned
+                return None
+            elif not isinstance(mid, int) and (
                 isinstance(ub, int) or isinstance(lb, int)
             ):
                 return Real(lb) if isinstance(lb, int) else Real(ub)

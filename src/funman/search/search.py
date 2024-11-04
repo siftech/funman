@@ -139,6 +139,7 @@ class SearchEpisode(BaseModel):
             },
             schedule=schedule,
         )
+        box._prioritize_entropy = self.config.prioritize_box_entropy
         box.bounds["timestep"] = Interval(
             lb=0, ub=len(schedule.timepoints) - 1, closed_upper_bound=True
         )

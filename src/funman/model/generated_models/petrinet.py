@@ -61,6 +61,13 @@ class Unit(BaseModel):
     expression_mathml: Optional[str] = None
 
 
+class Observable(BaseModel):
+    id: str
+    name: Optional[str] = None
+    expression: Optional[str] = None
+    expression_mathml: Optional[str] = None
+
+
 class Parameter(BaseModel):
     id: str
     name: Optional[str] = None
@@ -80,6 +87,7 @@ class OdeSemantics(BaseModel):
     rates: Optional[List[Rate]] = None
     initials: Optional[List[Initial]] = None
     parameters: Optional[List[Parameter]] = None
+    observables: Optional[List[Observable]] = None
     time: Optional[Time] = None
 
 

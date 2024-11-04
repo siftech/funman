@@ -1,5 +1,7 @@
 from typing import List, Optional, Union
 
+import numpy as np
+import pandas as pd
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -15,6 +17,7 @@ from funman.model.query import Query
 
 from .interval import Interval
 from .parameter import ModelParameter, StructureParameter
+from .representation import Timeseries
 
 
 class Constraint(BaseModel):
@@ -38,6 +41,11 @@ class Constraint(BaseModel):
     def check_name(self) -> "FUNMANConfig":
         self._escaped_name = self.name.replace(" ", "_").replace("-", "_")
         return self
+
+
+class TimeseriesConstraint(Constraint):
+    soft: bool = False
+    timeseries: Timeseries
 
 
 class TimedConstraint(Constraint):

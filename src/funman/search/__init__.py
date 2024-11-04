@@ -6,3 +6,5 @@ This subpackage contains the search algorithms used to run FUNMAN. It also defin
 from .search import *
 from .smt_check import *
 from .box_search import *
+
+# from .simulator_check import *

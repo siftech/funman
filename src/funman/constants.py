@@ -17,3 +17,7 @@ LABEL_FALSE: Literal["false"] = "false"
 LABEL_UNKNOWN: Literal["unknown"] = "unknown"
 LABEL_DROPPED: Literal["dropped"] = "dropped"
 Label = Literal["true", "false", "unknown", "dropped"]
+
+MODE_SMT: Literal["mode_smt"] = "mode_smt"
+MODE_ODEINT: Literal["mode_odeint"] = "mode_odeint"
+Mode = Literal["mode_smt", "mode_odeint"]

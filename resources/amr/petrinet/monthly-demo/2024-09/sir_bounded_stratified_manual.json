@@ -1,0 +1,539 @@
+{
+    "header": {
+        "name": "SIR Model",
+        "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.1/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "SIR model created by Ben, Micah, Brandon",
+        "model_version": "0.1"
+    },
+    "properties": null,
+    "model": {
+        "states": [
+            {
+                "id": "S_1_lb",
+                "name": "S_1_lb",
+                "description": "Number of individuals that are 'susceptible' to a disease infection Stratified wrt. 1 lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "S_2_lb",
+                "name": "S_2_lb",
+                "description": "Number of individuals that are 'susceptible' to a disease infection Stratified wrt. 2 lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_lb",
+                "name": "I_lb",
+                "description": "Number of individuals that are 'infected' by a disease lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R_lb",
+                "name": "R_lb",
+                "description": "Number of individuals that have 'recovered' from a disease infection lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "S_1_ub",
+                "name": "S_1_ub",
+                "description": "Number of individuals that are 'susceptible' to a disease infection Stratified wrt. 1 ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "S_2_ub",
+                "name": "S_2_ub",
+                "description": "Number of individuals that are 'susceptible' to a disease infection Stratified wrt. 2 ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_ub",
+                "name": "I_ub",
+                "description": "Number of individuals that are 'infected' by a disease ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R_ub",
+                "name": "R_ub",
+                "description": "Number of individuals that have 'recovered' from a disease infection ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": null
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "id": "inf_1_in_lb",
+                "input": [
+                    "S_1_lb"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_1_in_lb",
+                    "description": "Infective process between individuals lb",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_1_in_ub",
+                "input": [
+                    "S_1_ub"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_1_in_ub",
+                    "description": "Infective process between individuals lb",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_2_in_lb",
+                "input": [
+                    "S_2_lb"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_2_in_lb",
+                    "description": "Infective process between individuals lb",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_2_in_ub",
+                "input": [
+                    "S_2_ub"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_2_in_ub",
+                    "description": "Infective process between individuals lb",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "rec_out_lb",
+                "input": [
+                    "I_lb"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "rec_out_lb",
+                    "description": "Recovery process of a infected individual lb",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "rec_out_ub",
+                "input": [
+                    "I_ub"
+                ],
+                "output": [],
+                "grounding": null,
+                "properties": {
+                    "name": "rec_out_ub",
+                    "description": "Recovery process of a infected individual lb",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_1_out_lb",
+                "input": [],
+                "output": [
+                    "I_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_1_out_lb",
+                    "description": "Infective process between individuals ub",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_1_out_ub",
+                "input": [],
+                "output": [
+                    "I_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_1_out_ub",
+                    "description": "Infective process between individuals ub",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_2_out_lb",
+                "input": [],
+                "output": [
+                    "I_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_2_out_lb",
+                    "description": "Infective process between individuals ub",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "inf_2_out_ub",
+                "input": [],
+                "output": [
+                    "I_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "inf_2_out_ub",
+                    "description": "Infective process between individuals ub",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "rec_in_lb",
+                "input": [],
+                "output": [
+                    "R_lb"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "rec_in_lb",
+                    "description": "Recovery process of a infected individual ub",
+                    "grounding": null
+                }
+            },
+            {
+                "id": "rec_in_ub",
+                "input": [],
+                "output": [
+                    "R_ub"
+                ],
+                "grounding": null,
+                "properties": {
+                    "name": "rec_in_ub",
+                    "description": "Recovery process of a infected individual ub",
+                    "grounding": null
+                }
+            }
+        ]
+    },
+    "semantics": {
+        "ode": {
+            "rates": [
+                {
+                    "target": "inf_1_in_lb",
+                    "expression": "I_ub*S_1_lb*beta_1_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_1_in_ub",
+                    "expression": "I_lb*S_1_ub*beta_1_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_2_in_lb",
+                    "expression": "I_ub*S_2_lb*beta_2_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_2_in_ub",
+                    "expression": "I_lb*S_2_ub*beta_2_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_1_out_lb",
+                    "expression": "I_lb*S_1_lb*beta_1_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_1_out_ub",
+                    "expression": "I_ub*S_1_ub*beta_1_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_2_out_lb",
+                    "expression": "I_lb*S_2_lb*beta_2_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "inf_2_out_ub",
+                    "expression": "I_ub*S_2_ub*beta_2_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "rec_in_lb",
+                    "expression": "I_lb*gamma_ub",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "rec_in_ub",
+                    "expression": "I_ub*gamma_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "rec_out_lb",
+                    "expression": "I_lb*gamma_lb",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "rec_out_ub",
+                    "expression": "I_ub*gamma_ub",
+                    "expression_mathml": null
+                }
+            ],
+            "initials": [
+                {
+                    "target": "I_lb",
+                    "expression": "1",
+                    "expression_mathml": "<ci>I0</ci>"
+                },
+                {
+                    "target": "R_lb",
+                    "expression": "0",
+                    "expression_mathml": "<ci>R0</ci>"
+                },
+                {
+                    "target": "S_1_lb",
+                    "expression": "500.000000000000",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "S_2_lb",
+                    "expression": "500.000000000000",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "I_ub",
+                    "expression": "1",
+                    "expression_mathml": "<ci>I0</ci>"
+                },
+                {
+                    "target": "R_ub",
+                    "expression": "0",
+                    "expression_mathml": "<ci>R0</ci>"
+                },
+                {
+                    "target": "S_1_ub",
+                    "expression": "500.000000000000",
+                    "expression_mathml": null
+                },
+                {
+                    "target": "S_2_ub",
+                    "expression": "500.000000000000",
+                    "expression_mathml": null
+                }
+            ],
+            "parameters": [
+                {
+                    "id": "gamma_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.1,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><ci>day</ci></apply>"
+                    }
+                },
+                {
+                    "id": "beta_1_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.000314,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/(person*day)",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>person</ci><ci>day</ci></apply></apply>"
+                    }
+                },
+                {
+                    "id": "beta_2_lb",
+                    "name": null,
+                    "description": null,
+                    "value": 0.000316,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/(person*day)",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>person</ci><ci>day</ci></apply></apply>"
+                    }
+                },
+                {
+                    "id": "gamma_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.1,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><ci>day</ci></apply>"
+                    }
+                },
+                {
+                    "id": "beta_1_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.000314,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/(person*day)",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>person</ci><ci>day</ci></apply></apply>"
+                    }
+                },
+                {
+                    "id": "beta_2_ub",
+                    "name": null,
+                    "description": null,
+                    "value": 0.000316,
+                    "grounding": null,
+                    "distribution": null,
+                    "units": {
+                        "expression": "1/(person*day)",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>person</ci><ci>day</ci></apply></apply>"
+                    }
+                }
+            ],
+            "observables": [],
+            "time": {
+                "id": "t",
+                "units": {
+                    "expression": "day",
+                    "expression_mathml": "<ci>day</ci>"
+                }
+            }
+        },
+        "typing": null,
+        "span": null
+    },
+    "metadata": {
+        "processed_at": 1682964953,
+        "processed_by": "mit:process-node1",
+        "variable_statements": [
+            {
+                "id": "v0",
+                "variable": {
+                    "id": "v0",
+                    "name": "VE",
+                    "metadata": [
+                        {
+                            "type": "text_annotation",
+                            "value": " Vaccine Effectiveness"
+                        },
+                        {
+                            "type": "text_annotation",
+                            "value": " Vaccine Effectiveness"
+                        }
+                    ],
+                    "dkg_groundings": [],
+                    "column": [
+                        {
+                            "id": "9-2",
+                            "name": "new_persons_vaccinated",
+                            "dataset": {
+                                "id": "9",
+                                "name": "usa-vaccinations.csv",
+                                "metadata": "https://github.com/DARPA-ASKEM/program-milestones/blob/main/6-month-milestone/evaluation/scenario_3/ta_1/google-health-data/usa-vaccinations.csv"
+                            }
+                        },
+                        {
+                            "id": "9-3",
+                            "name": "cumulative_persons_vaccinated",
+                            "dataset": {
+                                "id": "9",
+                                "name": "usa-vaccinations.csv",
+                                "metadata": "https://github.com/DARPA-ASKEM/program-milestones/blob/main/6-month-milestone/evaluation/scenario_3/ta_1/google-health-data/usa-vaccinations.csv"
+                            }
+                        }
+                    ],
+                    "paper": {
+                        "id": "COVID-19 Vaccine Effectiveness by Product and Timing in New York State",
+                        "file_directory": "https://www.medrxiv.org/content/10.1101/2021.10.08.21264595v1",
+                        "doi": "10.1101/2021.10.08.21264595"
+                    },
+                    "equations": []
+                },
+                "metadata": [],
+                "provenance": {
+                    "method": "MIT annotation",
+                    "description": "text, dataset, formula annotation (chunwei@mit.edu)"
+                }
+            }
+        ]
+    }
+}

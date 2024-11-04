@@ -63,7 +63,7 @@ class Storage:
             #     raise FunmanException(f"Id {id} was already set to a value.")
             self.results[id] = result
             with open(self.path / f"{id}.json", "w") as f:
-                f.write(result.model_dump_json(by_alias=True))
+                f.write(result.model_dump_json(indent=4, by_alias=True))
 
     def get_result(self, id: str) -> FunmanResults:
         with self.lock:

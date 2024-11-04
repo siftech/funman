@@ -36,6 +36,7 @@ class Box(BaseModel):
     corner_points: List[Point] = []
     points: List[Point] = []
     _points_at_step: Dict[Timestep, List[Point]] = {}
+    _prioritize_entropy: bool = False
 
     @staticmethod
     def from_point(
@@ -206,7 +207,9 @@ class Box(BaseModel):
         """
         bounds = {p: None for p in self.bounds.keys()}
         for p in bounds:
-            if self.bounds[p].meets(other.bounds[p]):
+            if self.bounds[p].meets(other.bounds[p]) or other.bounds[p].meets(
+                self.bounds[p]
+            ):
                 bounds[p] = Interval(
                     lb=min(self.bounds[p].lb, other.bounds[p].lb),
                     ub=max(self.bounds[p].ub, other.bounds[p].ub),
@@ -242,7 +245,10 @@ class Box(BaseModel):
                         continue
 
                     if (
-                        sorted[i].bounds[p].meets(self.bounds[p])
+                        (
+                            sorted[i].bounds[p].meets(self.bounds[p])
+                            or self.bounds[p].meets(sorted[i].bounds[p])
+                        )
                         and sorted[i] not in disqualified_set
                         and sorted[i].schedule == self.schedule
                     ):
@@ -264,23 +270,16 @@ class Box(BaseModel):
                         if sorted[i] in equals_set:
                             equals_set.remove(sorted[i])
                         disqualified_set.add(sorted[i])
-                    if sorted[i].bounds[p].disjoint(
-                        self.bounds[p]
-                    ) and not sorted[i].bounds[p].meets(self.bounds[p]):
+                    if sorted[i].bounds[p].disjoint(self.bounds[p]) and not (
+                        sorted[i].bounds[p].meets(self.bounds[p])
+                        or self.bounds[p].meets(sorted[i].bounds[p])
+                    ):
                         break  # Because sorted, no further checking needed
         if len(boxes.keys()) == 1:  # 1D
             candidates = meets_set
         else:  # > 1D
             candidates = meets_set.intersection(equals_set)
         return candidates
-
-    def _copy(self):
-        c = Box(
-            bounds={
-                p: Interval(lb=b.lb, ub=b.ub) for p, b in self.bounds.items()
-            }
-        )
-        return c
 
     def point_entropy(self, bias=1.0) -> float:
         """
@@ -305,51 +304,69 @@ class Box(BaseModel):
             H = -(p * log2(p)) - ((1.0 - p) * log2(1.0 - p))
         return H
 
+    def _lt_base_(self, other):
+        # print("b")
+        s_t = len(self.true_points())
+        o_t = len(other.true_points())
+
+        s_ts = self.timestep().lb
+        o_ts = other.timestep().lb
+
+        s_nv = self.normalized_volume()
+        o_nv = other.normalized_volume()
+
+        if s_t == o_t:
+            if s_ts == o_ts:
+                return s_nv > o_nv
+            else:
+                return s_ts > o_ts
+        else:
+            return s_t > o_t
+
+    def _lt_entropy_(self, other):
+        # print("e")
+
+        s_t = len(self.true_points())
+        o_t = len(other.true_points())
+
+        s_et = (1.0 - self.point_entropy()) * (s_t + 1)
+        o_et = (1.0 - other.point_entropy()) * (o_t + 1)
+
+        s_nv = self.normalized_volume()
+        o_nv = other.normalized_volume()
+
+        s_ts = self.timestep().lb
+        o_ts = other.timestep().lb
+        # return s_t < o_t
+        # if self.timestep().lb == other.timestep().lb:
+        #     if s_t == o_t:
+        if s_et == o_et:
+            if s_ts == o_ts:
+                return s_nv > o_nv
+            else:
+                return s_ts > o_ts
+        else:
+            return s_et > o_et
+
+        # if s_t == o_t:
+        #     if s_nv == o_nv:
+        #         return s_ts > o_ts
+        #     else:
+        #         return s_nv > o_nv
+        # else:
+        #     return s_t > o_t
+        #     else:
+        #         return s_t > o_t
+        # else:
+        #     return self.timestep().lb > other.timestep().lb
+
     def __lt__(self, other):
         if isinstance(other, Box):
-            # prefer boxes with true points
-            # prefer boxes later in time
-            # prefer boxes with smaller width
-            # s_t = (
-            #     float(max(len(self.true_points()), len(self.false_points())))
-            #     / float(len(self.points))
-            #     if len(self.points) > 0
-            #     else 0.0
-            # )
-            # o_t = (
-            #     float(max(len(other.true_points()), len(other.false_points())))
-            #     / float(len(other.points))
-            #     if len(other.points) > 0
-            #     else 0.0
-            # )
-            # s_t = (
-            #     2.0 * (1.0 - self.point_entropy())
-            #     + 0.5 * (len(self.true_points()))
-            #     + 0.5 * (len(self.false_points()))
-            # )
-            # o_t = (
-            #     2.0 * (1.0 - other.point_entropy())
-            #     + 0.5 * (len(other.true_points()))
-            #     + 0.5 * (len(other.false_points()))
-            # )
-            s_t = (1.0 - self.point_entropy()) * (len(self.true_points()) + 1)
-            o_t = (1.0 - other.point_entropy()) * (
-                len(other.true_points()) + 1
+            return (
+                self._lt_entropy_(other)
+                if self._prioritize_entropy
+                else self._lt_base_(other)
             )
-            if self.timestep().lb == other.timestep().lb:
-                # s_residual_volume = self.timestep().width()*self.normalized_volume()*Decimal(s_t)
-                # o_residual_volume = other.timestep().width()*other.normalized_volume()*Decimal(o_t)
-                # return s_residual_volume > o_residual_volume
-                if s_t == o_t:
-
-                    # if s_t == o_t:
-                    return self.normalized_volume() > other.normalized_volume()
-                    # else:
-                    #     return s_t > o_t
-                else:
-                    return s_t > o_t
-            else:
-                return self.timestep().lb > other.timestep().lb
         else:
             raise Exception(f"Cannot compare __lt__() Box to {type(other)}")
 

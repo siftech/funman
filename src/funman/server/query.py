@@ -15,6 +15,7 @@ from funman.model.decapode import DecapodeModel
 from funman.model.encoded import EncodedModel
 from funman.model.ensemble import EnsembleModel
 from funman.model.generated_models.petrinet import Model as GeneratedPetriNet
+from funman.model.model import is_observable, is_state_variable
 from funman.model.petrinet import GeneratedPetriNetModel, PetrinetModel
 from funman.model.query import QueryAnd, QueryFunction, QueryLE, QueryTrue
 from funman.model.regnet import GeneratedRegnetModel, RegnetModel
@@ -173,6 +174,7 @@ class FunmanResultsTiming(BaseModel):
     solver_time: Optional[timedelta] = None
     encoding_time: Optional[timedelta] = None
     progress_timeseries: List[Tuple[datetime, float]] = []
+    additional_time: Dict[str, timedelta] = {}
 
     def update_progress(
         self, progress, granularity=timedelta(seconds=1)
@@ -195,7 +197,12 @@ class FunmanResultsTiming(BaseModel):
 
     def finalize(self):
         """Calculate total time"""
-        self.total_time = self.end_time - self.start_time
+        try:
+            self.total_time = self.end_time - self.start_time
+        except Exception as e:
+            l.exception(
+                f"Exception in FunmanResultsTiming:finalize() start_time: {self.start_time} end_time: {self.end_time}"
+            )
 
 
 class FunmanResults(BaseModel):
@@ -236,7 +243,7 @@ class FunmanResults(BaseModel):
 
         """
         if not isinstance(self.model, GeneratedPetriNetModel):
-            raise NotImplemented(
+            raise NotImplementedError(
                 f"Cannot contract model of type {type(self.model)}"
             )
 
@@ -278,9 +285,18 @@ class FunmanResults(BaseModel):
         self.progress.progress = coverage_of_search_space
         self.progress.coverage_of_search_space = coverage_of_search_space
         self.progress.coverage_of_representable_space = coverage_of_repr_space
-        self.timing.update_progress(self.progress.coverage_of_search_space)
 
-        self.contract_model()
+        try:
+            self.timing.update_progress(self.progress.coverage_of_search_space)
+        except Exception as e:
+            l.exception(f"Unable to update progress due to exception: {e}")
+
+        try:
+            self.contract_model()
+        except NotImplementedError as e:
+            l.info(
+                f"Bypassing output of contracted model because it is not implmented for this model type: {type(self.model)}"
+            )
 
         return self.progress
 
@@ -324,6 +340,9 @@ class FunmanResults(BaseModel):
         scenario = FunmanWorkUnit(
             id=self.id, model=self.model, request=self.request
         ).to_scenario()
+
+        # Needed to extract
+        scenario._process_parameters()
         return scenario
 
     def point_parameters(
@@ -332,7 +351,11 @@ class FunmanResults(BaseModel):
         if scenario is None:
             scenario = self._scenario()
         parameters = scenario.model_parameters()
-        return {p: point.values[p.name] for p in parameters}
+        return {
+            p: point.values[p.name]
+            for p in parameters
+            if p.name in point.values
+        }
 
     def dataframe(
         self, points: List[Point], interpolate="linear", max_time=None
@@ -356,7 +379,10 @@ class FunmanResults(BaseModel):
             fails if scenario is not consistent
         """
         scenario = self._scenario()
-        to_plot = scenario.model._state_var_names()
+        to_plot = (
+            scenario.model._state_var_names()
+            + scenario.model._observable_names()
+        )
         time_var = scenario.model._time_var()
         if time_var:
             to_plot += ["timer_t"]
@@ -365,6 +391,12 @@ class FunmanResults(BaseModel):
         for i, point in enumerate(points):
             timeseries = self.symbol_timeseries(point, to_plot)
             df = pd.DataFrame.from_dict(timeseries)
+
+            if interpolate:
+                df = df.infer_objects(copy=False).interpolate(
+                    method=interpolate
+                )
+
             df["id"] = i
             parameters = self.point_parameters(point=point, scenario=scenario)
             for p, v in parameters.items():
@@ -375,13 +407,12 @@ class FunmanResults(BaseModel):
                 ):
                     df[p.name] = v
             df["label"] = point.label
+            df["label"] = df["label"].astype(str)
             # if max_time:
             # if time_var:
             #     df = df.at[max_time, :] = None
             # df = df.reindex(range(max_time+1), fill_value=None)
 
-            if interpolate:
-                df = df.interpolate(method=interpolate)
             if time_var and any("timer_t" in x for x in df.columns):
                 df = (
                     df.rename(columns={"timer_t": "time"})
@@ -411,13 +442,17 @@ class FunmanResults(BaseModel):
         timestep = point.timestep()
         max_t = point.schedule.timepoints[timestep]
 
-        a_series["index"] = list(range(0, max_t + 1))
+        a_series["index"] = list(range(0, int(max_t) + 1))
         for var, tps in series.items():
-            vals = [None] * (int(max_t) + 1)
-            for t, v in tps.items():
-                if t.isdigit() and int(t) <= int(max_t):
-                    vals[int(t)] = v
-            a_series[var] = vals
+
+            if isinstance(tps, dict):
+                vals = [None] * (int(max_t) + 1)
+                for t, v in tps.items():
+                    if t.isdigit() and int(t) <= int(max_t):
+                        vals[int(t)] = v
+                a_series[var] = vals
+            else:
+                a_series[var] = [tps] * (int(max_t) + 1)
         return a_series
 
     def symbol_values(
@@ -443,30 +478,43 @@ class FunmanResults(BaseModel):
         vals = {}
         for var in vars:
             vals[var] = {}
-            for t in vars[var]:
-                try:
-                    value = point.values[vars[var][t]]
-                    vals[var][t] = float(value)
-                except OverflowError as e:
-                    l.warning(e)
+            if isinstance(vars[var], dict):
+                for t in vars[var]:
+                    try:
+                        value = point.values[vars[var][t]]
+                        vals[var][t] = float(value)
+                    except OverflowError as e:
+                        l.warning(e)
+            else:
+                vals[var] = point.values[vars[var]]
         return vals
 
     def _symbols(
         self, point: Point, variables: List[str]
     ) -> Dict[str, Dict[str, str]]:
         symbols = {}
-        # vars.sort(key=lambda x: x.symbol_name())
         for var in point.values:
-            if any(f"{v}_" in var for v in variables):
+            if is_state_variable(var, self.model) or is_observable(
+                var, self.model
+            ):
                 var_name, timepoint = self._split_symbol(var)
                 if timepoint:
                     if var_name not in symbols:
                         symbols[var_name] = {}
                     symbols[var_name][timepoint] = var
+                elif timepoint is None:
+                    # Could be an observable with not time index
+                    if var_name not in symbols:
+                        symbols[var_name] = {}
+                    symbols[var_name] = var
         return symbols
 
     def _split_symbol(self, symbol: str) -> Tuple[str, str]:
-        s, t = symbol.rsplit("_", 1)
+        try:
+            s, t = symbol.rsplit("_", 1)
+        except ValueError:
+            s = symbol
+            t = None
         return s, t
 
     def plot_trajectories(self, variable: str, num: int = 200):
@@ -542,7 +590,9 @@ class FunmanResults(BaseModel):
                         **kwargs,
                     )
                 else:
+                    # data = [state_vars[c].tolist() for c in state_vars.columns]
                     ax = plt.plot(
+                        # data, #
                         state_vars,
                         label=label,
                         marker=label_marker[label],

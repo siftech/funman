@@ -38,15 +38,15 @@ ARG AUTOMATES_COMMIT_TAG
 #     && git checkout ${AUTOMATES_COMMIT_TAG}
 # RUN pip install -e automates
 
-RUN pip install --no-cache-dir z3-solver
+RUN pip install --no-cache-dir z3-solver==4.12.6
 RUN pip install --no-cache-dir graphviz
-RUN pip install --no-cache-dir pydantic>=2.3.0
+RUN pip install --no-cache-dir pydantic
 RUN pip install --no-cache-dir pydantic-settings
-RUN pip install --no-cache-dir fastapi>=0.103.1
+RUN pip install --no-cache-dir fastapi
 
 RUN pip install --no-cache-dir --upgrade setuptools pip
 RUN pip install --no-cache-dir wheel
 
-RUN pip install /dreal4/dreal-*.whl
+RUN pip install /dreal4/dreal-4.21.6.2-cp38-none-manylinux_$(ldd --version | grep '^ldd' | sed -E 's/^ldd.*([0-9]+)\.([0-9]+)$/\1_\2/')_$(arch).whl
 
 CMD [ "/bin/bash" ]

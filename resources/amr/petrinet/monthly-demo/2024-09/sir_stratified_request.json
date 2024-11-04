@@ -1,0 +1,27 @@
+{
+  "constraints": [],
+  "parameters": [
+    
+  ],
+  "structure_parameters": [
+    {
+      "name": "schedules",
+      "schedules": [
+        {
+          "timepoints": [
+            0,
+            1,
+            2
+          ]
+        }
+      ]
+    }
+  ],
+  "config": {
+    "tolerance": 1e-2,
+    "normalization_constant": 1001,
+    "normalize": false,
+    "use_compartmental_constraints": true,
+    "mode": "mode_odeint"
+  }
+}

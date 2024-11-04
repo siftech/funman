@@ -1,0 +1,93 @@
+{
+    "constraints": [
+        {
+            "name": "ibounds",
+            "variable": "I",
+            "interval": {
+                "lb": 0.2,
+                "ub": 0.4
+            },
+            "timepoints": {
+                "lb": 35,
+                "ub": 40,
+                "closed_upper_bound": true
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "beta",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.3
+            },
+            "label": "all"
+        },
+        {
+            "name": "gamma",
+            "interval": {
+                "lb": 0.01,
+                "ub": 0.3
+            },
+            "label": "all"
+        },
+        {
+            "name": "S0",
+            "interval": {
+                "lb": 0.990,
+                "ub": 0.990
+            },
+            "label": "any"
+        },
+        {
+            "name": "I0",
+            "interval": {
+                "lb": 0.010,
+                "ub": 0.010
+            },
+            "label": "any"
+        },
+        {
+            "name": "R0",
+            "interval": {
+                "lb": 0,
+                "ub": 0
+            },
+            "label": "any"
+        },
+        {
+            "name": "N",
+            "interval": {
+                "lb": 1,
+                "ub": 1
+            },
+            "label": "any"
+        }
+    ],
+    "structure_parameters": [
+        {
+            "name": "num_steps",
+            "interval": {
+                "lb": 8,
+                "ub": 8
+            },
+            "label": "all"
+        },
+        {
+            "name": "step_size",
+            "interval": {
+                "lb": 5,
+                "ub": 5
+            },
+            "label": "all"
+        }
+    ],
+    "config": {
+        "tolerance": 1e-2,
+        "normalization_constant": 1,
+        "use_compartmental_constraints": true,
+        "prioritize_box_entropy": false,
+        "dreal_precision": 1,
+        "normalize": false
+    }
+}

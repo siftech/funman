@@ -1,0 +1,1065 @@
+{
+    "header": {
+        "name": "Evaluation Scenario 1. Part 1 (ii) Masking type 3",
+        "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.5/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "Evaluation Scenario 1. Part 1 (ii) Masking type 3",
+        "model_version": "0.1",
+        "properties": {}
+    },
+    "model": {
+        "states": [
+            {
+                "id": "S_lb",
+                "name": "S_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_compliant_lb",
+                "name": "I_compliant_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_noncompliant_lb",
+                "name": "I_noncompliant_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "E_compliant_lb",
+                "name": "E_compliant_lb",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "0000154"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "E_noncompliant_lb",
+                "name": "E_noncompliant_lb",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "0000154"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_compliant_ub",
+                "name": "I_compliant_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "masking": "noncompliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "I_noncompliant_ub",
+                "name": "I_noncompliant_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "masking": "noncompliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "S_ub",
+                "name": "S_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000514"
+                    },
+                    "modifiers": {
+                        "masking": "noncompliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "E_compliant_ub",
+                "name": "E_compliant_ub",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "0000154"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "E_noncompliant_ub",
+                "name": "E_noncompliant_ub",
+                "grounding": {
+                    "identifiers": {
+                        "apollosv": "0000154"
+                    },
+                    "modifiers": {
+                        "masking": "compliant"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R_lb",
+                "name": "R_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "R_ub",
+                "name": "R_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000592"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "H_lb",
+                "name": "H_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "property": "ncit:C25179"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "H_ub",
+                "name": "H_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ido": "0000511"
+                    },
+                    "modifiers": {
+                        "property": "ncit:C25179"
+                    }
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D_lb",
+                "name": "D_lb",
+                "grounding": {
+                    "identifiers": {
+                        "ncit": "C28554"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            },
+            {
+                "id": "D_ub",
+                "name": "D_ub",
+                "grounding": {
+                    "identifiers": {
+                        "ncit": "C28554"
+                    },
+                    "modifiers": {}
+                },
+                "units": {
+                    "expression": "person",
+                    "expression_mathml": "<ci>person</ci>"
+                }
+            }
+        ],
+        "transitions": [
+            {
+                "id": "t1_lb",
+                "input": [
+                    "I_compliant_ub",
+                    "S_ub"
+                ],
+                "output": [
+                    "I_compliant_ub",
+                    "E_compliant_lb"
+                ],
+                "properties": {
+                    "name": "t1_lb"
+                }
+            },
+            {
+                "id": "t1_ub",
+                "input": [
+                    "I_compliant_lb",
+                    "S_lb"
+                ],
+                "output": [
+                    "I_compliant_lb",
+                    "E_compliant_ub"
+                ],
+                "properties": {
+                    "name": "t1_ub"
+                }
+            },
+            {
+                "id": "t2_lb",
+                "input": [
+                    "I_noncompliant_ub",
+                    "S_ub"
+                ],
+                "output": [
+                    "I_noncompliant_ub",
+                    "E_compliant_lb"
+                ],
+                "properties": {
+                    "name": "t2_lb"
+                }
+            },
+            {
+                "id": "t2_ub",
+                "input": [
+                    "I_noncompliant_lb",
+                    "S_lb"
+                ],
+                "output": [
+                    "I_noncompliant_lb",
+                    "E_compliant_ub"
+                ],
+                "properties": {
+                    "name": "t2_ub"
+                }
+            },
+            {
+                "id": "t3_lb",
+                "input": [
+                    "I_noncompliant_ub",
+                    "S_ub"
+                ],
+                "output": [
+                    "I_noncompliant_ub",
+                    "E_noncompliant_lb"
+                ],
+                "properties": {
+                    "name": "t3_lb"
+                }
+            },
+            {
+                "id": "t3_ub",
+                "input": [
+                    "I_noncompliant_lb",
+                    "S_lb"
+                ],
+                "output": [
+                    "I_noncompliant_lb",
+                    "E_noncompliant_ub"
+                ],
+                "properties": {
+                    "name": "t3_ub"
+                }
+            },
+            {
+                "id": "t4_lb",
+                "input": [
+                    "I_compliant_ub",
+                    "S_ub"
+                ],
+                "output": [
+                    "I_compliant_ub",
+                    "E_noncompliant_lb"
+                ],
+                "properties": {
+                    "name": "t4_lb"
+                }
+            },
+            {
+                "id": "t4_ub",
+                "input": [
+                    "I_compliant_lb",
+                    "S_lb"
+                ],
+                "output": [
+                    "I_compliant_lb",
+                    "E_noncompliant_ub"
+                ],
+                "properties": {
+                    "name": "t4_ub"
+                }
+            },
+            {
+                "id": "t5_lb",
+                "input": [
+                    "E_compliant_ub"
+                ],
+                "output": [
+                    "I_compliant_lb"
+                ],
+                "properties": {
+                    "name": "t5_lb"
+                }
+            },
+            {
+                "id": "t5_ub",
+                "input": [
+                    "E_compliant_lb"
+                ],
+                "output": [
+                    "I_compliant_ub"
+                ],
+                "properties": {
+                    "name": "t5_ub"
+                }
+            },
+            {
+                "id": "t6_lb",
+                "input": [
+                    "E_noncompliant_ub"
+                ],
+                "output": [
+                    "I_noncompliant_lb"
+                ],
+                "properties": {
+                    "name": "t6_lb"
+                }
+            },
+            {
+                "id": "t6_ub",
+                "input": [
+                    "E_noncompliant_lb"
+                ],
+                "output": [
+                    "I_noncompliant_ub"
+                ],
+                "properties": {
+                    "name": "t6_ub"
+                }
+            },
+            {
+                "id": "t7_lb",
+                "input": [
+                    "I_compliant_ub"
+                ],
+                "output": [
+                    "R_lb"
+                ],
+                "properties": {
+                    "name": "t7_lb"
+                }
+            },
+            {
+                "id": "t7_ub",
+                "input": [
+                    "I_compliant_lb"
+                ],
+                "output": [
+                    "R_ub"
+                ],
+                "properties": {
+                    "name": "t7_ub"
+                }
+            },
+            {
+                "id": "t8_lb",
+                "input": [
+                    "I_noncompliant_ub"
+                ],
+                "output": [
+                    "R_lb"
+                ],
+                "properties": {
+                    "name": "t8_lb"
+                }
+            },
+            {
+                "id": "t8_ub",
+                "input": [
+                    "I_noncompliant_lb"
+                ],
+                "output": [
+                    "R_ub"
+                ],
+                "properties": {
+                    "name": "t8_ub"
+                }
+            },
+            {
+                "id": "t9_lb",
+                "input": [
+                    "I_compliant_ub"
+                ],
+                "output": [
+                    "H_lb"
+                ],
+                "properties": {
+                    "name": "t9_lb"
+                }
+            },
+            {
+                "id": "t9_ub",
+                "input": [
+                    "I_compliant_lb"
+                ],
+                "output": [
+                    "H_ub"
+                ],
+                "properties": {
+                    "name": "t9_ub"
+                }
+            },
+            {
+                "id": "t10_lb",
+                "input": [
+                    "I_noncompliant_ub"
+                ],
+                "output": [
+                    "H_lb"
+                ],
+                "properties": {
+                    "name": "t10_lb"
+                }
+            },
+            {
+                "id": "t10_ub",
+                "input": [
+                    "I_noncompliant_lb"
+                ],
+                "output": [
+                    "H_ub"
+                ],
+                "properties": {
+                    "name": "t10_ub"
+                }
+            },
+            {
+                "id": "t11_lb",
+                "input": [
+                    "H_ub"
+                ],
+                "output": [
+                    "R_lb"
+                ],
+                "properties": {
+                    "name": "t11_lb"
+                }
+            },
+            {
+                "id": "t11_ub",
+                "input": [
+                    "H_lb"
+                ],
+                "output": [
+                    "R_ub"
+                ],
+                "properties": {
+                    "name": "t11_ub"
+                }
+            },
+            {
+                "id": "t12_lb",
+                "input": [
+                    "H_lb"
+                ],
+                "output": [
+                    "D_lb"
+                ],
+                "properties": {
+                    "name": "t12_lb"
+                }
+            },
+            {
+                "id": "t12_ub",
+                "input": [
+                    "H_ub"
+                ],
+                "output": [
+                    "D_ub"
+                ],
+                "properties": {
+                    "name": "t12_ub"
+                }
+            },
+            {
+                "id": "t15_lb",
+                "input": [
+                    "E_noncompliant_ub"
+                ],
+                "output": [
+                    "E_compliant_lb"
+                ],
+                "properties": {
+                    "name": "t15_lb"
+                }
+            },
+            {
+                "id": "t15_ub",
+                "input": [
+                    "E_noncompliant_lb"
+                ],
+                "output": [
+                    "E_compliant_ub"
+                ],
+                "properties": {
+                    "name": "t15_ub"
+                }
+            },
+            {
+                "id": "t16_lb",
+                "input": [
+                    "E_compliant_ub"
+                ],
+                "output": [
+                    "E_noncompliant_lb"
+                ],
+                "properties": {
+                    "name": "t16_lb"
+                }
+            },
+            {
+                "id": "t16_ub",
+                "input": [
+                    "E_compliant_lb"
+                ],
+                "output": [
+                    "E_noncompliant_ub"
+                ],
+                "properties": {
+                    "name": "t16_ub"
+                }
+            },
+            {
+                "id": "t17_lb",
+                "input": [
+                    "I_noncompliant_ub"
+                ],
+                "output": [
+                    "I_compliant_lb"
+                ],
+                "properties": {
+                    "name": "t17_lb"
+                }
+            },
+            {
+                "id": "t17_ub",
+                "input": [
+                    "I_noncompliant_lb"
+                ],
+                "output": [
+                    "I_compliant_ub"
+                ],
+                "properties": {
+                    "name": "t17_ub"
+                }
+            },
+            {
+                "id": "t18_lb",
+                "input": [
+                    "I_compliant_ub"
+                ],
+                "output": [
+                    "I_noncompliant_lb"
+                ],
+                "properties": {
+                    "name": "t18_lb"
+                }
+            },
+            {
+                "id": "t18_ub",
+                "input": [
+                    "I_compliant_lb"
+                ],
+                "output": [
+                    "I_noncompliant_ub"
+                ],
+                "properties": {
+                    "name": "t18_ub"
+                }
+            }
+        ]
+    },
+    "semantics": {
+        "ode": {
+            "rates": [
+                {
+                    "target": "t1_lb",
+                    "expression": "0",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t1_ub",
+                    "expression": "I_compliant_ub*S_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t2_lb",
+                    "expression": "I_noncompliant_lb*S_lb*beta*(-c_m_ub*eps_m_ub + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t2_ub",
+                    "expression": "I_noncompliant_ub*S_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t4_lb",
+                    "expression": "0",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t4_ub",
+                    "expression": "I_compliant_ub*S_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t3_lb",
+                    "expression": "I_noncompliant_lb*S_lb*beta*(-c_m_ub*eps_m_ub + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_lb</ci><ci>S_lb</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_ub</ci><ci>eps_m_ub</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t3_ub",
+                    "expression": "I_noncompliant_ub*S_ub*beta*(-c_m_lb*eps_m_lb + 1)/N",
+                    "expression_mathml": "<apply><divide/><apply><times/><ci>I_ub</ci><ci>S_ub</ci><ci>beta</ci><apply><plus/><apply><minus/><apply><times/><ci>c_m_lb</ci><ci>eps_m_lb</ci></apply></apply><cn>1</cn></apply></apply><ci>N</ci></apply>"
+                },
+                {
+                    "target": "t5_lb",
+                    "expression": "E_compliant_lb*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E_lb</ci><ci>r_E_to_I</ci></apply>"
+                },
+                {
+                    "target": "t5_ub",
+                    "expression": "E_compliant_ub*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E_ub</ci><ci>r_E_to_I</ci></apply>"
+                },
+                {
+                    "target": "t6_lb",
+                    "expression": "E_noncompliant_lb*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E_lb</ci><ci>r_E_to_I</ci></apply>"
+                },
+                {
+                    "target": "t6_ub",
+                    "expression": "E_noncompliant_ub*r_E_to_I",
+                    "expression_mathml": "<apply><times/><ci>E_ub</ci><ci>r_E_to_I</ci></apply>"
+                },
+                {
+                    "target": "t7_lb",
+                    "expression": "I_compliant_lb*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I_lb</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                },
+                {
+                    "target": "t7_ub",
+                    "expression": "I_compliant_ub*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I_ub</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                },
+                {
+                    "target": "t8_lb",
+                    "expression": "I_noncompliant_lb*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I_lb</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                },
+                {
+                    "target": "t8_ub",
+                    "expression": "I_noncompliant_ub*p_I_to_R*r_I_to_R",
+                    "expression_mathml": "<apply><times/><ci>I_ub</ci><ci>p_I_to_R</ci><ci>r_I_to_R</ci></apply>"
+                },
+                {
+                    "target": "t9_lb",
+                    "expression": "I_compliant_lb*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I_lb</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                },
+                {
+                    "target": "t9_ub",
+                    "expression": "I_compliant_ub*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I_ub</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                },
+                {
+                    "target": "t10_lb",
+                    "expression": "I_noncompliant_lb*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I_lb</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                },
+                {
+                    "target": "t10_ub",
+                    "expression": "I_noncompliant_ub*p_I_to_H*r_I_to_H",
+                    "expression_mathml": "<apply><times/><ci>I_ub</ci><ci>p_I_to_H</ci><ci>r_I_to_H</ci></apply>"
+                },
+                {
+                    "target": "t11_lb",
+                    "expression": "H_lb*p_H_to_R*r_H_to_R",
+                    "expression_mathml": "<apply><times/><ci>H_lb</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
+                },
+                {
+                    "target": "t11_ub",
+                    "expression": "H_ub*p_H_to_R*r_H_to_R",
+                    "expression_mathml": "<apply><times/><ci>H_ub</ci><ci>p_H_to_R</ci><ci>r_H_to_R</ci></apply>"
+                },
+                {
+                    "target": "t12_lb",
+                    "expression": "H_lb*p_H_to_D*r_H_to_D",
+                    "expression_mathml": "<apply><times/><ci>H</ci><ci>p_H_to_D</ci><ci>r_H_to_D</ci></apply>"
+                },
+                {
+                    "target": "t12_ub",
+                    "expression": "H_ub*p_H_to_D*r_H_to_D",
+                    "expression_mathml": "<apply><times/><ci>H_ub</ci><ci>p_H_to_D</ci><ci>r_H_to_D</ci></apply>"
+                },
+                {
+                    "target": "t15_lb",
+                    "expression": "E_noncompliant_ub*p_noncompliant_compliant",
+                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
+                },
+                {
+                    "target": "t15_ub",
+                    "expression": "E_noncompliant_lb*p_noncompliant_compliant",
+                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
+                },
+                {
+                    "target": "t16_lb",
+                    "expression": "E_compliant_ub*p_compliant_noncompliant",
+                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
+                },
+                {
+                    "target": "t16_ub",
+                    "expression": "E_compliant_lb*p_compliant_noncompliant",
+                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
+                },
+                {
+                    "target": "t17_lb",
+                    "expression": "I_noncompliant_ub*p_noncompliant_compliant",
+                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
+                },
+                {
+                    "target": "t17_ub",
+                    "expression": "I_noncompliant_lb*p_noncompliant_compliant",
+                    "expression_mathml": "<apply><times/><ci>I_noncompliant</ci><ci>p_noncompliant_compliant</ci></apply>"
+                },
+                {
+                    "target": "t18_lb",
+                    "expression": "I_compliant_ub*p_compliant_noncompliant",
+                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
+                },
+                {
+                    "target": "t18_ub",
+                    "expression": "I_compliant_lb*p_compliant_noncompliant",
+                    "expression_mathml": "<apply><times/><ci>I_compliant</ci><ci>p_compliant_noncompliant</ci></apply>"
+                }
+            ],
+            "initials": [
+                {
+                    "target": "S_lb",
+                    "expression": "19339995.00000000",
+                    "expression_mathml": "<cn>9669997.5</cn>"
+                },
+                {
+                    "target": "I_compliant_lb",
+                    "expression": "2.00000000000000",
+                    "expression_mathml": "<cn>2.0</cn>"
+                },
+                {
+                    "target": "I_noncompliant_lb",
+                    "expression": "2.00000000000000",
+                    "expression_mathml": "<cn>2.0</cn>"
+                },
+                {
+                    "target": "E_compliant_lb",
+                    "expression": "0.500000000000000",
+                    "expression_mathml": "<cn>1.0</cn>"
+                },
+                {
+                    "target": "E_noncompliant_lb",
+                    "expression": "0.500000000000000",
+                    "expression_mathml": "<cn>1.0</cn>"
+                },
+                {
+                    "target": "R_lb",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "H_lb",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "D_lb",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "S_ub",
+                    "expression": "19339995.00000000",
+                    "expression_mathml": "<cn>9669997.5</cn>"
+                },
+                {
+                    "target": "I_compliant_ub",
+                    "expression": "2.00000000000000",
+                    "expression_mathml": "<cn>2.0</cn>"
+                },
+                {
+                    "target": "I_noncompliant_ub",
+                    "expression": "2.00000000000000",
+                    "expression_mathml": "<cn>4.0</cn>"
+                },
+                {
+                    "target": "E_compliant_ub",
+                    "expression": "0.500000000000000",
+                    "expression_mathml": "<cn>1.0</cn>"
+                },
+                {
+                    "target": "E_noncompliant_ub",
+                    "expression": "0.500000000000000",
+                    "expression_mathml": "<cn>1.0</cn>"
+                },
+                {
+                    "target": "R_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "H_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                },
+                {
+                    "target": "D_ub",
+                    "expression": "0.0",
+                    "expression_mathml": "<cn>0.0</cn>"
+                }
+            ],
+            "parameters": [
+                {
+                    "id": "N",
+                    "value": 19340000.0,
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "beta",
+                    "value": 0.4,
+                    "units": {
+                        "expression": "1/(day*person)",
+                        "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>day</ci><ci>person</ci></apply></apply>"
+                    }
+                },
+                {
+                    "id": "eps_m_lb",
+                    "value": 0.4,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "eps_m_ub",
+                    "value": 0.6,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "c_m_lb",
+                    "value": 0.4,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "c_m_ub",
+                    "value": 0.6,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "r_E_to_I",
+                    "value": 0.2,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "p_I_to_R",
+                    "value": 0.8,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "r_I_to_R",
+                    "value": 0.07,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "p_I_to_H",
+                    "value": 0.2,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "r_I_to_H",
+                    "value": 0.1,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "p_H_to_R",
+                    "value": 0.88,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "r_H_to_R",
+                    "value": 0.1,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "p_H_to_D",
+                    "value": 0.12,
+                    "units": {
+                        "expression": "1",
+                        "expression_mathml": "<cn>1</cn>"
+                    }
+                },
+                {
+                    "id": "r_H_to_D",
+                    "value": 0.1,
+                    "units": {
+                        "expression": "1/day",
+                        "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                    }
+                },
+                {
+                    "id": "p_noncompliant_compliant",
+                    "value": 0.1
+                },
+                {
+                    "id": "p_compliant_noncompliant",
+                    "value": 0.1
+                }
+            ],
+            "observables": [],
+            "time": {
+                "id": "t",
+                "units": {
+                    "expression": "day",
+                    "expression_mathml": "<ci>day</ci>"
+                }
+            }
+        }
+    },
+    "metadata": {
+        "annotations": {
+            "license": null,
+            "authors": [],
+            "references": [],
+            "time_scale": null,
+            "time_start": null,
+            "time_end": null,
+            "locations": [],
+            "pathogens": [],
+            "diseases": [],
+            "hosts": [],
+            "model_types": []
+        }
+    }
+}
