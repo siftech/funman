@@ -41,19 +41,23 @@ class SympyBoundedSubstituter(BaseModel):
         self, derivative_variables: List[str], expr: str, bound: str
     ) -> sympy.Expr:
         # deriv_var_symbols = [self.str_to_symbol[s] for s in derivative_variables]
-        sym_expr = expr #to_sympy(expr, self.str_to_symbol)
+        sym_expr = expr  # to_sympy(expr, self.str_to_symbol)
         # substitute lb for deriv_var_symbol in sym_expr
         sym_expr = sym_expr.subs(
             {s: self.bound_symbols[s][bound] for s in derivative_variables}
         )
         return sym_expr
 
-    def maximize(self, derivative_variables: List[str], expr: sympy.Expr) -> str:
+    def maximize(
+        self, derivative_variables: List[str], expr: sympy.Expr
+    ) -> str:
         sym_expr = self._prepare_expression(derivative_variables, expr, "ub")
         m_expr = self._substitute(sym_expr, False)
         return m_expr
 
-    def minimize(self, derivative_variables: List[str], expr: sympy.Expr) -> str:
+    def minimize(
+        self, derivative_variables: List[str], expr: sympy.Expr
+    ) -> str:
         sym_expr = self._prepare_expression(derivative_variables, expr, "lb")
         m_expr = self._substitute(sym_expr, True)
         return m_expr
@@ -216,16 +220,26 @@ def sympy_subs(expr: Expr, substitution: Dict[str, Union[float, str]]) -> Expr:
 
 
 reserved_words = ["lambda"]
+reserved_chars = ["{", "}"]
 
 
-def has_reserved(str_expr, rw):
+def has_reserved_word(str_expr, rw):
     return rw in str_expr and f"funman_{rw}" not in str_expr
+
+
+def has_reserved_char(str_expr, rc):
+    return rc in str_expr
 
 
 def replace_reserved(str_expr):
     for rw in reserved_words:
-        if isinstance(str_expr, str) and has_reserved(str_expr, rw):
+        if isinstance(str_expr, str) and has_reserved_word(str_expr, rw):
             str_expr = str_expr.replace(rw, f"funman_{rw}")
+
+    for rc in reserved_chars:
+        if isinstance(str_expr, str) and has_reserved_char(str_expr, rc):
+            str_expr = str_expr.replace(rc, "_")
+
     return str_expr
 
 

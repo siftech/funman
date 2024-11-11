@@ -1113,7 +1113,11 @@ class BoxSearch(Search):
                     "dreal_precision": episode.config.dreal_precision,
                     "dreal_log_level": episode.config.dreal_log_level,
                     "dreal_mcts": episode.config.dreal_mcts,
-                    "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in episode.problem.parameters] if episode.config.dreal_prefer_parameters else [],
+                    "preferred": (
+                        episode.config.dreal_prefer_parameters
+                        if episode.config.dreal_prefer_parameters
+                        else [p.name for p in episode.problem.parameters]
+                    ),
                     "random_seed": episode.config.random_seed,
                 }
             else:

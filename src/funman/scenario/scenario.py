@@ -153,6 +153,18 @@ class AnalysisScenario(ABC, BaseModel):
 
         return search
 
+    def parameter_map(self) -> Dict[str, Parameter]:
+        return {p.name: p for p in self.parameters}
+
+    def escaped_parameter_map(self) -> Dict[str, str]:
+        rmap = {}
+        for p in self.parameters:
+            if hasattr(p, "_escaped_name"):
+                rmap[p._escaped_name] = p.name
+            else:
+                rmap[p.name] = p.name
+        return rmap
+
     def _initialize_encodings(self, config: "FUNMANConfig"):
         # self._assume_model = Symbol("assume_model")
         self._smt_encoder = self.model.default_encoder(config, self)
@@ -367,6 +379,7 @@ class AnalysisScenario(ABC, BaseModel):
             for var, value in point.values_at(0, self.model).items()
             if var != "timer_t"
         }
+
         parameters = {
             p: point.value_of(p) for p in self.model._parameter_names()
         }

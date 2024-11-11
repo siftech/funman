@@ -101,7 +101,9 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
             parameter_space = ParameterSpace(
                 num_dimensions=len(self.parameters)
             )
-            parameter_space.true_boxes.append(Box.from_point(point))
+            parameter_space.true_boxes.append(
+                Box.from_point(point, parameters=self.parameter_map())
+            )
             scenario_result = ConsistencyScenarioResult(
                 scenario=self, consistent={}, parameter_space=parameter_space
             )

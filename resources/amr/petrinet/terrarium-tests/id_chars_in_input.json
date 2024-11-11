@@ -1,0 +1,487 @@
+{
+    "model": {
+        "id": "9009b45f-505e-4de5-8cd7-3ff665df6207",
+        "createdOn": "2024-11-01T14:51:22.220+00:00",
+        "updatedOn": "2024-11-01T17:20:47.204+00:00",
+        "name": "sirhd-base (vax)",
+        "fileNames": [],
+        "temporary": false,
+        "publicAsset": true,
+        "header": {
+            "name": "sirhd-base (vax)",
+            "description": "This is a model from equations",
+            "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+            "schema_name": "petrinet",
+            "model_version": "0.1"
+        },
+        "model": {
+            "transitions": [
+                {
+                    "id": "t0_Vaccinated",
+                    "input": [
+                        "I",
+                        "S_Vaccinated"
+                    ],
+                    "output": [
+                        "I",
+                        "I"
+                    ],
+                    "properties": {
+                        "name": "t0_Vaccinated"
+                    }
+                },
+                {
+                    "id": "t0_Unvaccinated",
+                    "input": [
+                        "I",
+                        "S_Unvaccinated"
+                    ],
+                    "output": [
+                        "I",
+                        "I"
+                    ],
+                    "properties": {
+                        "name": "t0_Unvaccinated"
+                    }
+                },
+                {
+                    "id": "t1",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "properties": {
+                        "name": "t1"
+                    }
+                },
+                {
+                    "id": "t2",
+                    "input": [
+                        "H"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "properties": {
+                        "name": "t2"
+                    }
+                },
+                {
+                    "id": "t3",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "H"
+                    ],
+                    "properties": {
+                        "name": "t3"
+                    }
+                },
+                {
+                    "id": "t4",
+                    "input": [
+                        "H"
+                    ],
+                    "output": [
+                        "D"
+                    ],
+                    "properties": {
+                        "name": "t4"
+                    }
+                },
+                {
+                    "id": "t_conv_0_Vaccinated_Unvaccinated",
+                    "input": [
+                        "S_Vaccinated"
+                    ],
+                    "output": [
+                        "S_Unvaccinated"
+                    ],
+                    "properties": {
+                        "name": "t_conv_0_Vaccinated_Unvaccinated"
+                    }
+                },
+                {
+                    "id": "t_conv_0_Unvaccinated_Vaccinated",
+                    "input": [
+                        "S_Unvaccinated"
+                    ],
+                    "output": [
+                        "S_Vaccinated"
+                    ],
+                    "properties": {
+                        "name": "t_conv_0_Unvaccinated_Vaccinated"
+                    }
+                }
+            ],
+            "states": [
+                {
+                    "id": "S_Vaccinated",
+                    "name": "S",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {
+                            "Vaccination status": "Vaccinated"
+                        }
+                    }
+                },
+                {
+                    "id": "I",
+                    "name": "I",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "S_Unvaccinated",
+                    "name": "S",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {
+                            "Vaccination status": "Unvaccinated"
+                        }
+                    }
+                },
+                {
+                    "id": "R",
+                    "name": "R",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "H",
+                    "name": "H",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "D",
+                    "name": "D",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                }
+            ]
+        },
+        "properties": {},
+        "semantics": {
+            "ode": {
+                "rates": [
+                    {
+                        "target": "t0_Vaccinated",
+                        "expression": "I*S_Vaccinated*b_Vaccinated/N",
+                        "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S_Vaccinated</ci><ci>b_Vaccinated</ci></apply><ci>N</ci></apply>"
+                    },
+                    {
+                        "target": "t0_Unvaccinated",
+                        "expression": "I*S_Unvaccinated*b_Unvaccinated/N",
+                        "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S_Unvaccinated</ci><ci>b_Unvaccinated</ci></apply><ci>N</ci></apply>"
+                    },
+                    {
+                        "target": "t1",
+                        "expression": "I*p_{IR}*r_{IR}",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>p_{IR}</ci><ci>r_{IR}</ci></apply>"
+                    },
+                    {
+                        "target": "t2",
+                        "expression": "H*p_{HR}*r_{HR}",
+                        "expression_mathml": "<apply><times/><ci>H</ci><ci>p_{HR}</ci><ci>r_{HR}</ci></apply>"
+                    },
+                    {
+                        "target": "t3",
+                        "expression": "I*p_{IH}*r_{IH}",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>p_{IH}</ci><ci>r_{IH}</ci></apply>"
+                    },
+                    {
+                        "target": "t4",
+                        "expression": "H*p_{HD}*r_{HD}",
+                        "expression_mathml": "<apply><times/><ci>H</ci><ci>p_{HD}</ci><ci>r_{HD}</ci></apply>"
+                    },
+                    {
+                        "target": "t_conv_0_Vaccinated_Unvaccinated",
+                        "expression": "S_Vaccinated*p_Vaccinated_Unvaccinated",
+                        "expression_mathml": "<apply><times/><ci>S_Vaccinated</ci><ci>p_Vaccinated_Unvaccinated</ci></apply>"
+                    },
+                    {
+                        "target": "t_conv_0_Unvaccinated_Vaccinated",
+                        "expression": "S_Unvaccinated*p_Unvaccinated_Vaccinated",
+                        "expression_mathml": "<apply><times/><ci>S_Unvaccinated</ci><ci>p_Unvaccinated_Vaccinated</ci></apply>"
+                    }
+                ],
+                "initials": [
+                    {
+                        "target": "S_Vaccinated",
+                        "expression": "101182948*0.6",
+                        "expression_mathml": "<cn>60709768.799999997</cn>"
+                    },
+                    {
+                        "target": "I",
+                        "expression": "1385335",
+                        "expression_mathml": "<cn>1385335</cn>"
+                    },
+                    {
+                        "target": "S_Unvaccinated",
+                        "expression": "101182948*0.4",
+                        "expression_mathml": "<cn>40473179.200000003</cn>"
+                    },
+                    {
+                        "target": "R",
+                        "expression": "781454",
+                        "expression_mathml": "<cn>781454</cn>"
+                    },
+                    {
+                        "target": "H",
+                        "expression": "73720",
+                        "expression_mathml": "<cn>73720</cn>"
+                    },
+                    {
+                        "target": "D",
+                        "expression": "781454",
+                        "expression_mathml": "<cn>781454</cn>"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "id": "N",
+                        "name": "N",
+                        "value": 150000000
+                    },
+                    {
+                        "id": "b_Vaccinated",
+                        "name": "b",
+                        "value": 0.08
+                    },
+                    {
+                        "id": "b_Unvaccinated",
+                        "name": "b",
+                        "value": 0.28
+                    },
+                    {
+                        "id": "p_{IR}",
+                        "name": "p_{IR}",
+                        "value": 0.8
+                    },
+                    {
+                        "id": "r_{IR}",
+                        "name": "r_{IR}",
+                        "value": 0.07
+                    },
+                    {
+                        "id": "p_{HR}",
+                        "name": "p_{HR}",
+                        "value": 0.77
+                    },
+                    {
+                        "id": "r_{HR}",
+                        "name": "r_{HR}",
+                        "value": 0.07
+                    },
+                    {
+                        "id": "p_{IH}",
+                        "name": "p_{IH}",
+                        "value": 0.2
+                    },
+                    {
+                        "id": "r_{IH}",
+                        "name": "r_{IH}",
+                        "value": 0.07
+                    },
+                    {
+                        "id": "p_{HD}",
+                        "name": "p_{HD}",
+                        "value": 0.23
+                    },
+                    {
+                        "id": "r_{HD}",
+                        "name": "r_{HD}",
+                        "value": 0.3
+                    },
+                    {
+                        "id": "p_Vaccinated_Unvaccinated",
+                        "value": 0
+                    },
+                    {
+                        "id": "p_Unvaccinated_Vaccinated",
+                        "value": 0.1,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.001,
+                                "maximum": 0.01
+                            }
+                        }
+                    }
+                ],
+                "observables": [],
+                "time": {
+                    "id": "t"
+                }
+            },
+            "span": [],
+            "typing": null
+        },
+        "metadata": {
+            "annotations": {
+                "authors": [],
+                "references": [],
+                "locations": [],
+                "pathogens": [],
+                "diseases": [],
+                "hosts": [],
+                "model_types": []
+            },
+            "source": null,
+            "gollmCard": null,
+            "gollmExtractions": null,
+            "templateCard": null
+        }
+    },
+    "request": {
+        "constraints": [],
+        "parameters": [
+            {
+                "name": "N",
+                "label": "any",
+                "interval": {
+                    "lb": 150000000,
+                    "ub": 150000000
+                }
+            },
+            {
+                "name": "b_Vaccinated",
+                "label": "any",
+                "interval": {
+                    "lb": 0.08,
+                    "ub": 0.08
+                }
+            },
+            {
+                "name": "b_Unvaccinated",
+                "label": "any",
+                "interval": {
+                    "lb": 0.28,
+                    "ub": 0.28
+                }
+            },
+            {
+                "name": "p_{IR}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.8,
+                    "ub": 0.8
+                }
+            },
+            {
+                "name": "r_{IR}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.07,
+                    "ub": 0.07
+                }
+            },
+            {
+                "name": "p_{HR}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.77,
+                    "ub": 0.77
+                }
+            },
+            {
+                "name": "r_{HR}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.07,
+                    "ub": 0.07
+                }
+            },
+            {
+                "name": "p_{IH}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.2,
+                    "ub": 0.2
+                }
+            },
+            {
+                "name": "r_{IH}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.07,
+                    "ub": 0.07
+                }
+            },
+            {
+                "name": "p_{HD}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.23,
+                    "ub": 0.23
+                }
+            },
+            {
+                "name": "r_{HD}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.3,
+                    "ub": 0.3
+                }
+            },
+            {
+                "name": "p_Vaccinated_Unvaccinated",
+                "label": "any",
+                "interval": {
+                    "lb": 0,
+                    "ub": 0
+                }
+            },
+            {
+                "name": "p_Unvaccinated_Vaccinated",
+                "label": "any",
+                "interval": {
+                    "lb": 0.001,
+                    "ub": 0.01
+                }
+            }
+        ],
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            10,
+                            20,
+                            30,
+                            40,
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            100
+                        ]
+                    }
+                ]
+            }
+        ],
+        "config": {
+            "use_compartmental_constraints": false,
+            "normalization_constant": 104204911,
+            "normalize": false,
+            "tolerance": 0.2,
+            "verbosity": 10,
+            "save_smtlib": "./out"
+        }
+    }
+}
