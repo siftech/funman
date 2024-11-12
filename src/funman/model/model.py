@@ -254,4 +254,6 @@ class FunmanModel(ABC, BaseModel):
         return None
 
     def num_elements(self):
-        raise NotImplementedError(f"num_elements not implemented for model type: {type(self)}" )
+        raise NotImplementedError(
+            f"num_elements not implemented for model type: {type(self)}"
+        )

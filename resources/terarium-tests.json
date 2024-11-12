@@ -132,6 +132,15 @@
                 "true-boxes": 1
             },
             "regression": false
+        },
+        {
+            "name": "id_chars_in_input",
+            "model-path": "amr/petrinet/terrarium-tests/id_chars_in_input.json",
+            "request-path": null,
+            "expected-outcome": {
+                "true-boxes": 1
+            },
+            "regression": false
         }
     ]
 }

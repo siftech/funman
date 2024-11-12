@@ -305,7 +305,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     _transition_rates_lambda_cache: Dict[str, Union[Callable, str]] = {}
 
     def num_elements(self):
-        num_elts = len(self._state_var_names()) + len(self._parameter_names()) + len(self.observables()) + len(list(self._transitions()))
+        num_elts = (
+            len(self._state_var_names())
+            + len(self._parameter_names())
+            + len(self.observables())
+            + len(list(self._transitions()))
+        )
         return num_elts
 
     def observables(self):
@@ -606,13 +611,14 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         bound_symbols = {
             sympy.Symbol(s): {
                 bound: sympy.Symbol(f"{s}_{bound}") for bound in ["lb", "ub"]
-            } 
+            }
             for s in symbols
         }
         for _, params in abstraction_metadata.get("parameters", {}).items():
             for p in params:
                 bound_symbols[sympy.Symbol(p)] = {
-                    bound: sympy.Symbol(f"{p}_{bound}") for bound in ["lb", "ub"]
+                    bound: sympy.Symbol(f"{p}_{bound}")
+                    for bound in ["lb", "ub"]
                 }
         substituter = SympyBoundedSubstituter(
             bound_symbols=bound_symbols, str_to_symbol=str_to_symbol
@@ -621,9 +627,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         def bound_expression(targets, e, bound, metadata):
 
             targets = {
-                sympy.Symbol(k):sympy.Symbol(v)
-                for k, v in targets.items()
-                }
+                sympy.Symbol(k): sympy.Symbol(v) for k, v in targets.items()
+            }
             e_s = sympy.sympify(e, substituter.str_to_symbol)
 
             # targets are forced substitutions

@@ -30,6 +30,8 @@ from pysmt.solvers.solver import (
 )
 from pysmt.walkers import DagWalker
 
+from funman.utils.smtlib_utils import str_smtlib
+
 l = logging.getLogger(__name__)
 
 
@@ -218,6 +220,7 @@ class DRealConverter(Converter, DagWalker):
             )
             new_symbols = self.create_dreal_symbols(str(dreal_formula))
             formula = CoreParser().parse(str(dreal_formula))
+            l.debug(f"Extracted SMTLib: {str_smtlib(formula)}")
         except Exception as e:
             raise e
         return formula

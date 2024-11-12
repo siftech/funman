@@ -81,7 +81,11 @@ class TestUseCases(unittest.TestCase):
         str_symbols = ["S", "I", "R", "beta", "gamma", "N"]
         symbols = {s: sympy.Symbol(s) for s in str_symbols}
         bound_symbols = {
-            sympy.Symbol(s): {"lb": sympy.Symbol(f"{s}_lb"), "ub": sympy.Symbol(f"{s}_ub")} for s in str_symbols
+            sympy.Symbol(s): {
+                "lb": sympy.Symbol(f"{s}_lb"),
+                "ub": sympy.Symbol(f"{s}_ub"),
+            }
+            for s in str_symbols
         }
         substituter = SympyBoundedSubstituter(
             bound_symbols=bound_symbols, str_to_symbol=symbols
@@ -95,7 +99,9 @@ class TestUseCases(unittest.TestCase):
                     else substituter.maximize
                 )
                 var, expr = test["input"]
-                test_output = test_fn([sympy.Symbol(var)], sympy.sympify(expr, symbols))
+                test_output = test_fn(
+                    [sympy.Symbol(var)], sympy.sympify(expr, symbols)
+                )
                 # self.l.debug(f"Minimized: [{infection_rate}], to get expression: [{test_output}]")
                 assert (
                     str(test_output) == test["expected_output"]
@@ -266,21 +272,21 @@ class TestUseCases(unittest.TestCase):
     @unittest.skip(reason="WIP")
     def test_sirhd_stratify(self):
         epsilon = 0.000001
-        timepoints = list(
-            range(0, 2, 1)
-        )
+        timepoints = list(range(0, 2, 1))
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
-            sirhd_base_request = FunmanWorkRequest.model_validate_json(f.read())
+            sirhd_base_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
         # sirhd_request.config.use_compartmental_constraints = False
         # sirhd_request.config.save_smtlib = "./out"
         sirhd_base_request.config.mode = "mode_odeint"
-        sirhd_base_request.structure_parameters[0].schedules[0].timepoints = timepoints
+        sirhd_base_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
 
         runner = Runner()
-        base_result = runner.run(
-            BASE_SIRHD_MODEL_PATH, sirhd_base_request
-        )
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
 
         # import matplotlib.pyplot as plt
 
@@ -319,12 +325,15 @@ class TestUseCases(unittest.TestCase):
         betas["beta_vac_unvac_1"].value += epsilon
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
-            sirhd_stratified_request = FunmanWorkRequest.model_validate_json(f.read())
+            sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
         # sirhd_request.config.use_compartmental_constraints = False
         # sirhd_request.config.save_smtlib = "./out"
         sirhd_stratified_request.config.mode = "mode_odeint"
-        sirhd_stratified_request.structure_parameters[0].schedules[0].timepoints = timepoints
-        
+        sirhd_stratified_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
 
         stratified_result = runner.run(
             stratified_model_SI.petrinet.model_dump(), sirhd_stratified_request
@@ -348,7 +357,9 @@ class TestUseCases(unittest.TestCase):
         abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
 
         bounded_abstract_model = abstract_model.formulate_bounds()
-        bounded_abstract_model.to_dot().render("sirhd_strat_SI_bounded_abstract_S")
+        bounded_abstract_model.to_dot().render(
+            "sirhd_strat_SI_bounded_abstract_S"
+        )
 
         # Setup request by removing compartmental constraint that won't be correct
         # for a bounded model
@@ -357,7 +368,9 @@ class TestUseCases(unittest.TestCase):
         # sirhd_request.config.use_compartmental_constraints = False
         # sirhd_request.config.save_smtlib = "./out"
         sirhd_request.config.mode = "mode_odeint"
-        sirhd_request.structure_parameters[0].schedules[0].timepoints = timepoints
+        sirhd_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
 
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet.model_dump(),
@@ -374,12 +387,24 @@ class TestUseCases(unittest.TestCase):
         base_df = base_result.dataframe(base_result.points())[bs]
 
         ss = [s for s in stratified_result.model._symbols() if s != "timer_t"]
-        stratified_df = stratified_result.dataframe(stratified_result.points())[ss]
+        stratified_df = stratified_result.dataframe(
+            stratified_result.points()
+        )[ss]
 
-        bass = [s for s in bounded_abstract_result.model._symbols() if s != "timer_t"]
-        bounded_abstract_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())[bass]
-        bounded_abstract_df["I_lb"] = bounded_abstract_df.I_vac_lb + bounded_abstract_df.I_unvac_lb
-        bounded_abstract_df["I_ub"] = bounded_abstract_df.I_vac_ub + bounded_abstract_df.I_unvac_ub
+        bass = [
+            s
+            for s in bounded_abstract_result.model._symbols()
+            if s != "timer_t"
+        ]
+        bounded_abstract_df = bounded_abstract_result.dataframe(
+            bounded_abstract_result.points()
+        )[bass]
+        bounded_abstract_df["I_lb"] = (
+            bounded_abstract_df.I_vac_lb + bounded_abstract_df.I_unvac_lb
+        )
+        bounded_abstract_df["I_ub"] = (
+            bounded_abstract_df.I_vac_ub + bounded_abstract_df.I_unvac_ub
+        )
 
         destratified_df = pd.DataFrame(stratified_df)
         destratified_df["S"] = destratified_df.S_vac + destratified_df.S_unvac
@@ -390,25 +415,37 @@ class TestUseCases(unittest.TestCase):
             lb = f"{variable}_lb"
             ub = f"{variable}_ub"
             if not all(values_df[variable] >= bounds_df[lb]):
-                failures.append(f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}")
+                failures.append(
+                    f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}"
+                )
             if not all(values_df[variable] <= bounds_df[ub]):
-                failures.append(f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}")
+                failures.append(
+                    f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}"
+                )
             return failures
 
         all_failures = []
-        for (values_df, model) in [(base_df, "base"), (destratified_df, "stratified")]:
+        for values_df, model in [
+            (base_df, "base"),
+            (destratified_df, "stratified"),
+        ]:
             for var in ["S", "I", "H", "R", "D"]:
-                all_failures += check_bounds(bounded_abstract_df, values_df, var, model)
+                all_failures += check_bounds(
+                    bounded_abstract_df, values_df, var, model
+                )
 
-        reasons = '\n'.join(map(str, all_failures))
-        assert len(all_failures) == 0, f"The bounds failed in the following cases:\n{reasons}"
+        reasons = "\n".join(map(str, all_failures))
+        assert (
+            len(all_failures) == 0
+        ), f"The bounds failed in the following cases:\n{reasons}"
+
 
 # S_ub: 1.492174e+08  S_strat: 1.492175e+08, diff -98.77
 
 # S_ub' = S_ub - IvlbSubBlbp0lb/Nub - IulbSubBlbp1lb/Nub - IvlbSubBlbp0lb/Nub - IulbSubBlbp1lb/Nub
 #       =      - 44.76501510409002 - 44.76501510409002 - 44.76501510409002 - 44.76501510409002
-#   because S = Sv+Su 
-# Stratified: 
+#   because S = Sv+Su
+# Stratified:
 # Sv' = Sv - IvSvB0p0/N - IuSvB0p1/N
 #     =  74608773.0 - (22.38250755204501) - (22.38250755204501)
 #     = 74608728.2349849
@@ -447,7 +484,7 @@ class TestUseCases(unittest.TestCase):
 # Rate(target='t1_vac_unvac_0_vac_unvac_0', expression='I_vac*S*agg_beta*p_I_vac_unvac_0/N', expression_mathml=None)
 # Rate(target='t1_vac_unvac_0_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None)
 # Rate(target='t1_vac_unvac_1_vac_unvac_0', expression='I_vac*S*agg_beta*p_I_vac_unvac_0/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_1_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None) 
+# Rate(target='t1_vac_unvac_1_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None)
 
 # Abstract Bounded:
 

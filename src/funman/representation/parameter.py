@@ -14,6 +14,7 @@ from pysmt.fnode import FNode
 from pysmt.shortcuts import REAL, Symbol
 
 from funman import LABEL_ALL, LABEL_ANY
+from funman.utils.sympy_utils import replace_reserved
 
 from .encoding_schedule import EncodingSchedule
 from .interval import Interval
@@ -39,6 +40,7 @@ class Parameter(BaseModel):
     @model_validator(mode="after")
     def check_name(self) -> "FUNMANConfig":
         self._escaped_name = self.name.replace(" ", "_").replace("-", "_")
+        self._escaped_name = replace_reserved(self._escaped_name)
         return self
 
     @model_validator(mode="after")

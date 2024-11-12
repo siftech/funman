@@ -5,8 +5,8 @@ import json
 import logging
 
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 from funman import (
     MODE_ODEINT,
@@ -202,13 +202,33 @@ def pretty_print_request_params(params):
         df = pd.DataFrame(params)
         print(df.T)
 
+
 def runtime_stats_dataframe(request_params):
     df = pd.DataFrame(request_params).T
     df.index.name = "Model"
-    df = df[["model_size", "total_time", "time_horizon"]].rename(columns={"model_size": "Model Size", "total_time": "Total Time", "time_horizon": "Time Horizon"}).sort_index()
+    df = (
+        df[["model_size", "total_time", "time_horizon"]]
+        .rename(
+            columns={
+                "model_size": "Model Size",
+                "total_time": "Total Time",
+                "time_horizon": "Time Horizon",
+            }
+        )
+        .sort_index()
+    )
     return df
 
-def report(results, name, states, request_results, request_params, plot_logscale=False, plot=True):
+
+def report(
+    results,
+    name,
+    states,
+    request_results,
+    request_params,
+    plot_logscale=False,
+    plot=True,
+):
     request_results[name] = results
     if plot:
         plot_last_point(results, states, plot_logscale=plot_logscale)
