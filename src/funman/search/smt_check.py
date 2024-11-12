@@ -13,7 +13,10 @@ from funman.constants import LABEL_FALSE, LABEL_TRUE
 from funman.representation.encoding_schedule import EncodingSchedule
 from funman.representation.explanation import Explanation
 from funman.translate.translate import EncodingOptions
-from funman.utils.smtlib_utils import smtlibscript_from_formula_list
+from funman.utils.smtlib_utils import (
+    smtlibscript_from_formula_list,
+    str_smtlib,
+)
 
 from ..representation import Interval, Point
 from ..representation.box import Box
@@ -82,7 +85,9 @@ class SMTCheck(Search):
                 point_label = (
                     LABEL_TRUE if explanation_result is None else LABEL_FALSE
                 )
-                results_dict = model_result.to_dict()
+                results_dict = model_result.to_dict(
+                    problem.escaped_parameter_map()
+                )
                 point = Point(
                     values=results_dict,
                     label=point_label,
@@ -98,7 +103,7 @@ class SMTCheck(Search):
                     models[point] = model_result
                     consistent[point] = results_dict
 
-                box = Box.from_point(point)
+                box = Box.from_point(point, parameters=problem.parameter_map())
                 # parameter_space.true_boxes.append(Box.from_point(point))
             else:
                 box = Box(
@@ -188,11 +193,21 @@ class SMTCheck(Search):
         )
         return all_layers_formula, all_simplified_layers_formula, model_formula
 
+    def prime_solver(self, s: Solver):
+        s.push(1)
+        s.add_assertion(
+            And(Symbol("prime_symbol_a"), Symbol("prime_symbol_b"))
+        )
+        s.solve()
+        s.pop(1)
+
     def solve_formula(
         self, s: Solver, formula: FNode, episode
     ) -> Union[pysmtModel, Explanation]:
+        self.prime_solver(s)
         s.push(1)
         s.add_assertion(formula)
+        l.debug(f"Solving SMTLib:\n{str_smtlib(formula)}")
         if episode.config.save_smtlib:
             filename = os.path.join(
                 episode.config.save_smtlib, "dbg_steps.smt2"
@@ -223,7 +238,11 @@ class SMTCheck(Search):
                 "dreal_precision": episode.config.dreal_precision,
                 "dreal_log_level": episode.config.dreal_log_level,
                 "dreal_mcts": episode.config.dreal_mcts,
-                "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in problem.model_parameters()]if episode.config.dreal_prefer_parameters else [],
+                "preferred": (
+                    episode.config.dreal_prefer_parameters
+                    if episode.config.dreal_prefer_parameters
+                    else [p.name for p in episode.problem.parameters]
+                ),
                 "random_seed": episode.config.random_seed,
             }
         else:
@@ -247,7 +266,9 @@ class SMTCheck(Search):
                 result = self.solve_formula(s, simplified_formula, episode)
                 if result is not None and isinstance(result, pysmtModel):
                     model_result = result
-                    assigned_vars = model_result.to_dict()
+                    assigned_vars = model_result.to_dict(
+                        episode.problem.escaped_parameter_map()
+                    )
                     substitution = {
                         Symbol(p, (REAL if isinstance(v, float) else BOOL)): (
                             Real(v) if isinstance(v, float) else Bool(v)

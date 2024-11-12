@@ -74,6 +74,22 @@ class FunmanWorkRequest(BaseModel):
             ] == 0, f"Constraints need names, found {name_counts[None]} constraints without names."
         return constraints
 
+    def time_horizon(self):
+        try:
+            schedules = next(
+                iter(
+                    [
+                        p
+                        for p in self.structure_parameters
+                        if p.name == "schedules"
+                    ]
+                )
+            )
+        except StopIteration:
+            l.exception("Could not find a Schedule structure parameter.")
+        time_horizon = max([max(s.timepoints) for s in schedules.schedules])
+        return time_horizon
+
 
 class FunmanProgress(BaseModel):
     progress: float = 0.0
@@ -236,6 +252,9 @@ class FunmanResults(BaseModel):
 
     def is_final(self):
         return self._finalized
+
+    def time_horizon(self):
+        return self.request.time_horizon()
 
     def contract_model(self):
         """
@@ -448,7 +467,9 @@ class FunmanResults(BaseModel):
             if isinstance(tps, dict):
                 vals = [None] * (int(max_t) + 1)
                 for t, v in tps.items():
-                    if t.isdigit() and int(t) <= int(max_t):
+                    if (not isinstance(t, float) or t.isdigit()) and int(
+                        t
+                    ) <= int(max_t):
                         vals[int(t)] = v
                 a_series[var] = vals
             else:
@@ -498,7 +519,7 @@ class FunmanResults(BaseModel):
                 var, self.model
             ):
                 var_name, timepoint = self._split_symbol(var)
-                if timepoint:
+                if timepoint is not None:
                     if var_name not in symbols:
                         symbols[var_name] = {}
                     symbols[var_name][timepoint] = var
@@ -514,6 +535,10 @@ class FunmanResults(BaseModel):
             s, t = symbol.rsplit("_", 1)
         except ValueError:
             s = symbol
+            t = None
+        try:
+            t = int(t)
+        except Exception:
             t = None
         return s, t
 

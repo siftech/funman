@@ -213,7 +213,7 @@ class SimulatorCheck(Search):
         self,
         beta_val,
         gamma_val,
-        query_condition=query_1,
+        query_condition=True,
         plot=False,
         rtol=1,
         atol=1,
@@ -296,7 +296,7 @@ class SimulatorCheck(Search):
             param_assignments, _ = eval_point(
                 point_values["beta"],
                 point_values["gamma"],
-                query_condition=query_condition,
+                # query_condition=query_condition,
                 rtol=rtol,
                 plot=plot,
             )
@@ -322,7 +322,11 @@ class SimulatorCheck(Search):
                 "dreal_precision": episode.config.dreal_precision,
                 "dreal_log_level": episode.config.dreal_log_level,
                 "dreal_mcts": episode.config.dreal_mcts,
-                "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in problem.model_parameters()]if episode.config.dreal_prefer_parameters else [],
+                "preferred": (
+                    episode.config.dreal_prefer_parameters
+                    if episode.config.dreal_prefer_parameters
+                    else [p.name for p in episode.problem.parameters]
+                ),
                 "random_seed": episode.config.random_seed,
             }
         else:
@@ -349,7 +353,9 @@ class SimulatorCheck(Search):
                     result = self.solve_formula(s, simplified_formula, episode)
                     if result is not None and isinstance(result, pysmtModel):
                         model_result = result
-                        assigned_vars = model_result.to_dict()
+                        assigned_vars = model_result.to_dict(
+                            episode.problem.escaped_parameter_map()
+                        )
                         substitution = {
                             Symbol(
                                 p, (REAL if isinstance(v, float) else BOOL)

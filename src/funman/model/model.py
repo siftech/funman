@@ -252,3 +252,8 @@ class FunmanModel(ABC, BaseModel):
 
     def _time_var(self):
         return None
+
+    def num_elements(self):
+        raise NotImplementedError(
+            f"num_elements not implemented for model type: {type(self)}"
+        )

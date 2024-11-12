@@ -304,7 +304,7 @@ www/_static/js/badge_only.js
 www/_static/js/html5shiv-printshiv.min.js
 www/_static/js/html5shiv.min.js
 www/_static/js/theme.js
-artifacts/.DS_Store
+**/.DS_Store
 scratch/funman.code-workspace
 **/*.gv*
 ./box_search.*
@@ -325,3 +325,5 @@ notebooks/saved-results/out
 auxiliary_packages/ibex_tests/num_constraint_test
 auxiliary_packages/ibex_tests/num_constraint_test.o
 notes/.DS_Store
+resources/amr/petrinet/monthly-demo/.DS_Store
+notes/abstraction/main.synctex(busy)

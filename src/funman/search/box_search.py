@@ -741,7 +741,12 @@ class BoxSearch(Search):
             for k, v in encoder.encode_assumptions(
                 episode.problem._assumptions, options
             ).items()
-            if k.relevant_at_time(timepoint)
+            if any(
+                [
+                    k.relevant_at_time(box.schedule.time_at_step(t))
+                    for t in range(0, timestep + 1)
+                ]
+            )
         }
         formula = And([v for k, v in assumptions.items()])
 
@@ -752,6 +757,7 @@ class BoxSearch(Search):
                         [
                             encoder.encode_assumption(k, options, layer_idx=i)
                             for i in range(timestep + 1)
+                            if k.relevant_at_time(box.schedule.time_at_step(i))
                         ]
                     ),
                     v,
@@ -767,6 +773,7 @@ class BoxSearch(Search):
                     [
                         encoder.encode_assumption(k, options, layer_idx=i)
                         for i in range(timestep + 1)
+                        if k.relevant_at_time(box.schedule.time_at_step(i))
                     ]
                 )
                 for k, v in assumptions.items()
@@ -1106,7 +1113,11 @@ class BoxSearch(Search):
                     "dreal_precision": episode.config.dreal_precision,
                     "dreal_log_level": episode.config.dreal_log_level,
                     "dreal_mcts": episode.config.dreal_mcts,
-                    "preferred": episode.config.dreal_prefer_parameters,  # [p.name for p in episode.problem.parameters] if episode.config.dreal_prefer_parameters else [],
+                    "preferred": (
+                        episode.config.dreal_prefer_parameters
+                        if episode.config.dreal_prefer_parameters
+                        else [p.name for p in episode.problem.parameters]
+                    ),
                     "random_seed": episode.config.random_seed,
                 }
             else:

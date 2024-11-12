@@ -274,7 +274,7 @@ class Runner:
             except FileNotFoundError as fne:
                 l.exception(f"Failed to load model:\n{fne}")
             except Exception as e:
-                l.debug(e)
+                # l.debug(e)
                 pass
 
         if m is None:

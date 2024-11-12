@@ -53,6 +53,7 @@ from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils import math_utils
 from funman.utils.sympy_utils import (
     FUNMANFormulaManager,
+    replace_reserved,
     sympy_to_pysmt,
     to_sympy,
 )
@@ -358,7 +359,7 @@ class Encoder(ABC, BaseModel):
         # vars.sort(key=lambda x: x.symbol_name())
         for var in vars.values():
             var_name, timepoint = self._split_symbol(var)
-            if timepoint:
+            if timepoint is not None:
                 if var_name not in symbols:
                     symbols[var_name] = {}
                 symbols[var_name][timepoint] = var
@@ -492,7 +493,9 @@ class Encoder(ABC, BaseModel):
 
         # Normalize if constant value
         parameter_assignments = {
-            self._encode_state_var(k.name): Real(float(k.interval.lb))
+            self._encode_state_var(replace_reserved(k.name)): Real(
+                float(k.interval.lb)
+            )
             for k in parameters
             if k.interval.lb == k.interval.ub
         }
@@ -1267,7 +1270,14 @@ class Encoder(ABC, BaseModel):
         a_series = {}  # timeseries as array/list
         max_t = max(
             [
-                max([int(k) for k in tps.keys() if k.isdigit()] + [0])
+                max(
+                    [
+                        int(k)
+                        for k in tps.keys()
+                        if isinstance(k, int) or k.isdigit()
+                    ]
+                    + [0]
+                )
                 for _, tps in series.items()
             ]
         )
@@ -1275,7 +1285,7 @@ class Encoder(ABC, BaseModel):
         for var, tps in series.items():
             vals = [None] * (int(max_t) + 1)
             for t, v in tps.items():
-                if t.isdigit():
+                if isinstance(t, int) or t.isdigit():
                     vals[int(t)] = v
             a_series[var] = vals
         return a_series
@@ -1401,11 +1411,21 @@ class Encoder(ABC, BaseModel):
         if symbol.symbol_name() in self._untimed_symbols:
             return symbol.symbol_name(), None
         else:
-            s, t = symbol.symbol_name().rsplit("_", 1)
-            if s not in self._timed_symbols or not t.isdigit():
-                raise Exception(
-                    f"Cannot determine if symbol {symbol} is timed."
-                )
+            try:
+                s, t = symbol.symbol_name().rsplit("_", 1)
+            except ValueError:
+                s = symbol
+                t = None
+            try:
+                t = int(t)
+            except Exception:
+                t = None
+            # return s, t
+            # s, t = symbol.symbol_name().rsplit("_", 1)
+            # if s not in self._timed_symbols:
+            #     raise Exception(
+            #         f"Cannot determine if symbol {symbol} is timed."
+            #     )
             return s, t
 
 
