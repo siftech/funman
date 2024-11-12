@@ -1,3 +1,10 @@
+# Terarium Notes
+Terarium will build and publish `funman-base` to GHCR that includes the dReal, ibex and other auxiliaries.
+This build uses CircleCI, see [pipeline results](https://app.circleci.com/pipelines/github/DARPA-ASKEM) 
+
+Terarium then builds a `funman-taskrunner` that bootstraps off `funman-base`. The taskrunner provides an ad-hoc invocation of Funman using MQ and named-pipes as the messaging mechanism. The taskrunner will do a source install of this repository. See here for more [information](https://github.com/DARPA-ASKEM/terarium/tree/main/packages/funman).
+
+
 # `funman`: Functional Model Analysis tool
 
 <!-- Outline:
