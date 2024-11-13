@@ -76,16 +76,19 @@ class ParameterSpace(BaseModel):
     def boxes(self) -> List[Box]:
         return self.true_boxes + self.false_boxes
 
-    def last_boxes(self) -> List[Box]:
+    def last_boxes(self, true_only=False) -> List[Box]:
         last_step = max(
             max([b.timestep().ub for b in self.true_boxes] + [0]),
-            max([b.timestep().ub for b in self.false_boxes] + [0]),
+            (max([b.timestep().ub for b in self.false_boxes] + [0]) if not true_only else 0),
         )
-        return [b for b in self.true_boxes if b.timestep().ub == last_step] + [
-            b for b in self.false_boxes if b.timestep().ub == last_step
-        ]
+        boxes= [b for b in self.true_boxes if b.timestep().ub == last_step] 
+        if not true_only:
+            boxes += [
+                b for b in self.false_boxes if b.timestep().ub == last_step
+            ]
+        return boxes
 
-    def outer_interval(self, param_name: str) -> Interval:
+    def outer_interval(self, param_name: str, last_boxes:bool =False) -> Interval:
         """
         Get the infimum and supremimum values of parameter param_name among all true boxes
 
@@ -99,17 +102,18 @@ class ParameterSpace(BaseModel):
         Interval
             Interval where the lb and ub are the minimum and maximum values taken by parameter among all true boxes.
         """
-        if len(self.true_boxes) > 0:
+        boxes = self.last_boxes() if last_boxes else self.true_boxes
+        if len(boxes) > 0:
             lb = min(
                 map(
                     lambda b: b.project([param_name]).bounds[param_name].lb,
-                    self.true_boxes,
+                    boxes,
                 )
             )
             ub = max(
                 map(
                     lambda b: b.project([param_name]).bounds[param_name].ub,
-                    self.true_boxes,
+                    boxes,
                 )
             )
         else:

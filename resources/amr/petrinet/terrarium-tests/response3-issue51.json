@@ -1,0 +1,1473 @@
+{
+    "id": "xyz",
+    "model": {
+        "name": "model_d209c26f-f79e-4692-913f-292962e85821",
+        "init_values": {},
+        "parameter_bounds": {},
+        "petrinet": {
+            "header": {
+                "name": "SIR",
+                "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+                "schema_name": "petrinet",
+                "description": "Basic epidemiological model with S, I, R compartments",
+                "model_version": "0.1"
+            },
+            "properties": {},
+            "model": {
+                "states": [
+                    {
+                        "id": "S",
+                        "name": "Susceptible",
+                        "description": null,
+                        "grounding": {
+                            "identifiers": {
+                                "ido": "0000514"
+                            },
+                            "modifiers": {}
+                        },
+                        "units": {
+                            "expression": "person",
+                            "expression_mathml": "<ci>person</ci>"
+                        }
+                    },
+                    {
+                        "id": "I",
+                        "name": "Infected",
+                        "description": null,
+                        "grounding": {
+                            "identifiers": {
+                                "ido": "0000511"
+                            },
+                            "modifiers": {}
+                        },
+                        "units": {
+                            "expression": "person",
+                            "expression_mathml": "<ci>person</ci>"
+                        }
+                    },
+                    {
+                        "id": "R",
+                        "name": "Recovered",
+                        "description": null,
+                        "grounding": {
+                            "identifiers": {
+                                "ido": "0000592"
+                            },
+                            "modifiers": {}
+                        },
+                        "units": {
+                            "expression": "person",
+                            "expression_mathml": "<ci>person</ci>"
+                        }
+                    }
+                ],
+                "transitions": [
+                    {
+                        "id": "inf",
+                        "input": [
+                            "I",
+                            "S"
+                        ],
+                        "output": [
+                            "I",
+                            "I"
+                        ],
+                        "grounding": null,
+                        "properties": {
+                            "name": "inf",
+                            "description": null,
+                            "grounding": null
+                        }
+                    },
+                    {
+                        "id": "rec",
+                        "input": [
+                            "I"
+                        ],
+                        "output": [
+                            "R"
+                        ],
+                        "grounding": null,
+                        "properties": {
+                            "name": "rec",
+                            "description": null,
+                            "grounding": null
+                        }
+                    }
+                ]
+            },
+            "semantics": {
+                "ode": {
+                    "rates": [
+                        {
+                            "target": "inf",
+                            "expression": "0.004*I*S*beta",
+                            "expression_mathml": "<apply><times/><cn>0.0040000000000000001</cn><ci>I</ci><ci>S</ci><ci>beta</ci></apply>"
+                        },
+                        {
+                            "target": "rec",
+                            "expression": "I*gamma",
+                            "expression_mathml": "<apply><times/><ci>I</ci><ci>gamma</ci></apply>"
+                        }
+                    ],
+                    "initials": [
+                        {
+                            "target": "S",
+                            "expression": "2000.0",
+                            "expression_mathml": "<ci>2000.0</ci>"
+                        },
+                        {
+                            "target": "I",
+                            "expression": "1.0",
+                            "expression_mathml": "<ci>1.0</ci>"
+                        },
+                        {
+                            "target": "R",
+                            "expression": "0.0",
+                            "expression_mathml": "<ci>0.0</ci>"
+                        }
+                    ],
+                    "parameters": [
+                        {
+                            "id": "beta",
+                            "name": "β",
+                            "description": "infection rate",
+                            "value": 0.04,
+                            "grounding": null,
+                            "distribution": {
+                                "type": "StandardUniform1",
+                                "parameters": {
+                                    "minimum": 0.03,
+                                    "maximum": 0.05
+                                }
+                            },
+                            "units": {
+                                "expression": "1/(day*person)",
+                                "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>day</ci><ci>person</ci></apply></apply>"
+                            }
+                        },
+                        {
+                            "id": "gamma",
+                            "name": "γ",
+                            "description": "recovery rate",
+                            "value": 0.02,
+                            "grounding": null,
+                            "distribution": {
+                                "type": "StandardUniform1",
+                                "parameters": {
+                                    "minimum": 0.01,
+                                    "maximum": 0.03
+                                }
+                            },
+                            "units": {
+                                "expression": "1/day",
+                                "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                            }
+                        }
+                    ],
+                    "observables": [],
+                    "time": {
+                        "id": "t",
+                        "units": {
+                            "expression": "day",
+                            "expression_mathml": "<ci>day</ci>"
+                        }
+                    }
+                },
+                "typing": null,
+                "span": null
+            },
+            "metadata": {
+                "annotations": {
+                    "authors": [],
+                    "references": [],
+                    "locations": [],
+                    "pathogens": [],
+                    "diseases": [],
+                    "hosts": [],
+                    "model_types": []
+                },
+                "source": null,
+                "gollmCard": null,
+                "gollmExtractions": null,
+                "templateCard": null
+            },
+            "id": "73e7e950-9d43-4304-96f8-f4af16cfd249",
+            "createdOn": "2024-08-28T00:38:18.290+00:00",
+            "updatedOn": "2024-10-30T19:14:48.672+00:00",
+            "name": "SIR",
+            "fileNames": [],
+            "temporary": false,
+            "publicAsset": false
+        }
+    },
+    "progress": {
+        "progress": 1,
+        "coverage_of_search_space": 1,
+        "coverage_of_representable_space": 0
+    },
+    "request": {
+        "query": null,
+        "constraints": [
+            {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                    "lb": 24,
+                    "ub": 27,
+                    "closed_upper_bound": true,
+                    "original_width": 3,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                    "lb": -1.7976931348623157e+308,
+                    "ub": 1000,
+                    "closed_upper_bound": false,
+                    "original_width": 1.7976931348623157e+308,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "variables": [
+                    "I"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": false
+            },
+            {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                    "lb": 0,
+                    "ub": 35,
+                    "closed_upper_bound": true,
+                    "original_width": 35,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                    "lb": 0,
+                    "ub": 1.7976931348623157e+308,
+                    "closed_upper_bound": false,
+                    "original_width": 1.7976931348623157e+308,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "variables": [
+                    "I"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": false
+            }
+        ],
+        "parameters": [
+            {
+                "name": "beta",
+                "interval": {
+                    "lb": 0.05,
+                    "ub": 0.05,
+                    "closed_upper_bound": true
+                },
+                "label": "all"
+            },
+            {
+                "name": "gamma",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.01,
+                    "closed_upper_bound": true
+                },
+                "label": "all"
+            }
+        ],
+        "config": {
+            "tolerance": 0.2,
+            "queue_timeout": 1,
+            "number_of_processes": 1,
+            "wait_timeout": null,
+            "wait_action_timeout": 0.05,
+            "solver": "dreal",
+            "num_steps": 2,
+            "step_size": 1,
+            "num_initial_boxes": 1,
+            "solver_timeout": null,
+            "initial_state_tolerance": 0,
+            "save_smtlib": null,
+            "dreal_precision": 0.1,
+            "dreal_log_level": "off",
+            "constraint_noise": 0,
+            "dreal_mcts": true,
+            "substitute_subformulas": false,
+            "normalization_constant": 1,
+            "use_compartmental_constraints": false,
+            "compartmental_constraint_noise": 0.01,
+            "normalize": false,
+            "simplify_query": false,
+            "series_approximation_threshold": null,
+            "profile": false,
+            "taylor_series_order": null,
+            "corner_points": false,
+            "verbosity": 0,
+            "use_transition_symbols": false,
+            "uniform_box_splits": false,
+            "dreal_prefer_parameters": [],
+            "point_based_evaluation": false,
+            "prioritize_box_entropy": true,
+            "mode": "mode_smt",
+            "random_seed": 0
+        },
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "interval": {
+                    "lb": -1.7976931348623157e+308,
+                    "ub": 1.7976931348623157e+308,
+                    "closed_upper_bound": false,
+                    "original_width": null,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "label": "any",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            7,
+                            14,
+                            21,
+                            28,
+                            35
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "done": true,
+    "error": false,
+    "error_message": null,
+    "parameter_space": {
+        "num_dimensions": 3,
+        "true_boxes": [
+            {
+                "type": "box",
+                "label": "true",
+                "bounds": {
+                    "beta": {
+                        "lb": 0.03,
+                        "ub": 0.05,
+                        "closed_upper_bound": false,
+                        "original_width": 0.020000000000000007,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "gamma": {
+                        "lb": 0.01,
+                        "ub": 0.03,
+                        "closed_upper_bound": false,
+                        "original_width": 0.02,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "timestep": {
+                        "lb": 0,
+                        "ub": 0,
+                        "closed_upper_bound": true,
+                        "original_width": 5,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    }
+                },
+                "explanation": {
+                    "expression": "((((((solve_step_0 & ((assume_Constraint_2_0 | (I_0 < 0.0)) | (! disj1))) & (disj1 | (! conj0))) & (conj0 | (! solve_step_0))) & ((I_0 = 1.0) | (! conj0))) & ((! (I_0 < 0.0)) | (! (I_0 = 1.0)))) & (! assume_Constraint_2_0))",
+                    "symbols": [
+                        "assume_Constraint_2_0",
+                        "solve_step_0",
+                        "disj1",
+                        "conj0",
+                        "I_0"
+                    ],
+                    "relevant_assumptions": [
+                        {
+                            "constraint": {
+                                "soft": true,
+                                "name": "Constraint 2",
+                                "timepoints": {
+                                    "lb": 0,
+                                    "ub": 35,
+                                    "closed_upper_bound": true,
+                                    "original_width": 35,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "additive_bounds": {
+                                    "lb": 0,
+                                    "ub": 1.7976931348623157e+308,
+                                    "closed_upper_bound": false,
+                                    "original_width": 1.7976931348623157e+308,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "variables": [
+                                    "I"
+                                ],
+                                "weights": [
+                                    1
+                                ],
+                                "derivative": false
+                            }
+                        }
+                    ]
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        7,
+                        14,
+                        21,
+                        28,
+                        35
+                    ]
+                },
+                "corner_points": [],
+                "points": [
+                    {
+                        "type": "point",
+                        "label": "true",
+                        "values": {
+                            "assume_Constraint_2": 1,
+                            "assume_Constraint_2_0": 1,
+                            "beta": 0.04,
+                            "gamma": 0.02,
+                            "timer_t_0": 0,
+                            "solve_step_0": 1,
+                            "S_0": 2000,
+                            "I_0": 1,
+                            "R_0": 0,
+                            "timestep": 0
+                        },
+                        "normalized_values": null,
+                        "schedule": {
+                            "timepoints": [
+                                0,
+                                7,
+                                14,
+                                21,
+                                28,
+                                35
+                            ]
+                        },
+                        "simulation": null
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "label": "true",
+                "bounds": {
+                    "beta": {
+                        "lb": 0.03,
+                        "ub": 0.05,
+                        "closed_upper_bound": false,
+                        "original_width": 0.020000000000000007,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "gamma": {
+                        "lb": 0.01,
+                        "ub": 0.03,
+                        "closed_upper_bound": false,
+                        "original_width": 0.02,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "timestep": {
+                        "lb": 1,
+                        "ub": 1,
+                        "closed_upper_bound": true,
+                        "original_width": 5,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    }
+                },
+                "explanation": {
+                    "expression": "(((((((((((((((((((assume_Constraint_2_0 & solve_step_0) & (gamma < 29999999999999999/1000000000000000000)) & (beta < 50000000000000003/1000000000000000000)) & solve_step_1) & (disj2 | (! conj0))) & (conj0 | (! solve_step_0))) & (((((((((((I_0 < 0.0) | (gamma < 10000000000000001/1000000000000000000)) | (beta < 29999999999999999/1000000000000000000)) | (! (R_0 = 0.0))) | (! (I_0 = 1.0))) | (! (S_0 = 2000.0))) | (! (gamma < 29999999999999999/1000000000000000000))) | (! (beta < 50000000000000003/1000000000000000000))) | (! (I_7 < 0.0))) | (! (R_7 = (R_0 + (7.0 * (gamma * I_0)))))) | (! (I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0))))))))) & ((R_0 = 0.0) | (! conj0))) & ((I_0 = 1.0) | (! conj0))) & ((S_0 = 2000.0) | (! conj0))) & ((assume_Constraint_2_7 | (I_7 < 0.0)) | (! disj6))) & (disj6 | (! conj3))) & (conj3 | (! solve_step_1))) & ((R_7 = (R_0 + (7.0 * (gamma * I_0)))) | (! conj3))) & ((I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))) | (! conj3))) & (((! assume_Constraint_2_0) | (! disj2)) | (! (I_0 < 0.0)))) & (! (gamma < 10000000000000001/1000000000000000000))) & (! (beta < 29999999999999999/1000000000000000000))) & (! assume_Constraint_2_7))",
+                    "symbols": [
+                        "assume_Constraint_2_7",
+                        "disj2",
+                        "beta",
+                        "gamma",
+                        "disj6",
+                        "R_7",
+                        "conj3",
+                        "assume_Constraint_2_0",
+                        "solve_step_0",
+                        "S_0",
+                        "conj0",
+                        "I_0",
+                        "solve_step_1",
+                        "R_0",
+                        "I_7"
+                    ],
+                    "relevant_assumptions": [
+                        {
+                            "constraint": {
+                                "soft": true,
+                                "name": "Constraint 2",
+                                "timepoints": {
+                                    "lb": 0,
+                                    "ub": 35,
+                                    "closed_upper_bound": true,
+                                    "original_width": 35,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "additive_bounds": {
+                                    "lb": 0,
+                                    "ub": 1.7976931348623157e+308,
+                                    "closed_upper_bound": false,
+                                    "original_width": 1.7976931348623157e+308,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "variables": [
+                                    "I"
+                                ],
+                                "weights": [
+                                    1
+                                ],
+                                "derivative": false
+                            }
+                        }
+                    ]
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        7,
+                        14,
+                        21,
+                        28,
+                        35
+                    ]
+                },
+                "corner_points": [],
+                "points": [
+                    {
+                        "type": "point",
+                        "label": "true",
+                        "values": {
+                            "assume_Constraint_2": 1,
+                            "assume_Constraint_2_0": 1,
+                            "beta": 0.04068230955501886,
+                            "gamma": 0.024208476440159936,
+                            "timer_t_0": 0,
+                            "solve_step_0": 1,
+                            "S_0": 2000,
+                            "I_0": 1,
+                            "R_0": 0,
+                            "assume_Constraint_2_7": 1,
+                            "S_7": 1997.7217906649191,
+                            "R_7": 0.16945933508111957,
+                            "timer_t_7": 7,
+                            "I_7": 3.1492906649188175,
+                            "timestep": 1
+                        },
+                        "normalized_values": null,
+                        "schedule": {
+                            "timepoints": [
+                                0,
+                                7,
+                                14,
+                                21,
+                                28,
+                                35
+                            ]
+                        },
+                        "simulation": null
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "label": "true",
+                "bounds": {
+                    "beta": {
+                        "lb": 0.03,
+                        "ub": 0.05,
+                        "closed_upper_bound": false,
+                        "original_width": 0.020000000000000007,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "gamma": {
+                        "lb": 0.01,
+                        "ub": 0.03,
+                        "closed_upper_bound": false,
+                        "original_width": 0.02,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "timestep": {
+                        "lb": 2,
+                        "ub": 2,
+                        "closed_upper_bound": true,
+                        "original_width": 5,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    }
+                },
+                "explanation": {
+                    "expression": "(((((((((((((((((((((((((((assume_Constraint_2_0 & solve_step_0) & (gamma < 29999999999999999/1000000000000000000)) & (beta < 50000000000000003/1000000000000000000)) & solve_step_2) & solve_step_1) & assume_Constraint_2_7) & (disj2 | (! conj0))) & (conj0 | (! solve_step_0))) & (((((((((((((((I_0 < 0.0) | (gamma < 10000000000000001/1000000000000000000)) | (beta < 29999999999999999/1000000000000000000)) | (I_7 < 0.0)) | (! (R_0 = 0.0))) | (! (I_0 = 1.0))) | (! (S_0 = 2000.0))) | (! (gamma < 29999999999999999/1000000000000000000))) | (! (beta < 50000000000000003/1000000000000000000))) | (! (R_7 = (R_0 + (7.0 * (gamma * I_0)))))) | (! (I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))))) | (! (S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))))) | (! (I_14 < 0.0))) | (! (R_14 = (R_7 + (7.0 * (gamma * I_7)))))) | (! (I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7))))))))) & ((R_0 = 0.0) | (! conj0))) & ((I_0 = 1.0) | (! conj0))) & ((S_0 = 2000.0) | (! conj0))) & (disj7 | (! conj3))) & (conj3 | (! solve_step_1))) & ((R_7 = (R_0 + (7.0 * (gamma * I_0)))) | (! conj3))) & ((I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))) | (! conj3))) & ((S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))) | (! conj3))) & ((assume_Constraint_2_14 | (I_14 < 0.0)) | (! disj11))) & (disj11 | (! conj7))) & (conj7 | (! solve_step_2))) & ((R_14 = (R_7 + (7.0 * (gamma * I_7)))) | (! conj7))) & ((I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))) | (! conj7))) & (((! assume_Constraint_2_0) | (! disj2)) | (! (I_0 < 0.0)))) & (((! assume_Constraint_2_7) | (! disj7)) | (! (I_7 < 0.0)))) & (! (gamma < 10000000000000001/1000000000000000000))) & (! (beta < 29999999999999999/1000000000000000000))) & (! assume_Constraint_2_14))",
+                    "symbols": [
+                        "assume_Constraint_2_7",
+                        "disj2",
+                        "beta",
+                        "gamma",
+                        "S_7",
+                        "R_7",
+                        "conj3",
+                        "S_0",
+                        "I_0",
+                        "disj7",
+                        "disj11",
+                        "R_0",
+                        "conj7",
+                        "assume_Constraint_2_0",
+                        "I_14",
+                        "solve_step_0",
+                        "conj0",
+                        "solve_step_1",
+                        "assume_Constraint_2_14",
+                        "solve_step_2",
+                        "R_14",
+                        "I_7"
+                    ],
+                    "relevant_assumptions": [
+                        {
+                            "constraint": {
+                                "soft": true,
+                                "name": "Constraint 2",
+                                "timepoints": {
+                                    "lb": 0,
+                                    "ub": 35,
+                                    "closed_upper_bound": true,
+                                    "original_width": 35,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "additive_bounds": {
+                                    "lb": 0,
+                                    "ub": 1.7976931348623157e+308,
+                                    "closed_upper_bound": false,
+                                    "original_width": 1.7976931348623157e+308,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "variables": [
+                                    "I"
+                                ],
+                                "weights": [
+                                    1
+                                ],
+                                "derivative": false
+                            }
+                        }
+                    ]
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        7,
+                        14,
+                        21,
+                        28,
+                        35
+                    ]
+                },
+                "corner_points": [],
+                "points": [
+                    {
+                        "type": "point",
+                        "label": "true",
+                        "values": {
+                            "assume_Constraint_2": 1,
+                            "assume_Constraint_2_0": 1,
+                            "beta": 0.041302664596581225,
+                            "gamma": 0.025313941800867015,
+                            "timer_t_0": 0,
+                            "solve_step_0": 1,
+                            "S_0": 2000,
+                            "I_0": 1,
+                            "R_0": 0,
+                            "assume_Constraint_2_7": 1,
+                            "S_7": 1997.6870499689073,
+                            "R_7": 0.17718910519619874,
+                            "timer_t_7": 7,
+                            "I_7": 3.1542130608091887,
+                            "I_14": 9.964794328709345,
+                            "assume_Constraint_2_14": 1,
+                            "S_14": 1990.4427404621756,
+                            "R_14": 0.749718825861009,
+                            "timer_t_14": 14,
+                            "timestep": 2
+                        },
+                        "normalized_values": null,
+                        "schedule": {
+                            "timepoints": [
+                                0,
+                                7,
+                                14,
+                                21,
+                                28,
+                                35
+                            ]
+                        },
+                        "simulation": null
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "label": "true",
+                "bounds": {
+                    "beta": {
+                        "lb": 0.03,
+                        "ub": 0.05,
+                        "closed_upper_bound": false,
+                        "original_width": 0.020000000000000007,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "gamma": {
+                        "lb": 0.01,
+                        "ub": 0.03,
+                        "closed_upper_bound": false,
+                        "original_width": 0.02,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "timestep": {
+                        "lb": 3,
+                        "ub": 3,
+                        "closed_upper_bound": true,
+                        "original_width": 5,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    }
+                },
+                "explanation": {
+                    "expression": "(((((((((((((((((((((((((((((((((((assume_Constraint_2_0 & solve_step_0) & (gamma < 29999999999999999/1000000000000000000)) & (beta < 50000000000000003/1000000000000000000)) & solve_step_3) & solve_step_2) & solve_step_1) & assume_Constraint_2_7) & assume_Constraint_2_14) & (disj2 | (! conj0))) & (conj0 | (! solve_step_0))) & (((((((((((((((((((I_0 < 0.0) | (gamma < 10000000000000001/1000000000000000000)) | (beta < 29999999999999999/1000000000000000000)) | (I_7 < 0.0)) | (I_14 < 0.0)) | (! (R_0 = 0.0))) | (! (I_0 = 1.0))) | (! (S_0 = 2000.0))) | (! (gamma < 29999999999999999/1000000000000000000))) | (! (beta < 50000000000000003/1000000000000000000))) | (! (R_7 = (R_0 + (7.0 * (gamma * I_0)))))) | (! (I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))))) | (! (S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))))) | (! (R_14 = (R_7 + (7.0 * (gamma * I_7)))))) | (! (I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))))) | (! (S_14 = (S_7 - (280001/10000000 * ((beta * I_7) * S_7)))))) | (! (I_21 < 0.0))) | (! (R_21 = (R_14 + (7.0 * (gamma * I_14)))))) | (! (I_21 = (I_14 + (7.0 * ((-1.0 * (gamma * I_14)) + (400001/100000000 * ((beta * I_14) * S_14))))))))) & ((R_0 = 0.0) | (! conj0))) & ((I_0 = 1.0) | (! conj0))) & ((S_0 = 2000.0) | (! conj0))) & (disj7 | (! conj3))) & (conj3 | (! solve_step_1))) & ((R_7 = (R_0 + (7.0 * (gamma * I_0)))) | (! conj3))) & ((I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))) | (! conj3))) & ((S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))) | (! conj3))) & (disj12 | (! conj7))) & (conj7 | (! solve_step_2))) & ((R_14 = (R_7 + (7.0 * (gamma * I_7)))) | (! conj7))) & ((I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))) | (! conj7))) & ((S_14 = (S_7 - (280001/10000000 * ((beta * I_7) * S_7)))) | (! conj7))) & ((assume_Constraint_2_21 | (I_21 < 0.0)) | (! disj16))) & (disj16 | (! conj11))) & (conj11 | (! solve_step_3))) & ((R_21 = (R_14 + (7.0 * (gamma * I_14)))) | (! conj11))) & ((I_21 = (I_14 + (7.0 * ((-1.0 * (gamma * I_14)) + (400001/100000000 * ((beta * I_14) * S_14)))))) | (! conj11))) & (((! assume_Constraint_2_0) | (! disj2)) | (! (I_0 < 0.0)))) & (((! assume_Constraint_2_7) | (! disj7)) | (! (I_7 < 0.0)))) & (((! assume_Constraint_2_14) | (! disj12)) | (! (I_14 < 0.0)))) & (! (gamma < 10000000000000001/1000000000000000000))) & (! (beta < 29999999999999999/1000000000000000000))) & (! assume_Constraint_2_21))",
+                    "symbols": [
+                        "assume_Constraint_2_7",
+                        "disj2",
+                        "beta",
+                        "gamma",
+                        "S_7",
+                        "R_7",
+                        "conj3",
+                        "S_0",
+                        "I_0",
+                        "disj7",
+                        "conj7",
+                        "R_0",
+                        "I_21",
+                        "disj12",
+                        "disj16",
+                        "assume_Constraint_2_21",
+                        "conj11",
+                        "R_21",
+                        "assume_Constraint_2_0",
+                        "I_14",
+                        "solve_step_0",
+                        "assume_Constraint_2_14",
+                        "solve_step_1",
+                        "conj0",
+                        "solve_step_2",
+                        "S_14",
+                        "solve_step_3",
+                        "R_14",
+                        "I_7"
+                    ],
+                    "relevant_assumptions": [
+                        {
+                            "constraint": {
+                                "soft": true,
+                                "name": "Constraint 2",
+                                "timepoints": {
+                                    "lb": 0,
+                                    "ub": 35,
+                                    "closed_upper_bound": true,
+                                    "original_width": 35,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "additive_bounds": {
+                                    "lb": 0,
+                                    "ub": 1.7976931348623157e+308,
+                                    "closed_upper_bound": false,
+                                    "original_width": 1.7976931348623157e+308,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "variables": [
+                                    "I"
+                                ],
+                                "weights": [
+                                    1
+                                ],
+                                "derivative": false
+                            }
+                        }
+                    ]
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        7,
+                        14,
+                        21,
+                        28,
+                        35
+                    ]
+                },
+                "corner_points": [],
+                "points": [
+                    {
+                        "type": "point",
+                        "label": "true",
+                        "values": {
+                            "assume_Constraint_2": 1,
+                            "assume_Constraint_2_0": 1,
+                            "beta": 0.04314214560970058,
+                            "gamma": 0.029365964306347078,
+                            "timer_t_0": 0,
+                            "solve_step_0": 1,
+                            "S_0": 2000,
+                            "I_0": 1,
+                            "R_0": 0,
+                            "assume_Constraint_2_7": 1,
+                            "S_7": 1997.5840398458568,
+                            "R_7": 0.205439970680366,
+                            "timer_t_7": 7,
+                            "I_7": 3.210503070115682,
+                            "I_14": 10.255476722785316,
+                            "assume_Constraint_2_14": 1,
+                            "S_14": 1989.8487650232757,
+                            "R_14": 0.8706393304700392,
+                            "timer_t_14": 14,
+                            "timer_t_21": 21,
+                            "I_21": 32.67926398277873,
+                            "assume_Constraint_2_21": 1,
+                            "S_21": 1965.2605871906246,
+                            "R_21": 2.978256675218668,
+                            "timestep": 3
+                        },
+                        "normalized_values": null,
+                        "schedule": {
+                            "timepoints": [
+                                0,
+                                7,
+                                14,
+                                21,
+                                28,
+                                35
+                            ]
+                        },
+                        "simulation": null
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "label": "true",
+                "bounds": {
+                    "beta": {
+                        "lb": 0.03,
+                        "ub": 0.05,
+                        "closed_upper_bound": false,
+                        "original_width": 0.020000000000000007,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "gamma": {
+                        "lb": 0.01,
+                        "ub": 0.03,
+                        "closed_upper_bound": false,
+                        "original_width": 0.02,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "timestep": {
+                        "lb": 4,
+                        "ub": 4,
+                        "closed_upper_bound": true,
+                        "original_width": 5,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    }
+                },
+                "explanation": {
+                    "expression": "(((((((((((((((((((((((((((((((((((((((((((assume_Constraint_2_0 & solve_step_0) & (gamma < 29999999999999999/1000000000000000000)) & (beta < 50000000000000003/1000000000000000000)) & solve_step_4) & solve_step_3) & solve_step_2) & solve_step_1) & assume_Constraint_2_7) & assume_Constraint_2_14) & assume_Constraint_2_21) & (disj2 | (! conj0))) & (conj0 | (! solve_step_0))) & (((((((((((((((((((((((I_0 < 0.0) | (gamma < 10000000000000001/1000000000000000000)) | (beta < 29999999999999999/1000000000000000000)) | (I_7 < 0.0)) | (I_14 < 0.0)) | (I_21 < 0.0)) | (! (R_0 = 0.0))) | (! (I_0 = 1.0))) | (! (S_0 = 2000.0))) | (! (gamma < 29999999999999999/1000000000000000000))) | (! (beta < 50000000000000003/1000000000000000000))) | (! (R_7 = (R_0 + (7.0 * (gamma * I_0)))))) | (! (I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))))) | (! (S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))))) | (! (R_14 = (R_7 + (7.0 * (gamma * I_7)))))) | (! (I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))))) | (! (S_14 = (S_7 - (280001/10000000 * ((beta * I_7) * S_7)))))) | (! (R_21 = (R_14 + (7.0 * (gamma * I_14)))))) | (! (I_21 = (I_14 + (7.0 * ((-1.0 * (gamma * I_14)) + (400001/100000000 * ((beta * I_14) * S_14)))))))) | (! (S_21 = (S_14 - (280001/10000000 * ((beta * I_14) * S_14)))))) | (! (I_28 < 0.0))) | (! (R_28 = (R_21 + (7.0 * (gamma * I_21)))))) | (! (I_28 = (I_21 + (7.0 * ((-1.0 * (gamma * I_21)) + (400001/100000000 * ((beta * I_21) * S_21))))))))) & ((R_0 = 0.0) | (! conj0))) & ((I_0 = 1.0) | (! conj0))) & ((S_0 = 2000.0) | (! conj0))) & (disj7 | (! conj3))) & (conj3 | (! solve_step_1))) & ((R_7 = (R_0 + (7.0 * (gamma * I_0)))) | (! conj3))) & ((I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))) | (! conj3))) & ((S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))) | (! conj3))) & (disj12 | (! conj7))) & (conj7 | (! solve_step_2))) & ((R_14 = (R_7 + (7.0 * (gamma * I_7)))) | (! conj7))) & ((I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))) | (! conj7))) & ((S_14 = (S_7 - (280001/10000000 * ((beta * I_7) * S_7)))) | (! conj7))) & (disj17 | (! conj11))) & (conj11 | (! solve_step_3))) & ((R_21 = (R_14 + (7.0 * (gamma * I_14)))) | (! conj11))) & ((I_21 = (I_14 + (7.0 * ((-1.0 * (gamma * I_14)) + (400001/100000000 * ((beta * I_14) * S_14)))))) | (! conj11))) & ((S_21 = (S_14 - (280001/10000000 * ((beta * I_14) * S_14)))) | (! conj11))) & ((assume_Constraint_2_28 | (I_28 < 0.0)) | (! disj21))) & (disj21 | (! conj15))) & (conj15 | (! solve_step_4))) & ((R_28 = (R_21 + (7.0 * (gamma * I_21)))) | (! conj15))) & ((I_28 = (I_21 + (7.0 * ((-1.0 * (gamma * I_21)) + (400001/100000000 * ((beta * I_21) * S_21)))))) | (! conj15))) & (((! assume_Constraint_2_0) | (! disj2)) | (! (I_0 < 0.0)))) & (((! assume_Constraint_2_7) | (! disj7)) | (! (I_7 < 0.0)))) & (((! assume_Constraint_2_14) | (! disj12)) | (! (I_14 < 0.0)))) & (((! assume_Constraint_2_21) | (! disj17)) | (! (I_21 < 0.0)))) & (! (gamma < 10000000000000001/1000000000000000000))) & (! (beta < 29999999999999999/1000000000000000000))) & (! assume_Constraint_2_28))",
+                    "symbols": [
+                        "beta",
+                        "gamma",
+                        "S_0",
+                        "I_0",
+                        "disj7",
+                        "conj7",
+                        "R_0",
+                        "I_21",
+                        "assume_Constraint_2_21",
+                        "S_21",
+                        "R_21",
+                        "assume_Constraint_2_0",
+                        "solve_step_0",
+                        "disj17",
+                        "conj0",
+                        "solve_step_1",
+                        "disj21",
+                        "solve_step_2",
+                        "conj15",
+                        "solve_step_3",
+                        "solve_step_4",
+                        "I_7",
+                        "assume_Constraint_2_7",
+                        "disj2",
+                        "conj3",
+                        "S_7",
+                        "R_7",
+                        "I_28",
+                        "assume_Constraint_2_28",
+                        "R_28",
+                        "disj12",
+                        "conj11",
+                        "I_14",
+                        "assume_Constraint_2_14",
+                        "S_14",
+                        "R_14"
+                    ],
+                    "relevant_assumptions": [
+                        {
+                            "constraint": {
+                                "soft": true,
+                                "name": "Constraint 2",
+                                "timepoints": {
+                                    "lb": 0,
+                                    "ub": 35,
+                                    "closed_upper_bound": true,
+                                    "original_width": 35,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "additive_bounds": {
+                                    "lb": 0,
+                                    "ub": 1.7976931348623157e+308,
+                                    "closed_upper_bound": false,
+                                    "original_width": 1.7976931348623157e+308,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "variables": [
+                                    "I"
+                                ],
+                                "weights": [
+                                    1
+                                ],
+                                "derivative": false
+                            }
+                        }
+                    ]
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        7,
+                        14,
+                        21,
+                        28,
+                        35
+                    ]
+                },
+                "corner_points": [],
+                "points": [
+                    {
+                        "type": "point",
+                        "label": "true",
+                        "values": {
+                            "assume_Constraint_2": 1,
+                            "assume_Constraint_2_0": 1,
+                            "beta": 0.043106691810954244,
+                            "gamma": 0.011639593504460793,
+                            "timer_t_0": 0,
+                            "solve_step_0": 1,
+                            "S_0": 2000,
+                            "I_0": 1,
+                            "R_0": 0,
+                            "assume_Constraint_2_7": 1,
+                            "S_7": 1997.5860252585865,
+                            "R_7": 0.0814584151380613,
+                            "timer_t_7": 7,
+                            "I_7": 3.3324975868822118,
+                            "I_14": 11.11151052223978,
+                            "assume_Constraint_2_14": 1,
+                            "S_14": 1989.5511595074886,
+                            "R_14": 0.3529903818758683,
+                            "timer_t_14": 14,
+                            "timer_t_21": 21,
+                            "I_21": 36.82371849669415,
+                            "assume_Constraint_2_21": 1,
+                            "S_21": 1962.9083424606902,
+                            "R_21": 1.2662679771632026,
+                            "I_28": 121.22909810769272,
+                            "assume_Constraint_2_28": 1,
+                            "S_28": 1875.75654581131,
+                            "R_28": 4.266455588890307,
+                            "timer_t_28": 28,
+                            "timestep": 4
+                        },
+                        "normalized_values": null,
+                        "schedule": {
+                            "timepoints": [
+                                0,
+                                7,
+                                14,
+                                21,
+                                28,
+                                35
+                            ]
+                        },
+                        "simulation": null
+                    }
+                ]
+            },
+            {
+                "type": "box",
+                "label": "true",
+                "bounds": {
+                    "beta": {
+                        "lb": 0.03,
+                        "ub": 0.05,
+                        "closed_upper_bound": false,
+                        "original_width": 0.020000000000000007,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "gamma": {
+                        "lb": 0.01,
+                        "ub": 0.03,
+                        "closed_upper_bound": false,
+                        "original_width": 0.02,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    },
+                    "timestep": {
+                        "lb": 5,
+                        "ub": 5,
+                        "closed_upper_bound": true,
+                        "original_width": 5,
+                        "normalized": false,
+                        "unnormalized_lb": null,
+                        "unnormalized_ub": null
+                    }
+                },
+                "explanation": {
+                    "expression": "(((((((((((((((((((((((((((((((((((((((((((((((((((assume_Constraint_2_0 & solve_step_0) & (gamma < 29999999999999999/1000000000000000000)) & (beta < 50000000000000003/1000000000000000000)) & solve_step_5) & solve_step_4) & solve_step_3) & solve_step_2) & solve_step_1) & assume_Constraint_2_7) & assume_Constraint_2_14) & assume_Constraint_2_21) & assume_Constraint_2_28) & (disj2 | (! conj0))) & (conj0 | (! solve_step_0))) & (((((((((((((((((((((((((((I_0 < 0.0) | (gamma < 10000000000000001/1000000000000000000)) | (beta < 29999999999999999/1000000000000000000)) | (I_7 < 0.0)) | (I_14 < 0.0)) | (I_21 < 0.0)) | (I_28 < 0.0)) | (! (R_0 = 0.0))) | (! (I_0 = 1.0))) | (! (S_0 = 2000.0))) | (! (gamma < 29999999999999999/1000000000000000000))) | (! (beta < 50000000000000003/1000000000000000000))) | (! (R_7 = (R_0 + (7.0 * (gamma * I_0)))))) | (! (I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))))) | (! (S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))))) | (! (R_14 = (R_7 + (7.0 * (gamma * I_7)))))) | (! (I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))))) | (! (S_14 = (S_7 - (280001/10000000 * ((beta * I_7) * S_7)))))) | (! (R_21 = (R_14 + (7.0 * (gamma * I_14)))))) | (! (I_21 = (I_14 + (7.0 * ((-1.0 * (gamma * I_14)) + (400001/100000000 * ((beta * I_14) * S_14)))))))) | (! (S_21 = (S_14 - (280001/10000000 * ((beta * I_14) * S_14)))))) | (! (R_28 = (R_21 + (7.0 * (gamma * I_21)))))) | (! (I_28 = (I_21 + (7.0 * ((-1.0 * (gamma * I_21)) + (400001/100000000 * ((beta * I_21) * S_21)))))))) | (! (S_28 = (S_21 - (280001/10000000 * ((beta * I_21) * S_21)))))) | (! (I_35 < 0.0))) | (! (R_35 = (R_28 + (7.0 * (gamma * I_28)))))) | (! (I_35 = (I_28 + (7.0 * ((-1.0 * (gamma * I_28)) + (400001/100000000 * ((beta * I_28) * S_28))))))))) & ((R_0 = 0.0) | (! conj0))) & ((I_0 = 1.0) | (! conj0))) & ((S_0 = 2000.0) | (! conj0))) & (disj7 | (! conj3))) & (conj3 | (! solve_step_1))) & ((R_7 = (R_0 + (7.0 * (gamma * I_0)))) | (! conj3))) & ((I_7 = (I_0 + (7.0 * ((-1.0 * (gamma * I_0)) + (400001/100000000 * ((beta * I_0) * S_0)))))) | (! conj3))) & ((S_7 = (S_0 - (280001/10000000 * ((beta * I_0) * S_0)))) | (! conj3))) & (disj12 | (! conj7))) & (conj7 | (! solve_step_2))) & ((R_14 = (R_7 + (7.0 * (gamma * I_7)))) | (! conj7))) & ((I_14 = (I_7 + (7.0 * ((-1.0 * (gamma * I_7)) + (400001/100000000 * ((beta * I_7) * S_7)))))) | (! conj7))) & ((S_14 = (S_7 - (280001/10000000 * ((beta * I_7) * S_7)))) | (! conj7))) & (disj17 | (! conj11))) & (conj11 | (! solve_step_3))) & ((R_21 = (R_14 + (7.0 * (gamma * I_14)))) | (! conj11))) & ((I_21 = (I_14 + (7.0 * ((-1.0 * (gamma * I_14)) + (400001/100000000 * ((beta * I_14) * S_14)))))) | (! conj11))) & ((S_21 = (S_14 - (280001/10000000 * ((beta * I_14) * S_14)))) | (! conj11))) & (disj22 | (! conj15))) & (conj15 | (! solve_step_4))) & ((R_28 = (R_21 + (7.0 * (gamma * I_21)))) | (! conj15))) & ((I_28 = (I_21 + (7.0 * ((-1.0 * (gamma * I_21)) + (400001/100000000 * ((beta * I_21) * S_21)))))) | (! conj15))) & ((S_28 = (S_21 - (280001/10000000 * ((beta * I_21) * S_21)))) | (! conj15))) & ((assume_Constraint_2_35 | (I_35 < 0.0)) | (! disj26))) & (disj26 | (! conj19))) & (conj19 | (! solve_step_5))) & ((R_35 = (R_28 + (7.0 * (gamma * I_28)))) | (! conj19))) & ((I_35 = (I_28 + (7.0 * ((-1.0 * (gamma * I_28)) + (400001/100000000 * ((beta * I_28) * S_28)))))) | (! conj19))) & (((! assume_Constraint_2_0) | (! disj2)) | (! (I_0 < 0.0)))) & (((! assume_Constraint_2_7) | (! disj7)) | (! (I_7 < 0.0)))) & (((! assume_Constraint_2_14) | (! disj12)) | (! (I_14 < 0.0)))) & (((! assume_Constraint_2_21) | (! disj17)) | (! (I_21 < 0.0)))) & (((! assume_Constraint_2_28) | (! disj22)) | (! (I_28 < 0.0)))) & (! (gamma < 10000000000000001/1000000000000000000))) & (! (beta < 29999999999999999/1000000000000000000))) & (! assume_Constraint_2_35))",
+                    "symbols": [
+                        "R_35",
+                        "beta",
+                        "gamma",
+                        "S_0",
+                        "disj22",
+                        "disj26",
+                        "I_0",
+                        "disj7",
+                        "conj7",
+                        "R_0",
+                        "conj19",
+                        "I_21",
+                        "assume_Constraint_2_21",
+                        "S_21",
+                        "R_21",
+                        "assume_Constraint_2_0",
+                        "solve_step_0",
+                        "disj17",
+                        "conj0",
+                        "solve_step_1",
+                        "conj15",
+                        "solve_step_2",
+                        "solve_step_3",
+                        "solve_step_4",
+                        "solve_step_5",
+                        "I_7",
+                        "assume_Constraint_2_7",
+                        "disj2",
+                        "conj3",
+                        "I_28",
+                        "R_7",
+                        "S_7",
+                        "assume_Constraint_2_28",
+                        "S_28",
+                        "R_28",
+                        "disj12",
+                        "conj11",
+                        "I_14",
+                        "assume_Constraint_2_14",
+                        "S_14",
+                        "R_14",
+                        "I_35",
+                        "assume_Constraint_2_35"
+                    ],
+                    "relevant_assumptions": [
+                        {
+                            "constraint": {
+                                "soft": true,
+                                "name": "Constraint 2",
+                                "timepoints": {
+                                    "lb": 0,
+                                    "ub": 35,
+                                    "closed_upper_bound": true,
+                                    "original_width": 35,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "additive_bounds": {
+                                    "lb": 0,
+                                    "ub": 1.7976931348623157e+308,
+                                    "closed_upper_bound": false,
+                                    "original_width": 1.7976931348623157e+308,
+                                    "normalized": false,
+                                    "unnormalized_lb": null,
+                                    "unnormalized_ub": null
+                                },
+                                "variables": [
+                                    "I"
+                                ],
+                                "weights": [
+                                    1
+                                ],
+                                "derivative": false
+                            }
+                        }
+                    ]
+                },
+                "schedule": {
+                    "timepoints": [
+                        0,
+                        7,
+                        14,
+                        21,
+                        28,
+                        35
+                    ]
+                },
+                "corner_points": [],
+                "points": [
+                    {
+                        "type": "point",
+                        "label": "true",
+                        "values": {
+                            "assume_Constraint_2": 1,
+                            "assume_Constraint_2_0": 1,
+                            "beta": 0.04480163295144128,
+                            "gamma": 0.020815373210305525,
+                            "timer_t_0": 0,
+                            "solve_step_0": 1,
+                            "S_0": 2000,
+                            "I_0": 1,
+                            "R_0": 0,
+                            "assume_Constraint_2_7": 1,
+                            "S_7": 1997.4911433048383,
+                            "R_7": 0.14570739191985033,
+                            "timer_t_7": 7,
+                            "I_7": 3.3631515335897664,
+                            "I_14": 11.29756310501111,
+                            "assume_Constraint_2_14": 1,
+                            "S_14": 1989.0640619943524,
+                            "R_14": 0.635743457757546,
+                            "timer_t_14": 14,
+                            "timer_t_21": 21,
+                            "I_21": 37.84762748348261,
+                            "assume_Constraint_2_21": 1,
+                            "S_21": 1960.874758068435,
+                            "R_21": 2.2818819988715493,
+                            "I_28": 125.46762455209364,
+                            "assume_Constraint_2_28": 1,
+                            "S_28": 1867.791320793056,
+                            "R_28": 7.79898581540458,
+                            "timer_t_28": 28,
+                            "R_35": 26.075585898503775,
+                            "timer_t_35": 35,
+                            "assume_Constraint_2_35": 1,
+                            "I_35": 401.0925011487771,
+                            "S_35": 1573.832177562502,
+                            "timestep": 5
+                        },
+                        "normalized_values": null,
+                        "schedule": {
+                            "timepoints": [
+                                0,
+                                7,
+                                14,
+                                21,
+                                28,
+                                35
+                            ]
+                        },
+                        "simulation": null
+                    }
+                ]
+            }
+        ],
+        "false_boxes": [],
+        "unknown_points": []
+    },
+    "timing": {
+        "start_time": "2024-11-06T16:26:47.322759",
+        "end_time": null,
+        "total_time": null,
+        "solver_time": null,
+        "encoding_time": null,
+        "progress_timeseries": [
+            [
+                "2024-11-06T16:26:48.703675",
+                1
+            ]
+        ],
+        "additional_time": {}
+    },
+    "contracted_model": {
+        "header": {
+            "name": "SIR",
+            "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+            "schema_name": "petrinet",
+            "description": "Basic epidemiological model with S, I, R compartments",
+            "model_version": "0.1"
+        },
+        "properties": {},
+        "model": {
+            "states": [
+                {
+                    "id": "S",
+                    "name": "Susceptible",
+                    "description": null,
+                    "grounding": {
+                        "identifiers": {
+                            "ido": "0000514"
+                        },
+                        "modifiers": {}
+                    },
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "I",
+                    "name": "Infected",
+                    "description": null,
+                    "grounding": {
+                        "identifiers": {
+                            "ido": "0000511"
+                        },
+                        "modifiers": {}
+                    },
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                },
+                {
+                    "id": "R",
+                    "name": "Recovered",
+                    "description": null,
+                    "grounding": {
+                        "identifiers": {
+                            "ido": "0000592"
+                        },
+                        "modifiers": {}
+                    },
+                    "units": {
+                        "expression": "person",
+                        "expression_mathml": "<ci>person</ci>"
+                    }
+                }
+            ],
+            "transitions": [
+                {
+                    "id": "inf",
+                    "input": [
+                        "I",
+                        "S"
+                    ],
+                    "output": [
+                        "I",
+                        "I"
+                    ],
+                    "grounding": null,
+                    "properties": {
+                        "name": "inf",
+                        "description": null,
+                        "grounding": null
+                    }
+                },
+                {
+                    "id": "rec",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "grounding": null,
+                    "properties": {
+                        "name": "rec",
+                        "description": null,
+                        "grounding": null
+                    }
+                }
+            ]
+        },
+        "semantics": {
+            "ode": {
+                "rates": [
+                    {
+                        "target": "inf",
+                        "expression": "0.004*I*S*beta",
+                        "expression_mathml": "<apply><times/><cn>0.0040000000000000001</cn><ci>I</ci><ci>S</ci><ci>beta</ci></apply>"
+                    },
+                    {
+                        "target": "rec",
+                        "expression": "I*gamma",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>gamma</ci></apply>"
+                    }
+                ],
+                "initials": [
+                    {
+                        "target": "S",
+                        "expression": "2000.0",
+                        "expression_mathml": "<ci>2000.0</ci>"
+                    },
+                    {
+                        "target": "I",
+                        "expression": "1.0",
+                        "expression_mathml": "<ci>1.0</ci>"
+                    },
+                    {
+                        "target": "R",
+                        "expression": "0.0",
+                        "expression_mathml": "<ci>0.0</ci>"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "id": "beta",
+                        "name": "β",
+                        "description": "infection rate",
+                        "value": 0.04,
+                        "grounding": null,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.03,
+                                "maximum": 0.05
+                            }
+                        },
+                        "units": {
+                            "expression": "1/(day*person)",
+                            "expression_mathml": "<apply><divide/><cn>1</cn><apply><times/><ci>day</ci><ci>person</ci></apply></apply>"
+                        }
+                    },
+                    {
+                        "id": "gamma",
+                        "name": "γ",
+                        "description": "recovery rate",
+                        "value": 0.02,
+                        "grounding": null,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.01,
+                                "maximum": 0.03
+                            }
+                        },
+                        "units": {
+                            "expression": "1/day",
+                            "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+                        }
+                    }
+                ],
+                "observables": [],
+                "time": {
+                    "id": "t",
+                    "units": {
+                        "expression": "day",
+                        "expression_mathml": "<ci>day</ci>"
+                    }
+                }
+            },
+            "typing": null,
+            "span": null
+        },
+        "metadata": {
+            "annotations": {
+                "authors": [],
+                "references": [],
+                "locations": [],
+                "pathogens": [],
+                "diseases": [],
+                "hosts": [],
+                "model_types": []
+            },
+            "source": null,
+            "gollmCard": null,
+            "gollmExtractions": null,
+            "templateCard": null
+        },
+        "id": "73e7e950-9d43-4304-96f8-f4af16cfd249",
+        "createdOn": "2024-08-28T00:38:18.290+00:00",
+        "updatedOn": "2024-10-30T19:14:48.672+00:00",
+        "name": "SIR",
+        "fileNames": [],
+        "temporary": false,
+        "publicAsset": false
+    },
+    "modelConfigurationId": "4bc2fd75-ce0f-4e20-a4ac-af2894f87cef"
+}

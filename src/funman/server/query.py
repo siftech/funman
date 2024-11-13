@@ -269,7 +269,7 @@ class FunmanResults(BaseModel):
         # Get new bounds for each parameter
         amr_parameters = self.model._parameter_names()
         parameter_bounds = {
-            param: self.parameter_space.outer_interval(param)
+            param: self.parameter_space.outer_interval(param, last_boxes=True)
             for param in amr_parameters
         }
         self.contracted_model = self.model.contract_parameters(
