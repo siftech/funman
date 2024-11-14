@@ -268,13 +268,17 @@ class FunmanResults(BaseModel):
 
         # Get new bounds for each parameter
         amr_parameters = self.model._parameter_names()
+        last_step = self.parameter_space.last_step(true_only=True)
         parameter_bounds = {
-            param: self.parameter_space.outer_interval(param, last_boxes=True)
+            param: self.parameter_space.outer_interval(
+                param, true_only=True, steps=[last_step]
+            )
             for param in amr_parameters
         }
         self.contracted_model = self.model.contract_parameters(
             parameter_bounds
         )
+        return last_step
 
     def update_parameter_space(
         self, scenario: AnalysisScenario, results: ParameterSpace
@@ -311,7 +315,27 @@ class FunmanResults(BaseModel):
             l.exception(f"Unable to update progress due to exception: {e}")
 
         try:
-            self.contract_model()
+
+            before_params = {}
+            if self.contracted_model:
+                before_params = {
+                    p.id: (
+                        p.distribution.parameters["minimum"],
+                        p.distribution.parameters["maximum"],
+                    )
+                    for p in self.contracted_model.semantics.ode.parameters
+                }
+                # l.info(f"Before { before_params }")
+            last_step = self.contract_model()
+            after_params = {
+                p.id: (
+                    p.distribution.parameters["minimum"],
+                    p.distribution.parameters["maximum"],
+                )
+                for p in self.contracted_model.semantics.ode.parameters
+            }
+            if after_params != before_params:
+                l.debug(f"Contracted @ {last_step} :  { after_params }")
         except NotImplementedError as e:
             l.info(
                 f"Bypassing output of contracted model because it is not implmented for this model type: {type(self.model)}"

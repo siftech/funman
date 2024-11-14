@@ -76,19 +76,36 @@ class ParameterSpace(BaseModel):
     def boxes(self) -> List[Box]:
         return self.true_boxes + self.false_boxes
 
-    def last_boxes(self, true_only=False) -> List[Box]:
+    def last_step(self, true_only=False) -> int:
         last_step = max(
             max([b.timestep().ub for b in self.true_boxes] + [0]),
-            (max([b.timestep().ub for b in self.false_boxes] + [0]) if not true_only else 0),
+            (
+                max([b.timestep().ub for b in self.false_boxes] + [0])
+                if not true_only
+                else 0
+            ),
         )
-        boxes= [b for b in self.true_boxes if b.timestep().ub == last_step] 
+        return last_step
+
+    def last_boxes(self, true_only=False, steps=None) -> List[Box]:
+
+        # l.info(f"last_boxes(), last_step = {last_step}")
+        boxes = [
+            b
+            for b in self.true_boxes
+            if steps is None or b.timestep().ub in steps
+        ]
         if not true_only:
             boxes += [
-                b for b in self.false_boxes if b.timestep().ub == last_step
+                b
+                for b in self.false_boxes
+                if steps is None or b.timestep().ub in steps
             ]
         return boxes
 
-    def outer_interval(self, param_name: str, last_boxes:bool =False) -> Interval:
+    def outer_interval(
+        self, param_name: str, true_only=False, steps=None
+    ) -> Interval:
         """
         Get the infimum and supremimum values of parameter param_name among all true boxes
 
@@ -102,7 +119,8 @@ class ParameterSpace(BaseModel):
         Interval
             Interval where the lb and ub are the minimum and maximum values taken by parameter among all true boxes.
         """
-        boxes = self.last_boxes() if last_boxes else self.true_boxes
+        boxes = self.last_boxes(true_only=true_only, steps=steps)
+        # l.info(f"OuterInterval({param_name}) uses {len(boxes)} boxes.")
         if len(boxes) > 0:
             lb = min(
                 map(
