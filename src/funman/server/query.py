@@ -324,6 +324,7 @@ class FunmanResults(BaseModel):
                         p.distribution.parameters["maximum"],
                     )
                     for p in self.contracted_model.semantics.ode.parameters
+                    if p.distribution
                 }
                 # l.info(f"Before { before_params }")
             last_step = self.contract_model()
@@ -333,6 +334,7 @@ class FunmanResults(BaseModel):
                     p.distribution.parameters["maximum"],
                 )
                 for p in self.contracted_model.semantics.ode.parameters
+                if p.distribution
             }
             if after_params != before_params:
                 l.debug(f"Contracted @ {last_step} :  { after_params }")
