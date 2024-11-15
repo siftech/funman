@@ -108,7 +108,9 @@ def summarize_results(
     boxes = (
         results.parameter_space.boxes()
         if not print_last_time
-        else results.parameter_space.last_boxes()
+        else results.parameter_space.last_boxes(
+            steps=[results.parameter_space.last_step()]
+        )
     )
 
     if parameters_to_plot is None:

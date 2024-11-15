@@ -358,6 +358,8 @@ class Runner:
                 sleep(10)
             elif not self._worker.is_processing_id(work_unit.id):
                 results = self._worker.get_results(work_unit.id)
+                with open(outfile, "w") as f:
+                    f.write(results.model_dump_json(by_alias=True))
                 break
 
         if not plotted and dump_plot:
@@ -426,7 +428,9 @@ class Runner:
         boxes = (
             results.parameter_space.boxes()
             if not print_last_time
-            else results.parameter_space.last_boxes()
+            else results.parameter_space.last_boxes(
+                steps=[results.parameter_space.last_step()]
+            )
         )
         if parameters_to_plot is None:
             parameters_to_plot = results.model._parameter_names()
