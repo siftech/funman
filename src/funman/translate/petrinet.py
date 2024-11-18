@@ -22,6 +22,7 @@ from funman.model.model import FunmanModel
 from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils.sympy_utils import (
     rate_expr_to_pysmt,
+    replace_reserved,
     series_approx,
     sympy_subs,
     to_sympy,
@@ -435,7 +436,9 @@ class PetrinetEncoder(Encoder):
         transition_id = scenario.model._transition_id(transition)
         input_edges = scenario.model._input_edges()
         output_edges = scenario.model._output_edges()
-        state_subs = {s: str(f) for s, f in current_state.items()}
+        state_subs = {
+            s: replace_reserved(str(f)) for s, f in current_state.items()
+        }
 
         ins = [
             current_state[scenario.model._edge_source(edge)]

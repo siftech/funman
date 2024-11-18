@@ -220,7 +220,7 @@ def sympy_subs(expr: Expr, substitution: Dict[str, Union[float, str]]) -> Expr:
 
 
 reserved_words = ["lambda"]
-reserved_chars = ["{", "}"]
+reserved_chars = {"{": "l_curly", "}": "r_curly", ".": "dot"}
 
 
 def has_reserved_word(str_expr, rw):
@@ -236,10 +236,20 @@ def replace_reserved(str_expr):
         if isinstance(str_expr, str) and has_reserved_word(str_expr, rw):
             str_expr = str_expr.replace(rw, f"funman_{rw}")
 
-    for rc in reserved_chars:
+    for rc, nc in reserved_chars.items():
         if isinstance(str_expr, str) and has_reserved_char(str_expr, rc):
-            str_expr = str_expr.replace(rc, "_")
+            str_expr = str_expr.replace(rc, nc)
+    return str_expr
 
+
+def rev_replace_reserved(str_expr):
+    for rw in reserved_words:
+        if isinstance(str_expr, str) and has_reserved_word(str_expr, rw):
+            str_expr = str_expr.replace(f"funman_{rw}", rw)
+
+    for rc, nc in reserved_chars.items():
+        if isinstance(str_expr, str) and has_reserved_char(str_expr, nc):
+            str_expr = str_expr.replace(nc, rc)
     return str_expr
 
 
@@ -407,12 +417,8 @@ def sympy_to_pysmt_real(expr, numerator_digits=6):
 
 
 def sympy_to_pysmt_symbol(op, expr, op_type=None):
-    s_expr = str(expr)
-    reserved = [s for s in reserved_words if s in s_expr]
-    if len(reserved) > 0:
-        for r in reserved:
-            s_expr = s_expr.replace(f"funman_{r}", r)
-    return op(s_expr, op_type) if op_type else op(str(expr))
+    s_expr = rev_replace_reserved(str(expr))
+    return op(s_expr, op_type) if op_type else op(s_expr)
 
 
 if __name__ == "__main__":

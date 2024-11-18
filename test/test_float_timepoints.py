@@ -9,6 +9,7 @@ import sympy
 from matplotlib import pyplot as plt
 
 from funman.api.run import Runner
+from funman.constants import MODE_ODEINT, MODE_SMT
 from funman.server.query import FunmanWorkRequest
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
 
@@ -33,31 +34,51 @@ class TestFloatTimepoints(unittest.TestCase):
         logging.getLogger().setLevel(logging.DEBUG)
         self.l.level = logging.getLogger().level
         self.l.handlers.append(logging.StreamHandler(sys.stdout))
-    
-    def test_float_timepoints(self):
-    
+
+    def setup_common(self):
         with open(BASE_SIR_REQUEST_PATH, "r") as f:
-            base_request = FunmanWorkRequest.model_validate_json(f.read())
-        base_request.config.verbosity = 
-        base_request.structure_parameters[0].schedules[0].timepoints = [
+            request = FunmanWorkRequest.model_validate_json(f.read())
+        request.config.verbosity = 5
+        request.structure_parameters[0].schedules[0].timepoints = [
             0.0,
             1e-2,
             0.1,
             1,
-            2
+            2,
         ]
+        return request
 
+    def setup_odeint(self):
+        request = self.setup_common()
+        request.config.mode = MODE_ODEINT
+        return request
+
+    def setup_smt(self):
+        request = self.setup_common()
+        request.config.mode = MODE_SMT
+        return request
+
+    def test_float_timepoints_odeint(self):
+        base_request = self.setup_odeint()
         runner = Runner()
-        base_result = runner.run(BASE_SIR_MODEL_PATH, BASE_SIR_REQUEST_PATH)
+        base_result = runner.run(
+            BASE_SIR_MODEL_PATH, base_request.model_dump()
+        )
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
+    def test_float_timepoints_smt(self):
+        base_request = self.setup_smt()
+        runner = Runner()
+        base_result = runner.run(
+            BASE_SIR_MODEL_PATH, base_request.model_dump()
+        )
+        df = base_result.dataframe(base_result.points())
         assert (
             base_result
         ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
 
-
-
-
-   
 if __name__ == "__main__":
     unittest.main()

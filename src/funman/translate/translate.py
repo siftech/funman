@@ -406,14 +406,14 @@ class Encoder(ABC, BaseModel):
         assumptions: List[Assumption],
     ) -> EncodedFormula:
         if layer_idx == 0:
-            return self.encode_init_layer(scenario)
+            return self.encode_init_layer(scenario, options)
         else:
             return self.encode_transition_layer(scenario, layer_idx, options)
 
     def encode_init_layer(
-        self, scenario: "AnalysisScenario"
+        self, scenario: "AnalysisScenario", options: EncodingOptions
     ) -> EncodedFormula:
-        initial_state = self._timed_model_elements["init"]
+        initial_state = self._timed_model_elements["init"][options.schedule]
         initial_symbols = initial_state.get_free_variables()
 
         observations = self.encode_observation(scenario, 0, substitutions={})
@@ -642,7 +642,7 @@ class Encoder(ABC, BaseModel):
             return TRUE(), None
 
     def _define_init(
-        self, scenario: "AnalysisScenario", init_time: int = 0
+        self, scenario: "AnalysisScenario", init_time: Timepoint = 0
     ) -> FNode:
         # Generate Parameter symbols and assignments
         substitutions = self._initialize_substitutions(scenario)
@@ -901,7 +901,8 @@ class Encoder(ABC, BaseModel):
         time_step_constraints: TimeStepConstraints = {}
         time_step_substitutions: TimeStepSubstitutions = {}
         timed_parameters: TimedParameters = {}
-        initial_state, initial_substitutions = self._define_init(scenario)
+        initial_states = {}
+
         if step_sizes and num_steps:
             schedules: List[EncodingSchedule] = []
             for i, step_size in enumerate(
@@ -967,7 +968,7 @@ class Encoder(ABC, BaseModel):
                     if s1 + 1 == s2
                 }
             )
-            time_step_substitutions[schedule] = initial_substitutions.copy()
+
             timed_parameters.update(
                 {
                     (t1, t2 - t1): None
@@ -976,6 +977,11 @@ class Encoder(ABC, BaseModel):
                     if s1 + 1 == s2
                 }
             )
+            initial_state, initial_substitution = self._define_init(
+                scenario, init_time=schedule.timepoints[0]
+            )
+            initial_states[schedule] = initial_state
+            time_step_substitutions[schedule] = initial_substitution.copy()
 
         # configurations = None
         # max_step_index = None
@@ -986,7 +992,7 @@ class Encoder(ABC, BaseModel):
             "schedules": schedules,
             "state_timepoints": state_timepoints,
             "transition_timepoints": transition_timepoints,
-            "init": initial_state,
+            "init": initial_states,
             "time_step_constraints": time_step_constraints,
             "time_step_substitutions": time_step_substitutions,
             # "configurations": configurations,

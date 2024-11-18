@@ -438,8 +438,18 @@ class FunmanResults(BaseModel):
             df = pd.DataFrame.from_dict(timeseries)
 
             if interpolate:
-                df = df.infer_objects(copy=False).interpolate(
-                    method=interpolate
+                new_index = np.linspace(
+                    df["index"].min(),
+                    df["index"].max(),
+                    num=int(
+                        (df["index"].max() - df["index"].min())
+                        / df["index"].diff().min()
+                    ),
+                )
+                df = (
+                    df.infer_objects(copy=False)
+                    .reindex(new_index)
+                    .interpolate(method=interpolate)
                 )
 
             df["id"] = i
@@ -487,19 +497,22 @@ class FunmanResults(BaseModel):
         timestep = point.timestep()
         max_t = point.schedule.timepoints[timestep]
 
-        a_series["index"] = list(range(0, int(max_t) + 1))
+        a_series["index"] = point.schedule.timepoints
+
         for var, tps in series.items():
 
             if isinstance(tps, dict):
-                vals = [None] * (int(max_t) + 1)
+                vals = [None] * len(a_series["index"])
                 for t, v in tps.items():
-                    if (not isinstance(t, float) or t.isdigit()) and int(
-                        t
-                    ) <= int(max_t):
-                        vals[int(t)] = v
+                    i = point.schedule.timepoints.index(t)
+                    vals[i] = v
+                    # if (not isinstance(t, float) or t.isdigit()) and int(
+                    #     t
+                    # ) <= int(max_t):
+                    #     vals[int(t)] = v
                 a_series[var] = vals
             else:
-                a_series[var] = [tps] * (int(max_t) + 1)
+                a_series[var] = [tps] * len(a_series["index"])
         return a_series
 
     def symbol_values(
@@ -565,7 +578,10 @@ class FunmanResults(BaseModel):
         try:
             t = int(t)
         except Exception:
-            t = None
+            try:
+                t = float(t)
+            except Exception:
+                t = None
         return s, t
 
     def plot_trajectories(self, variable: str, num: int = 200):
