@@ -22,8 +22,8 @@ EXAMPLE_DIR = os.path.join(
 BASE_SIR_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
 BASE_SIR_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
 
-BASE_SIRHD_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sirhd_request.json")
-BASE_SIRHD_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sirhd.json")
+PS_SIR_REQUEST_PATH = os.path.join(RESOURCES, "amr", "petrinet", "amr-examples", "sir_request1.json")
+PS_SIR_MODEL_PATH = os.path.join(RESOURCES, "amr", "petrinet", "amr-examples", "sir.json")
 
 
 class TestFloatTimepoints(unittest.TestCase):
@@ -35,8 +35,8 @@ class TestFloatTimepoints(unittest.TestCase):
         self.l.level = logging.getLogger().level
         self.l.handlers.append(logging.StreamHandler(sys.stdout))
 
-    def setup_common(self):
-        with open(BASE_SIR_REQUEST_PATH, "r") as f:
+    def setup_common(self, request_file=BASE_SIR_REQUEST_PATH):
+        with open(request_file, "r") as f:
             request = FunmanWorkRequest.model_validate_json(f.read())
         request.config.verbosity = 5
         request.structure_parameters[0].schedules[0].timepoints = [
@@ -53,8 +53,8 @@ class TestFloatTimepoints(unittest.TestCase):
         request.config.mode = MODE_ODEINT
         return request
 
-    def setup_smt(self):
-        request = self.setup_common()
+    def setup_smt(self, request_file=BASE_SIR_REQUEST_PATH):
+        request = self.setup_common(request_file=request_file)
         request.config.mode = MODE_SMT
         return request
 
@@ -78,6 +78,19 @@ class TestFloatTimepoints(unittest.TestCase):
         assert (
             base_result
         ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
+
+
+    def test_float_timepoints_ps_smt(self):
+        base_request = self.setup_smt(request_file=PS_SIR_REQUEST_PATH)
+        runner = Runner()
+        base_result = runner.run(
+            PS_SIR_MODEL_PATH, base_request.model_dump()
+        )
+        df = base_result.dataframe(base_result.points())
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
+
 
 
 if __name__ == "__main__":

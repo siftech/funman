@@ -121,15 +121,15 @@ class CoreLexer(HRLexer):
                     r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
                 ),  # decimals scientific
             ]
-            + self.rules[0:-1]
+            + self.rules[0:-2]
             + [
                 Rule(
-                    r"(([A-Za-z_]|[^\u0000-\u007F])([A-Za-z_]|[^\u0000-\u007F])*)",
+                    r"(([A-Za-z_]|[^\u0000-\u007F])([\w\.\{\}_]|[^\u0000-\u007F])*)",
                     self.identifier,
                     True,
                 ),  # unicode identifiers
             ]
-            + self.rules[-1:]
+            + self.rules[-2:]
         )
         self.compile()
 
