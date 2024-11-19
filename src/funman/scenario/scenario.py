@@ -374,7 +374,9 @@ class AnalysisScenario(ABC, BaseModel):
     ) -> Optional[Timeseries]:
         init = {
             var: value
-            for var, value in point.values_at(0, self.model).items()
+            for var, value in point.values_at(
+                point.schedule.timepoints[0], self.model
+            ).items()
             if var != "timer_t"
         }
 

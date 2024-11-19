@@ -1,5 +1,6 @@
 import logging
 import math
+import re
 from functools import reduce
 from typing import Dict, List, Union
 
@@ -238,7 +239,8 @@ def replace_reserved(str_expr):
 
     for rc, nc in reserved_chars.items():
         if isinstance(str_expr, str) and has_reserved_char(str_expr, rc):
-            str_expr = str_expr.replace(rc, nc)
+            for g in re.finditer(re.compile(f"[A-Za-z]+.*?(\{rc})"), str_expr):
+                str_expr = f"{str_expr[:g.end()-1]}{nc}{str_expr[g.end():]}"
     return str_expr
 
 
@@ -249,7 +251,10 @@ def rev_replace_reserved(str_expr):
 
     for rc, nc in reserved_chars.items():
         if isinstance(str_expr, str) and has_reserved_char(str_expr, nc):
-            str_expr = str_expr.replace(nc, rc)
+            for g in re.finditer(re.compile(f"[A-Za-z]+.*?({nc})"), str_expr):
+                str_expr = (
+                    f"{str_expr[:g.end()-len(nc)]}{rc}{str_expr[g.end():]}"
+                )
     return str_expr
 
 

@@ -4,6 +4,7 @@ from collections import Counter
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from pydantic import BaseModel, ValidationInfo, field_validator

@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from funman import to_sympy
 from funman.constants import LABEL_UNKNOWN, NEG_INFINITY, POS_INFINITY, Label
 from funman.model.model import FunmanModel, is_state_variable
+from funman.utils.math_utils import get_number_from_string
 
 from . import Timepoint
 
@@ -70,7 +71,8 @@ class Point(BaseModel):
         v = {
             k.rsplit("_", 1)[0]: v
             for k, v in self.values.items()
-            if is_state_variable(k, model) and int(k.rsplit("_", 1)[-1]) == tp
+            if is_state_variable(k, model)
+            and get_number_from_string(k.rsplit("_", 1)[-1]) == tp
         }
         return v
 
@@ -95,7 +97,7 @@ class Point(BaseModel):
     def relevant_timepoints(self, model: FunmanModel) -> List[int]:
         steps = list(
             {
-                int(k.rsplit("_", 1)[-1])
+                get_number_from_string(k.rsplit("_", 1)[-1])
                 for k, v in self.values.items()
                 if is_state_variable(k, model)
             }

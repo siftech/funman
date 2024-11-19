@@ -738,7 +738,7 @@ class Encoder(ABC, BaseModel):
                 continue
 
             sv_formula = Equals(
-                self._encode_state_var(sv, time=int(timepoint)),
+                self._encode_state_var(sv, time=timepoint),
                 Real(constraint.timeseries[sv][layer_idx]),
             )
             formulas.append(sv_formula)
