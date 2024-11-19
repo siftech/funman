@@ -1,6 +1,16 @@
 from funman.constants import NEG_INFINITY, POS_INFINITY
 
 
+def get_number_from_string(string):
+    try:
+        return int(string)
+    except ValueError:
+        try:
+            return float(string)
+        except ValueError:
+            return None
+
+
 # lhs < rhs
 def lt(lhs, rhs):
     # inf < ?

@@ -212,7 +212,8 @@ def model_to_dict(self, escaped_parameter_map: Dict[str, str]):
             varname = var[0].symbol_name()
             if varname in escaped_parameter_map:
                 varname = escaped_parameter_map[varname]
-            d[varname] = value
+            if varname != "funman_prime_symbol":
+                d[varname] = value
         except OverflowError as e:
             raise e
     return d

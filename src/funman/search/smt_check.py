@@ -196,7 +196,7 @@ class SMTCheck(Search):
     def prime_solver(self, s: Solver):
         s.push(1)
         s.add_assertion(
-            And(Symbol("prime_symbol_a"), Symbol("prime_symbol_b"))
+            And(Symbol("funman_prime_symbol"), Symbol("funman_prime_symbol"))
         )
         s.solve()
         s.pop(1)

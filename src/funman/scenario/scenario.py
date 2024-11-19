@@ -49,7 +49,7 @@ from funman.translate.translate import EncodingOptions
 from funman.utils import math_utils
 from funman.utils.sympy_utils import replace_reserved, to_sympy
 
-from ..representation import Point
+from ..representation import Point, Timepoint
 
 l = logging.getLogger(__name__)
 
@@ -65,6 +65,7 @@ class AnalysisScenario(ABC, BaseModel):
     """True if its okay when the volume of the search space is empty (e.g., when it is a point)"""
     empty_volume_ok: bool = False
     model_config = ConfigDict(extra="forbid")
+    init_time: Timepoint = 0.0
 
     model: Union[
         GeneratedPetriNetModel,
@@ -182,9 +183,6 @@ class AnalysisScenario(ABC, BaseModel):
         for schedule in self._smt_encoder._timed_model_elements[
             "schedules"
         ].schedules:
-            assert (
-                0 in schedule.timepoints
-            ), "Schedule for encoding does not include a timepoint 0"
             encoding = self._smt_encoder.initialize_encodings(
                 self, len(schedule.timepoints)
             )
@@ -376,7 +374,9 @@ class AnalysisScenario(ABC, BaseModel):
     ) -> Optional[Timeseries]:
         init = {
             var: value
-            for var, value in point.values_at(0, self.model).items()
+            for var, value in point.values_at(
+                point.schedule.timepoints[0], self.model
+            ).items()
             if var != "timer_t"
         }
 
@@ -471,7 +471,7 @@ class AnalysisScenario(ABC, BaseModel):
 
         values = {
             **{
-                f"{var}_{int(timepoint)}": timeseries.data[var_idx + 1][
+                f"{var}_{str(timepoint)}": timeseries.data[var_idx + 1][
                     timestep
                 ]
                 for var_idx, var in enumerate(timeseries.columns[1:])

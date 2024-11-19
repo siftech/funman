@@ -52,7 +52,7 @@ def _wrap_with_internal_model(
 
 
 def is_state_variable(
-    var_string, model: "FunmanModel", time_pattern: str = f"[\\d]+$"
+    var_string, model: "FunmanModel", time_pattern: str = f"\d+(?:\.\d+)?$"
 ) -> bool:
     vars_pattern = "|".join(model._state_var_names())
     pattern = re.compile(f"^(?:{vars_pattern}).*_{time_pattern}")
