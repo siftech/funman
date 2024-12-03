@@ -239,7 +239,14 @@ def replace_reserved(str_expr):
 
     for rc, nc in reserved_chars.items():
         if isinstance(str_expr, str) and has_reserved_char(str_expr, rc):
-            for g in re.finditer(re.compile(f"[A-Za-z]+.*?(\{rc})"), str_expr):
+            for g in reversed(
+                list(
+                    re.finditer(
+                        re.compile(f"([A-Za-z]|[^\u0000-\u007F])+.*?(\{rc})"),
+                        str_expr,
+                    )
+                )
+            ):
                 str_expr = f"{str_expr[:g.end()-1]}{nc}{str_expr[g.end():]}"
     return str_expr
 
