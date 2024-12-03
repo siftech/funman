@@ -22,8 +22,12 @@ EXAMPLE_DIR = os.path.join(
 BASE_SIR_REQUEST_PATH = os.path.join(EXAMPLE_DIR, "sir_request1.json")
 BASE_SIR_MODEL_PATH = os.path.join(EXAMPLE_DIR, "sir.json")
 
-PS_SIR_REQUEST_PATH = os.path.join(RESOURCES, "amr", "petrinet", "amr-examples", "sir_request1.json")
-PS_SIR_MODEL_PATH = os.path.join(RESOURCES, "amr", "petrinet", "amr-examples", "sir.json")
+PS_SIR_REQUEST_PATH = os.path.join(
+    RESOURCES, "amr", "petrinet", "amr-examples", "sir_request1.json"
+)
+PS_SIR_MODEL_PATH = os.path.join(
+    RESOURCES, "amr", "petrinet", "amr-examples", "sir.json"
+)
 
 
 class TestFloatTimepoints(unittest.TestCase):
@@ -79,18 +83,14 @@ class TestFloatTimepoints(unittest.TestCase):
             base_result
         ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
-
     def test_float_timepoints_ps_smt(self):
         base_request = self.setup_smt(request_file=PS_SIR_REQUEST_PATH)
         runner = Runner()
-        base_result = runner.run(
-            PS_SIR_MODEL_PATH, base_request.model_dump()
-        )
+        base_result = runner.run(PS_SIR_MODEL_PATH, base_request.model_dump())
         df = base_result.dataframe(base_result.points())
         assert (
             base_result
         ), f"Could not generate a result for model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
-
 
 
 if __name__ == "__main__":

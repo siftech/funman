@@ -8,6 +8,7 @@ import pandas as pd
 import sympy
 from matplotlib import pyplot as plt
 
+from funman import Abstraction, Stratification, Stratum
 from funman.api.run import Runner
 from funman.server.query import FunmanWorkRequest
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
@@ -121,13 +122,13 @@ class TestUseCases(unittest.TestCase):
         (base_model, _) = runner.get_model(BASE_SIR_MODEL_PATH)
 
         # Stratify Base model
-        stratified_model = base_model.stratify(
-            "S",
-            ["1", "2"],
-            strata_parameters=["beta"],
-            strata_transitions=[],
-            self_strata_transition=False,
+        stratification = Stratification(
+            base_state="S",
+            base_parameters=["beta"],
+            strata=[Stratum(name="1"), Stratum(name="2")],
+            strata_transitions=False,
         )
+        stratified_model = base_model.stratify(stratification)
 
         stratified_params = stratified_model.petrinet.semantics.ode.parameters
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
@@ -143,7 +144,9 @@ class TestUseCases(unittest.TestCase):
         ), f"Could not generate a result for stratified version of model: [{BASE_SIR_MODEL_PATH}], request: [{BASE_SIR_REQUEST_PATH}]"
 
         # Abstract and bound stratified Base model
-        abstract_model = stratified_model.abstract({"S_1": "S", "S_2": "S"})
+        abstract_model = stratified_model.abstract(
+            Abstraction(abstraction={"S_1": "S", "S_2": "S"})
+        )
         bounded_abstract_model = abstract_model.formulate_bounds()
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet.model_dump(),
@@ -269,7 +272,7 @@ class TestUseCases(unittest.TestCase):
 
         # FIXME need assert
 
-    @unittest.skip(reason="WIP")
+    # @unittest.skip(reason="WIP")
     def test_sirhd_stratify(self):
         epsilon = 0.000001
         timepoints = list(range(0, 2, 1))
@@ -300,21 +303,42 @@ class TestUseCases(unittest.TestCase):
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         # Stratify Base model
-        stratified_model_S = base_model.stratify(
-            "S",
-            ["vac", "unvac"],
-            strata_parameters=["beta"],
-            self_strata_transition=False,
+        stratification = Stratification(
+            base_state="S",
+            base_parameters=["beta"],
+            strata=[Stratum(name="vac"), Stratum(name="unvac")],
+            strata_transitions=False,
         )
+        stratified_model_S = base_model.stratify(stratification)
         stratified_model_S.to_dot().render("sirhd_strat_S")
 
-        stratified_model_SI = stratified_model_S.stratify(
-            "I",
-            ["vac", "unvac"],
-            strata_parameters=[],
-            self_strata_transition=False,
+        # Combines rates for stratified t1 transition
+        # S_v beta_v I, S_u beta_u I -> S beta I
+        undo_S = stratified_model_S.abstract(
+            Abstraction(
+                abstraction={
+                    "S_vac": "S",
+                    "S_unvac": "S",
+                    "beta_vac_unvac_0": "agg_beta",
+                    "beta_vac_unvac_1": "agg_beta",
+                }
+            )
         )
+        undo_S.to_dot().render("undo_S")
 
+        stratification = Stratification(
+            base_state="I",
+            stratum=Stratum(
+                values={
+                    StratumAttribute(name="vac"): {
+                        StratumAttributeValue(name="T"),
+                        StratumAttributeValue(name="F"),
+                    }
+                }
+            ),
+            strata_transitions=False,
+        )
+        stratified_model_SI = stratified_model_S.stratify(stratification)
         stratified_model_SI.to_dot().render("sirhd_strat_SI")
 
         stratified_params = (
@@ -345,12 +369,14 @@ class TestUseCases(unittest.TestCase):
 
         # Abstract and bound stratified Base model
         abstract_model = stratified_model_SI.abstract(
-            {
-                "S_vac": "S",
-                "S_unvac": "S",
-                "beta_vac_unvac_0": "agg_beta",
-                "beta_vac_unvac_1": "agg_beta",
-            }
+            Abstraction(
+                abstraction={
+                    "S_vac": "S",
+                    "S_unvac": "S",
+                    "beta_vac_unvac_0": "agg_beta",
+                    "beta_vac_unvac_1": "agg_beta",
+                }
+            )
         )
         # print(abstract_model._state_var_names())
         # print(abstract_model._parameter_names())
@@ -439,96 +465,6 @@ class TestUseCases(unittest.TestCase):
             len(all_failures) == 0
         ), f"The bounds failed in the following cases:\n{reasons}"
 
-
-# S_ub: 1.492174e+08  S_strat: 1.492175e+08, diff -98.77
-
-# S_ub' = S_ub - IvlbSubBlbp0lb/Nub - IulbSubBlbp1lb/Nub - IvlbSubBlbp0lb/Nub - IulbSubBlbp1lb/Nub
-#       =      - 44.76501510409002 - 44.76501510409002 - 44.76501510409002 - 44.76501510409002
-#   because S = Sv+Su
-# Stratified:
-# Sv' = Sv - IvSvB0p0/N - IuSvB0p1/N
-#     =  74608773.0 - (22.38250755204501) - (22.38250755204501)
-#     = 74608728.2349849
-#     = 74608727.79499725
-# Su' = Su - IvSuB1p0/N - IuSuB1p1/N
-#     = 74608728.23448753
-#     = 74608727.79449497
-# Su' + Sv' = 149217456.46947244
-#           = 149217455.58949223
-# I_vac               5.000000e+02
-# I_unvac             5.000000e+02
-# S_vac               7.460877e+07
-# S_unvac             7.460877e+07
-# R                   0.000000e+00
-# H                   0.000000e+00
-# D                   7.814540e+05
-# N                   1.500000e+08
-# pir                 9.000000e-01
-# pih                 1.000000e-01
-# rih                 7.000000e-02
-# phd                 1.300000e-01
-# rhd                 3.000000e-01
-# phr                 8.700000e-01
-# rhr                 7.000000e-02
-# rir                 7.000000e-02
-# beta_vac_unvac_0    1.799990e-01
-# beta_vac_unvac_1    1.800010e-01
-# p_I_vac_unvac_0     5.000000e-01
-# p_I_vac_unvac_1     5.000000e-01
-
-# Rate(target='t1_vac_unvac_0_vac_unvac_0', expression='p_I_vac_unvac_0*I_vac*S_vac*beta_vac_unvac_0/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_0_vac_unvac_1', expression='p_I_vac_unvac_1*I_unvac*S_vac*beta_vac_unvac_0/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_1_vac_unvac_0', expression='p_I_vac_unvac_0*I_vac*S_unvac*beta_vac_unvac_1/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_1_vac_unvac_1', expression='p_I_vac_unvac_1*I_unvac*S_unvac*beta_vac_unvac_1/N', expression_mathml=None)
-
-# Rate(target='t1_vac_unvac_0_vac_unvac_0', expression='I_vac*S*agg_beta*p_I_vac_unvac_0/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_0_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_1_vac_unvac_0', expression='I_vac*S*agg_beta*p_I_vac_unvac_0/N', expression_mathml=None)
-# Rate(target='t1_vac_unvac_1_vac_unvac_1', expression='I_unvac*S*agg_beta*p_I_vac_unvac_1/N', expression_mathml=None)
-
-# Abstract Bounded:
-
-#   = 149217356.8112546
-#   = 149217366.93993962
-#  diff = 10.128685027360916
-# I_vac_lb              5.000000e+02
-# I_vac_ub              5.000000e+02
-# I_unvac_lb            5.000000e+02
-# I_unvac_ub            5.000000e+02
-# R_lb                  0.000000e+00
-# R_ub                  0.000000e+00
-# H_lb                  0.000000e+00
-# H_ub                  0.000000e+00
-# D_lb                  7.814540e+05
-# D_ub                  7.814540e+05
-# S_lb                  1.492175e+08
-# S_ub                  1.492175e+08
-# N_lb                  1.500000e+08
-# N_ub                  1.500000e+08
-# pir_lb                9.000000e-01
-# pir_ub                9.000000e-01
-# pih_lb                1.000000e-01
-# pih_ub                1.000000e-01
-# rih_lb                7.000000e-02
-# rih_ub                7.000000e-02
-# phd_lb                1.300000e-01
-# phd_ub                1.300000e-01
-# rhd_lb                3.000000e-01
-# rhd_ub                3.000000e-01
-# phr_lb                8.700000e-01
-# phr_ub                8.700000e-01
-# rhr_lb                7.000000e-02
-# rhr_ub                7.000000e-02
-# rir_lb                7.000000e-02
-# rir_ub                7.000000e-02
-# p_I_vac_unvac_0_lb    5.000000e-01
-# p_I_vac_unvac_0_ub    5.000000e-01
-# p_I_vac_unvac_1_lb    5.000000e-01
-# p_I_vac_unvac_1_ub    5.000000e-01
-# agg_beta_lb           1.799990e-01
-# agg_beta_ub           1.800010e-01
-# I_lb                  1.000000e+03
-# I_ub                  1.000000e+03
 
 if __name__ == "__main__":
     unittest.main()

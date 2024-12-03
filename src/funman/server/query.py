@@ -445,7 +445,8 @@ class FunmanResults(BaseModel):
                     num=int(
                         (df["index"].max() - df["index"].min())
                         / df["index"].diff().min()
-                    ),
+                    )
+                    + 1,
                 )
                 df = (
                     df.infer_objects(copy=False)
