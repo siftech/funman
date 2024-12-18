@@ -150,7 +150,7 @@ class Runner:
 
     def run(
         self,
-        model: Union[str, funman.FunmanModel, Dict],
+        model: Union[str, funman.FunmanModel, GeneratedPetriNet, Dict],
         request: Union[str, FunmanWorkRequest, Dict],
         description: str = "",
         case_out_dir: str = ".",
@@ -247,12 +247,16 @@ class Runner:
         return results
 
     def get_model(
-        self, model_file: Union[str, Dict]
+        self, model_file: Union[str, Dict, GeneratedPetriNet]
     ) -> Tuple[FunmanModel, Optional[FunmanWorkRequest]]:
         m = None
         req = None
         for model in models:
             try:
+                if isinstance(model_file, GeneratedPetriNet):
+                    m = _wrap_with_internal_model(model_file)
+                    req = None
+                    break
                 if isinstance(model_file, str):
                     with open(model_file, "r") as mf:
                         j = json.load(mf)
@@ -296,7 +300,9 @@ class Runner:
 
     def run_instance(
         self,
-        case: Tuple[Union[str, Dict], Union[str, Dict], str],
+        case: Tuple[
+            Union[str, Dict, GeneratedPetriNet], Union[str, Dict], str
+        ],
         out_dir=".",
         dump_plot=False,
         parameters_to_plot=None,

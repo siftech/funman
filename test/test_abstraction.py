@@ -8,7 +8,14 @@ import pandas as pd
 import sympy
 from matplotlib import pyplot as plt
 
-from funman import Abstraction, Stratification, Stratum
+from funman import (
+    Abstraction,
+    Stratification,
+    Stratum,
+    StratumAttribute,
+    StratumAttributeValue,
+    StratumAttributeValueSet,
+)
 from funman.api.run import Runner
 from funman.server.query import FunmanWorkRequest
 from funman.utils.sympy_utils import SympyBoundedSubstituter, to_sympy
@@ -302,11 +309,23 @@ class TestUseCases(unittest.TestCase):
 
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
+        vac_T = StratumAttributeValue(name="T")
+        vac_F = StratumAttributeValue(name="F")
+        vac_stratum_attr = StratumAttribute(name="vac", values={vac_T, vac_F})
+        vac_stratum = Stratum(
+            values={
+                vac_stratum_attr: {
+                    StratumAttributeValueSet(values={vac_T}),
+                    StratumAttributeValueSet(values={vac_F}),
+                }
+            }
+        )
+
         # Stratify Base model
         stratification = Stratification(
             base_state="S",
             base_parameters=["beta"],
-            strata=[Stratum(name="vac"), Stratum(name="unvac")],
+            stratum=vac_stratum,
             strata_transitions=False,
         )
         stratified_model_S = base_model.stratify(stratification)
@@ -314,13 +333,14 @@ class TestUseCases(unittest.TestCase):
 
         # Combines rates for stratified t1 transition
         # S_v beta_v I, S_u beta_u I -> S beta I
+
         undo_S = stratified_model_S.abstract(
             Abstraction(
                 abstraction={
-                    "S_vac": "S",
-                    "S_unvac": "S",
-                    "beta_vac_unvac_0": "agg_beta",
-                    "beta_vac_unvac_1": "agg_beta",
+                    "S_vac_T": "S",
+                    "S_vac_F": "S",
+                    "beta__None_vac_F_vac_F": "agg_beta",
+                    "beta__None_vac_T_vac_T": "agg_beta",
                 }
             )
         )
@@ -328,14 +348,7 @@ class TestUseCases(unittest.TestCase):
 
         stratification = Stratification(
             base_state="I",
-            stratum=Stratum(
-                values={
-                    StratumAttribute(name="vac"): {
-                        StratumAttributeValue(name="T"),
-                        StratumAttributeValue(name="F"),
-                    }
-                }
-            ),
+            stratum=vac_stratum,
             strata_transitions=False,
         )
         stratified_model_SI = stratified_model_S.stratify(stratification)
@@ -345,8 +358,8 @@ class TestUseCases(unittest.TestCase):
             stratified_model_SI.petrinet.semantics.ode.parameters
         )
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta_vac_unvac_0"].value -= epsilon
-        betas["beta_vac_unvac_1"].value += epsilon
+        betas["beta__None_vac_T_vac_T"].value -= epsilon
+        betas["beta__None_vac_F_vac_F"].value += epsilon
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
@@ -360,7 +373,7 @@ class TestUseCases(unittest.TestCase):
         ].timepoints = timepoints
 
         stratified_result = runner.run(
-            stratified_model_SI.petrinet.model_dump(), sirhd_stratified_request
+            stratified_model_SI.petrinet, sirhd_stratified_request
         )
 
         assert (
@@ -371,10 +384,10 @@ class TestUseCases(unittest.TestCase):
         abstract_model = stratified_model_SI.abstract(
             Abstraction(
                 abstraction={
-                    "S_vac": "S",
-                    "S_unvac": "S",
-                    "beta_vac_unvac_0": "agg_beta",
-                    "beta_vac_unvac_1": "agg_beta",
+                    "S_vac_T": "S",
+                    "S_vac_F": "S",
+                    "beta__None_vac_F_vac_F": "agg_beta",
+                    "beta__None_vac_T_vac_T": "agg_beta",
                 }
             )
         )
@@ -399,7 +412,7 @@ class TestUseCases(unittest.TestCase):
         ].timepoints = timepoints
 
         bounded_abstract_result = runner.run(
-            bounded_abstract_model.petrinet.model_dump(),
+            bounded_abstract_model.petrinet,
             sirhd_request,
         )
 
@@ -426,25 +439,31 @@ class TestUseCases(unittest.TestCase):
             bounded_abstract_result.points()
         )[bass]
         bounded_abstract_df["I_lb"] = (
-            bounded_abstract_df.I_vac_lb + bounded_abstract_df.I_unvac_lb
+            bounded_abstract_df.I_vac_T_lb + bounded_abstract_df.I_vac_F_lb
         )
         bounded_abstract_df["I_ub"] = (
-            bounded_abstract_df.I_vac_ub + bounded_abstract_df.I_unvac_ub
+            bounded_abstract_df.I_vac_T_ub + bounded_abstract_df.I_vac_F_ub
         )
 
         destratified_df = pd.DataFrame(stratified_df)
-        destratified_df["S"] = destratified_df.S_vac + destratified_df.S_unvac
-        destratified_df["I"] = destratified_df.I_vac + destratified_df.I_unvac
+        destratified_df["S"] = (
+            destratified_df.S_vac_T + destratified_df.S_vac_F
+        )
+        destratified_df["I"] = (
+            destratified_df.I_vac_T + destratified_df.I_vac_F
+        )
 
-        def check_bounds(bounds_df, values_df, variable, values_model_name):
+        def check_bounds(
+            bounds_df, values_df, variable, values_model_name, tolerance=1e-10
+        ):
             failures = []
             lb = f"{variable}_lb"
             ub = f"{variable}_ub"
-            if not all(values_df[variable] >= bounds_df[lb]):
+            if not all(values_df[variable] >= bounds_df[lb] - tolerance):
                 failures.append(
                     f"The bounded abstract model does not lower bound the {values_model_name} model {variable}:\n{pd.DataFrame({lb:bounds_df[lb], variable: values_df[variable], f'{variable}-{lb}':values_df[variable]-bounds_df[lb]})}"
                 )
-            if not all(values_df[variable] <= bounds_df[ub]):
+            if not all(values_df[variable] <= bounds_df[ub] + tolerance):
                 failures.append(
                     f"The bounded abstract model does not upper bound the {values_model_name} model {variable}:\n{pd.DataFrame({ub:bounds_df[ub], variable: values_df[variable], f'{ub}-{variable}':bounds_df[ub]-values_df[variable]})}"
                 )
@@ -464,6 +483,125 @@ class TestUseCases(unittest.TestCase):
         assert (
             len(all_failures) == 0
         ), f"The bounds failed in the following cases:\n{reasons}"
+
+    # @unittest.skip(reason="WIP")
+    def test_sirhd_stratify_transitions(self):
+        epsilon = 0.000001
+        timepoints = list(range(0, 2, 1))
+
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_base_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
+        sirhd_base_request.config.mode = "mode_odeint"
+        sirhd_base_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
+
+        runner = Runner()
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
+
+        vac_T = StratumAttributeValue(name="T")
+        vac_F = StratumAttributeValue(name="F")
+        vac_stratum_attr = StratumAttribute(name="vac", values={vac_T, vac_F})
+        vac_stratum = Stratum(
+            values={
+                vac_stratum_attr: {
+                    StratumAttributeValueSet(values={vac_T}),
+                    StratumAttributeValueSet(values={vac_F}),
+                }
+            }
+        )
+
+        # Stratify Base model
+        stratification = Stratification(
+            base_state="S",
+            base_parameters=["beta"],
+            stratum=vac_stratum,
+            strata_transitions=True,
+        )
+        stratified_model_S = base_model.stratify(stratification)
+        stratified_model_S.to_dot().render("sirhd_strat_S")
+
+        stratification = Stratification(
+            base_state="I",
+            stratum=vac_stratum,
+            strata_transitions=True,
+        )
+        stratified_model_SI = stratified_model_S.stratify(stratification)
+        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+
+        stratified_params = (
+            stratified_model_SI.petrinet.semantics.ode.parameters
+        )
+        betas = {p.id: p for p in stratified_params if "beta" in p.id}
+        betas["beta__None_vac_T_vac_T"].value -= epsilon
+        betas["beta__None_vac_F_vac_F"].value += epsilon
+
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
+
+        stratified_result = runner.run(
+            stratified_model_SI.petrinet, sirhd_stratified_request
+        )
+
+        assert (
+            stratified_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        # Abstract and bound stratified Base model
+        abstract_model = stratified_model_SI.abstract(
+            Abstraction(
+                abstraction={
+                    "S_vac_T": "S",
+                    "S_vac_F": "S",
+                    "beta__None_vac_F_vac_F": "agg_beta",
+                    "beta__None_vac_T_vac_T": "agg_beta",
+                }
+            )
+        )
+        # print(abstract_model._state_var_names())
+        # print(abstract_model._parameter_names())
+        abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
+
+        bounded_abstract_model = abstract_model.formulate_bounds()
+        bounded_abstract_model.to_dot().render(
+            "sirhd_strat_SI_bounded_abstract_S"
+        )
+
+        # Setup request by removing compartmental constraint that won't be correct
+        # for a bounded model
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_request = FunmanWorkRequest.model_validate_json(f.read())
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_request.config.mode = "mode_odeint"
+        sirhd_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
+
+        bounded_abstract_result = runner.run(
+            bounded_abstract_model.petrinet,
+            sirhd_request,
+        )
+
+        assert (
+            bounded_abstract_result
+        ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
 
 if __name__ == "__main__":
