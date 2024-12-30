@@ -306,6 +306,9 @@ class StratumAttributeValue(BaseModel):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return str(self)
+
 
 class StratumAttribute(BaseModel):
     name: str
@@ -317,6 +320,9 @@ class StratumAttribute(BaseModel):
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return str(self)
+
 
 class StratumAttributeValueSet(BaseModel):
     values: Set[StratumAttributeValue]
@@ -326,6 +332,9 @@ class StratumAttributeValueSet(BaseModel):
 
     def __str__(self):
         return "_".join((str(v) for v in self.values))
+
+    def __repr__(self):
+        return str(self)
 
     def is_subset(self, other, strict=False):
         return self.values.issubset(other.values) and (
@@ -338,6 +347,9 @@ class StratumValuation(BaseModel):
 
     def __str__(self):
         return "_".join([f"{a}_{av}" for a, av in self.values.items()])
+
+    def __repr__(self):
+        return str(self)
 
     def is_subset(self, other, strict=False):
         # cases:
@@ -422,9 +434,11 @@ class Stratification(BaseModel):
     base_state: str
     base_parameters: List[str] = []
     stratum: Stratum  # interpreted as cross product over attribute values
-    stratified_transitions: List[str] = []
-
-    strata_transitions: bool = False
+    self_strata_transitions: bool = False
+    cross_strata_transitions: bool = False
+    only_natural_transitions: bool = (
+        True  # only stratify transitions that are not persistence
+    )
 
     def stratifies(self, variable: str) -> bool:
         return any(
@@ -615,6 +629,24 @@ class StateTransition(BaseModel):
     input_stratum: Optional[StratumValuation] = None
     output: Optional[State] = None
     output_stratum: Optional[StratumValuation] = None
+
+    def __str__(self):
+        return f"{self.input.id}({self.input_stratum}) -> {self.output.id}({self.output_stratum})"
+
+    def __repr__(self):
+        return str(self)
+
+    def id(self):
+        return f"{self.input_id()}_to_{self.output_id()}"
+
+    def input_id(self):
+        return f"{self.input.id}_{self.input_stratum}"
+
+    def output_id(self):
+        return f"{self.output.id}_{self.output_stratum}"
+
+    def is_natural_transition(self):
+        return self.input != self.output
 
     def stratify(self, var, strata_transition):
         (src, dest) = strata_transition
@@ -1324,13 +1356,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     #     pass
 
     def stratified_trans_id(self, transition, strata_transition):
-        return f"{transition.id}_{'_'.join([(f'{st[0]}_{st[1]}' if st else str(st)) for st in strata_transition])}"
+        return f"{transition.id}_{'_'.join([(f'_{st[0]}_to_{st[1]}_' if st else str(st)) for st in strata_transition])}"
 
     def stratified_state_id(self, state_var, index, strata):
         return f"{state_var}_{'_'.join([str(s) for s in strata])}_{index}"
 
     def stratified_parameter_id(self, parameter, strata_transition):
-        return f"{parameter}__{'_'.join([(f'{st[0]}_{st[1]}' if st else str(st))  for st in strata_transition])}"
+        return f"{parameter}__{'_'.join([(f'_{st[0]}_to_{st[1]}_' if st else str(st))  for st in strata_transition])}"
 
     def transformations(self):
         return (
@@ -1350,30 +1382,26 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         else:
             return StratumValuation()
 
-    def stratify_transition(
-        self,
-        transition: Transition,
-        state_var: str,
-        strata: Stratum,
-        strata_parameters: Optional[List[str]] = None,
-        strata_transition=False,
-    ):
-
-        # Need to determine which strata transitions occur and involving what variables.
+    def strata_self_transitions(self, state_var, strata):
+        transition = Transition(
+            id=f"self_{state_var.id}",
+            input=[state_var.id],
+            output=[state_var.id],
+            grounding=None,
+            properties={"name": f"self_{state_var.id}"},
+        )
         strata_levels = strata.valuations()
         strata_transitions = [
             (input_strata, output_strata)
             for input_strata in strata_levels
             for output_strata in strata_levels
-            if strata_transition or input_strata == output_strata
+            if input_strata != output_strata
         ]
-
         tr_map = self.transition_map(transition)
         new_transitions = []
         new_transition_maps = []
         new_rates = []
         new_parameters = []
-        old_rate = self._transition_rate(transition)[0]
         old_parameters = self._semantics_parameters()
         state_strata_transitions = list(
             itertools.product(
@@ -1387,12 +1415,110 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 ]
             )
         )
-        for strata_transitions in state_strata_transitions:
-            strat_tr_map = tr_map.stratify(state_var, strata_transitions)
+        for state_strata_transitions in state_strata_transitions:
+            strat_tr_map = tr_map.stratify(state_var, state_strata_transitions)
             if strat_tr_map is None:
                 continue
             new_transition_maps.append(strat_tr_map)
-            new_id = self.stratified_trans_id(transition, strata_transitions)
+            new_id = self.stratified_trans_id(
+                transition, state_strata_transitions
+            )
+            new_t = Transition(
+                id=new_id,
+                input=strat_tr_map.inputs(),
+                output=strat_tr_map.outputs(),
+                grounding=transition.grounding,
+                properties=Properties(
+                    name=new_id,
+                    description=(
+                        f"{transition.properties.description} Stratified."
+                        if transition.properties.description
+                        else transition.properties.description
+                    ),
+                ),
+            )
+            new_transitions.append(new_t)
+            transition_probability = f"p_{new_id}"
+            new_rate = Rate(target=new_id, expression=transition_probability)
+            new_rates.append(new_rate)
+
+            new_parameters.append(
+                Parameter(
+                    id=transition_probability,
+                    name=transition_probability,
+                    description=transition_probability,
+                    value=str(1.0 / float(len(strata_levels))),
+                    distribution=None,
+                    units=None,
+                    grounding=None,
+                )
+            )
+
+        return new_transitions, new_rates, new_parameters
+
+    def stratify_transition(
+        self, transition: Transition, stratification: Stratification
+    ):
+
+        state_var = self.state_var(stratification.base_state)
+        strata = stratification.stratum
+        strata_parameters = stratification.base_parameters
+        cross_strata_transitions = stratification.cross_strata_transitions
+
+        # Need to determine which strata transitions occur and involving what variables.
+        strata_levels = strata.valuations()
+        tr_map = self.transition_map(transition)
+        possible_strata_transitions = [
+            [
+                (input_strata, output_strata)
+                for input_strata in (
+                    strata_levels if st.input == state_var else [None]
+                )
+                for output_strata in (
+                    strata_levels if st.output == state_var else [None]
+                )
+                if (
+                    (
+                        not st.is_natural_transition()
+                        or cross_strata_transitions
+                        or input_strata == output_strata
+                        or input_strata is None
+                        or output_strata is None
+                    )
+                    and
+                    # only natural -> is natural
+                    (
+                        st.is_natural_transition()
+                        or (
+                            not stratification.only_natural_transitions
+                            or input_strata == output_strata
+                        )
+                    )
+                )
+            ]
+            for st in tr_map.state_transitions
+        ]
+
+        new_transitions = []
+        new_transition_maps = []
+        new_rates = []
+        new_parameters = []
+        grouped_cross_transition_parameters = {}
+        grouped_abstract_transition_parameters = {}
+        old_rate = self._transition_rate(transition)[0]
+        old_parameters = self._semantics_parameters()
+        state_strata_transitions = list(
+            itertools.product(*possible_strata_transitions)
+        )
+        for state_strata_transition in state_strata_transitions:
+            strat_tr_map = tr_map.stratify(state_var, state_strata_transition)
+            if strat_tr_map is None:
+                continue
+            new_transition_maps.append(strat_tr_map)
+
+            new_id = self.stratified_trans_id(
+                transition, state_strata_transition
+            )
             new_t = Transition(
                 id=new_id,
                 input=strat_tr_map.inputs(),
@@ -1409,23 +1535,60 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
             new_transitions.append(new_t)
 
-            transition_probability = (
-                sympy.Symbol(f"p_{new_id}")
-                if strat_tr_map.abstract_to_concrete()
-                else 1
-            )
+            abstract_transition_probabilities = {
+                st.input.id: sympy.Symbol(
+                    f"p_abstract_{transition.id}_{st.input.id}"
+                )
+                for st in strat_tr_map.abstract_to_concrete()
+            }
+            cross_strata_transition_probability = {
+                st.input.id: sympy.Symbol(f"p_cross_{transition.id}_{st.id()}")
+                for st in strat_tr_map.state_transitions
+                if (
+                    cross_strata_transitions
+                    and (state_var.id in transition.output)
+                    and (
+                        st.is_natural_transition()
+                        or not stratification.only_natural_transitions
+                    )
+                )
+            }
+
+            # for trans, arp in zip(
+            #     new_transitions, aggregated_rates_and_parameters
+            # ):
+
+            for i, p in cross_strata_transition_probability.items():
+                grouped_cross_transition_parameters[i] = (
+                    grouped_cross_transition_parameters.get(i, set({})).union(
+                        set([p])
+                    )
+                )
+            for i, p in abstract_transition_probabilities.items():
+                grouped_abstract_transition_parameters[i] = (
+                    grouped_abstract_transition_parameters.get(
+                        i, set({})
+                    ).union(set([p]))
+                )
+
             input_subs = {
                 tr_map.state_transitions[i]
                 .input.id: strat_tr_map.state_transitions[i]
                 .input.id
                 for i in range(len(tr_map.state_transitions))
+                if tr_map.state_transitions[i].input.id
+                != strat_tr_map.state_transitions[i].input.id
             }
             param_subs = {
-                p: self.stratified_parameter_id(p, strata_transitions)
+                p: self.stratified_parameter_id(p, state_strata_transition)
                 for p in strata_parameters
             }
             all_sub = {**input_subs, **param_subs}
-            rate_expr = old_rate.subs(all_sub) * transition_probability
+            rate_expr = old_rate.subs(all_sub)
+            for p in abstract_transition_probabilities.values():
+                rate_expr = rate_expr * p
+            for p in cross_strata_transition_probability.values():
+                rate_expr = rate_expr * p
             new_rate = Rate(target=new_id, expression=str(rate_expr))
             new_rates.append(new_rate)
 
@@ -1441,20 +1604,48 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 )
                 for op, np in param_subs.items()
             ]
-            if isinstance(transition_probability, sympy.Symbol):
-                new_parameters.append(
-                    Parameter(
-                        id=str(transition_probability),
-                        name=str(transition_probability),
-                        description=str(transition_probability),
-                        value=str(1.0 / float(len(strata_levels))),
-                        distribution=None,
-                        units=None,
-                        grounding=None,
+
+        for parameter_groups in [
+            grouped_abstract_transition_parameters,
+            grouped_cross_transition_parameters,
+        ]:
+            for input_state, group in parameter_groups.items():
+                for parameter in group:
+                    new_parameters.append(
+                        Parameter(
+                            id=str(parameter),
+                            name=str(parameter),
+                            description=str(parameter),
+                            value=str(1.0 / float(len(group))),
+                            distribution=None,
+                            units=None,
+                            grounding=None,
+                        )
                     )
-                )
 
         return new_transitions, new_rates, new_parameters
+
+    def stratify_state(self, original_var, valuations):
+        new_vars = []
+        new_vars_strata = {}
+        for valuation in valuations:
+            valuation_str = "_".join(
+                [
+                    f"{attribute}_{values}"
+                    for attribute, values in valuation.values.items()
+                ]
+            )
+            new_var_id = f"{original_var.id}_{valuation_str}"
+            new_var = State(
+                id=new_var_id,
+                name=new_var_id,
+                description=f"{original_var.description} Stratified wrt. {valuation_str}",
+                grounding=original_var.grounding,
+                units=original_var.units,
+            )
+            new_vars.append(new_var)
+            new_vars_strata[new_var.id] = valuation
+        return new_vars, new_vars_strata
 
     def stratify(self, stratification: Stratification):
         """
@@ -1493,8 +1684,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         state_var = stratification.base_state
         stratum = stratification.stratum
         strata_parameters = stratification.base_parameters
-        strata_transitions = stratification.stratified_transitions
-        self_strata_transition = stratification.strata_transitions
+        cross_strata_transitions = stratification.cross_strata_transitions
+        self_strata_transition = stratification.self_strata_transitions
 
         # get state variable
         state_vars: List[State] = [
@@ -1506,29 +1697,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             len(state_vars) == 1
         ), "Found more than one State variable for {state_var}"
         original_var = state_vars[0]
+        original_var = self.state_var(state_var)
 
-        new_vars = []
-        new_vars_strata = {}
-        for valuation in stratum.valuations():
-            valuation_str = "_".join(
-                [
-                    f"{attribute}_{values}"
-                    for attribute, values in valuation.values.items()
-                ]
-            )
-            new_var_id = f"{original_var.id}_{valuation_str}"
-            new_var = State(
-                id=new_var_id,
-                name=new_var_id,
-                description=f"{original_var.description} Stratified wrt. {valuation_str}",
-                grounding=original_var.grounding,
-                units=original_var.units,
-            )
-            new_vars.append(new_var)
-            new_vars_strata[new_var.id] = valuation
-        unchanged_vars = [
-            s.id for s in self._state_vars() if s != original_var
-        ]
+        valuations = stratum.valuations()
+        new_vars, new_vars_strata = self.stratify_state(
+            original_var, valuations
+        )
 
         # get new transitions
         transitions_to_stratify: List[Transition] = [
@@ -1543,27 +1717,21 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             if t.id not in transitions_to_stratify_ids
         }
 
-        # Replicate transitions where original_var is in source and destination
-        # Assume that each i/o pair of original_var are of the same strata
-        # Assume all unpaired i/o is of the same strata
-        # Assume have equal number of inputs and outputs
-        # For each
-        # new_src_dest_transitions
-        tr_rt_parms = [
-            self.stratify_transition(
-                t,
-                original_var,
-                stratum,
-                strata_parameters,
-                strata_transition=(t_id in strata_transitions),
-            )
+        stratified_transitions_rates_params = [
+            self.stratify_transition(t, stratification)
             for t_id, t in zip(
                 transitions_to_stratify_ids, transitions_to_stratify
             )
         ]
-        new_transitions = [tr for t in tr_rt_parms for tr in t[0]]
-        new_rates = [r for t in tr_rt_parms for r in t[1]]
-        new_parameters = [p for t in tr_rt_parms for p in t[2]]
+        new_transitions = [
+            tr for t in stratified_transitions_rates_params for tr in t[0]
+        ]
+        new_rates = [
+            r for t in stratified_transitions_rates_params for r in t[1]
+        ]
+        new_parameters = [
+            p for t in stratified_transitions_rates_params for p in t[2]
+        ]
 
         # There may be duplicate transition probability parameters between strata when there are multiple transitions that are stratified
         # This is ugly because Parameter does not have a hash function
@@ -1596,7 +1764,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         new_initials = [
             i
             for i in self.petrinet.semantics.ode.initials
-            if i.target in unchanged_vars
+            if i.target != original_var.id
         ] + [
             Initial(
                 target=n.id,
@@ -1642,42 +1810,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         new_observables = self.petrinet.semantics.ode.observables
 
         if self_strata_transition:
-            self_strata_transitions = [
-                Transition(
-                    id=f"p_{state_var}_{level_s}_{level_t}",
-                    input=[f"{state_var}_{level_s}"],
-                    output=[f"{state_var}_{level_t}"],
-                    grounding=None,
-                    properties={"name": f"p_{state_var}_{level_s}_{level_t}"},
-                )
-                for level_s in stratum
-                for level_t in stratum
-                if level_s != level_t
-            ]
-            self_strata_rates = [
-                Rate(
-                    target=f"p_{state_var}_{level_s}_{level_t}",
-                    expression=f"{state_var}_{level_s}*p_{state_var}_{level_s}_{level_t}",
-                )
-                for level_s in stratum
-                for level_t in stratum
-                if level_s != level_t
-            ]
-            self_strata_parameters = (
-                [
-                    Parameter(
-                        id=f"p_{state_var}_{level_s}_{level_t}",
-                        name=f"p_{state_var}_{level_s}_{level_t}",
-                        description="Transition rate parameter between {state_var} strata {level_s} and {level_t}.",
-                        value=1.0 / float(len(stratum)),
-                    )
-                    for level_s in stratum
-                    for level_t in stratum
-                    # if level_s != level_t
-                ]
-                if len(transition_probability_parameters) == 0
-                else []
-            )
+            (
+                self_strata_transitions,
+                self_strata_rates,
+                self_strata_parameters,
+            ) = self.strata_self_transitions(original_var, stratum)
         else:
             self_strata_transitions = []
             self_strata_rates = []
@@ -1696,16 +1833,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         for i, t_id in enumerate(transitions_to_stratify_ids):
             old_param_bounds = abstracted_parameters.get(t_id, None)
             if old_param_bounds:
-                for j, nt in enumerate(tr_rt_parms[i][0]):
+                for j, nt in enumerate(
+                    stratified_transitions_rates_params[i][0]
+                ):
                     abstracted_parameters[nt.id] = copy.deepcopy(
                         old_param_bounds
                     )
                     for bp in stratification.base_parameters:
                         # Add stratified parameters, inheriting bounds
-                        if j < len(tr_rt_parms[2]):
-                            abstracted_parameters[nt.id][tr_rt_parms[2][j]] = (
-                                abstracted_parameters[nt.id][bp]
-                            )
+                        if j < len(stratified_transitions_rates_params[2]):
+                            abstracted_parameters[nt.id][
+                                stratified_transitions_rates_params[2][j]
+                            ] = abstracted_parameters[nt.id][bp]
                         # Remove base parameters
                         if bp in abstracted_parameters[nt.id]:
                             del abstracted_parameters[nt.id][bp]

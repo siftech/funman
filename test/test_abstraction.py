@@ -520,29 +520,34 @@ class TestUseCases(unittest.TestCase):
         )
 
         # Stratify Base model
-        stratification = Stratification(
+        stratification_S = Stratification(
             base_state="S",
             base_parameters=["beta"],
             stratum=vac_stratum,
-            strata_transitions=True,
+            self_strata_transitions=True,
+            cross_strata_transitions=True,
         )
-        stratified_model_S = base_model.stratify(stratification)
-        stratified_model_S.to_dot().render("sirhd_strat_S")
-
-        stratification = Stratification(
+        stratification_I = Stratification(
             base_state="I",
             stratum=vac_stratum,
-            strata_transitions=True,
+            cross_strata_transitions=True,
         )
-        stratified_model_SI = stratified_model_S.stratify(stratification)
+
+        stratified_model_I = base_model.stratify(stratification_I)
+        stratified_model_I.to_dot().render("sirhd_strat_I")
+
+        stratified_model_S = base_model.stratify(stratification_S)
+        stratified_model_S.to_dot().render("sirhd_strat_S")
+
+        stratified_model_SI = stratified_model_S.stratify(stratification_I)
         stratified_model_SI.to_dot().render("sirhd_strat_SI")
 
         stratified_params = (
             stratified_model_SI.petrinet.semantics.ode.parameters
         )
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta__None_vac_T_vac_T"].value -= epsilon
-        betas["beta__None_vac_F_vac_F"].value += epsilon
+        betas["beta__None__vac_T_to_vac_T_"].value -= epsilon
+        betas["beta__None__vac_F_to_vac_F_"].value += epsilon
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
@@ -569,8 +574,8 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "S_vac_T": "S",
                     "S_vac_F": "S",
-                    "beta__None_vac_F_vac_F": "agg_beta",
-                    "beta__None_vac_T_vac_T": "agg_beta",
+                    "beta__None__vac_T_to_vac_T_": "agg_beta",
+                    "beta__None__vac_F_to_vac_F_": "agg_beta",
                 }
             )
         )
@@ -582,6 +587,21 @@ class TestUseCases(unittest.TestCase):
         bounded_abstract_model.to_dot().render(
             "sirhd_strat_SI_bounded_abstract_S"
         )
+
+        # Abstract and bound stratified Base model
+        abstract_model1 = stratified_model_SI.abstract(
+            Abstraction(
+                abstraction={
+                    "I_vac_T": "I",
+                    "I_vac_F": "I",
+                    "beta__None__vac_T_to_vac_T_": "agg_beta",
+                    "beta__None__vac_F_to_vac_F_": "agg_beta",
+                }
+            )
+        )
+        # print(abstract_model._state_var_names())
+        # print(abstract_model._parameter_names())
+        abstract_model.to_dot().render("sirhd_strat_SI_abstract_S")
 
         # Setup request by removing compartmental constraint that won't be correct
         # for a bounded model
