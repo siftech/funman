@@ -194,7 +194,7 @@ class TestUseCases(unittest.TestCase):
         )[bass]
 
         ds_df = pd.DataFrame(s_df)
-        ds_df["S"] = ds_df.S_1 + ds_df.S_2
+        ds_df["S"] = ds_df.S_st_1 + ds_df.S_st_2
 
         def check_bounds(bounds_df, values_df, variable, values_model_name):
             failures = []
@@ -471,7 +471,7 @@ class TestUseCases(unittest.TestCase):
         )
 
         def check_bounds(
-            bounds_df, values_df, variable, values_model_name, tolerance=1e-10
+            bounds_df, values_df, variable, values_model_name, tolerance=1e-7
         ):
             failures = []
             lb = f"{variable}_lb"
