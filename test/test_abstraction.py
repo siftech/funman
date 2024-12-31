@@ -128,22 +128,34 @@ class TestUseCases(unittest.TestCase):
 
         (base_model, _) = runner.get_model(BASE_SIR_MODEL_PATH)
 
+        st_1 = StratumAttributeValue(name="1")
+        st_2 = StratumAttributeValue(name="2")
+        stratum_attr = StratumAttribute(name="st", values={st_1, st_2})
+        stratum = Stratum(
+            values={
+                stratum_attr: {
+                    StratumAttributeValueSet(values={st_1}),
+                    StratumAttributeValueSet(values={st_2}),
+                }
+            }
+        )
+
         # Stratify Base model
         stratification = Stratification(
             base_state="S",
             base_parameters=["beta"],
-            strata=[Stratum(name="1"), Stratum(name="2")],
+            stratum=stratum,
             strata_transitions=False,
         )
         stratified_model = base_model.stratify(stratification)
 
         stratified_params = stratified_model.petrinet.semantics.ode.parameters
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta_1_2_0"].value -= epsilon
-        betas["beta_1_2_1"].value += epsilon
+        betas["beta___None_to_None___st_1_to_None_"].value -= epsilon
+        betas["beta___None_to_None___st_2_to_None_"].value += epsilon
 
         stratified_result = runner.run(
-            stratified_model.petrinet.model_dump(), BASE_SIR_REQUEST_PATH
+            stratified_model.petrinet, BASE_SIR_REQUEST_PATH
         )
 
         assert (
@@ -152,11 +164,11 @@ class TestUseCases(unittest.TestCase):
 
         # Abstract and bound stratified Base model
         abstract_model = stratified_model.abstract(
-            Abstraction(abstraction={"S_1": "S", "S_2": "S"})
+            Abstraction(abstraction={"S_st_1": "S", "S_st_2": "S"})
         )
         bounded_abstract_model = abstract_model.formulate_bounds()
         bounded_abstract_result = runner.run(
-            bounded_abstract_model.petrinet.model_dump(),
+            bounded_abstract_model.petrinet,
             BASE_SIR_REQUEST_PATH,
         )
 
@@ -334,14 +346,16 @@ class TestUseCases(unittest.TestCase):
         # Combines rates for stratified t1 transition
         # S_v beta_v I, S_u beta_u I -> S beta I
 
+        betas = [
+            p.id
+            for p in stratified_model_S.petrinet.semantics.ode.parameters
+            if "beta" in p.id
+        ]
+        beta_abs = {p: "agg_beta" for p in betas}
+
         undo_S = stratified_model_S.abstract(
             Abstraction(
-                abstraction={
-                    "S_vac_T": "S",
-                    "S_vac_F": "S",
-                    "beta__None_vac_F_vac_F": "agg_beta",
-                    "beta__None_vac_T_vac_T": "agg_beta",
-                }
+                abstraction={"S_vac_T": "S", "S_vac_F": "S", **beta_abs}
             )
         )
         undo_S.to_dot().render("undo_S")
@@ -357,9 +371,12 @@ class TestUseCases(unittest.TestCase):
         stratified_params = (
             stratified_model_SI.petrinet.semantics.ode.parameters
         )
-        betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta__None_vac_T_vac_T"].value -= epsilon
-        betas["beta__None_vac_F_vac_F"].value += epsilon
+        betas = [p for p in stratified_params if "beta" in p.id]
+        for i, b in enumerate(betas):
+            if i == 0:
+                b.value -= epsilon
+            else:
+                b.value += epsilon
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
@@ -386,8 +403,8 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "S_vac_T": "S",
                     "S_vac_F": "S",
-                    "beta__None_vac_F_vac_F": "agg_beta",
-                    "beta__None_vac_T_vac_T": "agg_beta",
+                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
+                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
                 }
             )
         )
@@ -546,8 +563,8 @@ class TestUseCases(unittest.TestCase):
             stratified_model_SI.petrinet.semantics.ode.parameters
         )
         betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta__None__vac_T_to_vac_T_"].value -= epsilon
-        betas["beta__None__vac_F_to_vac_F_"].value += epsilon
+        betas["beta___None_to_None___vac_T_to_None_"].value -= epsilon
+        betas["beta___None_to_None___vac_F_to_None_"].value += epsilon
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
@@ -574,8 +591,8 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "S_vac_T": "S",
                     "S_vac_F": "S",
-                    "beta__None__vac_T_to_vac_T_": "agg_beta",
-                    "beta__None__vac_F_to_vac_F_": "agg_beta",
+                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
+                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
                 }
             )
         )
@@ -594,8 +611,8 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "I_vac_T": "I",
                     "I_vac_F": "I",
-                    "beta__None__vac_T_to_vac_T_": "agg_beta",
-                    "beta__None__vac_F_to_vac_F_": "agg_beta",
+                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
+                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
                 }
             )
         )

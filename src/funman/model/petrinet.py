@@ -309,6 +309,12 @@ class StratumAttributeValue(BaseModel):
     def __repr__(self):
         return str(self)
 
+    def __eq__(self, other):
+        return (
+            isinstance(other, StratumAttributeValue)
+            and self.name == other.name
+        )
+
 
 class StratumAttribute(BaseModel):
     name: str
@@ -350,6 +356,23 @@ class StratumValuation(BaseModel):
 
     def __repr__(self):
         return str(self)
+
+    def __getitem__(self, key):
+        if key in self.values:
+            return self.values[key]
+        else:
+            return key.values
+
+    def __setitem__(self, key, value):
+        self.values[key] = value
+
+    def expand_valuations(self, attr: StratumAttribute):
+        exp_vals = []
+        for val in attr.values:
+            c = self.model_copy(deep=True)
+            c[attr] = StratumAttributeValueSet(values={val})
+            exp_vals.append(c)
+        return exp_vals
 
     def is_subset(self, other, strict=False):
         # cases:
@@ -1465,39 +1488,86 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         strata_parameters = stratification.base_parameters
         cross_strata_transitions = stratification.cross_strata_transitions
 
+        assert (
+            len(strata.values.keys()) == 1
+        ), f"Only support stratification by one attribute at a time, got: {list(strata.keys())}"
+        strata_attr = next(iter(strata.values.keys()))
+
         # Need to determine which strata transitions occur and involving what variables.
         strata_levels = strata.valuations()
         tr_map = self.transition_map(transition)
-        possible_strata_transitions = [
-            [
-                (input_strata, output_strata)
-                for input_strata in (
-                    strata_levels if st.input == state_var else [None]
+        possible_strata_transitions = []
+        for st in tr_map.state_transitions:
+            input_stratum = self.state_strata(st.input)
+            output_stratum = self.state_strata(st.output)
+            if strata_attr in input_stratum.values:
+                # Already have a valuation for attribute
+                current_input_stratum = [input_stratum]
+            elif state_var == st.input:
+                # Don't have a valuation, so consider all values
+                current_input_stratum = input_stratum.expand_valuations(
+                    strata_attr
                 )
-                for output_strata in (
-                    strata_levels if st.output == state_var else [None]
+            else:
+                current_input_stratum = [None]
+
+            if strata_attr in output_stratum.values:
+                # Already have a valuation for attribute
+                current_output_stratum = [output_stratum]
+            elif state_var == st.output:
+                # Don't have a valuation, so consider all values
+                current_output_stratum = output_stratum.expand_valuations(
+                    strata_attr
                 )
-                if (
-                    (
-                        not st.is_natural_transition()
-                        or cross_strata_transitions
-                        or input_strata == output_strata
-                        or input_strata is None
-                        or output_strata is None
+            else:
+                current_output_stratum = [None]
+
+            # Can only make more concrete with those levels consistent with the current stratum
+            possible_input_levels = (
+                [
+                    s
+                    for s in strata_levels
+                    if any(
+                        [s1 for s1 in current_input_stratum if s1.is_subset(s)]
                     )
-                    and
-                    # only natural -> is natural
-                    (
-                        st.is_natural_transition()
-                        or (
-                            not stratification.only_natural_transitions
-                            or input_strata == output_strata
+                ]
+                if state_var == st.input
+                else current_input_stratum
+            )
+            possible_output_levels = (
+                [
+                    s
+                    for s in strata_levels
+                    if any(
+                        [
+                            s1
+                            for s1 in current_output_stratum
+                            if s1.is_subset(s)
+                        ]
+                    )
+                ]
+                if state_var == st.output
+                else current_output_stratum
+            )
+
+            legal_strata_transitions = []
+            for input_level in possible_input_levels:
+                for output_level in possible_output_levels:
+                    if cross_strata_transitions and st.is_natural_transition():
+                        # allow levels to be different
+                        legal_strata_transitions.append(
+                            (input_level, output_level)
                         )
-                    )
-                )
-            ]
-            for st in tr_map.state_transitions
-        ]
+                    elif (
+                        input_level == output_level
+                        or input_level is None
+                        or output_level is None
+                    ):
+                        # levels must be the same
+                        legal_strata_transitions.append(
+                            (input_level, output_level)
+                        )
+            possible_strata_transitions.append(legal_strata_transitions)
 
         new_transitions = []
         new_transition_maps = []
