@@ -403,8 +403,7 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "S_vac_T": "S",
                     "S_vac_F": "S",
-                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
-                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
+                    **{b.id: "agg_beta" for b in betas},
                 }
             )
         )
@@ -501,6 +500,12 @@ class TestUseCases(unittest.TestCase):
             len(all_failures) == 0
         ), f"The bounds failed in the following cases:\n{reasons}"
 
+    def model_has_expected_parameters(self, model, expected_parameters):
+        params = model._parameter_names()
+        assert all(
+            [p in params for p in expected_parameters]
+        ), f"Stratifying I error: did not get expected parameters, got {params}, expecting new parameters {expected_parameters}"
+
     # @unittest.skip(reason="WIP")
     def test_sirhd_stratify_transitions(self):
         epsilon = 0.000001
@@ -562,27 +567,50 @@ class TestUseCases(unittest.TestCase):
             "p_cross_I_vac_F_vac_F_to_I_vac_F_vac_F___S__to_I_vac_T_vac_T",
             "p_cross_I_vac_F_vac_F_to_I_vac_F_vac_F___S__to_I_vac_F_vac_F",
         ]
-        assert all(
-            [
-                p in stratified_model_I_parameters
-                for p in stratified_model_I_expected_parameters
-            ]
-        ), f"Stratifying I error: did not get expected parameters, got {stratified_model_I_parameters}, expecting new parameters [{stratified_model_I_expected_parameters}]"
+        self.model_has_expected_parameters(
+            stratified_model_I, stratified_model_I_expected_parameters
+        )
 
-        # stratified_model_S = base_model.stratify(stratification_S)
-        # stratified_model_S.to_dot().render("sirhd_strat_S")
-        # stratified_model_S_parameters = stratified_model_S._parameter_names()
+        stratified_model_S = base_model.stratify(stratification_S)
+        stratified_model_S.to_dot().render("sirhd_strat_S")
+        stratified_model_S_parameters = stratified_model_S._parameter_names()
 
         # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
+        stratified_model_S_expected_parameters = [
+            "beta_I__to_I____S_vac_T_vac_T_to_I_",
+            "beta_I__to_I____S_vac_F_vac_F_to_I_",
+            "p_cross_S_vac_T_vac_T_to_S_vac_F_vac_F",
+            "p_cross_S_vac_F_vac_F_to_S_vac_T_vac_T",
+        ]
+        self.model_has_expected_parameters(
+            stratified_model_S, stratified_model_S_expected_parameters
+        )
 
         # assert ('beta___None_to_None___vac_T_to_None_' in stratified_model_S_parameters and
         #         'beta___None_to_None___vac_F_to_None_' in stratified_model_S_parameters and
         #         'p_self_S__vac_T_to_vac_F_' in stratified_model_S_parameters and
         #         'p_self_S__vac_F_to_vac_T_' in stratified_model_S_parameters), f"Stratifying I error: did not get expected parameters, got {stratified_model_S_parameters}, expecting new parameters [beta___None_to_None___vac_T_to_None_, beta___None_to_None___vac_F_to_None_, p_self_S__vac_T_to_vac_F_, p_self_S__vac_F_to_vac_T_]"
 
-        # stratified_model_SI = stratified_model_S.stratify(stratification_I)
-        # stratified_model_SI.to_dot().render("sirhd_strat_SI")
-        # stratified_model_SI_parameters = stratified_model_SI._parameter_names()
+        stratified_model_SI = stratified_model_S.stratify(stratification_I)
+        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+        stratified_model_SI_parameters = stratified_model_SI._parameter_names()
+
+        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
+        stratified_model_SI_expected_parameters = [
+            "p_cross_I_vac_F_vac_F_to_I_vac_F_vac_F___S_vac_F_vac_F_to_I_vac_F_vac_F",
+            "p_cross_I_vac_F_vac_F_to_I_vac_F_vac_F___S_vac_F_vac_F_to_I_vac_T_vac_T",
+            "p_cross_I_vac_T_vac_T_to_I_vac_T_vac_T___S_vac_F_vac_F_to_I_vac_F_vac_F",
+            "p_cross_I_vac_T_vac_T_to_I_vac_T_vac_T___S_vac_F_vac_F_to_I_vac_T_vac_T",
+            "p_cross_I_vac_F_vac_F_to_I_vac_F_vac_F___S_vac_T_vac_T_to_I_vac_F_vac_F",
+            "p_cross_I_vac_F_vac_F_to_I_vac_F_vac_F___S_vac_T_vac_T_to_I_vac_T_vac_T",
+            "p_cross_I_vac_T_vac_T_to_I_vac_T_vac_T___S_vac_T_vac_T_to_I_vac_F_vac_F",
+            "p_cross_I_vac_T_vac_T_to_I_vac_T_vac_T___S_vac_T_vac_T_to_I_vac_T_vac_T",
+            "beta_I__to_I____S_vac_F_vac_F_to_I_",
+            "beta_I__to_I____S_vac_T_vac_T_to_I_",
+        ]
+        self.model_has_expected_parameters(
+            stratified_model_SI, stratified_model_SI_expected_parameters
+        )
 
         # SI adds to S, stratified beta unchnaged, doesn't need an abstract S parameter
         # new 'p_cross_t1__None_to_None___vac_T_to_None__S_vac_T_vac_T_to_I_vac_T_vac_T'
@@ -613,12 +641,17 @@ class TestUseCases(unittest.TestCase):
             "beta_I_vac_T_vac_T_to_I_vac_T_vac_T___S_vac_F_vac_F_to_I_vac_T_vac_T",
             "beta_I_vac_T_vac_T_to_I_vac_T_vac_T___S_vac_T_vac_T_to_I_vac_T_vac_T",
         ]
-        assert all(
-            [
-                p in stratified_model_IS_parameters
-                for p in stratified_model_IS_expected_parameters
-            ]
-        ), f"Stratifying IS error: did not get expected parameters, got {stratified_model_IS_parameters}, expecting new parameters [{stratified_model_IS_expected_parameters}]"
+
+        self.model_has_expected_parameters(
+            stratified_model_IS, stratified_model_IS_expected_parameters
+        )
+
+        # assert all(
+        #     [
+        #         p in stratified_model_IS_parameters
+        #         for p in stratified_model_IS_expected_parameters
+        #     ]
+        # ), f"Stratifying IS error: did not get expected parameters, got {stratified_model_IS_parameters}, expecting new parameters [{stratified_model_IS_expected_parameters}]"
 
         #  remove 'p_abstract_t1_S'
         #  There are two cross parameters here from stratifying I, after stratifying S, then there should be 4
@@ -641,9 +674,12 @@ class TestUseCases(unittest.TestCase):
         stratified_params = (
             stratified_model_SI.petrinet.semantics.ode.parameters
         )
-        betas = {p.id: p for p in stratified_params if "beta" in p.id}
-        betas["beta___None_to_None___vac_T_to_None_"].value -= epsilon
-        betas["beta___None_to_None___vac_F_to_None_"].value += epsilon
+        betas = [p for p in stratified_params if "beta" in p.id]
+        for i, b in enumerate(betas):
+            if i == 0:
+                b.value -= epsilon
+            else:
+                b.value += epsilon
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
@@ -670,8 +706,7 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "S_vac_T": "S",
                     "S_vac_F": "S",
-                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
-                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
+                    **{b.id: "agg_beta" for b in betas},
                 }
             )
         )
@@ -684,8 +719,7 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "I_vac_T": "I",
                     "I_vac_F": "I",
-                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
-                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
+                    **{b.id: "agg_beta" for b in betas},
                 }
             )
         )
@@ -706,8 +740,7 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "I_vac_T": "I",
                     "I_vac_F": "I",
-                    "beta___None_to_None___vac_T_to_None_": "agg_beta",
-                    "beta___None_to_None___vac_F_to_None_": "agg_beta",
+                    **{b.id: "agg_beta" for b in betas},
                 }
             )
         )

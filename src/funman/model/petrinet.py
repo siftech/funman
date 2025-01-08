@@ -804,10 +804,11 @@ class TransitionMap(BaseModel):
         rates = model._transition_rate(transition)
         if len(rates) > 0:
             rate = str(rates[0])
+            params = model._semantics_parameters()
             for (
                 parameter_id,
                 parameter,
-            ) in model._semantics_parameters().items():
+            ) in params.items():
                 if parameter_id in rate:
                     if "p_abstract" in parameter_id:
                         self.abstract_input_parameters.append(parameter)
@@ -1005,7 +1006,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         return value
 
     def _semantics_parameters(self):
-        return {p.id: p for p in self.petrinet.semantics.ode.parameters}
+        return (
+            {p.id: p for p in self.petrinet.semantics.ode.parameters}
+            if self.petrinet.semantics
+            else {}
+        )
 
     def _parameter_lb(self, param_name: str):
         return next(
@@ -1467,13 +1472,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     #     pass
 
     def stratified_trans_id(self, transition, strata_transition):
-        return f"{transition.id}_{'_'.join([(f'_{st[0]}_to_{st[2]}_' if st else str(st)) for st in strata_transition])}"
+        return f"{transition.id}_{'_'.join([(f'_{st[0]}_to_{st[2]}' if st else str(st)) for st in strata_transition])}"
 
     def stratified_state_id(self, state_var, index, strata):
         return f"{state_var}_{'_'.join([str(s) for s in strata])}_{index}"
 
     def stratified_parameter_id(self, parameter, strata_transition):
-        return f"{parameter}__{'_'.join([(f'_{st[0]}_to_{st[1]}_' if st else str(st))  for st in strata_transition])}"
+        return f"{parameter}__{'_'.join([(f'_{st[0]}_to_{st[1]}' if st else str(st))  for st in strata_transition])}"
 
     def transformations(self):
         return (
@@ -2049,7 +2054,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         # Remove parameters not appearing in a rate
         new_model.petrinet.semantics.ode.parameters = [
             p
-            for p in new_parameters
+            for p in new_model.petrinet.semantics.ode.parameters
             if any(
                 [
                     p.id in r.expression
