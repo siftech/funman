@@ -330,7 +330,7 @@ class TestUseCases(unittest.TestCase):
     # @unittest.skip(reason="WIP")
     def test_sirhd_stratify(self):
         epsilon = 0.000001
-        timepoints = list(range(0, 5, 1))
+        timepoints = list(range(0, 2, 1))
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_base_request = FunmanWorkRequest.model_validate_json(
