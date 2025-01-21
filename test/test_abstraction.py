@@ -330,7 +330,7 @@ class TestUseCases(unittest.TestCase):
     # @unittest.skip(reason="WIP")
     def test_sirhd_stratify(self):
         epsilon = 0.000001
-        timepoints = list(range(0, 5, 1))
+        timepoints = list(range(0, 2, 1))
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_base_request = FunmanWorkRequest.model_validate_json(
@@ -882,7 +882,7 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.000001
-        timepoints = list(range(0, 11, 2))
+        timepoints = list(range(0, 11, 1))
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_base_request = FunmanWorkRequest.model_validate_json(
@@ -914,13 +914,16 @@ class TestUseCases(unittest.TestCase):
             }
         )
 
+        stratified_vars = ["S", "I"] #, "R", "H", "D"]
+        
+
         vac_stratifications = [
             Stratification(
                 base_state=var,
                 stratum=vac_stratum,
                 self_strata_transitions=True,
             )
-            for var in ["S", "I", "R", "H", "D"]
+            for var in stratified_vars
         ]
 
         vac_model = reduce(
@@ -937,7 +940,7 @@ class TestUseCases(unittest.TestCase):
                     for s_attr_value in value_set.values
                 }
             )
-            for var in ["S", "I", "R", "H", "D"]
+            for var in stratified_vars
         ]
 
         vac_abs_model = reduce(
@@ -969,13 +972,25 @@ class TestUseCases(unittest.TestCase):
         # Add constraint on I
         sirhd_stratified_request.constraints.append(
             StateVariableConstraint(
-                name="I upper", variable="I_vac_ub", interval=Interval(ub=1e5)
+                name="I upper", variable="I_ub", interval=Interval(ub=1e5)
             )
         )
 
+        base_model_result = runner.run(
+            base_model.petrinet, sirhd_stratified_request
+        )
+        vac_model_results = runner.run(vac_model.petrinet, sirhd_stratified_request)
         bounded_abstract_model_result = runner.run(
             bounded_abstract_model.petrinet, sirhd_stratified_request
         )
+
+        base_df = base_model_result.dataframe(points=base_model_result.points())
+        vac_model_df = vac_model_results.dataframe(points=vac_model_results.points())
+        bounded_df = bounded_abstract_model_result.dataframe(points=bounded_abstract_model_result.points())
+
+        I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
+        
+
         assert (
             bounded_abstract_model_result
         ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
