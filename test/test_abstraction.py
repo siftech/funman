@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 import unittest
+from functools import reduce
 from pathlib import Path
 
 import pandas as pd
@@ -10,6 +11,8 @@ from matplotlib import pyplot as plt
 
 from funman import (
     Abstraction,
+    Interval,
+    StateVariableConstraint,
     Stratification,
     Stratum,
     StratumAttribute,
@@ -156,7 +159,6 @@ class TestUseCases(unittest.TestCase):
                 b.value -= epsilon
             else:
                 b.value += epsilon
-        
 
         stratified_result = runner.run(
             stratified_model.petrinet, BASE_SIR_REQUEST_PATH
@@ -296,8 +298,8 @@ class TestUseCases(unittest.TestCase):
         # FIXME need assert
 
     def check_bounds(
-            self, bounds_df, values_df, variable, values_model_name, tolerance=1e-7
-        ):
+        self, bounds_df, values_df, variable, values_model_name, tolerance=1e-7
+    ):
         failures = []
         lb = f"{variable}_lb"
         ub = f"{variable}_ub"
@@ -311,7 +313,9 @@ class TestUseCases(unittest.TestCase):
             )
         return failures
 
-    def check_bounds_configurations(self, configurations, variables, bounded_abstract_df):
+    def check_bounds_configurations(
+        self, configurations, variables, bounded_abstract_df
+    ):
         all_failures = []
         for values_df, model in configurations:
             for var in variables:
@@ -506,10 +510,10 @@ class TestUseCases(unittest.TestCase):
             (destratified_df, "stratified"),
         ]
         variables = ["S", "I", "H", "R", "D"]
-        
-        self.check_bounds_configurations(configurations, variables, bounded_abstract_df)
 
-
+        self.check_bounds_configurations(
+            configurations, variables, bounded_abstract_df
+        )
 
     def model_has_expected_parameters(self, model, expected_parameters):
         params = model._parameter_names()
@@ -566,13 +570,26 @@ class TestUseCases(unittest.TestCase):
             cross_strata_transitions=True,
         )
 
-
         stratified_model_S = base_model.stratify(stratification_S)
         stratified_model_S.to_dot().render("sirhd_strat_S")
         stratified_model_S_parameters = stratified_model_S._parameter_names()
 
         # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
-        stratified_model_S_expected_parameters = ['N', 'pir', 'pih', 'rih', 'phd', 'rhd', 'phr', 'rhr', 'rir', 'beta___to_____S_vac_F_to__', 'beta___to_____S_vac_T_to__', 'p_cross_S_vac_F_to_S_vac_T', 'p_cross_S_vac_T_to_S_vac_F']
+        stratified_model_S_expected_parameters = [
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_F_to__",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_S_vac_F_to_S_vac_T",
+            "p_cross_S_vac_T_to_S_vac_F",
+        ]
         self.model_has_expected_parameters(
             stratified_model_S, stratified_model_S_expected_parameters
         )
@@ -582,38 +599,103 @@ class TestUseCases(unittest.TestCase):
         stratified_model_I_parameters = stratified_model_I._parameter_names()
 
         # I stratification allows cross strata transitions, but will not stratify beta
-        stratified_model_I_expected_parameters =['p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_T', 'p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_F', 'p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_T', 'p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_F', 'N', 'beta', 'pir', 'pih', 'rih', 'phd', 'rhd', 'phr', 'rhr', 'rir']
+        stratified_model_I_expected_parameters = [
+            "p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_T",
+            "p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_F",
+            "p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_T",
+            "p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_F",
+            "N",
+            "beta",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+        ]
         self.model_has_expected_parameters(
             stratified_model_I, stratified_model_I_expected_parameters
         )
-
-        
-
 
         stratified_model_SI = stratified_model_S.stratify(stratification_I)
         stratified_model_SI.to_dot().render("sirhd_strat_SI")
         stratified_model_SI_parameters = stratified_model_SI._parameter_names()
 
         # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
-        stratified_model_SI_expected_parameters = ['p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F', 'p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T', 'p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F', 'p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T', 'p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F', 'p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T', 'p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F', 'p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T', 'N', 'pir', 'pih', 'rih', 'phd', 'rhd', 'phr', 'rhr', 'rir', 'beta___to_____S_vac_F_to__', 'beta___to_____S_vac_T_to__', 'p_cross_S_vac_F_to_S_vac_T', 'p_cross_S_vac_T_to_S_vac_F']
+        stratified_model_SI_expected_parameters = [
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T",
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_F_to__",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_S_vac_F_to_S_vac_T",
+            "p_cross_S_vac_T_to_S_vac_F",
+        ]
         self.model_has_expected_parameters(
             stratified_model_SI, stratified_model_SI_expected_parameters
         )
-
 
         stratified_model_IS = stratified_model_I.stratify(stratification_S)
         stratified_model_IS.to_dot().render("sirhd_strat_IS")
         stratified_model_IS_parameters = stratified_model_IS._parameter_names()
 
-        stratified_model_IS_expected_parameters = ['N', 'pir', 'pih', 'rih', 'phd', 'rhd', 'phr', 'rhr', 'rir', 'beta___to_____S_vac_T_to__', 'p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T', 'beta___to_____S_vac_F_to__', 'p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T', 'p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F', 'p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F', 'p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T', 'p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T', 'p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F', 'p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F', 'p_cross_S_vac_T_to_S_vac_F', 'p_cross_S_vac_F_to_S_vac_T']
+        stratified_model_IS_expected_parameters = [
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T",
+            "beta___to_____S_vac_F_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F",
+            "p_cross_S_vac_T_to_S_vac_F",
+            "p_cross_S_vac_F_to_S_vac_T",
+        ]
 
         self.model_has_expected_parameters(
             stratified_model_IS, stratified_model_IS_expected_parameters
         )
 
-        assert len(set(stratified_model_SI_parameters).symmetric_difference(set(stratified_model_IS_parameters))) == 0
-       
-        for stratified_params in [stratified_model_SI.petrinet.semantics.ode.parameters, stratified_model_IS.petrinet.semantics.ode.parameters]:
+        assert (
+            len(
+                set(stratified_model_SI_parameters).symmetric_difference(
+                    set(stratified_model_IS_parameters)
+                )
+            )
+            == 0
+        )
+
+        for stratified_params in [
+            stratified_model_SI.petrinet.semantics.ode.parameters,
+            stratified_model_IS.petrinet.semantics.ode.parameters,
+        ]:
             betas = [p for p in stratified_params if "beta" in p.id]
             for i, b in enumerate(betas):
                 if i == 0:
@@ -730,26 +812,39 @@ class TestUseCases(unittest.TestCase):
             bounded_abstract_result
         ), f"Could not generate a result for bounded abstracted stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
-        bounded_abstract_df = bounded_abstract_result.dataframe(bounded_abstract_result.points())
-        bounded_abstract_df['I_lb'] = bounded_abstract_df['I_vac_F_lb'] + bounded_abstract_df['I_vac_T_lb']
-        bounded_abstract_df['I_ub'] = bounded_abstract_df['I_vac_F_ub'] + bounded_abstract_df['I_vac_T_ub']
+        bounded_abstract_df = bounded_abstract_result.dataframe(
+            bounded_abstract_result.points()
+        )
+        bounded_abstract_df["I_lb"] = (
+            bounded_abstract_df["I_vac_F_lb"]
+            + bounded_abstract_df["I_vac_T_lb"]
+        )
+        bounded_abstract_df["I_ub"] = (
+            bounded_abstract_df["I_vac_F_ub"]
+            + bounded_abstract_df["I_vac_T_ub"]
+        )
 
         base_df = base_result.dataframe(base_result.points())
 
-        stratified_S_df = stratified_model_S_result.dataframe(stratified_model_S_result.points())
+        stratified_S_df = stratified_model_S_result.dataframe(
+            stratified_model_S_result.points()
+        )
         destratified_S_df = pd.DataFrame(stratified_S_df)
         destratified_S_df["S"] = (
             destratified_S_df.S_vac_T + destratified_S_df.S_vac_F
         )
-        
 
-        stratified_I_df = stratified_model_I_result.dataframe(stratified_model_I_result.points())
+        stratified_I_df = stratified_model_I_result.dataframe(
+            stratified_model_I_result.points()
+        )
         destratified_I_df = pd.DataFrame(stratified_I_df)
         destratified_I_df["I"] = (
             destratified_I_df.I_vac_T + destratified_I_df.I_vac_F
         )
 
-        stratified_SI_df = stratified_model_SI_result.dataframe(stratified_model_SI_result.points())
+        stratified_SI_df = stratified_model_SI_result.dataframe(
+            stratified_model_SI_result.points()
+        )
         destratified_SI_df = pd.DataFrame(stratified_SI_df)
         destratified_SI_df["S"] = (
             destratified_SI_df.S_vac_T + destratified_SI_df.S_vac_F
@@ -758,7 +853,9 @@ class TestUseCases(unittest.TestCase):
             destratified_SI_df.I_vac_T + destratified_SI_df.I_vac_F
         )
 
-        stratified_IS_df = stratified_model_IS_result.dataframe(stratified_model_IS_result.points())
+        stratified_IS_df = stratified_model_IS_result.dataframe(
+            stratified_model_IS_result.points()
+        )
         destratified_IS_df = pd.DataFrame(stratified_IS_df)
         destratified_IS_df["S"] = (
             destratified_IS_df.S_vac_T + destratified_IS_df.S_vac_F
@@ -775,8 +872,113 @@ class TestUseCases(unittest.TestCase):
             (destratified_IS_df, "stratified_IS"),
         ]
         variables = ["S", "I", "H", "R", "D"]
-        
-        self.check_bounds_configurations(configurations, variables, bounded_abstract_df)
+
+        self.check_bounds_configurations(
+            configurations, variables, bounded_abstract_df
+        )
+
+        # @unittest.skip(reason="WIP")
+
+    def test_sirhd_stratify_analysis(self):
+
+        epsilon = 0.000001
+        timepoints = list(range(0, 11, 2))
+
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_base_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
+        sirhd_base_request.config.mode = "mode_odeint"
+        sirhd_base_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
+
+        runner = Runner()
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
+
+        vac_T = StratumAttributeValue(name="T")
+        vac_F = StratumAttributeValue(name="F")
+        vac_stratum_attr = StratumAttribute(name="vac", values={vac_T, vac_F})
+        vac_stratum = Stratum(
+            values={
+                vac_stratum_attr: {
+                    StratumAttributeValueSet(values={vac_T}),
+                    StratumAttributeValueSet(values={vac_F}),
+                }
+            }
+        )
+
+        vac_stratifications = [
+            Stratification(
+                base_state=var,
+                stratum=vac_stratum,
+                self_strata_transitions=True,
+            )
+            for var in ["S", "I", "R", "H", "D"]
+        ]
+
+        vac_model = reduce(
+            lambda x, y: x.stratify(y), vac_stratifications, base_model
+        )
+        vac_model.to_dot().render("sirhd_strat_all")
+
+        vac_abstractions = [
+            Abstraction(
+                abstraction={
+                    f"{var}_{s_attr.name}_{s_attr_value.name}": var
+                    for s_attr in [vac_stratum_attr]
+                    for value_set in vac_stratum.values[s_attr]
+                    for s_attr_value in value_set.values
+                }
+            )
+            for var in ["S", "I", "R", "H", "D"]
+        ]
+
+        vac_abs_model = reduce(
+            lambda x, y: x.abstract(y), vac_abstractions, vac_model
+        )
+        vac_abs_model.to_dot().render("sirhd_strat_all_abs")
+
+        bounded_abstract_model = vac_abs_model.formulate_bounds()
+
+        # for stratified_params in [stratified_model_SI.petrinet.semantics.ode.parameters, stratified_model_IS.petrinet.semantics.ode.parameters]:
+        #     betas = [p for p in stratified_params if "beta" in p.id]
+        #     for i, b in enumerate(betas):
+        #         if i == 0:
+        #             b.value -= epsilon
+        #         else:
+        #             b.value += epsilon
+
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
+
+        # Add constraint on I
+        sirhd_stratified_request.constraints.append(
+            StateVariableConstraint(
+                name="I upper", variable="I_vac_ub", interval=Interval(ub=1e5)
+            )
+        )
+
+        bounded_abstract_model_result = runner.run(
+            bounded_abstract_model.petrinet, sirhd_stratified_request
+        )
+        assert (
+            bounded_abstract_model_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
 
 if __name__ == "__main__":
