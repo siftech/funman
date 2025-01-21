@@ -18,6 +18,8 @@ from funman import (
     StratumAttribute,
     StratumAttributeValue,
     StratumAttributeValueSet,
+    StrataTransition,
+    StratumValuation
 )
 from funman.api.run import Runner
 from funman.server.query import FunmanWorkRequest
@@ -914,16 +916,29 @@ class TestUseCases(unittest.TestCase):
             }
         )
 
-        stratified_vars = ["S", "I"] #, "R", "H", "D"]
+        base_params = base_model.petrinet.semantics.ode.parameters
+        beta = next(iter([p for p in base_params if "beta" in p.id]))
+
+        stratified_vars_params = [
+            {"var":"S", "params":{
+                "beta": {
+                    StrataTransition(
+                        input_stratum=StratumValuation(values={vac_stratum_attr:StratumAttributeValueSet(values={vac_T})}),
+                         output_stratum=StratumValuation()): beta.value-epsilon, 
+                    StrataTransition(
+                        input_stratum=StratumValuation(values={vac_stratum_attr:StratumAttributeValueSet(values={vac_F})}),
+                         output_stratum=StratumValuation()): beta.value+epsilon}}}, 
+            {"var":"I", "params":{}}] #, "R", "H", "D"]
         
 
         vac_stratifications = [
             Stratification(
-                base_state=var,
+                base_state=var_params["var"],
                 stratum=vac_stratum,
                 self_strata_transitions=True,
+                base_parameters=var_params["params"]
             )
-            for var in stratified_vars
+            for var_params in stratified_vars_params
         ]
 
         vac_model = reduce(
@@ -933,14 +948,9 @@ class TestUseCases(unittest.TestCase):
 
         vac_abstractions = [
             Abstraction(
-                abstraction={
-                    f"{var}_{s_attr.name}_{s_attr_value.name}": var
-                    for s_attr in [vac_stratum_attr]
-                    for value_set in vac_stratum.values[s_attr]
-                    for s_attr_value in value_set.values
-                }
-            )
-            for var in stratified_vars
+                abstraction={"S_vac_F": "S", "S_vac_T": "S","beta___to_____S_vac_F_to__":"beta", "beta___to_____S_vac_T_to__": "beta" }),
+                Abstraction(
+                abstraction={"I_vac_F": "I", "I_vac_T": "I",}),
         ]
 
         vac_abs_model = reduce(

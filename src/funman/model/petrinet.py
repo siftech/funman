@@ -468,10 +468,11 @@ class Stratum(BaseModel):
             + "]"
         )
 
+StratifiedParameterMapping = Dict[str,Dict["StrataTransition", float]]
 
 class Stratification(BaseModel):
     base_state: str
-    base_parameters: List[str] = []
+    base_parameters: Union[List[str], StratifiedParameterMapping] = []
     stratum: Stratum  # interpreted as cross product over attribute values
     self_strata_transitions: bool = False
     cross_strata_transitions: bool = False
@@ -695,6 +696,9 @@ class StrataTransition(BaseModel):
 
     def __repr__(self):
         return str(self)
+
+    def __hash__(self):
+        return hash(self.input_stratum) + hash(self.output_stratum)
 
     def input_attributes(self):
         in_attrs = (
@@ -1940,12 +1944,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     param_subs[p] = (
                         f"{p}_{strat_tr_map.id(strat_tr_map.state_transitions, state_vars=relevant_new_state_var_ids)}"
                     )
+                    # value = if isinstance(strata_parameters, dict) and p in strata_parameters else old_parameters[p].value
+                    if isinstance(strata_parameters, dict) and p in strata_parameters:
+                        st_tr = next(iter([st for st in strata_parameters[p] if any([st ==st1.strata_transition for st1 in strat_tr_map.state_transitions]) ]))
+                        value = strata_parameters[p][st_tr]
+                    else:
+                        value = old_parameters[p].value
                     new_parameters.append(
                         Parameter(
                             id=param_subs[p],
                             name=param_subs[p],
                             description=f"{p} stratified as {param_subs[p]}",
-                            value=old_parameters[p].value,
+                            value=value,
                             distribution=old_parameters[p].distribution,
                             units=old_parameters[p].units,
                             grounding=old_parameters[p].grounding,
