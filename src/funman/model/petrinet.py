@@ -2824,7 +2824,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             }
 
             # Need to introduce a new parameter for probability of transition going from abstract input to a concrete output
-            transition_parameters = []
+            transition_parameters = [
+                str(s)
+                for s in abstract_expression.free_symbols
+                if str(s).startswith("p_cross_")
+            ]
             # if abstract_to_concrete_transition is not None:
             #     for atc in abstract_to_concrete_transition:
             #         trans_sym = sympy.Symbol(atc)
@@ -2874,6 +2878,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             if not any(
                 [
                     p.id in rp["parameters"]
+                    or p.id in rp["transition_parameters"]
                     for rp in aggregated_rates_and_parameters
                 ]
             )
