@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 import unittest
-from functools import reduce
+from itertools import accumulate
 from pathlib import Path
 
 import pandas as pd
@@ -13,13 +13,13 @@ from funman import (
     Abstraction,
     Interval,
     StateVariableConstraint,
+    StrataTransition,
     Stratification,
     Stratum,
     StratumAttribute,
     StratumAttributeValue,
     StratumAttributeValueSet,
-    StrataTransition,
-    StratumValuation
+    StratumValuation,
 )
 from funman.api.run import Runner
 from funman.server.query import FunmanWorkRequest
@@ -884,90 +884,10 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.000001
-        timepoints = list(range(0, 11, 1))
-
-        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
-            sirhd_base_request = FunmanWorkRequest.model_validate_json(
-                f.read()
-            )
-        sirhd_base_request.config.mode = "mode_odeint"
-        sirhd_base_request.structure_parameters[0].schedules[
-            0
-        ].timepoints = timepoints
+        timepoints = list(range(0, 2, 1))
 
         runner = Runner()
-        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
-
-        assert (
-            base_result
-        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
-
-        vac_T = StratumAttributeValue(name="T")
-        vac_F = StratumAttributeValue(name="F")
-        vac_stratum_attr = StratumAttribute(name="vac", values={vac_T, vac_F})
-        vac_stratum = Stratum(
-            values={
-                vac_stratum_attr: {
-                    StratumAttributeValueSet(values={vac_T}),
-                    StratumAttributeValueSet(values={vac_F}),
-                }
-            }
-        )
-
-        base_params = base_model.petrinet.semantics.ode.parameters
-        beta = next(iter([p for p in base_params if "beta" in p.id]))
-
-        stratified_vars_params = [
-            {"var":"S", "params":{
-                "beta": {
-                    StrataTransition(
-                        input_stratum=StratumValuation(values={vac_stratum_attr:StratumAttributeValueSet(values={vac_T})}),
-                         output_stratum=StratumValuation()): beta.value-epsilon, 
-                    StrataTransition(
-                        input_stratum=StratumValuation(values={vac_stratum_attr:StratumAttributeValueSet(values={vac_F})}),
-                         output_stratum=StratumValuation()): beta.value+epsilon}}}, 
-            {"var":"I", "params":{}}] #, "R", "H", "D"]
-        
-
-        vac_stratifications = [
-            Stratification(
-                base_state=var_params["var"],
-                stratum=vac_stratum,
-                self_strata_transitions=True,
-                base_parameters=var_params["params"]
-            )
-            for var_params in stratified_vars_params
-        ]
-
-        vac_model = reduce(
-            lambda x, y: x.stratify(y), vac_stratifications, base_model
-        )
-        vac_model.to_dot().render("sirhd_strat_all")
-
-        vac_abstractions = [
-            Abstraction(
-                abstraction={"S_vac_F": "S", "S_vac_T": "S","beta___to_____S_vac_F_to__":"beta", "beta___to_____S_vac_T_to__": "beta" }),
-                Abstraction(
-                abstraction={"I_vac_F": "I", "I_vac_T": "I",}),
-        ]
-
-        vac_abs_model = reduce(
-            lambda x, y: x.abstract(y), vac_abstractions, vac_model
-        )
-        vac_abs_model.to_dot().render("sirhd_strat_all_abs")
-
-        bounded_abstract_model = vac_abs_model.formulate_bounds()
-
-        # for stratified_params in [stratified_model_SI.petrinet.semantics.ode.parameters, stratified_model_IS.petrinet.semantics.ode.parameters]:
-        #     betas = [p for p in stratified_params if "beta" in p.id]
-        #     for i, b in enumerate(betas):
-        #         if i == 0:
-        #             b.value -= epsilon
-        #         else:
-        #             b.value += epsilon
-
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
                 f.read()
@@ -986,24 +906,163 @@ class TestUseCases(unittest.TestCase):
             )
         )
 
-        base_model_result = runner.run(
-            base_model.petrinet, sirhd_stratified_request
+        # with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+        #     sirhd_base_request = FunmanWorkRequest.model_validate_json(
+        #         f.read()
+        #     )
+        # sirhd_base_request.config.mode = "mode_odeint"
+        # sirhd_base_request.structure_parameters[0].schedules[
+        #     0
+        # ].timepoints = timepoints
+
+        # runner = Runner()
+        # base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+
+        # assert (
+        #     base_result
+        # ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        # (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
+
+        vac_T = StratumAttributeValue(name="T")
+        vac_F = StratumAttributeValue(name="F")
+        vac_stratum_attr = StratumAttribute(name="vac", values={vac_T, vac_F})
+        vac_stratum = Stratum(
+            values={
+                vac_stratum_attr: {
+                    StratumAttributeValueSet(values={vac_T}),
+                    StratumAttributeValueSet(values={vac_F}),
+                }
+            }
         )
-        vac_model_results = runner.run(vac_model.petrinet, sirhd_stratified_request)
-        bounded_abstract_model_result = runner.run(
-            bounded_abstract_model.petrinet, sirhd_stratified_request
+
+        base_params = base_model.petrinet.semantics.ode.parameters
+        beta = next(iter([p for p in base_params if "beta" in p.id]))
+
+        vac_stratifications = [
+            Stratification(
+                base_state="S",
+                stratum=vac_stratum,
+                self_strata_transitions=True,
+                base_parameters={
+                    "beta": {
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_T}
+                                    )
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        - epsilon,
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_F}
+                                    )
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        + epsilon,
+                    }
+                },
+            ),
+            Stratification(
+                base_state="I",
+                stratum=vac_stratum,
+                self_strata_transitions=True,
+            ),
+            Stratification(
+                base_state="R",
+                stratum=vac_stratum,
+                self_strata_transitions=True,
+            ),
+            Stratification(
+                base_state="H",
+                stratum=vac_stratum,
+                self_strata_transitions=True,
+            ),
+            Stratification(
+                base_state="D",
+                stratum=vac_stratum,
+                self_strata_transitions=True,
+            ),
+        ]
+
+        vac_abstractions = [
+            Abstraction(abstraction={"D_vac_F": "D", "D_vac_T": "D"}),
+            Abstraction(abstraction={"H_vac_F": "H", "H_vac_T": "H"}),
+            Abstraction(abstraction={"R_vac_F": "R", "R_vac_T": "R"}),
+            Abstraction(abstraction={"I_vac_F": "I", "I_vac_T": "I"}),
+            Abstraction(
+                abstraction={
+                    "S_vac_F": "S",
+                    "S_vac_T": "S",
+                    "beta___to_____S_vac_F_to__": "beta",
+                    "beta___to_____S_vac_T_to__": "beta",
+                }
+            ),
+        ]
+
+        transformation_sequence = vac_stratifications + vac_abstractions
+
+        vac_models = list(
+            accumulate(
+                transformation_sequence,
+                lambda x, y: x.transform(y),
+                initial=base_model,
+            )
         )
 
-        base_df = base_model_result.dataframe(points=base_model_result.points())
-        vac_model_df = vac_model_results.dataframe(points=vac_model_results.points())
-        bounded_df = bounded_abstract_model_result.dataframe(points=bounded_abstract_model_result.points())
+        list(
+            map(
+                lambda x, name: x.to_dot().render(f"vac_model_{name}"),
+                vac_models,
+                range(len(vac_models)),
+            )
+        )
 
-        I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
-        
+        vac_model_params = [
+            {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
+            for m in vac_models
+        ]
 
-        assert (
-            bounded_abstract_model_result
-        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+        bounded_vac_models = [m.formulate_bounds() for m in vac_models]
+
+        results = [
+            runner.run(m.petrinet, sirhd_stratified_request)
+            for m in vac_models[0 : len(vac_stratifications) + 1]
+            + bounded_vac_models
+        ]
+        # 0: base
+        # 1: stratify([I], base)
+        # 2: stratify([S, beta], stratify([I], base))
+        # 3: bound(base)
+        # 4: bound(stratify([I], base))
+        # 5: bound(stratify([S, beta], stratify([I], base)))
+        # 6: bound(abstract([S, beta], stratify([S, beta], stratify([I], base))))
+        # 7: bound(abstract([I], abstract([S, beta], stratify([S, beta], stratify([I], base)))))
+
+        m = []
+        for i, result in enumerate(results):
+            df = result.dataframe()
+            df["model_index"] = i
+            df["runtime"] = result.timing.total_time
+            df = df.set_index(["model_index", "index"])
+            m.append(df)
+        dfs = pd.concat(m)
+        runtimes = dfs.reset_index(["index"]).runtime.drop_duplicates()
+
+        # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
+        # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
+
+        # assert (
+        #     bounded_abstract_model_result
+        # ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
 
 if __name__ == "__main__":

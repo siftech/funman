@@ -468,7 +468,9 @@ class Stratum(BaseModel):
             + "]"
         )
 
-StratifiedParameterMapping = Dict[str,Dict["StrataTransition", float]]
+
+StratifiedParameterMapping = Dict[str, Dict["StrataTransition", float]]
+
 
 class Stratification(BaseModel):
     base_state: str
@@ -1945,8 +1947,24 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         f"{p}_{strat_tr_map.id(strat_tr_map.state_transitions, state_vars=relevant_new_state_var_ids)}"
                     )
                     # value = if isinstance(strata_parameters, dict) and p in strata_parameters else old_parameters[p].value
-                    if isinstance(strata_parameters, dict) and p in strata_parameters:
-                        st_tr = next(iter([st for st in strata_parameters[p] if any([st ==st1.strata_transition for st1 in strat_tr_map.state_transitions]) ]))
+                    if (
+                        isinstance(strata_parameters, dict)
+                        and p in strata_parameters
+                    ):
+                        st_tr = next(
+                            iter(
+                                [
+                                    st
+                                    for st in strata_parameters[p]
+                                    if any(
+                                        [
+                                            st == st1.strata_transition
+                                            for st1 in strat_tr_map.state_transitions
+                                        ]
+                                    )
+                                ]
+                            )
+                        )
                         value = strata_parameters[p][st_tr]
                     else:
                         value = old_parameters[p].value
@@ -2514,17 +2532,34 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             return True
 
         ancestors = self.petrinet.metadata.get("ancestors", [])
-        c1 = str(s1)
-        c2 = str(s2)
+        c1 = set([str(s1)])
+        c2 = set([str(s2)])
         for level in reversed(ancestors):
-            p1 = level.get(c1, c1)
-            p2 = level.get(c2, c2)
-            if p1 == p2:
+            try:
+                p1 = set([])
+                for c in c1:
+                    p = level.get(c, c)
+                    p1 = p1.union(set(p) if isinstance(p, list) else set([p]))
+                p2 = set([])
+                for c in c2:
+                    p = level.get(c, c)
+                    p2 = p2.union(set(p) if isinstance(p, list) else set([p]))
+            except:
+                pass
+            if len(p1.intersection(p2)) > 0:
                 return True
             c1 = p1
             c2 = p2
 
         return False
+
+    def transform(
+        self, op: Union[Stratification, Abstraction]
+    ) -> "GeneratedPetriNetModel":
+        if isinstance(op, Stratification):
+            return self.stratify(op)
+        else:
+            return self.abstract(op)
 
     def abstract(self, abstraction: Abstraction):
         # Get existing state variables
@@ -2607,15 +2642,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             for ct, gts in zip(consolidated_transitions, grouped_transitions)
             if len(gts) > 1
         }
-
-        ## Remove self transitions
-        new_transitions = [
-            t
-            for t in consolidated_transitions
-            if not (t.input == t.output and len(t.input) == 1)
-        ]
-
-        new_model.petrinet.model.transitions = new_transitions
 
         def get_rate(
             self, target: str, rates: List[Rate], max_rate=False
@@ -2775,17 +2801,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
             if len(rates) > 1:
                 # When have more than one rate that we're aggregating, then we identify parameters that can be aggregated
-
-                # starting_expression = I*S_unvac*beta_vac_unvac_1/N + I*S_vac*beta_vac_unvac_0/N
-                #                     = I/N * (S_unvac*beta_vac_unvac_1 + S_vac*beta_vac_unvac_0)
-                #                     = I/N * (S_unvac*agg_beta + S_vac*agg_beta)
-                #                     = I*agg_beta/N * (S_unvac + S_vac)
-                #                     = I*agg_beta*S/N
-                #
-                #                     = I/N * (S_unvac*beta_vac_unvac_1 + S_vac*beta_vac_unvac_0)
-                #                     = I/N * (S_unvac*beta_vac_unvac_1 + (S-S_unvac)*(agg_beta-beta_vac_unvac_1))
-
-                # FIXME need to remove double counting of parameters p_I_I and beta_I_I
                 parameter_values = self._parameter_values()
                 parameter_minimization = {
                     str(
@@ -2846,11 +2861,23 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             #         # parameter_minimization[trans_sym] = str(trans_sym)
             #         transition_parameters.append(trans_sym)
 
-            abstraction._parameter_ancestors = {
-                k: v
-                for k, v in i_abstraction.items()
-                if all([p in parameter_names for p in v])
-            }
+            abstraction._parameter_ancestors.update(
+                {
+                    k: v
+                    for k, v in i_abstraction.items()
+                    if all([p in parameter_names for p in v])
+                }
+            )
+            abstraction._parameter_ancestors.update(
+                {
+                    v: [
+                        k
+                        for k, v1 in parameter_minimization.items()
+                        if v == v1
+                    ]
+                    for v in parameter_minimization.values()
+                }
+            )
             # abstract_expression1 = sympy.expand(sympy.expand(starting_expression.subs(abstraction_substitution )).subs(parameter_minimization))
             return {
                 "rate": str(abstract_expression),
@@ -2858,6 +2885,16 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 "transition_parameters": transition_parameters,
                 "states": abstracted_states,
             }
+
+        ## Remove self transitions
+        new_transitions = []
+        candidate_rates = []
+        for t, r in zip(consolidated_transitions, grouped_rates):
+            if not (t.input == t.output and len(t.input) == 1):
+                new_transitions.append(t)
+                candidate_rates.append(r)
+
+        new_model.petrinet.model.transitions = new_transitions
 
         aggregated_rates_and_parameters = [
             aggregate_rates(
@@ -2868,7 +2905,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 #     consolidated_transitions[i], self.transformations()
                 # ),
             )  # reduce(lambda x, y: x+y, [to_sympy(r.expression, self._symbols()) for r in g]) #"+".join([f"({r.expression})" for r in g])
-            for i, g in enumerate(grouped_rates)
+            for i, g in enumerate(candidate_rates)
             if i < len(new_transitions)
         ]
 
@@ -2878,7 +2915,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 target=new_transitions[i].id,
                 expression=aggregated_rates_and_parameters[i]["rate"],
             )
-            for i, g in enumerate(grouped_rates)
+            for i, g in enumerate(candidate_rates)
             if i < len(new_transitions)
         ]
 
