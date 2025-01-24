@@ -884,7 +884,7 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.000001
-        timepoints = list(range(0, 2, 1))
+        timepoints = list(range(0, 11, 1))
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -1096,7 +1096,7 @@ class TestUseCases(unittest.TestCase):
             m.append(df)
         dfs = pd.concat(m)
         runtimes = dfs.reset_index(["index"]).runtime.drop_duplicates()
-
+        self.l.info(runtimes)
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
         # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
 
