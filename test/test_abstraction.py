@@ -936,6 +936,22 @@ class TestUseCases(unittest.TestCase):
             }
         )
 
+        age_0 = StratumAttributeValue(name="0")
+        age_1 = StratumAttributeValue(name="1")
+        age_2 = StratumAttributeValue(name="2")
+        age_stratum_attr = StratumAttribute(
+            name="age", values={age_0, age_1, age_2}
+        )
+        age_stratum = Stratum(
+            values={
+                age_stratum_attr: {
+                    StratumAttributeValueSet(values={age_0}),
+                    StratumAttributeValueSet(values={age_1}),
+                    StratumAttributeValueSet(values={age_2}),
+                }
+            }
+        )
+
         base_params = base_model.petrinet.semantics.ode.parameters
         beta = next(iter([p for p in base_params if "beta" in p.id]))
 
@@ -972,6 +988,16 @@ class TestUseCases(unittest.TestCase):
                 },
             ),
             Stratification(
+                base_state="S_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=True,
+            ),
+            Stratification(
+                base_state="S_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=True,
+            ),
+            Stratification(
                 base_state="I",
                 stratum=vac_stratum,
                 self_strata_transitions=True,
@@ -998,6 +1024,20 @@ class TestUseCases(unittest.TestCase):
             Abstraction(abstraction={"H_vac_F": "H", "H_vac_T": "H"}),
             Abstraction(abstraction={"R_vac_F": "R", "R_vac_T": "R"}),
             Abstraction(abstraction={"I_vac_F": "I", "I_vac_T": "I"}),
+            Abstraction(
+                abstraction={
+                    "S_vac_F_age_0": "S_vac_F",
+                    "S_vac_F_age_1": "S_vac_F",
+                    "S_vac_F_age_2": "S_vac_F",
+                }
+            ),
+            Abstraction(
+                abstraction={
+                    "S_vac_T_age_0": "S_vac_T",
+                    "S_vac_T_age_1": "S_vac_T",
+                    "S_vac_T_age_2": "S_vac_T",
+                }
+            ),
             Abstraction(
                 abstraction={
                     "S_vac_F": "S",

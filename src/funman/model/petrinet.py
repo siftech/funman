@@ -1783,11 +1783,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         legal_strata_transitions.append(
                             (input_level, strata_parameters, output_level)
                         )
-                    elif (
-                        input_level == output_level
-                        or len(input_level.values) == 0
-                        or len(output_level.values) == 0
-                    ):
+                    elif input_level.is_subset(
+                        output_level
+                    ) or output_level.is_subset(input_level):
                         # levels must be the same
                         # param_transition = (input_level if state_var == st.input else None, output_level if state_var == st.output else None)
                         # strat_params = {p:self.stratified_parameter_id(p, [param_transition]) for p in strata_parameters if not (param_transition[0] is None and param_transition[1] is None)}
@@ -2051,6 +2049,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def stratify_state(self, original_var, valuations):
         new_vars = []
         new_vars_strata = {}
+        old_strata = self.state_strata(original_var)
         for valuation in valuations:
             valuation_str = "_".join(
                 [
@@ -2067,7 +2066,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 units=original_var.units,
             )
             new_vars.append(new_var)
-            new_vars_strata[new_var.id] = valuation
+            new_strata = old_strata.copy(deep=True)
+            new_strata.values.update(valuation.values)
+            new_vars_strata[new_var.id] = new_strata
         return new_vars, new_vars_strata
 
     def normalize_stratified_transitions(
