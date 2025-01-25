@@ -19,6 +19,7 @@ from funman import (
     StratumAttribute,
     StratumAttributeValue,
     StratumAttributeValueSet,
+    StratumPartition,
     StratumValuation,
 )
 from funman.api.run import Runner
@@ -1086,6 +1087,171 @@ class TestUseCases(unittest.TestCase):
         # 5: bound(stratify([S, beta], stratify([I], base)))
         # 6: bound(abstract([S, beta], stratify([S, beta], stratify([I], base))))
         # 7: bound(abstract([I], abstract([S, beta], stratify([S, beta], stratify([I], base)))))
+
+        m = []
+        for i, result in enumerate(results):
+            df = result.dataframe()
+            df["model_index"] = i
+            df["runtime"] = result.timing.total_time
+            df = df.set_index(["model_index", "index"])
+            m.append(df)
+        dfs = pd.concat(m)
+        runtimes = dfs.reset_index(["index"]).runtime.drop_duplicates()
+        self.l.info(runtimes)
+        # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
+        # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
+
+        # assert (
+        #     bounded_abstract_model_result
+        # ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+    def test_sirhd_nonuniform_abstraction(self):
+
+        epsilon = 0.000001
+        timepoints = list(range(0, 2, 1))
+
+        runner = Runner()
+        (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
+        with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
+            sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
+                f.read()
+            )
+        # sirhd_request.config.use_compartmental_constraints = False
+        # sirhd_request.config.save_smtlib = "./out"
+        sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.structure_parameters[0].schedules[
+            0
+        ].timepoints = timepoints
+
+        age_0 = StratumAttributeValue(name="0")
+        age_1 = StratumAttributeValue(name="1")
+        age_2 = StratumAttributeValue(name="2")
+        age_stratum_attr = StratumAttribute(
+            name="age", values={age_0, age_1, age_2}
+        )
+        age_stratum = Stratum(
+            values={
+                age_stratum_attr: {
+                    StratumAttributeValueSet(values={age_0}),
+                    StratumAttributeValueSet(values={age_1}),
+                    StratumAttributeValueSet(values={age_2}),
+                }
+            }
+        )
+
+        base_params = base_model.petrinet.semantics.ode.parameters
+        beta = next(iter([p for p in base_params if "beta" in p.id]))
+
+        age_0_age_1_val = StratumValuation(
+            values={
+                age_stratum_attr: StratumAttributeValueSet(
+                    values={age_0, age_1}
+                )
+            }
+        )
+        age_1_age_2_val = StratumValuation(
+            values={
+                age_stratum_attr: StratumAttributeValueSet(
+                    values={age_1, age_2}
+                )
+            }
+        )
+        age_0_val = StratumValuation(
+            values={age_stratum_attr: StratumAttributeValueSet(values={age_0})}
+        )
+        age_1_val = StratumValuation(
+            values={age_stratum_attr: StratumAttributeValueSet(values={age_1})}
+        )
+        age_2_val = StratumValuation(
+            values={age_stratum_attr: StratumAttributeValueSet(values={age_2})}
+        )
+        empty_val = StratumValuation()
+
+        vac_stratifications = [
+            Stratification(
+                base_state="S",
+                stratum=age_stratum,
+                self_strata_transitions=True,
+                partition=StratumPartition(
+                    values=[age_0_val, age_1_age_2_val]
+                ),
+                base_parameters={
+                    "beta": {
+                        StrataTransition(
+                            input_stratum=age_0_val, output_stratum=empty_val
+                        ): beta.value
+                        - epsilon,
+                        StrataTransition(
+                            input_stratum=age_1_age_2_val,
+                            output_stratum=empty_val,
+                        ): beta.value
+                        + epsilon,
+                    }
+                },
+            ),
+            Stratification(
+                base_state="S_age_1_2",
+                stratum=age_stratum,
+                self_strata_transitions=True,
+                partition=StratumPartition(values=[age_1_val, age_2_val]),
+                base_parameters={
+                    "beta__age_1_2_to___": {
+                        StrataTransition(
+                            input_stratum=age_1_val,
+                            output_stratum=empty_val,
+                        ): beta.value
+                        - epsilon,
+                        StrataTransition(
+                            input_stratum=age_2_val,
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        + epsilon,
+                    }
+                },
+            ),
+        ]
+
+        vac_abstractions = [
+            Abstraction(
+                abstraction={
+                    "S_age_0": "S_age_0_age_1",
+                    "S_age_1": "S_age_0_age_1",
+                }
+            ),
+        ]
+
+        transformation_sequence = vac_stratifications[
+            0:1
+        ]  # + vac_abstractions
+
+        vac_models = list(
+            accumulate(
+                transformation_sequence,
+                lambda x, y: x.transform(y),
+                initial=base_model,
+            )
+        )
+
+        list(
+            map(
+                lambda x, name: x.to_dot().render(f"vac_model_{name}"),
+                vac_models,
+                range(len(vac_models)),
+            )
+        )
+
+        vac_model_params = [
+            {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
+            for m in vac_models
+        ]
+
+        bounded_vac_models = [m.formulate_bounds() for m in vac_models]
+
+        results = [
+            runner.run(m.petrinet, sirhd_stratified_request)
+            for m in vac_models[0 : len(vac_stratifications) + 1]
+            + bounded_vac_models
+        ]
 
         m = []
         for i, result in enumerate(results):
