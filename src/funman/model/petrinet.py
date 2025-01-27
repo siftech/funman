@@ -5,7 +5,7 @@ from collections import Counter
 from difflib import SequenceMatcher
 from functools import reduce
 from math import prod
-from typing import Callable, Dict, List, Optional, Set, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import graphviz
 import matplotlib.pyplot as plt
@@ -321,7 +321,7 @@ class StratumAttributeValue(BaseModel):
 
 class StratumAttribute(BaseModel):
     name: str
-    values: Set[StratumAttributeValue]
+    values: List[StratumAttributeValue]
 
     def __hash__(self):
         return self.name.__hash__()
@@ -334,7 +334,7 @@ class StratumAttribute(BaseModel):
 
 
 class StratumAttributeValueSet(BaseModel):
-    values: Set[StratumAttributeValue]
+    values: List[StratumAttributeValue]
 
     def __hash__(self):
         return sum(hash(v) for v in self.values)
@@ -345,9 +345,9 @@ class StratumAttributeValueSet(BaseModel):
     def __repr__(self):
         return str(self)
 
-    def is_subset(self, other, strict=False):
-        return self.values.issubset(other.values) and (
-            not strict or not other.values.issubset(self.values)
+    def is_case_subset(self, other, strict=False):
+        return set(self.values).issubset(set(other.values)) and (
+            not strict or not set(other.values).issubset(set(self.values))
         )
 
 
@@ -358,7 +358,9 @@ class StratumValuation(BaseModel):
         return sum(hash(k) * hash(v) for k, v in self.values.items())
 
     def __str__(self):
-        return "_".join([f"{a}_{av}" for a, av in self.values.items()])
+        attrs = list(self.values.keys())
+        attrs.sort()
+        return "_".join([f"{attr}_{self.values[attr]}" for attr in attrs])
 
     def __repr__(self):
         return str(self)
@@ -372,6 +374,17 @@ class StratumValuation(BaseModel):
     def __setitem__(self, key, value):
         self.values[key] = value
 
+    def __lt__(self, other):
+        if isinstance(other, StratumValuation):
+            if len(self.values) < len(other.values):
+                return True
+            elif len(self.values) > len(other.values):
+                return False
+            else:
+                return str(self) < str(other)
+        else:
+            return False
+
     def expand_valuations(self, attr: StratumAttribute):
         exp_vals = []
         for val in attr.values:
@@ -380,8 +393,10 @@ class StratumValuation(BaseModel):
             exp_vals.append(c)
         return exp_vals
 
-    def num_interpretations(self, attributes: Set[StratumAttribute]):
-        unassigned_attributes = attributes.difference(set(self.values.keys()))
+    def num_interpretations(self, attributes: List[StratumAttribute]):
+        unassigned_attributes = set(attributes).difference(
+            set(self.values.keys())
+        )
         num_specified_interpretations = prod(
             [len(v.values) for v in self.values.values()]
         )
@@ -390,7 +405,7 @@ class StratumValuation(BaseModel):
         )
         return num_specified_interpretations * num_unspecified_interpretations
 
-    def is_subset(self, other, strict=False):
+    def subsumed_by(self, other, strict=False):
         # cases:
         #  - attr not in self, attr not in other -> not strict
         #  - attr in self, attr not in other -> not strict or self[attr] != domain(attr)
@@ -421,7 +436,7 @@ class StratumValuation(BaseModel):
                     or (
                         attr in self.values
                         and attr in other.values
-                        and self.values[attr].is_subset(
+                        and self.values[attr].is_case_subset(
                             other.values[attr], strict=strict
                         )
                     )
@@ -438,7 +453,7 @@ class StratumValuation(BaseModel):
 
 
 class Stratum(BaseModel):
-    values: Dict[StratumAttribute, Set[StratumAttributeValueSet]] = {}
+    values: Dict[StratumAttribute, List[StratumAttributeValueSet]] = {}
 
     def valuations(self) -> List[StratumValuation]:
         value_list = list(self.values.items())
@@ -799,7 +814,7 @@ class StateTransition(BaseModel):
             self.input
             and self.input == var
             and strata_transition
-            and strata_transition.input_stratum.is_subset(
+            and strata_transition.input_stratum.subsumed_by(
                 new_st.strata_transition.input_stratum
             )
         ):
@@ -820,7 +835,7 @@ class StateTransition(BaseModel):
             self.output
             and self.output == var
             and strata_transition.output_stratum
-            and strata_transition.output_stratum.is_subset(
+            and strata_transition.output_stratum.subsumed_by(
                 new_st.strata_transition.output_stratum
             )
         ):
@@ -850,12 +865,12 @@ class StateTransition(BaseModel):
         # (src, params, dest) = strata_transition
         return (
             strata_transition.input_stratum is None
-            or strata_transition.input_stratum.is_subset(
+            or strata_transition.input_stratum.subsumed_by(
                 self.strata_transition.input_stratum
             )
         ) and (
             strata_transition.output_stratum is None
-            or strata_transition.output_stratum.is_subset(
+            or strata_transition.output_stratum.subsumed_by(
                 self.strata_transition.output_stratum
             )
         )
@@ -869,6 +884,12 @@ class StateTransition(BaseModel):
             iter(stratification.stratum.values.keys())
         )  # Assumes one attribute at a time
         strata_levels = stratification.valuations()
+        # FIXME the logic below is wrong, I think it should be intersects
+        # Stratification will always specialize stratum.  The possible levels are
+        # those that would result in specializations.
+        # I think the confusion is the semantics of the valuations and how they combined
+        # implicit and explict attribute levels.
+        # {"a1": [v1, v2], "a2": [v3, v4]}
         possible_input_levels = (
             [sl for sl in strata_levels if sl.is_subset(input_stratum)]
             if stratification.base_state == self.input.id
@@ -889,18 +910,18 @@ class StateTransition(BaseModel):
                     # allow levels to be different
                     legal_strata_transitions.append(
                         StrataTransition(
-                            input_stratum=input_level,
-                            output_stratum=output_level,
+                            input_stratum=input_level.model_copy(),
+                            output_stratum=output_level.model_copy(),
                         )
                     )
-                elif input_level.is_subset(
+                elif input_level.subsumed_by(
                     output_level
-                ) or output_level.is_subset(input_level):
+                ) or output_level.subsumed_by(input_level):
                     # levels must be the same
                     legal_strata_transitions.append(
                         StrataTransition(
-                            input_stratum=input_level,
-                            output_stratum=output_level,
+                            input_stratum=input_level.model_copy(),
+                            output_stratum=output_level.model_copy(),
                         )
                     )
         return legal_strata_transitions
@@ -920,7 +941,7 @@ class StateTransition(BaseModel):
         ) or (
             self.strata_transition.input_stratum is not None
             and self.strata_transition.output_stratum is not None
-            and self.strata_transition.output_stratum.is_subset(
+            and self.strata_transition.output_stratum.subsumed_by(
                 self.strata_transition.input_stratum, strict=True
             )
         )
@@ -948,11 +969,15 @@ class TransitionMap(BaseModel):
             if v in remaining_outputs:
                 self.state_transitions.append(
                     StateTransition(
-                        input=model.state_var(v),
-                        output=model.state_var(v),
+                        input=model.state_var(v).model_copy(),
+                        output=model.state_var(v).model_copy(),
                         strata_transition=StrataTransition(
-                            input_stratum=model.state_strata(v),
-                            output_stratum=model.state_strata(v),
+                            input_stratum=model.state_strata(v).model_copy(
+                                deep=True
+                            ),
+                            output_stratum=model.state_strata(v).model_copy(
+                                deep=True
+                            ),
                         ),
                     )
                 )
@@ -975,8 +1000,8 @@ class TransitionMap(BaseModel):
                 input=input_var,
                 output=output_var,
                 strata_transition=StrataTransition(
-                    input_stratum=model.state_strata(input_var),
-                    output_stratum=model.state_strata(output_var),
+                    input_stratum=model.state_strata(input_var).model_copy(),
+                    output_stratum=model.state_strata(output_var).model_copy(),
                 ),
             )
             self.state_transitions.append(st)
@@ -1016,8 +1041,8 @@ class TransitionMap(BaseModel):
     def outputs(self) -> List[State]:
         return [st.output.id for st in self.state_transitions]
 
-    def var_ids(self) -> Set[State]:
-        return set(self.inputs()).union(set(self.outputs()))
+    def var_ids(self) -> List[State]:
+        return list(set(self.inputs()).union(set(self.outputs())))
 
     def stratify(
         self, stratification, var, strata_transitions, transition_probability
@@ -1708,7 +1733,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         strata_levels = stratification.valuations()
         strata_transitions = [
             StrataTransition(
-                input_stratum=input_strata, output_stratum=output_strata
+                input_stratum=input_strata.model_copy(),
+                output_stratum=output_strata.model_copy(),
             )
             for input_strata in strata_levels
             for output_strata in strata_levels
@@ -1940,8 +1966,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             strata_transition_probability_by_input[input_key] = (
                 transition_probability
             )
-
-        for input_key in strata_transitions_by_input.keys():
+        input_keys = list(strata_transitions_by_input.keys())
+        input_keys.sort()
+        for input_key in input_keys:
             for state_strata_transition, transition_probability in zip(
                 strata_transitions_by_input[input_key],
                 strata_transition_probability_by_input[input_key],
@@ -2144,10 +2171,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         original_var = self.state_var(stratification.base_state)
         old_strata = self.state_strata(original_var)
         for valuation in stratification.valuations():
+            valuation_values_keys = list(valuation.values.keys())
+            valuation_values_keys.sort()
             valuation_str = "_".join(
                 [
-                    f"{attribute}_{values}"
-                    for attribute, values in valuation.values.items()
+                    f"{attribute}_{valuation.values[attribute]}"
+                    for attribute in valuation_values_keys
                 ]
             )
             new_var_id = f"{original_var.id}_{valuation_str}"

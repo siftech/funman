@@ -1303,14 +1303,14 @@ class TestUseCases(unittest.TestCase):
         age_0_age_1_val = StratumValuation(
             values={
                 age_stratum_attr: StratumAttributeValueSet(
-                    values={age_0, age_1}
+                    values=[age_0, age_1]
                 )
             }
         )
         age_1_age_2_val = StratumValuation(
             values={
                 age_stratum_attr: StratumAttributeValueSet(
-                    values={age_1, age_2}
+                    values=[age_1, age_2]
                 )
             }
         )
@@ -1353,7 +1353,7 @@ class TestUseCases(unittest.TestCase):
                 self_strata_transitions=True,
                 partition=StratumPartition(values=[age_1_val, age_2_val]),
                 base_parameters={
-                    "beta__age_1_2_to___": {
+                    "beta___to_____S_age_1_2_to__": {
                         StrataTransition(
                             input_stratum=age_1_val,
                             output_stratum=empty_val,
@@ -1361,7 +1361,7 @@ class TestUseCases(unittest.TestCase):
                         - epsilon,
                         StrataTransition(
                             input_stratum=age_2_val,
-                            output_stratum=StratumValuation(),
+                            output_stratum=empty_val,
                         ): beta.value
                         + epsilon,
                     }
@@ -1378,9 +1378,7 @@ class TestUseCases(unittest.TestCase):
             ),
         ]
 
-        transformation_sequence = vac_stratifications[
-            0:1
-        ]  # + vac_abstractions
+        transformation_sequence = vac_stratifications  # + vac_abstractions
 
         vac_models = list(
             accumulate(
