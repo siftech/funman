@@ -1685,7 +1685,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             grounding=None,
             properties={"name": f"self_{state_var.id}"},
         )
-        strata_levels = strata.valuations()
+        strata_levels = stratification.valuations()
         strata_transitions = [
             StrataTransition(
                 input_stratum=input_strata, output_stratum=output_strata
@@ -1714,7 +1714,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         )
         transition_probability_value = 1.0 / float(
             len(state_strata_transitions)
-        )
+        )  # FIXME needs to use the number of interpretations making each transition as a weight
         for state_strata_transition in state_strata_transitions:
             strat_tr_map = tr_map.stratify(
                 stratification,
