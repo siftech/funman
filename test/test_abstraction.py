@@ -1413,11 +1413,16 @@ class TestUseCases(unittest.TestCase):
         for i, result in enumerate(results):
             df = result.dataframe()
             df["model_index"] = i
-            df["runtime"] = result.timing.total_time
+            df["runtime (s)"] = (
+                f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
+            )
+            df["I_bound"] = len(result.parameter_space.true_points()) > 0
             df = df.set_index(["model_index", "index"])
             m.append(df)
         dfs = pd.concat(m)
-        runtimes = dfs.reset_index(["index"]).runtime.drop_duplicates()
+        runtimes = dfs.reset_index(["index"])[
+            ["runtime (s)", "description", "I_bound"]
+        ].drop_duplicates()
         self.l.info(runtimes)
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
         # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
