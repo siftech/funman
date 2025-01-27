@@ -12,6 +12,8 @@ from matplotlib import pyplot as plt
 from funman import (
     Abstraction,
     Interval,
+    LinearConstraint,
+    Observable,
     StateVariableConstraint,
     StrataTransition,
     Stratification,
@@ -958,6 +960,7 @@ class TestUseCases(unittest.TestCase):
 
         vac_stratifications = [
             Stratification(
+                description="Stratify S and beta wrt. vaccination status.  Set beta values for strata.",
                 base_state="S",
                 stratum=vac_stratum,
                 self_strata_transitions=True,
@@ -989,31 +992,127 @@ class TestUseCases(unittest.TestCase):
                 },
             ),
             Stratification(
+                description="Stratify S_vac_T wrt. age group",
                 base_state="S_vac_T",
                 stratum=age_stratum,
                 self_strata_transitions=True,
+                base_parameters={
+                    "beta___to_____S_vac_T_to__": {
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    age_stratum_attr: StratumAttributeValueSet(
+                                        values={age_0}
+                                    ),
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_T}
+                                    ),
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        - 2 * epsilon,
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    age_stratum_attr: StratumAttributeValueSet(
+                                        values={age_1}
+                                    ),
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_T}
+                                    ),
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value,
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    age_stratum_attr: StratumAttributeValueSet(
+                                        values={age_2}
+                                    ),
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_T}
+                                    ),
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        + 2 * epsilon,
+                    }
+                },
             ),
             Stratification(
+                description="Stratify S_vac_F wrt. age group",
                 base_state="S_vac_F",
                 stratum=age_stratum,
                 self_strata_transitions=True,
+                base_parameters={
+                    "beta___to_____S_vac_F_to__": {
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    age_stratum_attr: StratumAttributeValueSet(
+                                        values={age_0}
+                                    ),
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_F}
+                                    ),
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        - 3 * epsilon,
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    age_stratum_attr: StratumAttributeValueSet(
+                                        values={age_1}
+                                    ),
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_F}
+                                    ),
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value,
+                        StrataTransition(
+                            input_stratum=StratumValuation(
+                                values={
+                                    age_stratum_attr: StratumAttributeValueSet(
+                                        values={age_2}
+                                    ),
+                                    vac_stratum_attr: StratumAttributeValueSet(
+                                        values={vac_F}
+                                    ),
+                                }
+                            ),
+                            output_stratum=StratumValuation(),
+                        ): beta.value
+                        + 3 * epsilon,
+                    }
+                },
             ),
             Stratification(
+                description="Stratify I wrt. vaccination status.",
                 base_state="I",
                 stratum=vac_stratum,
                 self_strata_transitions=True,
             ),
             Stratification(
+                description="Stratify R wrt. vaccination status.",
                 base_state="R",
                 stratum=vac_stratum,
                 self_strata_transitions=True,
             ),
             Stratification(
+                description="Stratify H wrt. vaccination status.",
                 base_state="H",
                 stratum=vac_stratum,
                 self_strata_transitions=True,
             ),
             Stratification(
+                description="Stratify D wrt. vaccination status.",
                 base_state="D",
                 stratum=vac_stratum,
                 self_strata_transitions=True,
@@ -1021,31 +1120,46 @@ class TestUseCases(unittest.TestCase):
         ]
 
         vac_abstractions = [
-            Abstraction(abstraction={"D_vac_F": "D", "D_vac_T": "D"}),
-            Abstraction(abstraction={"H_vac_F": "H", "H_vac_T": "H"}),
-            Abstraction(abstraction={"R_vac_F": "R", "R_vac_T": "R"}),
-            Abstraction(abstraction={"I_vac_F": "I", "I_vac_T": "I"}),
             Abstraction(
+                description="Abstract D wrt. vaccination status.",
+                abstraction={"D_vac_F": "D", "D_vac_T": "D"},
+            ),
+            Abstraction(
+                description="Abstract H wrt. vaccination status.",
+                abstraction={"H_vac_F": "H", "H_vac_T": "H"},
+            ),
+            Abstraction(
+                description="Abstract R wrt. vaccination status.",
+                abstraction={"R_vac_F": "R", "R_vac_T": "R"},
+            ),
+            Abstraction(
+                description="Abstract I wrt. vaccination status.",
+                abstraction={"I_vac_F": "I", "I_vac_T": "I"},
+            ),
+            Abstraction(
+                description="Abstract S age groups wrt. unvaccination status.",
                 abstraction={
                     "S_vac_F_age_0": "S_vac_F",
                     "S_vac_F_age_1": "S_vac_F",
                     "S_vac_F_age_2": "S_vac_F",
-                }
+                },
             ),
             Abstraction(
+                description="Abstract S age groups wrt. vaccination status.",
                 abstraction={
                     "S_vac_T_age_0": "S_vac_T",
                     "S_vac_T_age_1": "S_vac_T",
                     "S_vac_T_age_2": "S_vac_T",
-                }
+                },
             ),
             Abstraction(
+                description="Abstract S and beta vaccination status.",
                 abstraction={
                     "S_vac_F": "S",
                     "S_vac_T": "S",
                     "beta___to_____S_vac_F_to__": "beta",
                     "beta___to_____S_vac_T_to__": "beta",
-                }
+                },
             ),
         ]
 
@@ -1056,6 +1170,20 @@ class TestUseCases(unittest.TestCase):
                 transformation_sequence,
                 lambda x, y: x.transform(y),
                 initial=base_model,
+            )
+        )
+
+        for m in vac_models:
+            infected_states = [
+                s.id for s in m.petrinet.model.states if s.id.startswith("I")
+            ]
+            infected_sum = Observable(
+                id="I", expression="+".join(infected_states)
+            )
+            m.petrinet.semantics.ode.observables = [infected_sum]
+        sirhd_stratified_request.constraints.append(
+            LinearConstraint(
+                name="I bound", variables=["I"], additive_bounds={"ub": 1000}
             )
         )
 
@@ -1074,6 +1202,25 @@ class TestUseCases(unittest.TestCase):
 
         bounded_vac_models = [m.formulate_bounds() for m in vac_models]
 
+        for m in bounded_vac_models:
+            # infected_states_lb = [s.id for s in m.petrinet.model.states if s.id.startswith("I") and s.id.endswith("_lb")]
+            infected_states_ub = [
+                s.id
+                for s in m.petrinet.model.states
+                if s.id.startswith("I") and s.id.endswith("_ub")
+            ]
+            infected_ub_sum = Observable(
+                id="I_ub", expression="+".join(infected_states_ub)
+            )
+            m.petrinet.semantics.ode.observables = [infected_ub_sum]
+        sirhd_stratified_request.constraints.append(
+            LinearConstraint(
+                name="I_ub bound",
+                variables=["I_ub"],
+                additive_bounds={"ub": 1000},
+            )
+        )
+
         results = [
             runner.run(m.petrinet, sirhd_stratified_request)
             for m in vac_models[0 : len(vac_stratifications) + 1]
@@ -1091,12 +1238,23 @@ class TestUseCases(unittest.TestCase):
         m = []
         for i, result in enumerate(results):
             df = result.dataframe()
+            df["description"] = (
+                result.model.petrinet.metadata["transformation_description"]
+                if "transformation_description"
+                in result.model.petrinet.metadata
+                else ""
+            )
             df["model_index"] = i
-            df["runtime"] = result.timing.total_time
+            df["runtime (s)"] = (
+                f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
+            )
+            df["I_bound"] = len(result.parameter_space.true_points()) > 0
             df = df.set_index(["model_index", "index"])
             m.append(df)
         dfs = pd.concat(m)
-        runtimes = dfs.reset_index(["index"]).runtime.drop_duplicates()
+        runtimes = dfs.reset_index(["index"])[
+            ["runtime (s)", "description", "I_bound"]
+        ].drop_duplicates()
         self.l.info(runtimes)
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
         # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T

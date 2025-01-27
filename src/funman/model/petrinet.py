@@ -480,6 +480,7 @@ class StratumPartition(BaseModel):
 
 
 class Stratification(BaseModel):
+    description: Optional[str] = None
     base_state: str
     base_parameters: Union[List[str], StratifiedParameterMapping] = []
     partition: StratumPartition = StratumPartition()
@@ -521,6 +522,7 @@ class Stratification(BaseModel):
 
 
 class Abstraction(BaseModel):
+    description: Optional[str] = None
     abstraction: Dict[str, str]
     parameters: Dict[str, Dict[str, Interval]] = {}
     base_states: Dict[str, State] = {}
@@ -805,9 +807,15 @@ class StateTransition(BaseModel):
                 id=f"{new_st.input.id}_{strata_transition.input_stratum}",
                 name=f"{new_st.input.name}_{strata_transition.input_stratum}",
             )
-            new_st.strata_transition.input_stratum = (
-                strata_transition.input_stratum
-            )
+            if new_st.strata_transition.input_stratum:
+                new_st.strata_transition.input_stratum.values.update(
+                    strata_transition.input_stratum.values
+                )
+            else:
+                new_st.strata_transition.input_stratum.values = (
+                    strata_transition.input_stratum.values
+                )
+
         if (
             self.output
             and self.output == var
@@ -820,9 +828,15 @@ class StateTransition(BaseModel):
                 id=f"{new_st.output.id}_{strata_transition.output_stratum}",
                 name=f"{new_st.output.name}_{strata_transition.output_stratum}",
             )
-            new_st.strata_transition.output_stratum = (
-                strata_transition.output_stratum
-            )
+            if new_st.strata_transition.output_stratum:
+                new_st.strata_transition.output_stratum.values.update(
+                    strata_transition.output_stratum.values
+                )
+            else:
+                new_st.strata_transition.output_stratum.values = (
+                    strata_transition.output_stratum.values
+                )
+
         return new_st
 
     def num_input_interpretations(self):
@@ -980,7 +994,7 @@ class TransitionMap(BaseModel):
                     # if "p_abstract" in parameter_id:
                     #     self.abstract_input_parameters.append(parameter)
                     # el
-                    if "p_cross" in parameter_id:
+                    if parameter_id.startswith("p_cross_"):
                         self.cross_stratam_transition_parameters.append(
                             parameter
                         )
@@ -994,7 +1008,7 @@ class TransitionMap(BaseModel):
         )
 
     def cross_strata_transition_probability(self, state_transitions):
-        return f"p_cross_{self.id(state_transitions, state_vars=None)}"
+        return f"p_cross_{self.id(state_transitions, state_vars=None)}_"
 
     def inputs(self) -> List[State]:
         return [st.input.id for st in self.state_transitions]
@@ -1619,7 +1633,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             for bnd in v.values()
         ]
 
-        return GeneratedPetriNetModel(
+        new_model = GeneratedPetriNetModel(
             petrinet=Model(
                 header=self.petrinet.header,
                 properties=self.petrinet.properties,
@@ -1638,6 +1652,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 metadata=self.petrinet.metadata,
             )
         )
+        new_model.petrinet.metadata["transformation_description"] = (
+            f"Bounded({new_model.petrinet.metadata['transformation_description']})"
+            if "transformation_description" in new_model.petrinet.metadata
+            else "Bounded()"
+        )
+        return new_model
 
     # def stratum(self, s: State) -> Stratum:
     #     # Actual Stratum of s
@@ -1757,7 +1777,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
             new_rates.append(new_rate)
 
-            new_parameters.append(transition_probability)
+            if transition_probability not in new_parameters:
+                new_parameters.append(transition_probability)
 
         return new_transitions, new_rates, new_parameters
 
@@ -1999,7 +2020,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 #     )
 
                 # Stratify parameters
-                to_be_stratified_parameters = set(strata_parameters)
+                to_be_stratified_parameters = set(
+                    [p for p in strata_parameters if p in str(old_rate)]
+                )
                 # {
                 #     k for sst in state_strata_transition for k in sst[1]
                 # }
@@ -2013,21 +2036,25 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         isinstance(strata_parameters, dict)
                         and p in strata_parameters
                     ):
-                        st_tr = next(
-                            iter(
-                                [
-                                    st
-                                    for st in strata_parameters[p]
-                                    if any(
-                                        [
-                                            st == st1.strata_transition
-                                            for st1 in strat_tr_map.state_transitions
-                                        ]
-                                    )
-                                ]
+                        try:
+                            st_tr = next(
+                                iter(
+                                    [
+                                        st
+                                        for st in strata_parameters[p]
+                                        if any(
+                                            [
+                                                st == st1.strata_transition
+                                                for st1 in strat_tr_map.state_transitions
+                                            ]
+                                        )
+                                    ]
+                                )
                             )
-                        )
-                        value = strata_parameters[p][st_tr]
+                            value = strata_parameters[p][st_tr]
+                        except StopIteration:
+                            pass
+
                     else:
                         value = old_parameters[p].value
                     new_parameters.append(
@@ -2080,7 +2107,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 #         new_parameters.append(p)
                 #     rate_expr = rate_expr * sympy.Symbol(p.id)
                 for p in strat_tr_map.cross_stratam_transition_parameters:
-                    new_parameters.append(p)
+                    if p not in new_parameters:
+                        new_parameters.append(p)
                     rate_expr = rate_expr * sympy.Symbol(p.id)
                 new_rate = Rate(target=new_id, expression=str(rate_expr))
                 new_rates.append(new_rate)
@@ -2621,10 +2649,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def transform(
         self, op: Union[Stratification, Abstraction]
     ) -> "GeneratedPetriNetModel":
+
         if isinstance(op, Stratification):
-            return self.stratify(op)
+            result = self.stratify(op)
         else:
-            return self.abstract(op)
+            result = self.abstract(op)
+
+        if op.description:
+            result.petrinet.metadata["transformation_description"] = (
+                op.description
+            )
+
+        return result
 
     def abstract(self, abstraction: Abstraction):
         # Get existing state variables
