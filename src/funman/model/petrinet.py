@@ -345,7 +345,7 @@ class StratumAttributeValueSet(BaseModel):
     def __repr__(self):
         return str(self)
 
-    def is_case_subset(self, other, strict=False):
+    def is_subset(self, other, strict=False):
         return set(self.values).issubset(set(other.values)) and (
             not strict or not set(other.values).issubset(set(self.values))
         )
@@ -409,7 +409,7 @@ class StratumValuation(BaseModel):
         # cases:
         #  - attr not in self, attr not in other -> not strict
         #  - attr in self, attr not in other -> not strict or self[attr] != domain(attr)
-        #  - attr not in self, attr in other -> not strict or other[attr] == domain(attr)
+        #  - attr not in self, attr in other -> not strict and other[attr] == domain(attr)
         #  - attr in self, attr in other -> self[attr].is_subset(other[atter])
         #  --
 
@@ -431,13 +431,13 @@ class StratumValuation(BaseModel):
                     or (
                         attr not in self.values
                         and attr in other.values
-                        and (not strict or other.values[attr] == attr.values)
+                        and (not strict and other.values[attr] == attr.values)
                     )
                     or (
                         attr in self.values
                         and attr in other.values
-                        and self.values[attr].is_case_subset(
-                            other.values[attr], strict=strict
+                        and other.values[attr].is_subset(
+                            self.values[attr], strict=strict
                         )
                     )
                     for attr in attrs
@@ -891,12 +891,24 @@ class StateTransition(BaseModel):
         # implicit and explict attribute levels.
         # {"a1": [v1, v2], "a2": [v3, v4]}
         possible_input_levels = (
-            [sl for sl in strata_levels if sl.is_subset(input_stratum)]
+            [
+                sl
+                for sl in strata_levels
+                if sl[strata_attr].is_subset(
+                    input_stratum[strata_attr]
+                )  # sl.is_subset(input_stratum)
+            ]
             if stratification.base_state == self.input.id
             else [input_stratum]
         )
         possible_output_levels = (
-            [sl for sl in strata_levels if sl.is_subset(output_stratum)]
+            [
+                sl
+                for sl in strata_levels
+                if sl[strata_attr].is_subset(
+                    output_stratum[strata_attr]
+                )  # sl.is_subset(output_stratum)
+            ]
             if stratification.base_state == self.output.id
             else [output_stratum]
         )
