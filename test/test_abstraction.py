@@ -1421,7 +1421,11 @@ class TestUseCases(unittest.TestCase):
             m.append(df)
         dfs = pd.concat(m)
         runtimes = dfs.reset_index(["index"])[
-            ["runtime (s)", "description", "I_bound"]
+            [
+                c
+                for c in ["runtime (s)", "description", "I_bound"]
+                if c in dfs.columns
+            ]
         ].drop_duplicates()
         self.l.info(runtimes)
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
