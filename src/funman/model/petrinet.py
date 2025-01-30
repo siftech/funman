@@ -332,6 +332,12 @@ class StratumAttribute(BaseModel):
     def __repr__(self):
         return str(self)
 
+    def __lt__(self, other):
+        if isinstance(other, StratumAttribute):
+            return str(self) < str(other)
+        else:
+            return True
+
 
 class StratumAttributeValueSet(BaseModel):
     values: List[StratumAttributeValue]
@@ -348,6 +354,17 @@ class StratumAttributeValueSet(BaseModel):
     def is_subset(self, other, strict=False):
         return set(self.values).issubset(set(other.values)) and (
             not strict or not set(other.values).issubset(set(self.values))
+        )
+
+    def intersection(self, other):
+        return StratumAttributeValueSet(
+            values=[v for v in self.values if v in other.values]
+        )
+
+    def difference(self, other):
+        # Return values present in self but not other
+        return StratumAttributeValueSet(
+            values=[v for v in self.values if v not in other.values]
         )
 
 
@@ -460,6 +477,40 @@ class StratumValuation(BaseModel):
         #     av.is_subset(other.values[a], strict=strict)
         #     for a, av in self.values.items()))
 
+    def attributes(self):
+        return list(self.values.keys())
+
+    def intersection(self, other):
+        self_attrs = set(self.attributes())
+        other_attrs = set(other.attributes())
+        attrs = self_attrs.union(other_attrs)
+
+        result = {}
+        for attr in attrs:
+            result[attr] = self[attr].intersection(other[attr])
+            if len(result[attr].values) == 0:
+                # empty intersection
+                return None
+        return StratumValuation(values=result)
+
+    def difference(self, other):
+        # Return values present in self but not other
+        self_attrs = set(self.attributes())
+        other_attrs = set(other.attributes())
+        attrs = self_attrs.union(other_attrs)
+
+        result = {}
+        for attr in attrs:
+            if attr in self.values:
+                if attr in other.values:
+                    result[attr] = self[attr].difference(other[attr])
+                else:
+                    result[attr] = self[attr]
+
+                if len(result[attr].values) == 0:
+                    del result[attr]
+        return StratumValuation(values=result)
+
 
 class Stratum(BaseModel):
     values: Dict[StratumAttribute, List[StratumAttributeValueSet]] = {}
@@ -519,6 +570,9 @@ class Stratification(BaseModel):
     _state_ancestors: Dict[str, str] = {}
     _transition_ancestors: Dict[str, str] = {}
     _parameter_ancestors: Dict[str, str] = {}
+
+    def strata_attribute(self):
+        return next(iter(self.stratum.values.keys()))
 
     def valuations(self) -> List[StratumValuation]:
         if self.partition.is_default_partition():
@@ -620,14 +674,14 @@ class Abstraction(BaseModel):
                 p: {
                     "lb": min(
                         [
-                            base_param_bounds[p1].lb
+                            base_param_bounds[str(p1)].lb
                             for p1, v in arp["parameters"].items()
                             if v == p
                         ]
                     ),
                     "ub": max(
                         [
-                            base_param_bounds[p1].ub
+                            base_param_bounds[str(p1)].ub
                             for p1, v in arp["parameters"].items()
                             if v == p
                         ]
@@ -816,22 +870,25 @@ class StateTransition(BaseModel):
     def is_natural_transition(self):
         return self.input != self.output
 
-    def stratify(self, var, strata_transition):
+    def stratify(self, var, var_strata, strata_transition, stratification):
         # (src, params, dest) = strata_transition
         # In order to stratify a state transition, to match the
         # strata_transition, the strata_transition must be subsumed
+        strata_attr = stratification.strata_attribute()
         new_st = self.model_copy(deep=True)
         if (
             self.input
             and self.input == var
             and strata_transition
-            and strata_transition.input_stratum.subsumed_by(
+            and strata_transition.input_stratum.intersection(
                 new_st.strata_transition.input_stratum
             )
+            is not None
         ):
+
             new_st.input = State(
-                id=f"{new_st.input.id}_{strata_transition.input_stratum}",
-                name=f"{new_st.input.name}_{strata_transition.input_stratum}",
+                id=f"{new_st.input.id}_{strata_transition.input_stratum.difference(var_strata)}",
+                name=f"{new_st.input.name}_{strata_transition.input_stratum.difference(var_strata)}",
             )
             if new_st.strata_transition.input_stratum:
                 new_st.strata_transition.input_stratum.values.update(
@@ -846,13 +903,14 @@ class StateTransition(BaseModel):
             self.output
             and self.output == var
             and strata_transition.output_stratum
-            and strata_transition.output_stratum.subsumed_by(
+            and strata_transition.output_stratum.intersection(
                 new_st.strata_transition.output_stratum
             )
+            is not None
         ):
             new_st.output = State(
-                id=f"{new_st.output.id}_{strata_transition.output_stratum}",
-                name=f"{new_st.output.name}_{strata_transition.output_stratum}",
+                id=f"{new_st.output.id}_{strata_transition.output_stratum.difference(var_strata)}",
+                name=f"{new_st.output.name}_{strata_transition.output_stratum.difference(var_strata)}",
             )
             if new_st.strata_transition.output_stratum:
                 new_st.strata_transition.output_stratum.values.update(
@@ -942,8 +1000,12 @@ class StateTransition(BaseModel):
                     # allow levels to be different
                     legal_strata_transitions.append(
                         StrataTransition(
-                            input_stratum=input_level.model_copy(),
-                            output_stratum=output_level.model_copy(),
+                            input_stratum=input_level.intersection(
+                                self.strata_transition.input_stratum
+                            ),
+                            output_stratum=output_level.intersection(
+                                self.strata_transition.output_stratum
+                            ),
                         )
                     )
                 elif input_level.subsumed_by(
@@ -952,8 +1014,12 @@ class StateTransition(BaseModel):
                     # levels must be the same
                     legal_strata_transitions.append(
                         StrataTransition(
-                            input_stratum=input_level.model_copy(),
-                            output_stratum=output_level.model_copy(),
+                            input_stratum=input_level.intersection(
+                                self.strata_transition.input_stratum
+                            ),
+                            output_stratum=output_level.intersection(
+                                self.strata_transition.output_stratum
+                            ),
                         )
                     )
         return legal_strata_transitions
@@ -1077,7 +1143,12 @@ class TransitionMap(BaseModel):
         return list(set(self.inputs()).union(set(self.outputs())))
 
     def stratify(
-        self, stratification, var, strata_transitions, transition_probability
+        self,
+        stratification,
+        var,
+        var_strata,
+        strata_transitions,
+        transition_probability,
     ):
         # new_sts = []
         # cst_params = []
@@ -1088,7 +1159,9 @@ class TransitionMap(BaseModel):
         ):
             if strata_transition:
                 if state_transition.stratification_allowed(strata_transition):
-                    str_st = state_transition.stratify(var, strata_transition)
+                    str_st = state_transition.stratify(
+                        var, var_strata, strata_transition, stratification
+                    )
                     # FIXME modify ai_parameters
                     # if str_st.abstract_to_concrete():
                     #     abstract_parameter_name = (
@@ -1498,8 +1571,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         }
         for _, params in abstracted_parameters.items():
             for p in params:
-                bound_symbols[sympy.Symbol(p)] = {
-                    bound: sympy.Symbol(f"{p}_{bound}")
+                bound_symbols[p] = {
+                    bound: sympy.Symbol(f"{str(p)}_{bound}")
                     for bound in ["lb", "ub"]
                 }
         substituter = SympyBoundedSubstituter(
@@ -1521,11 +1594,16 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             # for k, v in metadata.items():
             #     e = e.replace(k, k.replace("agg", bound))
 
-            return (
-                substituter.minimize(targets, e_s)
-                if bound == "lb"
-                else substituter.maximize(targets, e_s)
-            )
+            try:
+                result = (
+                    substituter.minimize(targets, e_s)
+                    if bound == "lb"
+                    else substituter.maximize(targets, e_s)
+                )
+            except KeyError as e:
+                raise e
+
+            return result
 
         def lb_expression(targets, e, symbols, metadata):
             return bound_expression(targets, e, "lb", metadata)
@@ -1797,6 +1875,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             strat_tr_map = tr_map.stratify(
                 stratification,
                 state_var,
+                self.state_strata(state_var),
                 state_strata_transition,
                 transition_probability_value,
             )
@@ -1852,7 +1931,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         assert (
             len(strata.values.keys()) == 1
         ), f"Only support stratification by one attribute at a time, got: {list(strata.keys())}"
-        strata_attr = next(iter(strata.values.keys()))
+        strata_attr = stratification.strata_attribute()
 
         # Need to determine which strata transitions occur and involving what variables.
         strata_levels = stratification.valuations()
@@ -1931,6 +2010,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 strat_tr_map = tr_map.stratify(
                     stratification,
                     state_var,
+                    self.state_strata(state_var),
                     state_strata_transition,
                     transition_probability,
                 )
@@ -2126,7 +2206,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 for t, p in zip(
                     input_strata_transitions, normalized_probabilities
                 ):
-                    cross_strata_parameter_by_transition[t.id].value = p
+                    try:
+                        if t.id in cross_strata_parameter_by_transition:
+                            cross_strata_parameter_by_transition[
+                                t.id
+                            ].value = p
+                    except KeyError as e:
+                        raise e
         return stratified_transitions_rates_params
 
     def stratify(self, stratification: Stratification):
@@ -2593,20 +2679,30 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         # Get existing state variables
         abstraction.base_states = {s.id: s for s in self._state_vars()}
         # Check that there is a state variable or parameter for each key in the state_abstraction
-        assert all(
-            {
-                (k in abstraction.base_states or k in self._parameter_names())
-                for k in abstraction.keys()
-            }
-        ), f"There are unknown states in the state_abstraction keys: {[k for k in abstraction.keys() if not (k in abstraction.base_states or k in self._parameter_names())]}"
+        try:
+            # This try block is weird (I know), but I need to set a breakpoint on assertion failures
+            assert all(
+                {
+                    (
+                        k in abstraction.base_states
+                        or k in self._parameter_names()
+                    )
+                    for k in abstraction.keys()
+                }
+            ), f"There are unknown states in the state_abstraction keys: {[k for k in abstraction.keys() if not (k in abstraction.base_states or k in self._parameter_names())]}"
 
-        # Check that the state_abstraction maps the keys to a state variable that is not in the abstraction.base_states
-        assert not any(
-            {
-                (v in abstraction.base_states or v in self._parameter_names())
-                for v in abstraction.values()
-            }
-        ), f"There are unknown states in the state_abstraction values: {[v for v in abstraction.values() if (v in abstraction.base_states or v in self._parameter_names()) ]}"
+            # Check that the state_abstraction maps the keys to a state variable that is not in the abstraction.base_states
+            assert not any(
+                {
+                    (
+                        v in abstraction.base_states
+                        or v in self._parameter_names()
+                    )
+                    for v in abstraction.values()
+                }
+            ), f"There are unknown states in the state_abstraction values: {[v for v in abstraction.values() if (v in abstraction.base_states or v in self._parameter_names()) ]}"
+        except AssertionError as e:
+            raise e
 
         # Create states for values in state_abstraction
         new_abstract_states = abstraction.abstract_states()
@@ -2831,10 +2927,20 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 # When have more than one rate that we're aggregating, then we identify parameters that can be aggregated
                 parameter_values = self._parameter_values()
                 parameter_minimization = {
-                    str(
-                        s
-                    ): f"agg_{'_'.join([str(us) for us in unique_symbols])}"
+                    s: sympy.Symbol(
+                        abstraction[str(s)]
+                        if all(
+                            [
+                                str(s) in abstraction.keys()
+                                for s in unique_symbols
+                            ]
+                        )
+                        else f"agg_{'_'.join([str(us) for us in unique_symbols])}"
+                    )
                     for unique_symbols in unique_symbol_groups
+                    if all(
+                        [str(s) in abstraction.keys() for s in unique_symbols]
+                    )
                     for s in unique_symbols
                     if str(s)
                     in parameter_names  # and not str(s).startswith("p_cross_")
@@ -2847,15 +2953,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 #     if str(s) in parameter_names  and str(s).startswith("p_cross_")
                 # }
                 # substitute abstraction into starting expression
-                abstract_expression = sympy.expand(
-                    starting_expression.subs(
-                        {
-                            **abstraction_substitution,
-                            **parameter_minimization,
-                            **constant_substitution,
-                        }
+                try:
+                    abstract_expression = sympy.expand(
+                        starting_expression.subs(
+                            {
+                                **abstraction_substitution,
+                                **parameter_minimization,
+                                **constant_substitution,
+                            }
+                        )
                     )
-                )
+                except sympy.SympifyError as e:
+                    raise e
             else:
                 # When have one rate that we're aggregating, then we need to be told if a parameter is being replaced.  It is assumed to be in the susbstitution.
 
@@ -2962,9 +3071,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         aggregated_parameters = [
             Parameter(
-                id=p,
-                name=p,
-                description=p,
+                id=str(p),
+                name=str(p),
+                description=str(p),
                 value=0.0,
                 grounding=None,
                 distribution=None,

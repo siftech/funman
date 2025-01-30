@@ -991,6 +991,7 @@ class TestUseCases(unittest.TestCase):
                     }
                 },
             ),
+            # FIXME Has an extra self transition that shouldn't be there
             Stratification(
                 description="Stratify S_vac_T wrt. age group",
                 base_state="S_vac_T",
@@ -1093,55 +1094,58 @@ class TestUseCases(unittest.TestCase):
                     }
                 },
             ),
-            Stratification(
-                description="Stratify I wrt. vaccination status.",
-                base_state="I",
-                stratum=vac_stratum,
-                self_strata_transitions=True,
-            ),
-            Stratification(
-                description="Stratify R wrt. vaccination status.",
-                base_state="R",
-                stratum=vac_stratum,
-                self_strata_transitions=True,
-            ),
-            Stratification(
-                description="Stratify H wrt. vaccination status.",
-                base_state="H",
-                stratum=vac_stratum,
-                self_strata_transitions=True,
-            ),
-            Stratification(
-                description="Stratify D wrt. vaccination status.",
-                base_state="D",
-                stratum=vac_stratum,
-                self_strata_transitions=True,
-            ),
+            # Stratification(
+            #     description="Stratify I wrt. vaccination status.",
+            #     base_state="I",
+            #     stratum=vac_stratum,
+            #     self_strata_transitions=True,
+            # ),
+            # Stratification(
+            #     description="Stratify R wrt. vaccination status.",
+            #     base_state="R",
+            #     stratum=vac_stratum,
+            #     self_strata_transitions=True,
+            # ),
+            # Stratification(
+            #     description="Stratify H wrt. vaccination status.",
+            #     base_state="H",
+            #     stratum=vac_stratum,
+            #     self_strata_transitions=True,
+            # ),
+            # Stratification(
+            #     description="Stratify D wrt. vaccination status.",
+            #     base_state="D",
+            #     stratum=vac_stratum,
+            #     self_strata_transitions=True,
+            # ),
         ]
 
         vac_abstractions = [
-            Abstraction(
-                description="Abstract D wrt. vaccination status.",
-                abstraction={"D_vac_F": "D", "D_vac_T": "D"},
-            ),
-            Abstraction(
-                description="Abstract H wrt. vaccination status.",
-                abstraction={"H_vac_F": "H", "H_vac_T": "H"},
-            ),
-            Abstraction(
-                description="Abstract R wrt. vaccination status.",
-                abstraction={"R_vac_F": "R", "R_vac_T": "R"},
-            ),
-            Abstraction(
-                description="Abstract I wrt. vaccination status.",
-                abstraction={"I_vac_F": "I", "I_vac_T": "I"},
-            ),
+            # Abstraction(
+            #     description="Abstract D wrt. vaccination status.",
+            #     abstraction={"D_vac_F": "D", "D_vac_T": "D"},
+            # ),
+            # Abstraction(
+            #     description="Abstract H wrt. vaccination status.",
+            #     abstraction={"H_vac_F": "H", "H_vac_T": "H"},
+            # ),
+            # Abstraction(
+            #     description="Abstract R wrt. vaccination status.",
+            #     abstraction={"R_vac_F": "R", "R_vac_T": "R"},
+            # ),
+            # Abstraction(
+            #     description="Abstract I wrt. vaccination status.",
+            #     abstraction={"I_vac_F": "I", "I_vac_T": "I"},
+            # ),
             Abstraction(
                 description="Abstract S age groups wrt. unvaccination status.",
                 abstraction={
                     "S_vac_F_age_0": "S_vac_F",
                     "S_vac_F_age_1": "S_vac_F",
                     "S_vac_F_age_2": "S_vac_F",
+                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_0_to__": "beta___to_____S_vac_F_to__",
+                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_1_to__": "beta___to_____S_vac_F_to__",
+                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_2_to__": "beta___to_____S_vac_F_to__",
                 },
             ),
             Abstraction(
@@ -1150,6 +1154,9 @@ class TestUseCases(unittest.TestCase):
                     "S_vac_T_age_0": "S_vac_T",
                     "S_vac_T_age_1": "S_vac_T",
                     "S_vac_T_age_2": "S_vac_T",
+                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_0_to__": "beta___to_____S_vac_T_to__",
+                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_1_to__": "beta___to_____S_vac_T_to__",
+                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_2_to__": "beta___to_____S_vac_T_to__",
                 },
             ),
             Abstraction(
@@ -1157,21 +1164,29 @@ class TestUseCases(unittest.TestCase):
                 abstraction={
                     "S_vac_F": "S",
                     "S_vac_T": "S",
-                    "beta___to_____S_vac_F_to__": "beta",
                     "beta___to_____S_vac_T_to__": "beta",
+                    "beta___to_____S_vac_F_to__": "beta",
                 },
             ),
         ]
 
         transformation_sequence = vac_stratifications + vac_abstractions
+        vac_models = []
 
-        vac_models = list(
-            accumulate(
-                transformation_sequence,
-                lambda x, y: x.transform(y),
-                initial=base_model,
-            )
-        )
+        current_model = base_model
+        for i, t in enumerate(transformation_sequence):
+            next_model = current_model.transform(t)
+            vac_models.append(next_model)
+            next_model.to_dot().render(f"vac_model_{i}"),
+            current_model = next_model
+
+        # vac_models = list(
+        #     accumulate(
+        #         transformation_sequence,
+        #         lambda x, y: x.transform(y),
+        #         initial=base_model,
+        #     )
+        # )
 
         for m in vac_models:
             infected_states = [
