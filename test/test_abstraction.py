@@ -175,7 +175,14 @@ class TestUseCases(unittest.TestCase):
 
         # Abstract and bound stratified Base model
         abstract_model = stratified_model.abstract(
-            Abstraction(abstraction={"S_st_1": "S", "S_st_2": "S"})
+            Abstraction(
+                abstraction={
+                    "S_st_1": "S",
+                    "S_st_2": "S",
+                    "beta___to_____S_st_1_to__": "beta",
+                    "beta___to_____S_st_2_to__": "beta",
+                }
+            )
         )
         bounded_abstract_model = abstract_model.formulate_bounds()
         bounded_abstract_result = runner.run(
@@ -592,9 +599,10 @@ class TestUseCases(unittest.TestCase):
             "rir",
             "beta___to_____S_vac_F_to__",
             "beta___to_____S_vac_T_to__",
-            "p_cross_S_vac_F_to_S_vac_T",
-            "p_cross_S_vac_T_to_S_vac_F",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
         ]
+
         self.model_has_expected_parameters(
             stratified_model_S, stratified_model_S_expected_parameters
         )
@@ -605,10 +613,10 @@ class TestUseCases(unittest.TestCase):
 
         # I stratification allows cross strata transitions, but will not stratify beta
         stratified_model_I_expected_parameters = [
-            "p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_T",
-            "p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_F",
-            "p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_T",
-            "p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_F",
+            "p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_T_",
+            "p_cross_I_vac_T_to_I_vac_T___S_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_to_I_vac_F_",
             "N",
             "beta",
             "pir",
@@ -630,14 +638,6 @@ class TestUseCases(unittest.TestCase):
 
         # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
         stratified_model_SI_expected_parameters = [
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T",
             "N",
             "pir",
             "pih",
@@ -647,10 +647,18 @@ class TestUseCases(unittest.TestCase):
             "phr",
             "rhr",
             "rir",
-            "beta___to_____S_vac_F_to__",
             "beta___to_____S_vac_T_to__",
-            "p_cross_S_vac_F_to_S_vac_T",
-            "p_cross_S_vac_T_to_S_vac_F",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_",
+            "beta___to_____S_vac_F_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
         ]
         self.model_has_expected_parameters(
             stratified_model_SI, stratified_model_SI_expected_parameters
@@ -671,17 +679,17 @@ class TestUseCases(unittest.TestCase):
             "rhr",
             "rir",
             "beta___to_____S_vac_T_to__",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_",
             "beta___to_____S_vac_F_to__",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F",
-            "p_cross_S_vac_T_to_S_vac_F",
-            "p_cross_S_vac_F_to_S_vac_T",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
         ]
 
         self.model_has_expected_parameters(
@@ -754,6 +762,14 @@ class TestUseCases(unittest.TestCase):
                     "S_vac_T": "S",
                     "S_vac_F": "S",
                     **{b.id: "beta" for b in betas},
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
                 }
             )
         )
@@ -767,6 +783,14 @@ class TestUseCases(unittest.TestCase):
                     "I_vac_T": "I",
                     "I_vac_F": "I",
                     **{b.id: "beta" for b in betas},
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
+                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
+                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
                 }
             )
         )

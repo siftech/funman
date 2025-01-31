@@ -38,6 +38,7 @@ from .generated_models.petrinet import (
     Semantics,
     State,
     Transition,
+    Transitions,
 )
 from .model import FunmanModel
 
@@ -565,7 +566,7 @@ class Stratification(BaseModel):
     only_natural_transitions: bool = (
         True  # only stratify transitions that are not persistence
     )
-    _new_vars: Optional[List[State]] = None
+    _new_vars: Optional[Dict[StratumValuation, State]] = None
     _new_vars_strata: Optional[Dict[str, Stratum]] = None
     _state_ancestors: Dict[str, str] = {}
     _transition_ancestors: Dict[str, str] = {}
@@ -671,7 +672,7 @@ class Abstraction(BaseModel):
 
         self.parameters = {
             new_rates[i].target: {
-                p: {
+                str(p): {
                     "lb": min(
                         [
                             base_param_bounds[str(p1)].lb
@@ -885,11 +886,10 @@ class StateTransition(BaseModel):
             )
             is not None
         ):
-
-            new_st.input = State(
-                id=f"{new_st.input.id}_{strata_transition.input_stratum.difference(var_strata)}",
-                name=f"{new_st.input.name}_{strata_transition.input_stratum.difference(var_strata)}",
-            )
+            i_var = stratification._new_vars[
+                strata_transition.input_stratum.intersection(var_strata)
+            ]
+            new_st.input = State(id=i_var.id, name=i_var.name)
             if new_st.strata_transition.input_stratum:
                 new_st.strata_transition.input_stratum.values.update(
                     strata_transition.input_stratum.values
@@ -908,10 +908,11 @@ class StateTransition(BaseModel):
             )
             is not None
         ):
-            new_st.output = State(
-                id=f"{new_st.output.id}_{strata_transition.output_stratum.difference(var_strata)}",
-                name=f"{new_st.output.name}_{strata_transition.output_stratum.difference(var_strata)}",
-            )
+            o_var = stratification._new_vars[
+                strata_transition.output_stratum.intersection(var_strata)
+            ]
+            new_st.output = State(id=o_var.id, name=o_var.name)
+
             if new_st.strata_transition.output_stratum:
                 new_st.strata_transition.output_stratum.values.update(
                     strata_transition.output_stratum.values
@@ -1424,10 +1425,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     unreserved_symbols[-1] = self._time_var_id(
                         self._time_var()
                     )
-                t_rates_lambda = [
-                    sympy.lambdify(unreserved_symbols, t, cse=True)
-                    for t in t_rates
-                ]
+                try:
+                    t_rates_lambda = [
+                        sympy.lambdify(unreserved_symbols, t, cse=True)
+                        for t in t_rates
+                    ]
+                except SyntaxError as e:
+                    raise e
                 self._transition_rates_cache[transition.id] = t_rates
                 self._transition_rates_lambda_cache[transition.id] = (
                     t_rates_lambda
@@ -1571,7 +1575,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         }
         for _, params in abstracted_parameters.items():
             for p in params:
-                bound_symbols[p] = {
+                bound_symbols[sympy.Symbol(p)] = {
                     bound: sympy.Symbol(f"{str(p)}_{bound}")
                     for bound in ["lb", "ub"]
                 }
@@ -2020,7 +2024,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
                 relevant_new_state_var_ids = [
                     s.id
-                    for s in stratification._new_vars
+                    for s in stratification._new_vars.values()
                     if s.id in strat_tr_map.var_ids()
                 ]
 
@@ -2073,8 +2077,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                 )
                             )
                             value = strata_parameters[p][st_tr]
-                        except StopIteration:
-                            pass
+                        except StopIteration as e:
+                            raise e
 
                     else:
                         value = old_parameters[p].value
@@ -2137,28 +2141,29 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         return (new_transitions, new_rates, new_parameters)
 
     def stratify_state(self, stratification: Stratification):
-        new_vars = []
+        new_vars = {}
         new_vars_strata = {}
         original_var = self.state_var(stratification.base_state)
         old_strata = self.state_strata(original_var)
         for valuation in stratification.valuations():
-            valuation_values_keys = list(valuation.values.keys())
-            valuation_values_keys.sort()
-            valuation_str = "_".join(
-                [
-                    f"{attribute}_{valuation.values[attribute]}"
-                    for attribute in valuation_values_keys
-                ]
-            )
-            new_var_id = f"{original_var.id}_{valuation_str}"
+            # valuation_values_keys = list(valuation.values.keys())
+            # valuation_values_keys.sort()
+            # valuation_str = "_".join(
+            #     [
+            #         f"{attribute}_{valuation.values[attribute]}"
+            #         for attribute in valuation_values_keys
+            #     ]
+            # )
+            new_var_id = f"{original_var.id}_{str(valuation)}"
             new_var = State(
                 id=new_var_id,
                 name=new_var_id,
-                description=f"{original_var.description} Stratified wrt. {valuation_str}",
+                description=f"{original_var.description} Stratified wrt. {str(valuation)}",
                 grounding=original_var.grounding,
                 units=original_var.units,
             )
-            new_vars.append(new_var)
+            new_valuation = valuation.intersection(old_strata)
+            new_vars[new_valuation] = new_var
             new_strata = old_strata.copy(deep=True)
             new_strata.values.update(valuation.values)
             new_vars_strata[new_var.id] = new_strata
@@ -2273,7 +2278,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         stratification._new_vars = new_vars
         stratification._new_vars_strata = new_vars_strata
         stratification._state_ancestors = {
-            new_var.id: stratification.base_state for new_var in new_vars
+            new_var.id: stratification.base_state
+            for new_var in new_vars.values()
         }
 
         # get new transitions
@@ -2350,21 +2356,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             for p in t[2]
         ]
 
-        # There may be duplicate transition probability parameters between strata when there are multiple transitions that are stratified
-        # This is ugly because Parameter does not have a hash function
-        unique_params = []
-        for p in new_parameters:
-            if p not in unique_params:
-                unique_params.append(p)
-        new_parameters = unique_params
-
         other_rates = {
             r.target: r
             for r in self.petrinet.semantics.ode.rates
             if r.target in other_transitions
         }
 
-        new_states = new_vars + [
+        new_states = list(new_vars.values()) + [
             s for s in self.petrinet.model.states.root if s != original_var
         ]
 
@@ -2399,7 +2397,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 target=n.id,
                 expression=str(original_init_value / float(len(new_vars))),
             )
-            for n in new_vars
+            for n in new_vars.values()
         ]
 
         if len(strata_parameters) > 0:
@@ -2435,6 +2433,26 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         else:
             new_parameters += self.petrinet.semantics.ode.parameters
 
+        # There may be duplicate transition probability parameters between strata when there are multiple transitions that are stratified
+        # This is ugly because Parameter does not have a hash function
+        unique_params = []
+        for p in new_parameters:
+            if p not in unique_params:
+                unique_params.append(p)
+        new_parameters = unique_params
+
+        # Remove parameters not appearing in a rate
+        new_parameters = [
+            p
+            for p in new_parameters
+            if any(
+                [
+                    p.id in r.expression
+                    for r in [*new_rates, *other_rates.values()]
+                ]
+            )
+        ]
+
         # FIXME update with splits
         new_observables = self.petrinet.semantics.ode.observables
 
@@ -2449,18 +2467,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             typing=self.petrinet.semantics.typing,
             span=self.petrinet.semantics.span,
         )
-
-        # Remove parameters not appearing in a rate
-        new_model.petrinet.semantics.ode.parameters = [
-            p
-            for p in new_model.petrinet.semantics.ode.parameters
-            if any(
-                [
-                    p.id in r.expression
-                    for r in new_model.petrinet.semantics.ode.rates
-                ]
-            )
-        ]
 
         new_metadata = copy.deepcopy(self.petrinet.metadata)
         transformations = new_metadata.get("transformations", [])
@@ -2725,7 +2731,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             petrinet=Model(
                 header=self.petrinet.header,
                 properties=self.petrinet.properties,
-                model=Model1(states=new_states, transitions=[]),
+                model=Model1(
+                    states=new_states, transitions=Transitions(root=[])
+                ),
             )
         )
         new_metadata = copy.deepcopy(self.petrinet.metadata)
@@ -2991,6 +2999,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 for s in abstract_expression.free_symbols
                 if str(s).startswith("p_cross_")
             ]
+
             # if abstract_to_concrete_transition is not None:
             #     for atc in abstract_to_concrete_transition:
             #         trans_sym = sympy.Symbol(atc)
@@ -3007,8 +3016,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
             abstraction._parameter_ancestors.update(
                 {
-                    v: [
-                        k
+                    str(v): [
+                        str(k)
                         for k, v1 in parameter_minimization.items()
                         if v == v1
                     ]
@@ -3031,7 +3040,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 new_transitions.append(t)
                 candidate_rates.append(r)
 
-        new_model.petrinet.model.transitions = new_transitions
+        new_model.petrinet.model.transitions.root += new_transitions
 
         aggregated_rates_and_parameters = [
             aggregate_rates(
@@ -3104,7 +3113,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 grouped_transition_parameters[tuple(trans.input)] = (
                     related_parameters
                 )
-
+        agg_param_ids = [p.id for p in aggregated_parameters]
         transition_parameters = [
             Parameter(
                 id=str(p),
@@ -3117,6 +3126,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
             for param_group in grouped_transition_parameters.values()
             for p in param_group
+            if p not in agg_param_ids
         ]
 
         new_parameters = (
@@ -3218,94 +3228,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         ancestors = new_metadata.get("ancestors", [])
         ancestors.append(abstraction._ancestors())
         new_metadata["ancestors"] = ancestors
-        # new_metadata["abstraction"] = {
-        #     # Need to know which parameter to replace by the min or max value, as well as the min and max value
-        #     # parameters -> transition_id -> parameter_id -> [lb,ub]
-        #     "parameters": {
-        #         new_rates[i].target: {
-        #             p:
-        #                 {"lb": min(
-        #                     [
-        #                         next(
-        #                             p2
-        #                             for p2 in self.petrinet.semantics.ode.parameters
-        #                             if p2.id == str(p1)
-        #                         ).value
-        #                         for p1, v in arp["parameters"].items()
-        #                         if v == p
-        #                     ]
-        #                 ),
-        #                 "ub": max(
-        #                     [
-        #                         next(
-        #                             p2
-        #                             for p2 in self.petrinet.semantics.ode.parameters
-        #                             if p2.id == str(p1)
-        #                         ).value
-        #                         for p1, v in arp["parameters"].items()
-        #                         if v == p
-        #                     ]
-        #                 ),
-        #             }
-        #             for p in set(
-        #                 [
-        #                     p
-        #                     for k, p in arp["parameters"].items()
-        #                     if str(k) in self._parameter_names()
-        #                 ]
-        #             )
-        #         }
-        #         for i, arp in enumerate(aggregated_rates_and_parameters)
-        #         if len(arp["parameters"]) > 0
-        #     }
-        # }
-        ## Consolidate bounds on a variable that is shared across multiple transitions
-        # bounded_params = {
-        #     p
-        #     for trans_id, p_bounds in new_metadata["abstraction"][
-        #         "parameters"
-        #     ].items()
-        #     for p in p_bounds
-        # }
-        # param_min_value = {
-        #     p: min(
-        #         [
-        #             bounds["lb"]
-        #             for trans_id, p_bounds in new_metadata["abstraction"][
-        #                 "parameters"
-        #             ].items()
-        #             for p1, bounds in p_bounds.items()
-        #             if p1 == p
-        #         ]
-        #     )
-        #     for p in bounded_params
-        # }
-        # param_max_value = {
-        #     p: max(
-        #         [
-        #             bounds["ub"]
-        #             for trans_id, p_bounds in new_metadata["abstraction"][
-        #                 "parameters"
-        #             ].items()
-        #             for p1, bounds in p_bounds.items()
-        #             if p1 == p
-        #         ]
-        #     )
-        #     for p in bounded_params
-        # }
-        # new_metadata["abstraction"]["parameters"] = {
-        #     trans_id: {
-        #         p1: (
-        #             bounds
-        #             if p1 not in param_min_value
-        #             else {"lb": param_min_value[p1], "ub": param_max_value[p1]}
-        #         )
-        #         for p1, bounds in p_bounds.items()
-        #     }
-        #     for trans_id, p_bounds in new_metadata["abstraction"][
-        #         "parameters"
-        #     ].items()
-        # }
 
         return new_model
 
