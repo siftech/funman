@@ -416,26 +416,30 @@ class AnalysisScenario(ABC, BaseModel):
         unreseved_parameters = {
             replace_reserved(k): v for k, v in parameters.items()
         }
-        for o in observables:
-            o_name = self.model._observable_name(o)
-            # o_fn = o.expression
-            o_fn = self.model.observable_expression(o_name)
-            # Evaluate o_fn for each time in timeseries
-            if self.model.is_timed_observable(o_name):
-                values = []
-                for ti, t in enumerate(timepoints):
-                    # state_at_t = [timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns)]
-                    state_at_t = {
-                        c: timeseries.data[ci][ti]
-                        for ci, c in enumerate(timeseries.columns)
-                        if c != "time"
-                    }
-                    value = o_fn[2].evalf(subs={**state_at_t, **parameters})
-                    values.append(float(value))
-                data[o_name] = values
-            else:
-                value = o_fn[2].evalf(subs={**unreseved_parameters})
-                data[o_name] = float(value)
+
+        if observables:
+            for o in observables:
+                o_name = self.model._observable_name(o)
+                # o_fn = o.expression
+                o_fn = self.model.observable_expression(o_name)
+                # Evaluate o_fn for each time in timeseries
+                if self.model.is_timed_observable(o_name):
+                    values = []
+                    for ti, t in enumerate(timepoints):
+                        # state_at_t = [timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns)]
+                        state_at_t = {
+                            c: timeseries.data[ci][ti]
+                            for ci, c in enumerate(timeseries.columns)
+                            if c != "time"
+                        }
+                        value = o_fn[2].evalf(
+                            subs={**state_at_t, **parameters}
+                        )
+                        values.append(float(value))
+                    data[o_name] = values
+                else:
+                    value = o_fn[2].evalf(subs={**unreseved_parameters})
+                    data[o_name] = float(value)
         return data
 
     def simulate_scenario(self, config: "FUNMANConfig") -> Point:

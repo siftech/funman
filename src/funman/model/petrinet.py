@@ -1363,7 +1363,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         return [self._state_var_name(s) for s in self._state_vars()]
 
     def _observable_names(self) -> List[str]:
-        return [self._observable_name(s) for s in self.observables()]
+        obs = self.observables()
+        return [self._observable_name(s) for s in obs] if obs else []
 
     def _transitions(self) -> List[Transition]:
         return self.petrinet.model.transitions

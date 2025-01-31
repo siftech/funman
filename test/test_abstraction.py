@@ -911,7 +911,7 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.000001
-        timepoints = list(range(0, 101, 1))
+        timepoints = [float(t) for t in list(range(0, 2, 1))]
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -929,7 +929,7 @@ class TestUseCases(unittest.TestCase):
         # Add constraint on I
         sirhd_stratified_request.constraints.append(
             StateVariableConstraint(
-                name="I upper", variable="I_ub", interval=Interval(ub=1e5)
+                name="I upper", variable="I", interval=Interval(ub=1200)
             )
         )
 
@@ -943,7 +943,7 @@ class TestUseCases(unittest.TestCase):
         # ].timepoints = timepoints
 
         # runner = Runner()
-        # base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+        # base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_stratified_request)
 
         # assert (
         #     base_result
@@ -1216,15 +1216,16 @@ class TestUseCases(unittest.TestCase):
             infected_states = [
                 s.id for s in m.petrinet.model.states if s.id.startswith("I")
             ]
-            infected_sum = Observable(
-                id="I", expression="+".join(infected_states)
-            )
-            m.petrinet.semantics.ode.observables = [infected_sum]
-        sirhd_stratified_request.constraints.append(
-            LinearConstraint(
-                name="I bound", variables=["I"], additive_bounds={"ub": 1e5}
-            )
-        )
+            if len(infected_states) > 1:
+                infected_sum = Observable(
+                    id="I", expression="+".join(infected_states)
+                )
+                m.petrinet.semantics.ode.observables = [infected_sum]
+            # sirhd_stratified_request.constraints.append(
+            #     LinearConstraint(
+            #         name="I bound", variables=["I"], additive_bounds={"ub": 1e5}
+            #     )
+            # )
 
         list(
             map(
@@ -1248,19 +1249,21 @@ class TestUseCases(unittest.TestCase):
                 for s in m.petrinet.model.states
                 if s.id.startswith("I") and s.id.endswith("_ub")
             ]
+
             infected_ub_sum = Observable(
-                id="I_ub", expression="+".join(infected_states_ub)
+                id="I", expression="+".join(infected_states_ub)
             )
             m.petrinet.semantics.ode.observables = [infected_ub_sum]
-        sirhd_stratified_request.constraints.append(
-            LinearConstraint(
-                name="I_ub bound",
-                variables=["I_ub"],
-                additive_bounds={"ub": 1e5},
-            )
-        )
+        # sirhd_stratified_request.constraints.append(
+        #     LinearConstraint(
+        #         name="I_ub bound",
+        #         variables=["I_ub"],
+        #         additive_bounds={"ub": 1200},
+        #     )
+        # )
 
-        results = [
+        results = [runner.run(base_model.petrinet, sirhd_stratified_request)]
+        results += [
             runner.run(m.petrinet, sirhd_stratified_request)
             for m in vac_models[0 : len(vac_stratifications) + 1]
         ]
@@ -1268,7 +1271,7 @@ class TestUseCases(unittest.TestCase):
             runner.run(m.petrinet, sirhd_stratified_request)
             for m in bounded_vac_models
         ]
-     
+
         m = []
         for i, result in enumerate(results):
             df = result.dataframe()

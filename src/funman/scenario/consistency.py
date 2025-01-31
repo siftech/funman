@@ -107,6 +107,18 @@ class ConsistencyScenario(AnalysisScenario, BaseModel):
             scenario_result = ConsistencyScenarioResult(
                 scenario=self, consistent={}, parameter_space=parameter_space
             )
+            sim_valid = self.check_simulation(config, scenario_result)
+            if not sim_valid:
+                scenario_result.parameter_space.false_boxes = (
+                    scenario_result.parameter_space.true_boxes
+                )
+                scenario_result.parameter_space.true_boxes = []
+                for tb in scenario_result.parameter_space.false_boxes:
+                    tb.label = "false"
+                    for pt in tb.points:
+                        pt.values["label"] = "false"
+                        pt.label = "false"
+
             resultsCallback(parameter_space)
         return scenario_result
 
