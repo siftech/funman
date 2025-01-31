@@ -911,7 +911,7 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.000001
-        timepoints = list(range(0, 11, 1))
+        timepoints = list(range(0, 101, 1))
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -1222,7 +1222,7 @@ class TestUseCases(unittest.TestCase):
             m.petrinet.semantics.ode.observables = [infected_sum]
         sirhd_stratified_request.constraints.append(
             LinearConstraint(
-                name="I bound", variables=["I"], additive_bounds={"ub": 1000}
+                name="I bound", variables=["I"], additive_bounds={"ub": 1e5}
             )
         )
 
@@ -1256,24 +1256,19 @@ class TestUseCases(unittest.TestCase):
             LinearConstraint(
                 name="I_ub bound",
                 variables=["I_ub"],
-                additive_bounds={"ub": 1000},
+                additive_bounds={"ub": 1e5},
             )
         )
 
         results = [
             runner.run(m.petrinet, sirhd_stratified_request)
             for m in vac_models[0 : len(vac_stratifications) + 1]
-            + bounded_vac_models
         ]
-        # 0: base
-        # 1: stratify([I], base)
-        # 2: stratify([S, beta], stratify([I], base))
-        # 3: bound(base)
-        # 4: bound(stratify([I], base))
-        # 5: bound(stratify([S, beta], stratify([I], base)))
-        # 6: bound(abstract([S, beta], stratify([S, beta], stratify([I], base))))
-        # 7: bound(abstract([I], abstract([S, beta], stratify([S, beta], stratify([I], base)))))
-
+        results += [
+            runner.run(m.petrinet, sirhd_stratified_request)
+            for m in bounded_vac_models
+        ]
+     
         m = []
         for i, result in enumerate(results):
             df = result.dataframe()
@@ -1284,6 +1279,8 @@ class TestUseCases(unittest.TestCase):
                 else ""
             )
             df["model_index"] = i
+            df["error"] = result.error
+            df["true_points"] = len(result.parameter_space.true_points())
             df["runtime (s)"] = (
                 f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
             )
@@ -1295,6 +1292,8 @@ class TestUseCases(unittest.TestCase):
             ["runtime (s)", "description", "I_bound"]
         ].drop_duplicates()
         self.l.info(runtimes)
+        runtimes.to_csv("stratify_analysis_runtimes.csv")
+        dfs.to_csv("stratify_analysis.csv")
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
         # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
 
