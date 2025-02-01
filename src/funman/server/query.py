@@ -404,7 +404,10 @@ class FunmanResults(BaseModel):
         }
 
     def dataframe(
-        self, points: List[Point], interpolate="linear", max_time=None
+        self,
+        points: Optional[List[Point]] = None,
+        interpolate="linear",
+        max_time=None,
     ):
         """
         Extract a timeseries as a Pandas dataframe.
@@ -434,6 +437,9 @@ class FunmanResults(BaseModel):
             to_plot += ["timer_t"]
 
         all_df = pd.DataFrame()
+
+        points = points if points else self.points()
+
         for i, point in enumerate(points):
             timeseries = self.symbol_timeseries(point, to_plot)
             df = pd.DataFrame.from_dict(timeseries)
@@ -445,7 +451,8 @@ class FunmanResults(BaseModel):
                     num=int(
                         (df["index"].max() - df["index"].min())
                         / df["index"].diff().min()
-                    ),
+                    )
+                    + 1,
                 )
                 df = (
                     df.infer_objects(copy=False)
