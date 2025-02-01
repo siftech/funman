@@ -1,5 +1,6 @@
 import logging
 import math
+import re
 from functools import reduce
 from typing import Dict, List, Union
 
@@ -41,19 +42,23 @@ class SympyBoundedSubstituter(BaseModel):
         self, derivative_variables: List[str], expr: str, bound: str
     ) -> sympy.Expr:
         # deriv_var_symbols = [self.str_to_symbol[s] for s in derivative_variables]
-        sym_expr = expr #to_sympy(expr, self.str_to_symbol)
+        sym_expr = expr  # to_sympy(expr, self.str_to_symbol)
         # substitute lb for deriv_var_symbol in sym_expr
         sym_expr = sym_expr.subs(
             {s: self.bound_symbols[s][bound] for s in derivative_variables}
         )
         return sym_expr
 
-    def maximize(self, derivative_variables: List[str], expr: sympy.Expr) -> str:
+    def maximize(
+        self, derivative_variables: List[str], expr: sympy.Expr
+    ) -> str:
         sym_expr = self._prepare_expression(derivative_variables, expr, "ub")
         m_expr = self._substitute(sym_expr, False)
         return m_expr
 
-    def minimize(self, derivative_variables: List[str], expr: sympy.Expr) -> str:
+    def minimize(
+        self, derivative_variables: List[str], expr: sympy.Expr
+    ) -> str:
         sym_expr = self._prepare_expression(derivative_variables, expr, "lb")
         m_expr = self._substitute(sym_expr, True)
         return m_expr
@@ -216,16 +221,47 @@ def sympy_subs(expr: Expr, substitution: Dict[str, Union[float, str]]) -> Expr:
 
 
 reserved_words = ["lambda"]
+reserved_chars = {"{": "l_curly", "}": "r_curly", ".": "dot"}
 
 
-def has_reserved(str_expr, rw):
+def has_reserved_word(str_expr, rw):
     return rw in str_expr and f"funman_{rw}" not in str_expr
+
+
+def has_reserved_char(str_expr, rc):
+    return rc in str_expr
 
 
 def replace_reserved(str_expr):
     for rw in reserved_words:
-        if isinstance(str_expr, str) and has_reserved(str_expr, rw):
+        if isinstance(str_expr, str) and has_reserved_word(str_expr, rw):
             str_expr = str_expr.replace(rw, f"funman_{rw}")
+
+    for rc, nc in reserved_chars.items():
+        if isinstance(str_expr, str) and has_reserved_char(str_expr, rc):
+            for g in reversed(
+                list(
+                    re.finditer(
+                        re.compile(f"([A-Za-z]|[^\u0000-\u007F])+.*?(\{rc})"),
+                        str_expr,
+                    )
+                )
+            ):
+                str_expr = f"{str_expr[:g.end()-1]}{nc}{str_expr[g.end():]}"
+    return str_expr
+
+
+def rev_replace_reserved(str_expr):
+    for rw in reserved_words:
+        if isinstance(str_expr, str) and has_reserved_word(str_expr, rw):
+            str_expr = str_expr.replace(f"funman_{rw}", rw)
+
+    for rc, nc in reserved_chars.items():
+        if isinstance(str_expr, str) and has_reserved_char(str_expr, nc):
+            for g in re.finditer(re.compile(f"[A-Za-z]+.*?({nc})"), str_expr):
+                str_expr = (
+                    f"{str_expr[:g.end()-len(nc)]}{rc}{str_expr[g.end():]}"
+                )
     return str_expr
 
 
@@ -393,12 +429,8 @@ def sympy_to_pysmt_real(expr, numerator_digits=6):
 
 
 def sympy_to_pysmt_symbol(op, expr, op_type=None):
-    s_expr = str(expr)
-    reserved = [s for s in reserved_words if s in s_expr]
-    if len(reserved) > 0:
-        for r in reserved:
-            s_expr = s_expr.replace(f"funman_{r}", r)
-    return op(s_expr, op_type) if op_type else op(str(expr))
+    s_expr = rev_replace_reserved(str(expr))
+    return op(s_expr, op_type) if op_type else op(s_expr)
 
 
 if __name__ == "__main__":

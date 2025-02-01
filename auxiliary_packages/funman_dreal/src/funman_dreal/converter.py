@@ -30,6 +30,8 @@ from pysmt.solvers.solver import (
 )
 from pysmt.walkers import DagWalker
 
+from funman.utils.smtlib_utils import str_smtlib
+
 l = logging.getLogger(__name__)
 
 
@@ -119,15 +121,15 @@ class CoreLexer(HRLexer):
                     r"(-?\d+\.\d+e-?\d+)", self.real_constant, True
                 ),  # decimals scientific
             ]
-            + self.rules[0:-1]
+            + self.rules[0:-2]
             + [
                 Rule(
-                    r"(([A-Za-z_]|[^\u0000-\u007F])([A-Za-z_]|[^\u0000-\u007F])*)",
+                    r"(([A-Za-z_]|[^\u0000-\u007F])([\w\.\{\}_]|[^\u0000-\u007F])*)",
                     self.identifier,
                     True,
                 ),  # unicode identifiers
             ]
-            + self.rules[-1:]
+            + self.rules[-2:]
         )
         self.compile()
 
@@ -218,6 +220,7 @@ class DRealConverter(Converter, DagWalker):
             )
             new_symbols = self.create_dreal_symbols(str(dreal_formula))
             formula = CoreParser().parse(str(dreal_formula))
+            l.debug(f"Extracted SMTLib: {str_smtlib(formula)}")
         except Exception as e:
             raise e
         return formula
