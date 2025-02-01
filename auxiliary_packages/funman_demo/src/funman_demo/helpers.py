@@ -5,6 +5,7 @@ import json
 import logging
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 
 from funman import (
@@ -163,7 +164,7 @@ def relax_parameter_bounds(funman_request, factor=0.1):
         interval.ub = interval.ub + (factor / 2 * width)
 
 
-def plot_last_point(results, states):
+def plot_last_point(results, states, plot_logscale=False):
     pts = results.parameter_space.points()
     print(f"{len(pts)} points")
 
@@ -171,7 +172,13 @@ def plot_last_point(results, states):
         # Get a plot for last point
         df = results.dataframe(points=pts[-1:])
         # pd.options.plotting.backend = "plotly"
+        for s in states:
+            df[s] = df[s].mask(np.isinf)
+
         ax = df[states].plot()
+
+        if plot_logscale:
+            ax.set_yscale("symlog")
 
         fig = plt.figure()
         # fig.set_yscale("log")
@@ -196,12 +203,41 @@ def pretty_print_request_params(params):
         print(df.T)
 
 
-def report(results, name, states, request_results, request_params):
+def runtime_stats_dataframe(request_params):
+    df = pd.DataFrame(request_params).T
+    df.index.name = "Model"
+    df = (
+        df[["model_size", "total_time", "time_horizon"]]
+        .rename(
+            columns={
+                "model_size": "Model Size",
+                "total_time": "Total Time",
+                "time_horizon": "Time Horizon",
+            }
+        )
+        .sort_index()
+    )
+    return df
+
+
+def report(
+    results,
+    name,
+    states,
+    request_results,
+    request_params,
+    plot_logscale=False,
+    plot=True,
+):
     request_results[name] = results
-    plot_last_point(results, states)
+    if plot:
+        plot_last_point(results, states, plot_logscale=plot_logscale)
     param_values = get_last_point_parameters(results)
     # print(f"Point parameters: {param_values}")
     if param_values is not None:
+        param_values["total_time"] = results.timing.total_time
+        param_values["model_size"] = results.model.num_elements()
+        param_values["time_horizon"] = results.time_horizon()
         request_params[name] = param_values
     pretty_print_request_params(request_params)
 

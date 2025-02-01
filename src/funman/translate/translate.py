@@ -53,6 +53,7 @@ from funman.translate.simplifier import FUNMANSimplifier
 from funman.utils import math_utils
 from funman.utils.sympy_utils import (
     FUNMANFormulaManager,
+    replace_reserved,
     sympy_to_pysmt,
     to_sympy,
 )
@@ -358,7 +359,7 @@ class Encoder(ABC, BaseModel):
         # vars.sort(key=lambda x: x.symbol_name())
         for var in vars.values():
             var_name, timepoint = self._split_symbol(var)
-            if timepoint:
+            if timepoint is not None:
                 if var_name not in symbols:
                     symbols[var_name] = {}
                 symbols[var_name][timepoint] = var
@@ -405,14 +406,14 @@ class Encoder(ABC, BaseModel):
         assumptions: List[Assumption],
     ) -> EncodedFormula:
         if layer_idx == 0:
-            return self.encode_init_layer(scenario)
+            return self.encode_init_layer(scenario, options)
         else:
             return self.encode_transition_layer(scenario, layer_idx, options)
 
     def encode_init_layer(
-        self, scenario: "AnalysisScenario"
+        self, scenario: "AnalysisScenario", options: EncodingOptions
     ) -> EncodedFormula:
-        initial_state = self._timed_model_elements["init"]
+        initial_state = self._timed_model_elements["init"][options.schedule]
         initial_symbols = initial_state.get_free_variables()
 
         observations = self.encode_observation(scenario, 0, substitutions={})
@@ -492,7 +493,9 @@ class Encoder(ABC, BaseModel):
 
         # Normalize if constant value
         parameter_assignments = {
-            self._encode_state_var(k.name): Real(float(k.interval.lb))
+            self._encode_state_var(replace_reserved(k.name)): Real(
+                float(k.interval.lb)
+            )
             for k in parameters
             if k.interval.lb == k.interval.ub
         }
@@ -639,7 +642,7 @@ class Encoder(ABC, BaseModel):
             return TRUE(), None
 
     def _define_init(
-        self, scenario: "AnalysisScenario", init_time: int = 0
+        self, scenario: "AnalysisScenario", init_time: Timepoint = 0
     ) -> FNode:
         # Generate Parameter symbols and assignments
         substitutions = self._initialize_substitutions(scenario)
@@ -735,7 +738,7 @@ class Encoder(ABC, BaseModel):
                 continue
 
             sv_formula = Equals(
-                self._encode_state_var(sv, time=int(timepoint)),
+                self._encode_state_var(sv, time=timepoint),
                 Real(constraint.timeseries[sv][layer_idx]),
             )
             formulas.append(sv_formula)
@@ -898,7 +901,8 @@ class Encoder(ABC, BaseModel):
         time_step_constraints: TimeStepConstraints = {}
         time_step_substitutions: TimeStepSubstitutions = {}
         timed_parameters: TimedParameters = {}
-        initial_state, initial_substitutions = self._define_init(scenario)
+        initial_states = {}
+
         if step_sizes and num_steps:
             schedules: List[EncodingSchedule] = []
             for i, step_size in enumerate(
@@ -964,7 +968,7 @@ class Encoder(ABC, BaseModel):
                     if s1 + 1 == s2
                 }
             )
-            time_step_substitutions[schedule] = initial_substitutions.copy()
+
             timed_parameters.update(
                 {
                     (t1, t2 - t1): None
@@ -973,6 +977,11 @@ class Encoder(ABC, BaseModel):
                     if s1 + 1 == s2
                 }
             )
+            initial_state, initial_substitution = self._define_init(
+                scenario, init_time=schedule.timepoints[0]
+            )
+            initial_states[schedule] = initial_state
+            time_step_substitutions[schedule] = initial_substitution.copy()
 
         # configurations = None
         # max_step_index = None
@@ -983,7 +992,7 @@ class Encoder(ABC, BaseModel):
             "schedules": schedules,
             "state_timepoints": state_timepoints,
             "transition_timepoints": transition_timepoints,
-            "init": initial_state,
+            "init": initial_states,
             "time_step_constraints": time_step_constraints,
             "time_step_substitutions": time_step_substitutions,
             # "configurations": configurations,
@@ -1267,7 +1276,14 @@ class Encoder(ABC, BaseModel):
         a_series = {}  # timeseries as array/list
         max_t = max(
             [
-                max([int(k) for k in tps.keys() if k.isdigit()] + [0])
+                max(
+                    [
+                        int(k)
+                        for k in tps.keys()
+                        if isinstance(k, int) or k.isdigit()
+                    ]
+                    + [0]
+                )
                 for _, tps in series.items()
             ]
         )
@@ -1275,7 +1291,7 @@ class Encoder(ABC, BaseModel):
         for var, tps in series.items():
             vals = [None] * (int(max_t) + 1)
             for t, v in tps.items():
-                if t.isdigit():
+                if isinstance(t, int) or t.isdigit():
                     vals[int(t)] = v
             a_series[var] = vals
         return a_series
@@ -1401,11 +1417,21 @@ class Encoder(ABC, BaseModel):
         if symbol.symbol_name() in self._untimed_symbols:
             return symbol.symbol_name(), None
         else:
-            s, t = symbol.symbol_name().rsplit("_", 1)
-            if s not in self._timed_symbols or not t.isdigit():
-                raise Exception(
-                    f"Cannot determine if symbol {symbol} is timed."
-                )
+            try:
+                s, t = symbol.symbol_name().rsplit("_", 1)
+            except ValueError:
+                s = symbol
+                t = None
+            try:
+                t = int(t)
+            except Exception:
+                t = None
+            # return s, t
+            # s, t = symbol.symbol_name().rsplit("_", 1)
+            # if s not in self._timed_symbols:
+            #     raise Exception(
+            #         f"Cannot determine if symbol {symbol} is timed."
+            #     )
             return s, t
 
 

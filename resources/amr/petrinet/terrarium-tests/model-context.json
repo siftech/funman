@@ -1,0 +1,350 @@
+{
+  "model": {
+    "id": "06690761-3219-4be6-9290-d378fac8d7b6",
+    "createdOn": "2024-11-20T20:46:01.312+00:00",
+    "updatedOn": "2024-11-20T21:08:48.435+00:00",
+    "name": "Hewitt Model A (from equations)",
+    "fileNames": [],
+    "temporary": false,
+    "publicAsset": false,
+    "header": {
+      "name": "Hewitt Model A (from equations)",
+      "description": "This is a model from equations",
+      "schema": "https://github.com/DARPA-ASKEM/Model-Representations/blob/main/petrinet/petrinet_schema.json",
+      "schema_name": "petrinet",
+      "model_version": "0.1"
+    },
+    "model": {
+      "transitions": [
+        {
+          "id": "t0",
+          "name": null,
+          "description": "Transition from susceptible to infected state due to contact with infected individuals.",
+          "grounding": {
+            "identifiers": {
+              "ncit": "C127773",
+              "apollosv": "00000211"
+            },
+            "context": {},
+            "modifiers": {}
+          },
+          "input": [
+            "i_{e}",
+            "s_{e}"
+          ],
+          "output": [
+            "i_{e}",
+            "i_{e}"
+          ],
+          "expression": null,
+          "properties": null
+        },
+        {
+          "id": "t1",
+          "name": null,
+          "description": "Transition from infected to recovered state as individuals recover from the infection.",
+          "grounding": {
+            "identifiers": {
+              "askemo": "0000013",
+              "hp": "0031797"
+            },
+            "context": {},
+            "modifiers": {}
+          },
+          "input": [
+            "i_{e}"
+          ],
+          "output": [
+            "r_{e}"
+          ],
+          "expression": null,
+          "properties": null
+        }
+      ],
+      "states": [
+        {
+          "id": "i_{e}",
+          "name": "i_{e}",
+          "description": "Infected state representing the number of infected individuals in the population.",
+          "grounding": {
+            "identifiers": {
+              "apollosv": "00000569"
+            },
+            "context": {},
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "individuals",
+            "expression_mathml": "<ci>individuals</ci>"
+          }
+        },
+        {
+          "id": "r_{e}",
+          "name": "r_{e}",
+          "description": "Recovered state representing the number of individuals who have recovered from the infection.",
+          "grounding": {
+            "identifiers": {
+              "ncit": "C173781"
+            },
+            "context": {},
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "individuals",
+            "expression_mathml": "<ci>individuals</ci>"
+          }
+        },
+        {
+          "id": "s_{e}",
+          "name": "s_{e}",
+          "description": "Susceptible state representing the number of individuals susceptible to the infection.",
+          "grounding": {
+            "identifiers": {
+              "apollosv": "00000516"
+            },
+            "context": {},
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "individuals",
+            "expression_mathml": "<ci>individuals</ci>"
+          }
+        }
+      ]
+    },
+    "semantics": {
+      "ode": {
+        "rates": [
+          {
+            "target": "t0",
+            "description": "Transition from susceptible to infected state due to contact with infected individuals.",
+            "expression": "s_{e}*β_{e}*i_{e}",
+            "expression_mathml": "<apply><times/><ci>s_{e}</ci><ci>β_{e}</ci><ci>i_{e}</ci></apply>"
+          },
+          {
+            "target": "t1",
+            "description": "Transition from infected to recovered state as individuals recover from the infection.",
+            "expression": "γ*i_{e}",
+            "expression_mathml": "<apply><times/><ci>γ</ci><ci>i_{e}</ci></apply>"
+          }
+        ],
+        "initials": [
+          {
+            "target": "s_{e}",
+            "description": "Susceptible state representing the number of individuals susceptible to the infection.",
+            "expression": "0.999",
+            "expression_mathml": "<cn>0.999</cn>"
+          },
+          {
+            "target": "i_{e}",
+            "description": "Infected state representing the number of infected individuals in the population.",
+            "expression": "0.001",
+            "expression_mathml": "<cn>0.001</cn>"
+          },
+          {
+            "target": "r_{e}",
+            "description": "Recovered state representing the number of individuals who have recovered from the infection.",
+            "expression": "0.0",
+            "expression_mathml": "<cn>0.0</cn>"
+          }
+        ],
+        "parameters": [
+          {
+            "id": "β_{e}",
+            "name": "β_{e}",
+            "description": "Transmission rate of the infection from infected to susceptible individuals.",
+            "grounding": {
+              "identifiers": {
+                "vsmo": "0000128",
+                "ncit": "C127773"
+              },
+              "context": {},
+              "modifiers": {}
+            },
+            "value": 1,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 0.59,
+                "maximum": 2.12
+              }
+            },
+            "units": {
+              "expression": "1/(individual*day)",
+              "expression_mathml": "<mfrac><mn>1</mn><mrow><mi>individual</mi><mo>*</mo><mi>day</mi></mrow></mfrac>"
+            }
+          },
+          {
+            "id": "γ",
+            "name": "γ",
+            "description": "Recovery rate of infected individuals.",
+            "grounding": {
+              "identifiers": {
+                "askemo": "0000013"
+              },
+              "context": {},
+              "modifiers": {}
+            },
+            "value": 1,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 0.26,
+                "maximum": 1.46
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<mfrac><mn>1</mn><mi>day</mi></mfrac>"
+            }
+          }
+        ],
+        "observables": [],
+        "time": null
+      },
+      "span": [],
+      "typing": null
+    },
+    "metadata": {
+      "annotations": {
+        "authors": [],
+        "references": [],
+        "locations": [],
+        "pathogens": [],
+        "diseases": [],
+        "hosts": [],
+        "model_types": []
+      },
+      "source": null,
+      "description": "PGgyPlN1bW1hcnk8L2gyPgo8cD5UaGUgbW9kZWwgZGVzY3JpYmVkIGluIHRoZSBkb2N1bWVudCBpcyBhIGhpZXJhcmNoaWNhbCBCYXllc2lhbiBtb2RlbCB0aGF0IGluY29ycG9yYXRlcyBzcGF0aWFsbHkgYW5kIHRlbXBvcmFsbHkgY29ycmVsYXRlZCBlcGlkZW1pb2xvZ2ljYWwgY29tcGFydG1lbnQgbW9kZWxzIHRvIGVzdGltYXRlIHRoZSBkeW5hbWljcyBvZiBTQVJTLUNvVi0yIG91dGJyZWFrcyBpbiB3aGl0ZS10YWlsZWQgZGVlciAoV1REKSBhY3Jvc3MgdGhlIFVuaXRlZCBTdGF0ZXMuIFRoZSBtb2RlbCB1c2VzIGEgU3VzY2VwdGlibGUtSW5mZWN0ZWQtUmVjb3ZlcmVkIChTSVIpIGZyYW1ld29yayB0byBxdWFudGlmeSBpbmZlY3Rpb24gcGFyYW1ldGVycyBzdWNoIGFzIHRyYW5zbWlzc2lvbiByYXRlcyBhbmQgZWZmZWN0aXZlIHJlcHJvZHVjdGlvbiByYXRpb3MuIFRoZSBtb2RlbCBpcyBkZXNpZ25lZCB0byBoYW5kbGUgdW5iYWxhbmNlZCBzcGF0aWFsLCB0ZW1wb3JhbCwgZ2VvZ3JhcGhpYywgYW5kIGRlbW9ncmFwaGljIGRpc3RyaWJ1dGlvbiBvZiBzYW1wbGVzLCBtYWtpbmcgaXQgc3VpdGFibGUgZm9yIGxhbmRzY2FwZS1zY2FsZSBzdXJ2ZWlsbGFuY2UgZGF0YS4gVGhlIG1vZGVsIGNhbiBsaWtlbHkgYmUgcmVwcmVzZW50ZWQgaW4gUGV0cmkgTmV0IGZvcm1hdCBhcyBpdCBpbnZvbHZlcyB0cmFuc2l0aW9ucyBiZXR3ZWVuIHN0YXRlcyAoc3VzY2VwdGlibGUsIGluZmVjdGVkLCByZWNvdmVyZWQpIGFuZCB1c2VzIHBhcmFtZXRlcnMgbGlrZSB0cmFuc21pc3Npb24gYW5kIHJlY292ZXJ5IHJhdGVzLjwvcD48YnI+CjxoMj5TcGVjczwvaDI+CjxoND5Eb21haW48L2g0Pgo8dWw+CjxsaT5FcGlkZW1pb2xvZ3k8L2xpPgo8bGk+V2lsZGxpZmUgRGlzZWFzZSBTdXJ2ZWlsbGFuY2U8L2xpPgo8L3VsPjxicj4KPGg0PlR5cGU8L2g0Pgo8cD5NYXRoZW1hdGljYWwgTW9kZWw8L3A+PGJyPgo8aDQ+U3BlY2lmaWNhdGlvbjwvaDQ+CjxwPlRoZSBtb2RlbCB1c2VzIGEgaGllcmFyY2hpY2FsIEJheWVzaWFuIGZyYW1ld29yayB3aXRoIHNwYXRpYWxseSBhbmQgdGVtcG9yYWxseSBjb3JyZWxhdGVkIFNJUiBjb21wYXJ0bWVudGFsIG1vZGVscy4gSXQgZXN0aW1hdGVzIHBhcmFtZXRlcnMgZm9yIDIsODkzIGNvdW50aWVzLCBhY2NvdW50aW5nIGZvciBzcGF0aWFsIGNvcnJlbGF0aW9uIHVzaW5nIGEgY29uZGl0aW9uYWwgYXV0b3JlZ3Jlc3NpdmUgKENBUikgcHJvY2Vzcy4gVGhlIG1vZGVsIGluY2x1ZGVzIHBhcmFtZXRlcnMgc3VjaCBhcyBsb2NhbCBlZmZlY3RpdmUgcmVwcm9kdWN0aW9uIHJhdGlvIChSX2UpIGFuZCB1c2VzIGNvdmFyaWF0ZXMgbGlrZSBodW1hbiBwb3B1bGF0aW9uIGRlbnNpdHkgYW5kIGRlZXIgaGFiaXRhdC48L3A+PGJyPgo8aDQ+U3RhdGVzPC9oND4KPHVsPgo8bGk+U3VzY2VwdGlibGU6IFJlcHJlc2VudHMgdGhlIG51bWJlciBvZiBpbmRpdmlkdWFscyBzdXNjZXB0aWJsZSB0byB0aGUgaW5mZWN0aW9uLCBtZWFzdXJlZCBpbiBpbmRpdmlkdWFscy4gVHJhbnNpdGlvbnMgdG8gaW5mZWN0ZWQgc3RhdGUgdXBvbiBjb250YWN0IHdpdGggaW5mZWN0ZWQgaW5kaXZpZHVhbHMuPC9saT4KPGxpPkluZmVjdGVkOiBSZXByZXNlbnRzIHRoZSBudW1iZXIgb2YgaW5mZWN0ZWQgaW5kaXZpZHVhbHMgaW4gdGhlIHBvcHVsYXRpb24sIG1lYXN1cmVkIGluIGluZGl2aWR1YWxzLiBUcmFuc2l0aW9ucyB0byByZWNvdmVyZWQgc3RhdGUgYXMgaW5kaXZpZHVhbHMgcmVjb3Zlci48L2xpPgo8bGk+UmVjb3ZlcmVkOiBSZXByZXNlbnRzIHRoZSBudW1iZXIgb2YgaW5kaXZpZHVhbHMgd2hvIGhhdmUgcmVjb3ZlcmVkIGZyb20gdGhlIGluZmVjdGlvbiwgbWVhc3VyZWQgaW4gaW5kaXZpZHVhbHMuPC9saT4KPC91bD48YnI+CjxoMj5QYXJhbWV0ZXJzPC9oMj4KPHVsPgo8bGk+VHJhbnNtaXNzaW9uIFJhdGUgKM6yX2UpOiBUaGUgcmF0ZSBhdCB3aGljaCBpbmZlY3Rpb24gaXMgdHJhbnNtaXR0ZWQgZnJvbSBpbmZlY3RlZCB0byBzdXNjZXB0aWJsZSBpbmRpdmlkdWFscywgbWVhc3VyZWQgaW4gMS8oaW5kaXZpZHVhbCpkYXkpLjwvbGk+CjxsaT5SZWNvdmVyeSBSYXRlICjOsyk6IFRoZSByYXRlIGF0IHdoaWNoIGluZmVjdGVkIGluZGl2aWR1YWxzIHJlY292ZXIsIG1lYXN1cmVkIGluIDEvZGF5LjwvbGk+CjwvdWw+PGJyPgo8aDI+VXNlczwvaDI+CjxoND5EaXJlY3QgVXNlPC9oND4KPHA+VGhlIG1vZGVsIGNhbiBiZSB1c2VkIHRvIHNpbXVsYXRlIGFuZCBhbmFseXplIHRoZSBzcHJlYWQgb2YgU0FSUy1Db1YtMiBpbiB3aGl0ZS10YWlsZWQgZGVlciBwb3B1bGF0aW9ucywgaGVscGluZyB0byBpbmZvcm0gc3VydmVpbGxhbmNlIGFuZCBjb250cm9sIHN0cmF0ZWdpZXMuPC9wPjxicj4KPGg0Pk91dCBPZiBTY29wZSBVc2U8L2g0Pgo8cD5UaGUgbW9kZWwgc2hvdWxkIG5vdCBiZSB1c2VkIGZvciBwcmVkaWN0aW5nIGluZGl2aWR1YWwtbGV2ZWwgaW5mZWN0aW9uIGV2ZW50cyBvciBmb3Igc3BlY2llcyBvdGhlciB0aGFuIHdoaXRlLXRhaWxlZCBkZWVyIHdpdGhvdXQgYXBwcm9wcmlhdGUgbW9kaWZpY2F0aW9ucy48L3A+PGJyPgo8aDI+QmlhcyBSaXNrcyBMaW1pdGF0aW9uczwvaDI+CjxoND5CaWFzZXM8L2g0Pgo8cD5UaGUgbW9kZWwgbWF5IGJlIGJpYXNlZCBkdWUgdG8gdW5iYWxhbmNlZCBzYW1wbGluZywgYXMgaXQgcmVsaWVzIG9uIG9wcG9ydHVuaXN0aWMgZGF0YSBjb2xsZWN0aW9uLjwvcD48YnI+CjxoND5SaXNrczwvaDQ+CjxwPlRoZXJlIGlzIGEgcmlzayBvZiBvdmVyZXN0aW1hdGluZyBvciB1bmRlcmVzdGltYXRpbmcgaW5mZWN0aW9uIHBhcmFtZXRlcnMgZHVlIHRvIHNwYXRpYWwgYW5kIHRlbXBvcmFsIGRhdGEgZ2Fwcy48L3A+PGJyPgo8aDQ+TGltaXRhdGlvbnM8L2g0Pgo8cD5UaGUgbW9kZWwncyBhY2N1cmFjeSBpcyBsaW1pdGVkIGJ5IHRoZSBhdmFpbGFiaWxpdHkgYW5kIHF1YWxpdHkgb2Ygc3VydmVpbGxhbmNlIGRhdGEsIGFuZCBpdCBtYXkgbm90IGNhcHR1cmUgYWxsIGVjb2xvZ2ljYWwgZmFjdG9ycyBpbmZsdWVuY2luZyB0cmFuc21pc3Npb24uPC9wPjxicj4KPGgyPlRlc3Rpbmc8L2gyPgo8aDQ+VmFsaWRhdGlvbjwvaDQ+CjxwPlRoZSBtb2RlbCB3YXMgdmFsaWRhdGVkIHRocm91Z2ggY29tcGFyaXNvbiB3aXRoIG9ic2VydmVkIHN1cnZlaWxsYW5jZSBkYXRhIGFuZCBjYWxpYnJhdGlvbiBjdXJ2ZXMuPC9wPjxicj4KPGg0Pk1ldHJpY3M8L2g0Pgo8cD5NZXRyaWNzIHVzZWQgaW5jbHVkZSB0aGUgZWZmZWN0aXZlIHJlcHJvZHVjdGlvbiByYXRpbyAoUl9lKSBhbmQgcHJldmFsZW5jZSBlc3RpbWF0ZXMuPC9wPjxicj4KPGgyPkdldHRpbmcgU3RhcnRlZDwvaDI+CjxoND5TdGVwczwvaDQ+Cjx1bD4KPGxpPkNvbGxlY3Qgc3VydmVpbGxhbmNlIGRhdGEgb24gU0FSUy1Db1YtMiBpbiB3aGl0ZS10YWlsZWQgZGVlci48L2xpPgo8bGk+SW5wdXQgZGF0YSBpbnRvIHRoZSBoaWVyYXJjaGljYWwgQmF5ZXNpYW4gbW9kZWwgZnJhbWV3b3JrLjwvbGk+CjxsaT5SdW4gdGhlIG1vZGVsIHRvIGVzdGltYXRlIGVwaWRlbWlvbG9naWNhbCBwYXJhbWV0ZXJzIGFuZCBwcmV2YWxlbmNlLjwvbGk+CjxsaT5BbmFseXplIHJlc3VsdHMgdG8gaW5mb3JtIHN1cnZlaWxsYW5jZSBhbmQgY29udHJvbCBzdHJhdGVnaWVzLjwvbGk+CjwvdWw+PGJyPgo8aDI+R2xvc3Nhcnk8L2gyPgo8dWw+CjxsaT5TSVIgTW9kZWw6IEEgY29tcGFydG1lbnRhbCBtb2RlbCBpbiBlcGlkZW1pb2xvZ3kgdGhhdCBkaXZpZGVzIHRoZSBwb3B1bGF0aW9uIGludG8gc3VzY2VwdGlibGUsIGluZmVjdGVkLCBhbmQgcmVjb3ZlcmVkIHN0YXRlcy48L2xpPgo8bGk+RWZmZWN0aXZlIFJlcHJvZHVjdGlvbiBSYXRpbyAoUl9lKTogVGhlIGF2ZXJhZ2UgbnVtYmVyIG9mIHNlY29uZGFyeSBpbmZlY3Rpb25zIHByb2R1Y2VkIGJ5IGFuIGluZmVjdGVkIGluZGl2aWR1YWwgaW4gYSBwb3B1bGF0aW9uLjwvbGk+CjwvdWw+PGJyPgo8aDI+QXV0aG9yczwvaDI+Cjx1bD4KPGxpPkpvc2h1YSBIZXdpdHQ8L2xpPgo8bGk+R3JldGUgV2lsc29uLUhlbmp1bTwvbGk+CjxsaT5EZXJlayBULiBDb2xsaW5zPC9saT4KPGxpPlRpbW90aHkgSi4gTGluZGVyPC9saT4KPGxpPkp1bGlhbm5hIEIuIExlbm9jaDwvbGk+CjxsaT5Kb25hdGhvbiBELiBIZWFsZTwvbGk+CjxsaT5DaHJpc3RvcGhlciBBLiBRdWludGFuYWw8L2xpPgo8bGk+Um9iZXJ0IFBsZXN6ZXdza2k8L2xpPgo8bGk+RGlsbG9uIFMuIE1jQnJpZGU8L2xpPgo8bGk+QW5kcmV3IFMuIEJvd21hbjwvbGk+CjxsaT5KZWZmcmV5IEMuIENoYW5kbGVyPC9saT4KPGxpPlN1c2FuIEEuIFNocmluZXI8L2xpPgo8bGk+U2FyYWggTi4gQmV2aW5zPC9saT4KPGxpPkRlbm5pcyBKLiBLb2hsZXI8L2xpPgo8bGk+UmljaGFyZCBCLiBDaGlwbWFuPC9saT4KPGxpPkFsbGVuIEwuIEdvc3NlcjwvbGk+CjxsaT5EYXZpZCBMLiBCZXJnbWFuPC9saT4KPGxpPlRob21hcyBKLiBEZUxpYmVydG88L2xpPgo8bGk+S2ltIE0uIFBlcGluPC9saT4KPC91bD48YnI+CjxoMj5DaXRhdGlvbnM8L2gyPgo8dWw+CjxsaT5DaGFuZGxlciwgSi4gQy4sIGV0IGFsLiAoMjAyMSkuIFNBUlMtQ29WLTIgZXhwb3N1cmUgaW4gd2lsZCB3aGl0ZS10YWlsZWQgZGVlci4gUE5BUywgMTE4KDQ3KSwgZTIxMTQ4MjgxMTguPC9saT4KPGxpPkhhbGUsIFYuIEwuLCBldCBhbC4gKDIwMjIpLiBTQVJTLUNvVi0yIGluZmVjdGlvbiBpbiBmcmVlLXJhbmdpbmcgd2hpdGUtdGFpbGVkIGRlZXIuIE5hdHVyZSwgNjAyLCA0ODEtNDg2LjwvbGk+CjwvdWw+PGJyPgo8aDI+TW9yZSBJbmZvcm1hdGlvbjwvaDI+CjxoND5GdW5kZWQgQnk8L2g0Pgo8cD5VU0RBIEFtZXJpY2FuIFJlc2N1ZSBQbGFuPC9wPjxicj4KPGg0PkxpbmtzPC9oND4KPHVsPgo8bGk+aHR0cHM6Ly9kb2kub3JnLzEwLjExNTUvMjAyNC83NTg5NTA5PC9saT4KPC91bD48YnI+Cg==",
+      "gollmCard": {
+        "summary": "The model described in the document is a hierarchical Bayesian model that incorporates spatially and temporally correlated epidemiological compartment models to estimate the dynamics of SARS-CoV-2 outbreaks in white-tailed deer (WTD) across the United States. The model uses a Susceptible-Infected-Recovered (SIR) framework to quantify infection parameters such as transmission rates and effective reproduction ratios. The model is designed to handle unbalanced spatial, temporal, geographic, and demographic distribution of samples, making it suitable for landscape-scale surveillance data. The model can likely be represented in Petri Net format as it involves transitions between states (susceptible, infected, recovered) and uses parameters like transmission and recovery rates.",
+        "specs": {
+          "domain": [
+            "Epidemiology",
+            "Wildlife Disease Surveillance"
+          ],
+          "type": "Mathematical Model",
+          "specification": "The model uses a hierarchical Bayesian framework with spatially and temporally correlated SIR compartmental models. It estimates parameters for 2,893 counties, accounting for spatial correlation using a conditional autoregressive (CAR) process. The model includes parameters such as local effective reproduction ratio (R_e) and uses covariates like human population density and deer habitat.",
+          "states": [
+            "Susceptible: Represents the number of individuals susceptible to the infection, measured in individuals. Transitions to infected state upon contact with infected individuals.",
+            "Infected: Represents the number of infected individuals in the population, measured in individuals. Transitions to recovered state as individuals recover.",
+            "Recovered: Represents the number of individuals who have recovered from the infection, measured in individuals."
+          ]
+        },
+        "parameters": [
+          "Transmission Rate (β_e): The rate at which infection is transmitted from infected to susceptible individuals, measured in 1/(individual*day).",
+          "Recovery Rate (γ): The rate at which infected individuals recover, measured in 1/day."
+        ],
+        "uses": {
+          "directUse": "The model can be used to simulate and analyze the spread of SARS-CoV-2 in white-tailed deer populations, helping to inform surveillance and control strategies.",
+          "outOfScopeUse": "The model should not be used for predicting individual-level infection events or for species other than white-tailed deer without appropriate modifications."
+        },
+        "biasRisksLimitations": {
+          "biases": "The model may be biased due to unbalanced sampling, as it relies on opportunistic data collection.",
+          "risks": "There is a risk of overestimating or underestimating infection parameters due to spatial and temporal data gaps.",
+          "limitations": "The model's accuracy is limited by the availability and quality of surveillance data, and it may not capture all ecological factors influencing transmission."
+        },
+        "testing": {
+          "validation": "The model was validated through comparison with observed surveillance data and calibration curves.",
+          "metrics": "Metrics used include the effective reproduction ratio (R_e) and prevalence estimates."
+        },
+        "gettingStarted": {
+          "steps": [
+            "Collect surveillance data on SARS-CoV-2 in white-tailed deer.",
+            "Input data into the hierarchical Bayesian model framework.",
+            "Run the model to estimate epidemiological parameters and prevalence.",
+            "Analyze results to inform surveillance and control strategies."
+          ]
+        },
+        "glossary": [
+          "SIR Model: A compartmental model in epidemiology that divides the population into susceptible, infected, and recovered states.",
+          "Effective Reproduction Ratio (R_e): The average number of secondary infections produced by an infected individual in a population."
+        ],
+        "authors": [
+          "Joshua Hewitt",
+          "Grete Wilson-Henjum",
+          "Derek T. Collins",
+          "Timothy J. Linder",
+          "Julianna B. Lenoch",
+          "Jonathon D. Heale",
+          "Christopher A. Quintanal",
+          "Robert Pleszewski",
+          "Dillon S. McBride",
+          "Andrew S. Bowman",
+          "Jeffrey C. Chandler",
+          "Susan A. Shriner",
+          "Sarah N. Bevins",
+          "Dennis J. Kohler",
+          "Richard B. Chipman",
+          "Allen L. Gosser",
+          "David L. Bergman",
+          "Thomas J. DeLiberto",
+          "Kim M. Pepin"
+        ],
+        "citations": [
+          "Chandler, J. C., et al. (2021). SARS-CoV-2 exposure in wild white-tailed deer. PNAS, 118(47), e2114828118.",
+          "Hale, V. L., et al. (2022). SARS-CoV-2 infection in free-ranging white-tailed deer. Nature, 602, 481-486."
+        ],
+        "moreInformation": {
+          "fundedBy": "USDA American Rescue Plan",
+          "links": [
+            "https://doi.org/10.1155/2024/7589509"
+          ]
+        }
+      },
+      "gollmExtractions": null,
+      "templateCard": null
+    }
+  },
+  "request": {
+    "constraints": [],
+    "parameters": [
+      {
+        "name": "β_{e}",
+        "label": "any",
+        "interval": {
+          "lb": 0.59,
+          "ub": 2.12
+        }
+      },
+      {
+        "name": "γ",
+        "label": "any",
+        "interval": {
+          "lb": 0.26,
+          "ub": 1.46
+        }
+      }
+    ],
+    "structure_parameters": [
+      {
+        "name": "schedules",
+        "schedules": [
+          {
+            "timepoints": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50,
+              60,
+              70,
+              80,
+              90,
+              100
+            ]
+          }
+        ]
+      }
+    ],
+    "config": {
+      "use_compartmental_constraints": true,
+      "normalization_constant": 0.999,
+      "normalize": false,
+      "tolerance": 0.2,
+      "verbosity": 0
+    }
+  }
+}

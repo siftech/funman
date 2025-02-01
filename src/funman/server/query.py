@@ -4,6 +4,7 @@ from collections import Counter
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from pydantic import BaseModel, ValidationInfo, field_validator
@@ -73,6 +74,22 @@ class FunmanWorkRequest(BaseModel):
                 None
             ] == 0, f"Constraints need names, found {name_counts[None]} constraints without names."
         return constraints
+
+    def time_horizon(self):
+        try:
+            schedules = next(
+                iter(
+                    [
+                        p
+                        for p in self.structure_parameters
+                        if p.name == "schedules"
+                    ]
+                )
+            )
+        except StopIteration:
+            l.exception("Could not find a Schedule structure parameter.")
+        time_horizon = max([max(s.timepoints) for s in schedules.schedules])
+        return time_horizon
 
 
 class FunmanProgress(BaseModel):
@@ -237,6 +254,9 @@ class FunmanResults(BaseModel):
     def is_final(self):
         return self._finalized
 
+    def time_horizon(self):
+        return self.request.time_horizon()
+
     def contract_model(self):
         """
         Use the parameter_space to contract the model parameter bounds and set self.contracted_model
@@ -249,13 +269,17 @@ class FunmanResults(BaseModel):
 
         # Get new bounds for each parameter
         amr_parameters = self.model._parameter_names()
+        last_step = self.parameter_space.last_step(true_only=True)
         parameter_bounds = {
-            param: self.parameter_space.outer_interval(param)
+            param: self.parameter_space.outer_interval(
+                param, true_only=True, steps=[last_step]
+            )
             for param in amr_parameters
         }
         self.contracted_model = self.model.contract_parameters(
             parameter_bounds
         )
+        return last_step
 
     def update_parameter_space(
         self, scenario: AnalysisScenario, results: ParameterSpace
@@ -292,7 +316,29 @@ class FunmanResults(BaseModel):
             l.exception(f"Unable to update progress due to exception: {e}")
 
         try:
-            self.contract_model()
+
+            before_params = {}
+            if self.contracted_model:
+                before_params = {
+                    p.id: (
+                        p.distribution.parameters["minimum"],
+                        p.distribution.parameters["maximum"],
+                    )
+                    for p in self.contracted_model.semantics.ode.parameters
+                    if p.distribution
+                }
+                # l.info(f"Before { before_params }")
+            last_step = self.contract_model()
+            after_params = {
+                p.id: (
+                    p.distribution.parameters["minimum"],
+                    p.distribution.parameters["maximum"],
+                )
+                for p in self.contracted_model.semantics.ode.parameters
+                if p.distribution
+            }
+            if after_params != before_params:
+                l.debug(f"Contracted @ {last_step} :  { after_params }")
         except NotImplementedError as e:
             l.info(
                 f"Bypassing output of contracted model because it is not implmented for this model type: {type(self.model)}"
@@ -358,7 +404,10 @@ class FunmanResults(BaseModel):
         }
 
     def dataframe(
-        self, points: List[Point], interpolate="linear", max_time=None
+        self,
+        points: Optional[List[Point]] = None,
+        interpolate="linear",
+        max_time=None,
     ):
         """
         Extract a timeseries as a Pandas dataframe.
@@ -388,13 +437,27 @@ class FunmanResults(BaseModel):
             to_plot += ["timer_t"]
 
         all_df = pd.DataFrame()
+
+        points = points if points else self.points()
+
         for i, point in enumerate(points):
             timeseries = self.symbol_timeseries(point, to_plot)
             df = pd.DataFrame.from_dict(timeseries)
 
             if interpolate:
-                df = df.infer_objects(copy=False).interpolate(
-                    method=interpolate
+                new_index = np.linspace(
+                    df["index"].min(),
+                    df["index"].max(),
+                    num=int(
+                        (df["index"].max() - df["index"].min())
+                        / df["index"].diff().min()
+                    )
+                    + 1,
+                )
+                df = (
+                    df.infer_objects(copy=False)
+                    .reindex(new_index)
+                    .interpolate(method=interpolate)
                 )
 
             df["id"] = i
@@ -442,17 +505,22 @@ class FunmanResults(BaseModel):
         timestep = point.timestep()
         max_t = point.schedule.timepoints[timestep]
 
-        a_series["index"] = list(range(0, int(max_t) + 1))
+        a_series["index"] = point.schedule.timepoints
+
         for var, tps in series.items():
 
             if isinstance(tps, dict):
-                vals = [None] * (int(max_t) + 1)
+                vals = [None] * len(a_series["index"])
                 for t, v in tps.items():
-                    if t.isdigit() and int(t) <= int(max_t):
-                        vals[int(t)] = v
+                    i = point.schedule.timepoints.index(t)
+                    vals[i] = v
+                    # if (not isinstance(t, float) or t.isdigit()) and int(
+                    #     t
+                    # ) <= int(max_t):
+                    #     vals[int(t)] = v
                 a_series[var] = vals
             else:
-                a_series[var] = [tps] * (int(max_t) + 1)
+                a_series[var] = [tps] * len(a_series["index"])
         return a_series
 
     def symbol_values(
@@ -498,7 +566,7 @@ class FunmanResults(BaseModel):
                 var, self.model
             ):
                 var_name, timepoint = self._split_symbol(var)
-                if timepoint:
+                if timepoint is not None:
                     if var_name not in symbols:
                         symbols[var_name] = {}
                     symbols[var_name][timepoint] = var
@@ -515,6 +583,13 @@ class FunmanResults(BaseModel):
         except ValueError:
             s = symbol
             t = None
+        try:
+            t = int(t)
+        except Exception:
+            try:
+                t = float(t)
+            except Exception:
+                t = None
         return s, t
 
     def plot_trajectories(self, variable: str, num: int = 200):

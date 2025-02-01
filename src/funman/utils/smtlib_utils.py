@@ -1,11 +1,13 @@
 import logging
 import warnings
+from io import StringIO
+from typing import Dict
 
 import pysmt.smtlib.commands as smtcmd
 from pysmt.constants import Numeral
 from pysmt.environment import get_env
 from pysmt.exceptions import NoLogicAvailableError, UndefinedLogicError
-from pysmt.logics import SMTLIB2_LOGICS, Logic, get_closer_smtlib_logic
+from pysmt.logics import QF_NRA, SMTLIB2_LOGICS, Logic, get_closer_smtlib_logic
 from pysmt.oracles import get_logic
 from pysmt.smtlib.printers import (
     SmtDagPrinter,
@@ -189,7 +191,7 @@ def smtlibscript_from_formula(formula, logic=None):
     return script
 
 
-def model_to_dict(self):
+def model_to_dict(self, escaped_parameter_map: Dict[str, str]):
     d = {}
     for var in self:
         try:
@@ -207,10 +209,25 @@ def model_to_dict(self):
                 value = 0.0
             else:
                 value = float(value)
-            d[var[0].symbol_name()] = value
+            varname = var[0].symbol_name()
+            if varname in escaped_parameter_map:
+                varname = escaped_parameter_map[varname]
+            if varname != "funman_prime_symbol":
+                d[varname] = value
         except OverflowError as e:
             raise e
     return d
 
 
 Model.to_dict = model_to_dict
+
+
+def str_smtlib(formula):
+    result = None
+    with StringIO() as f:
+        smtlibscript_from_formula_list(
+            [formula],
+            logic=QF_NRA,
+        ).serialize(f, daggify=False)
+        result = f.getvalue()
+    return result

@@ -126,7 +126,7 @@ class FUNMANConfig(BaseModel):
     uniform_box_splits: bool = False
     """ Uniformly split boxes in box search, instead of separating points in boxes """
 
-    dreal_prefer_parameters: List[str] = []
+    dreal_prefer_parameters: Optional[List[str]] = None
     """ Prefer to split the listed parameters in dreal """
 
     point_based_evaluation: bool = False

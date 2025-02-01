@@ -40,7 +40,10 @@ class Box(BaseModel):
 
     @staticmethod
     def from_point(
-        point: Point, radius: float = None, radius_vars=None
+        point: Point,
+        parameters: Dict[str, Parameter] = None,
+        radius: float = None,
+        radius_vars=None,
     ) -> "Box":
         box = Box()
         if radius is not None and radius_vars is not None:
@@ -51,6 +54,7 @@ class Box(BaseModel):
                 p: (
                     Interval(lb=v - radius, ub=v + radius)
                     if p in radius_vars
+                    and (parameters is None or p in parameters)
                     else Interval.from_value(v)
                 )
                 for p, v in point.values.items()
@@ -58,8 +62,14 @@ class Box(BaseModel):
 
         else:
             box.bounds = {
-                p: Interval.from_value(v) for p, v in point.values.items()
+                p: Interval.from_value(v)
+                for p, v in point.values.items()
+                if parameters is None or p in parameters
             }
+        if "timestep" in point.values:
+            box.bounds["timestep"] = Interval.from_value(
+                point.values["timestep"]
+            )
         box.points.append(point)
         box.schedule = point.schedule
         box.label = point.label

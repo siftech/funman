@@ -37,9 +37,9 @@ class Distribution(BaseModel):
 
 
 class Grounding(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
+    # model_config = ConfigDict(
+    #     extra="forbid",
+    # )
     identifiers: Dict[str, Any]
     modifiers: Optional[Dict[str, Any]] = None
 

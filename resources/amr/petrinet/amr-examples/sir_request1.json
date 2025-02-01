@@ -51,20 +51,19 @@
   ],
   "structure_parameters": [
     {
-      "name": "num_steps",
-      "interval": {
-        "lb": 1,
-        "ub": 5
-      },
-      "label": "all"
-    },
-    {
-      "name": "step_size",
-      "interval": {
-        "lb": 1,
-        "ub": 1
-      },
-      "label": "all"
+      "name": "schedules",
+      "schedules": [
+        {
+          "timepoints": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
     }
   ],
   "config": {

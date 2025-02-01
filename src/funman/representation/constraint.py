@@ -14,6 +14,7 @@ from typing_extensions import Annotated
 
 from funman.model import FunmanModel
 from funman.model.query import Query
+from funman.utils.sympy_utils import replace_reserved
 
 from .interval import Interval
 from .parameter import ModelParameter, StructureParameter
@@ -40,6 +41,7 @@ class Constraint(BaseModel):
     @model_validator(mode="after")
     def check_name(self) -> "FUNMANConfig":
         self._escaped_name = self.name.replace(" ", "_").replace("-", "_")
+        self._escaped_name = replace_reserved(self._escaped_name)
         return self
 
 

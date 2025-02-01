@@ -49,7 +49,7 @@ from funman.translate.translate import EncodingOptions
 from funman.utils import math_utils
 from funman.utils.sympy_utils import replace_reserved, to_sympy
 
-from ..representation import Point
+from ..representation import Point, Timepoint
 
 l = logging.getLogger(__name__)
 
@@ -65,6 +65,7 @@ class AnalysisScenario(ABC, BaseModel):
     """True if its okay when the volume of the search space is empty (e.g., when it is a point)"""
     empty_volume_ok: bool = False
     model_config = ConfigDict(extra="forbid")
+    init_time: Timepoint = 0.0
 
     model: Union[
         GeneratedPetriNetModel,
@@ -153,6 +154,18 @@ class AnalysisScenario(ABC, BaseModel):
 
         return search
 
+    def parameter_map(self) -> Dict[str, Parameter]:
+        return {p.name: p for p in self.parameters}
+
+    def escaped_parameter_map(self) -> Dict[str, str]:
+        rmap = {}
+        for p in self.parameters:
+            if hasattr(p, "_escaped_name"):
+                rmap[p._escaped_name] = p.name
+            else:
+                rmap[p.name] = p.name
+        return rmap
+
     def _initialize_encodings(self, config: "FUNMANConfig"):
         # self._assume_model = Symbol("assume_model")
         self._smt_encoder = self.model.default_encoder(config, self)
@@ -170,9 +183,6 @@ class AnalysisScenario(ABC, BaseModel):
         for schedule in self._smt_encoder._timed_model_elements[
             "schedules"
         ].schedules:
-            assert (
-                0 in schedule.timepoints
-            ), "Schedule for encoding does not include a timepoint 0"
             encoding = self._smt_encoder.initialize_encodings(
                 self, len(schedule.timepoints)
             )
@@ -364,9 +374,12 @@ class AnalysisScenario(ABC, BaseModel):
     ) -> Optional[Timeseries]:
         init = {
             var: value
-            for var, value in point.values_at(0, self.model).items()
+            for var, value in point.values_at(
+                point.schedule.timepoints[0], self.model
+            ).items()
             if var != "timer_t"
         }
+
         parameters = {
             p: point.value_of(p) for p in self.model._parameter_names()
         }
@@ -403,26 +416,30 @@ class AnalysisScenario(ABC, BaseModel):
         unreseved_parameters = {
             replace_reserved(k): v for k, v in parameters.items()
         }
-        for o in observables:
-            o_name = self.model._observable_name(o)
-            # o_fn = o.expression
-            o_fn = self.model.observable_expression(o_name)
-            # Evaluate o_fn for each time in timeseries
-            if self.model.is_timed_observable(o_name):
-                values = []
-                for ti, t in enumerate(timepoints):
-                    # state_at_t = [timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns)]
-                    state_at_t = {
-                        c: timeseries.data[ci][ti]
-                        for ci, c in enumerate(timeseries.columns)
-                        if c != "time"
-                    }
-                    value = o_fn[2].evalf(subs={**state_at_t, **parameters})
-                    values.append(float(value))
-                data[o_name] = values
-            else:
-                value = o_fn[2].evalf(subs={**unreseved_parameters})
-                data[o_name] = float(value)
+
+        if observables:
+            for o in observables:
+                o_name = self.model._observable_name(o)
+                # o_fn = o.expression
+                o_fn = self.model.observable_expression(o_name)
+                # Evaluate o_fn for each time in timeseries
+                if self.model.is_timed_observable(o_name):
+                    values = []
+                    for ti, t in enumerate(timepoints):
+                        # state_at_t = [timeseries.data[ci][ti] for ci, c in enumerate(timeseries.columns)]
+                        state_at_t = {
+                            c: timeseries.data[ci][ti]
+                            for ci, c in enumerate(timeseries.columns)
+                            if c != "time"
+                        }
+                        value = o_fn[2].evalf(
+                            subs={**state_at_t, **parameters}
+                        )
+                        values.append(float(value))
+                    data[o_name] = values
+                else:
+                    value = o_fn[2].evalf(subs={**unreseved_parameters})
+                    data[o_name] = float(value)
         return data
 
     def simulate_scenario(self, config: "FUNMANConfig") -> Point:
@@ -458,7 +475,7 @@ class AnalysisScenario(ABC, BaseModel):
 
         values = {
             **{
-                f"{var}_{int(timepoint)}": timeseries.data[var_idx + 1][
+                f"{var}_{str(timepoint)}": timeseries.data[var_idx + 1][
                     timestep
                 ]
                 for var_idx, var in enumerate(timeseries.columns[1:])

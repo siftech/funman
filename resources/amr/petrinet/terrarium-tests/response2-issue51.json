@@ -1,0 +1,491 @@
+{
+    "id": "xyz",
+    "model": {
+        "name": "model_b4c45491-3081-41aa-a3be-a784706839e0",
+        "init_values": {},
+        "parameter_bounds": {},
+        "petrinet": {
+            "header": {
+                "name": "SIR (relative)",
+                "schema_": "https://github.com/DARPA-ASKEM/Model-Representations/blob/main/petrinet/petrinet_schema.json",
+                "schema_name": "petrinet",
+                "description": "This is a model from equations",
+                "model_version": "0.1"
+            },
+            "properties": null,
+            "model": {
+                "states": [
+                    {
+                        "id": "I",
+                        "name": "I",
+                        "description": null,
+                        "grounding": null,
+                        "units": null
+                    },
+                    {
+                        "id": "R",
+                        "name": "R",
+                        "description": null,
+                        "grounding": null,
+                        "units": null
+                    },
+                    {
+                        "id": "S",
+                        "name": "S",
+                        "description": null,
+                        "grounding": null,
+                        "units": null
+                    }
+                ],
+                "transitions": [
+                    {
+                        "id": "t0",
+                        "input": [
+                            "I",
+                            "S"
+                        ],
+                        "output": [
+                            "I",
+                            "I"
+                        ],
+                        "grounding": null,
+                        "properties": null
+                    },
+                    {
+                        "id": "t1",
+                        "input": [
+                            "I"
+                        ],
+                        "output": [
+                            "R"
+                        ],
+                        "grounding": null,
+                        "properties": null
+                    }
+                ]
+            },
+            "semantics": {
+                "ode": {
+                    "rates": [
+                        {
+                            "target": "t0",
+                            "expression": "I*β*S",
+                            "expression_mathml": "<apply><times/><ci>I</ci><ci>β</ci><ci>S</ci></apply>"
+                        },
+                        {
+                            "target": "t1",
+                            "expression": "γ*I",
+                            "expression_mathml": "<apply><times/><ci>γ</ci><ci>I</ci></apply>"
+                        }
+                    ],
+                    "initials": [
+                        {
+                            "target": "S",
+                            "expression": "0.99",
+                            "expression_mathml": "<cn>0.98999999999999999</cn>"
+                        },
+                        {
+                            "target": "I",
+                            "expression": "0.01",
+                            "expression_mathml": "<cn>0.01</cn>"
+                        },
+                        {
+                            "target": "R",
+                            "expression": "0.0",
+                            "expression_mathml": "<cn>0.0</cn>"
+                        }
+                    ],
+                    "parameters": [
+                        {
+                            "id": "β",
+                            "name": "β",
+                            "description": null,
+                            "value": 1,
+                            "grounding": null,
+                            "distribution": {
+                                "type": "StandardUniform1",
+                                "parameters": {
+                                    "minimum": 0.1,
+                                    "maximum": 1.5
+                                }
+                            },
+                            "units": null
+                        },
+                        {
+                            "id": "γ",
+                            "name": "γ",
+                            "description": null,
+                            "value": 1,
+                            "grounding": null,
+                            "distribution": {
+                                "type": "StandardUniform1",
+                                "parameters": {
+                                    "minimum": 0.05,
+                                    "maximum": 1
+                                }
+                            },
+                            "units": null
+                        }
+                    ],
+                    "observables": [],
+                    "time": null
+                },
+                "typing": null,
+                "span": []
+            },
+            "metadata": {
+                "annotations": {
+                    "authors": [],
+                    "references": [],
+                    "locations": [],
+                    "pathogens": [],
+                    "diseases": [],
+                    "hosts": [],
+                    "model_types": []
+                },
+                "source": null,
+                "gollmCard": null,
+                "gollmExtractions": null,
+                "templateCard": null
+            },
+            "id": "4cd3210d-b095-4296-b27a-05368ddb799a",
+            "createdOn": "2024-11-05T15:50:33.376+00:00",
+            "updatedOn": "2024-11-06T21:04:46.375+00:00",
+            "name": "SIR (relative)",
+            "fileNames": [],
+            "temporary": false,
+            "publicAsset": false
+        }
+    },
+    "progress": {
+        "progress": 1,
+        "coverage_of_search_space": 0,
+        "coverage_of_representable_space": 0
+    },
+    "request": {
+        "query": null,
+        "constraints": [
+            {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                    "lb": 4,
+                    "ub": 8,
+                    "closed_upper_bound": true,
+                    "original_width": 4,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                    "lb": -1.7976931348623157e+308,
+                    "ub": 0.1,
+                    "closed_upper_bound": false,
+                    "original_width": 1.7976931348623157e+308,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "variables": [
+                    "I"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": false
+            },
+            {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                    "lb": 0,
+                    "ub": 10,
+                    "closed_upper_bound": true,
+                    "original_width": 10,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                    "lb": 0,
+                    "ub": 1.7976931348623157e+308,
+                    "closed_upper_bound": false,
+                    "original_width": 1.7976931348623157e+308,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "variables": [
+                    "I"
+                ],
+                "weights": [
+                    1
+                ],
+                "derivative": false
+            }
+        ],
+        "parameters": [
+            {
+                "name": "β",
+                "interval": {
+                    "lb": 0.1,
+                    "ub": 1.5,
+                    "closed_upper_bound": false,
+                    "original_width": 1.4000000000000001,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "label": "all"
+            },
+            {
+                "name": "γ",
+                "interval": {
+                    "lb": 0.05,
+                    "ub": 1,
+                    "closed_upper_bound": false,
+                    "original_width": 0.95,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "label": "all"
+            }
+        ],
+        "config": {
+            "tolerance": 0.05,
+            "queue_timeout": 1,
+            "number_of_processes": 1,
+            "wait_timeout": null,
+            "wait_action_timeout": 0.05,
+            "solver": "dreal",
+            "num_steps": 2,
+            "step_size": 1,
+            "num_initial_boxes": 1,
+            "solver_timeout": null,
+            "initial_state_tolerance": 0,
+            "save_smtlib": null,
+            "dreal_precision": 0.1,
+            "dreal_log_level": "off",
+            "constraint_noise": 0,
+            "dreal_mcts": true,
+            "substitute_subformulas": false,
+            "normalization_constant": 1,
+            "use_compartmental_constraints": false,
+            "compartmental_constraint_noise": 0.01,
+            "normalize": false,
+            "simplify_query": false,
+            "series_approximation_threshold": null,
+            "profile": false,
+            "taylor_series_order": null,
+            "corner_points": false,
+            "verbosity": 20,
+            "use_transition_symbols": false,
+            "uniform_box_splits": false,
+            "dreal_prefer_parameters": null,
+            "point_based_evaluation": false,
+            "prioritize_box_entropy": true,
+            "mode": "mode_smt",
+            "random_seed": 0
+        },
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "interval": {
+                    "lb": -1.7976931348623157e+308,
+                    "ub": 1.7976931348623157e+308,
+                    "closed_upper_bound": false,
+                    "original_width": null,
+                    "normalized": false,
+                    "unnormalized_lb": null,
+                    "unnormalized_ub": null
+                },
+                "label": "any",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            1,
+                            3,
+                            5,
+                            6,
+                            8,
+                            10
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "done": true,
+    "error": false,
+    "error_message": null,
+    "parameter_space": {
+        "num_dimensions": 3,
+        "true_boxes": [],
+        "false_boxes": [],
+        "unknown_points": []
+    },
+    "timing": {
+        "start_time": "2024-11-07T15:27:45.126533",
+        "end_time": null,
+        "total_time": null,
+        "solver_time": null,
+        "encoding_time": null,
+        "progress_timeseries": [],
+        "additional_time": {}
+    },
+    "contracted_model": {
+        "header": {
+            "name": "SIR (relative)",
+            "schema_": "https://github.com/DARPA-ASKEM/Model-Representations/blob/main/petrinet/petrinet_schema.json",
+            "schema_name": "petrinet",
+            "description": "This is a model from equations",
+            "model_version": "0.1"
+        },
+        "properties": null,
+        "model": {
+            "states": [
+                {
+                    "id": "I",
+                    "name": "I",
+                    "description": null,
+                    "grounding": null,
+                    "units": null
+                },
+                {
+                    "id": "R",
+                    "name": "R",
+                    "description": null,
+                    "grounding": null,
+                    "units": null
+                },
+                {
+                    "id": "S",
+                    "name": "S",
+                    "description": null,
+                    "grounding": null,
+                    "units": null
+                }
+            ],
+            "transitions": [
+                {
+                    "id": "t0",
+                    "input": [
+                        "I",
+                        "S"
+                    ],
+                    "output": [
+                        "I",
+                        "I"
+                    ],
+                    "grounding": null,
+                    "properties": null
+                },
+                {
+                    "id": "t1",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "grounding": null,
+                    "properties": null
+                }
+            ]
+        },
+        "semantics": {
+            "ode": {
+                "rates": [
+                    {
+                        "target": "t0",
+                        "expression": "I*β*S",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>β</ci><ci>S</ci></apply>"
+                    },
+                    {
+                        "target": "t1",
+                        "expression": "γ*I",
+                        "expression_mathml": "<apply><times/><ci>γ</ci><ci>I</ci></apply>"
+                    }
+                ],
+                "initials": [
+                    {
+                        "target": "S",
+                        "expression": "0.99",
+                        "expression_mathml": "<cn>0.98999999999999999</cn>"
+                    },
+                    {
+                        "target": "I",
+                        "expression": "0.01",
+                        "expression_mathml": "<cn>0.01</cn>"
+                    },
+                    {
+                        "target": "R",
+                        "expression": "0.0",
+                        "expression_mathml": "<cn>0.0</cn>"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "id": "β",
+                        "name": "β",
+                        "description": null,
+                        "value": 1,
+                        "grounding": null,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.1,
+                                "maximum": 1.5
+                            }
+                        },
+                        "units": null
+                    },
+                    {
+                        "id": "γ",
+                        "name": "γ",
+                        "description": null,
+                        "value": 1,
+                        "grounding": null,
+                        "distribution": {
+                            "type": "StandardUniform1",
+                            "parameters": {
+                                "minimum": 0.05,
+                                "maximum": 1
+                            }
+                        },
+                        "units": null
+                    }
+                ],
+                "observables": [],
+                "time": null
+            },
+            "typing": null,
+            "span": []
+        },
+        "metadata": {
+            "annotations": {
+                "authors": [],
+                "references": [],
+                "locations": [],
+                "pathogens": [],
+                "diseases": [],
+                "hosts": [],
+                "model_types": []
+            },
+            "source": null,
+            "gollmCard": null,
+            "gollmExtractions": null,
+            "templateCard": null
+        },
+        "id": "4cd3210d-b095-4296-b27a-05368ddb799a",
+        "createdOn": "2024-11-05T15:50:33.376+00:00",
+        "updatedOn": "2024-11-06T21:04:46.375+00:00",
+        "name": "SIR (relative)",
+        "fileNames": [],
+        "temporary": false,
+        "publicAsset": false
+    },
+    "modelConfigurationId": "78f842cc-3a32-44e4-9334-e2fab4aa22da"
+}
