@@ -8,6 +8,7 @@ import numpy as np
 import sympy
 from pydantic import BaseModel, ConfigDict
 from pysmt.shortcuts import TRUE, And, Solver
+from pysmt.logics import QF_NRA
 
 from funman import (
     NEG_INFINITY,
@@ -387,6 +388,14 @@ class AnalysisScenario(ABC, BaseModel):
             model=self.model, init=init, parameters=parameters, tvect=tvect
         )
         timeseries = simulator.sim()
+
+        observable_timeseries = self.compute_observables(
+            timeseries, parameters
+        )
+        for k, v in observable_timeseries.items():
+            timeseries.data.append(v)
+            timeseries.columns.append(k)
+            
         # timeseries = np.array([[tvect[t], timeseries[t]] for t in range(len(tvect))])
         return timeseries
 
@@ -524,7 +533,7 @@ class AnalysisScenario(ABC, BaseModel):
         for point in points:
             timeseries = self.run_point_simulation(
                 point, point.relevant_timepoints(self.model)
-            )
+            ) if not point.simulation else point.simulation
             sim_results.append((point, timeseries))
             point.simulation = timeseries
 
@@ -535,7 +544,26 @@ class AnalysisScenario(ABC, BaseModel):
                 )
                 continue
 
-            with Solver() as solver:
+            if config.solver == "dreal":
+                opts = {
+                    "dreal_precision": config.dreal_precision,
+                    "dreal_log_level": config.dreal_log_level,
+                    "dreal_mcts": config.dreal_mcts,
+                    "preferred": (
+                        config.dreal_prefer_parameters
+                        if config.dreal_prefer_parameters
+                        else [p.name for p in self.parameters]
+                    ),
+                    "random_seed": config.random_seed,
+                }
+            else:
+                opts = {}
+
+            with Solver(
+                name=config.solver,
+                logic=QF_NRA,
+                solver_options=opts,
+            ) as solver:
                 sim_encoding = self.encode_timeseries_verification(
                     point, timeseries
                 )

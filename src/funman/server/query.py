@@ -455,7 +455,7 @@ class FunmanResults(BaseModel):
                     + 1,
                 )
                 df = (
-                    df.infer_objects(copy=False)
+                    df.set_index("index").infer_objects(copy=False)
                     .reindex(new_index)
                     .interpolate(method=interpolate)
                 )

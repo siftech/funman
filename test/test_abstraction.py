@@ -911,7 +911,7 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.000001
-        timepoints = [float(t) for t in list(range(0, 2, 1))]
+        timepoints = [float(t) for t in list(range(0, 151, 10))]
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -929,27 +929,9 @@ class TestUseCases(unittest.TestCase):
         # Add constraint on I
         sirhd_stratified_request.constraints.append(
             StateVariableConstraint(
-                name="I upper", variable="I", interval=Interval(ub=1200)
+                name="I upper", variable="I", interval=Interval(ub=35500000.0), soft=False
             )
         )
-
-        # with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
-        #     sirhd_base_request = FunmanWorkRequest.model_validate_json(
-        #         f.read()
-        #     )
-        # sirhd_base_request.config.mode = "mode_odeint"
-        # sirhd_base_request.structure_parameters[0].schedules[
-        #     0
-        # ].timepoints = timepoints
-
-        # runner = Runner()
-        # base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_stratified_request)
-
-        # assert (
-        #     base_result
-        # ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
-        # (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         vac_T = StratumAttributeValue(name="T")
         vac_F = StratumAttributeValue(name="F")
@@ -1194,6 +1176,7 @@ class TestUseCases(unittest.TestCase):
             ),
         ]
 
+        # transformation_sequence = vac_stratifications + vac_abstractions
         transformation_sequence = vac_stratifications + vac_abstractions
         vac_models = []
 
@@ -1240,7 +1223,7 @@ class TestUseCases(unittest.TestCase):
             for m in vac_models
         ]
 
-        bounded_vac_models = [m.formulate_bounds() for m in vac_models]
+        bounded_vac_models = [m.formulate_bounds() for m in [base_model] + vac_models]
 
         for m in bounded_vac_models:
             # infected_states_lb = [s.id for s in m.petrinet.model.states if s.id.startswith("I") and s.id.endswith("_lb")]
@@ -1261,16 +1244,21 @@ class TestUseCases(unittest.TestCase):
         #         additive_bounds={"ub": 1200},
         #     )
         # )
+        sirhd_stratified_request.config.use_compartmental_constraints = False
 
         results = [runner.run(base_model.petrinet, sirhd_stratified_request)]
         results += [
             runner.run(m.petrinet, sirhd_stratified_request)
-            for m in vac_models[0 : len(vac_stratifications) + 1]
+            for m in vac_models[0 : len(vac_stratifications)]
         ]
         results += [
             runner.run(m.petrinet, sirhd_stratified_request)
             for m in bounded_vac_models
         ]
+        # results = [
+        #     runner.run(m.petrinet, sirhd_stratified_request)
+        #     for m in bounded_vac_models
+        # ]
 
         m = []
         for i, result in enumerate(results):
@@ -1288,11 +1276,16 @@ class TestUseCases(unittest.TestCase):
                 f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
             )
             df["I_bound"] = len(result.parameter_space.true_points()) > 0
-            df = df.set_index(["model_index", "index"])
+            # df = df.set_index(["model_index", "index"])
+            df.index = df.index.rename("time")
+            df = df.reset_index().set_index(["model_index", "time"])
             m.append(df)
         dfs = pd.concat(m)
-        runtimes = dfs.reset_index(["index"])[
-            ["runtime (s)", "description", "I_bound"]
+
+        runtimes = dfs.reset_index(["time"])[
+            ["runtime (s)", "description", "I_bound"
+            # , "I", *[b for b in dfs.columns if b.startswith("beta")]
+            ]
         ].drop_duplicates()
         self.l.info(runtimes)
         runtimes.to_csv("stratify_analysis_runtimes.csv")
