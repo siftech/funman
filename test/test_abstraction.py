@@ -914,6 +914,7 @@ class TestUseCases(unittest.TestCase):
         N= 150000000.0
         max_I = 0.3 * N  #3.542629e+07
         timepoints = [float(t) for t in list(range(0, 201, 10))]
+        num_age_groups = 5
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -947,28 +948,32 @@ class TestUseCases(unittest.TestCase):
             }
         )
 
-        age_0 = StratumAttributeValue(name="0")
-        age_1 = StratumAttributeValue(name="1")
-        age_2 = StratumAttributeValue(name="2")
-        age_3 = StratumAttributeValue(name="3")
-        age_4 = StratumAttributeValue(name="4")
-        age_5 = StratumAttributeValue(name="5")
-        age_6 = StratumAttributeValue(name="6")
-        age_7 = StratumAttributeValue(name="7")
-        age_8 = StratumAttributeValue(name="8")
-        age_9 = StratumAttributeValue(name="9")
+        age_values = [StratumAttributeValue(name=str(i)) for i in range(num_age_groups)]
+        # age_0 = StratumAttributeValue(name="0")
+        # age_1 = StratumAttributeValue(name="1")
+        # age_2 = StratumAttributeValue(name="2")
+        # age_3 = StratumAttributeValue(name="3")
+        # age_4 = StratumAttributeValue(name="4")
+        # age_5 = StratumAttributeValue(name="5")
+        # age_6 = StratumAttributeValue(name="6")
+        # age_7 = StratumAttributeValue(name="7")
+        # age_8 = StratumAttributeValue(name="8")
+        # age_9 = StratumAttributeValue(name="9")
         
         age_stratum_attr = StratumAttribute(
-            name="age", values={age_0, age_1, age_2
+            name="age", values=age_values
+            # {age_0, age_1, age_2
             # , age_3, age_4, age_5, age_6, age_7, age_8, age_9
-            }
+            # }
         )
         age_stratum = Stratum(
             values={
                 age_stratum_attr: {
-                    StratumAttributeValueSet(values={age_0}),
-                    StratumAttributeValueSet(values={age_1}),
-                    StratumAttributeValueSet(values={age_2}),
+                    StratumAttributeValueSet(values={age_value})
+                    for age_value in age_values
+                    # StratumAttributeValueSet(values={age_0}),
+                    # StratumAttributeValueSet(values={age_1}),
+                    # StratumAttributeValueSet(values={age_2}),
                     # StratumAttributeValueSet(values={age_3}),
                     # StratumAttributeValueSet(values={age_4}),
                     # StratumAttributeValueSet(values={age_5}),
@@ -1028,7 +1033,7 @@ class TestUseCases(unittest.TestCase):
                             input_stratum=StratumValuation(
                                 values={
                                     age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_0}
+                                        values={age_value}
                                     ),
                                     vac_stratum_attr: StratumAttributeValueSet(
                                         values={vac_T}
@@ -1036,35 +1041,49 @@ class TestUseCases(unittest.TestCase):
                                 }
                             ),
                             output_stratum=StratumValuation(),
-                        ): beta.value
-                        - 2 * epsilon,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_1}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_T}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_2}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_T}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value
-                        + 2 * epsilon,
+                        ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.5)))
+                        for i, age_value in enumerate(age_values)
+                        # StrataTransition(
+                        #     input_stratum=StratumValuation(
+                        #         values={
+                        #             age_stratum_attr: StratumAttributeValueSet(
+                        #                 values={age_0}
+                        #             ),
+                        #             vac_stratum_attr: StratumAttributeValueSet(
+                        #                 values={vac_T}
+                        #             ),
+                        #         }
+                        #     ),
+                        #     output_stratum=StratumValuation(),
+                        # ): beta.value
+                        # - 2 * epsilon,
+                        # StrataTransition(
+                        #     input_stratum=StratumValuation(
+                        #         values={
+                        #             age_stratum_attr: StratumAttributeValueSet(
+                        #                 values={age_1}
+                        #             ),
+                        #             vac_stratum_attr: StratumAttributeValueSet(
+                        #                 values={vac_T}
+                        #             ),
+                        #         }
+                        #     ),
+                        #     output_stratum=StratumValuation(),
+                        # ): beta.value,
+                        # StrataTransition(
+                        #     input_stratum=StratumValuation(
+                        #         values={
+                        #             age_stratum_attr: StratumAttributeValueSet(
+                        #                 values={age_2}
+                        #             ),
+                        #             vac_stratum_attr: StratumAttributeValueSet(
+                        #                 values={vac_T}
+                        #             ),
+                        #         }
+                        #     ),
+                        #     output_stratum=StratumValuation(),
+                        # ): beta.value
+                        # + 2 * epsilon,
                     }
                 },
             ),
@@ -1079,7 +1098,7 @@ class TestUseCases(unittest.TestCase):
                             input_stratum=StratumValuation(
                                 values={
                                     age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_0}
+                                        values={age_value}
                                     ),
                                     vac_stratum_attr: StratumAttributeValueSet(
                                         values={vac_F}
@@ -1087,35 +1106,49 @@ class TestUseCases(unittest.TestCase):
                                 }
                             ),
                             output_stratum=StratumValuation(),
-                        ): beta.value
-                        - 3 * epsilon,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_1}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_F}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_2}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_F}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value
-                        + 3 * epsilon,
+                        ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.75)))
+                        for i, age_value in enumerate(age_values)
+                        # StrataTransition(
+                        #     input_stratum=StratumValuation(
+                        #         values={
+                        #             age_stratum_attr: StratumAttributeValueSet(
+                        #                 values={age_0}
+                        #             ),
+                        #             vac_stratum_attr: StratumAttributeValueSet(
+                        #                 values={vac_F}
+                        #             ),
+                        #         }
+                        #     ),
+                        #     output_stratum=StratumValuation(),
+                        # ): beta.value
+                        # - 3 * epsilon,
+                        # StrataTransition(
+                        #     input_stratum=StratumValuation(
+                        #         values={
+                        #             age_stratum_attr: StratumAttributeValueSet(
+                        #                 values={age_1}
+                        #             ),
+                        #             vac_stratum_attr: StratumAttributeValueSet(
+                        #                 values={vac_F}
+                        #             ),
+                        #         }
+                        #     ),
+                        #     output_stratum=StratumValuation(),
+                        # ): beta.value,
+                        # StrataTransition(
+                        #     input_stratum=StratumValuation(
+                        #         values={
+                        #             age_stratum_attr: StratumAttributeValueSet(
+                        #                 values={age_2}
+                        #             ),
+                        #             vac_stratum_attr: StratumAttributeValueSet(
+                        #                 values={vac_F}
+                        #             ),
+                        #         }
+                        #     ),
+                        #     output_stratum=StratumValuation(),
+                        # ): beta.value
+                        # + 3 * epsilon,
                     }
                 },
             ),
@@ -1196,11 +1229,11 @@ class TestUseCases(unittest.TestCase):
         vac_abstractions = [
             Abstraction(
                 description="Abstract D_vac_T wrt. age.",
-                abstraction={"D_vac_T_age_0": "D_vac_T","D_vac_T_age_1": "D_vac_T","D_vac_T_age_2": "D_vac_T"},
+                abstraction={f"D_vac_T_age_{i}": "D_vac_T" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract D_vac_F wrt. age.",
-                abstraction={"D_vac_F_age_0": "D_vac_F","D_vac_F_age_1": "D_vac_F","D_vac_F_age_2": "D_vac_F"},
+                abstraction={f"D_vac_F_age_{i}": "D_vac_F" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract D wrt. vaccination status.",
@@ -1208,11 +1241,11 @@ class TestUseCases(unittest.TestCase):
             ),
             Abstraction(
                 description="Abstract H_vac_T wrt. age.",
-                abstraction={"H_vac_T_age_0": "H_vac_T","H_vac_T_age_1": "H_vac_T","H_vac_T_age_2": "H_vac_T"},
+                abstraction={f"H_vac_T_age_{i}": "H_vac_T" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract H_vac_F wrt. age.",
-                abstraction={"H_vac_F_age_0": "H_vac_F","H_vac_F_age_1": "H_vac_F","H_vac_F_age_2": "H_vac_F"},
+                abstraction={f"H_vac_F_age_{i}": "H_vac_F" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract H wrt. vaccination status.",
@@ -1220,11 +1253,11 @@ class TestUseCases(unittest.TestCase):
             ),
             Abstraction(
                 description="Abstract R_vac_T wrt. age.",
-                abstraction={"R_vac_T_age_0": "R_vac_T","R_vac_T_age_1": "R_vac_T","R_vac_T_age_2": "R_vac_T"},
+                abstraction={f"R_vac_T_age_{i}": "R_vac_T" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract R_vac_F wrt. age.",
-                abstraction={"R_vac_F_age_0": "R_vac_F","R_vac_F_age_1": "R_vac_F","R_vac_F_age_2": "R_vac_F"},
+                abstraction={f"R_vac_F_age_{i}": "R_vac_F" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract R wrt. vaccination status.",
@@ -1232,11 +1265,11 @@ class TestUseCases(unittest.TestCase):
             ),
             Abstraction(
                 description="Abstract I_vac_T wrt. age.",
-                abstraction={"I_vac_T_age_0": "I_vac_T","I_vac_T_age_1": "I_vac_T","I_vac_T_age_2": "I_vac_T"},
+                abstraction={f"I_vac_T_age_{i}": "I_vac_T" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract I_vac_F wrt. age.",
-                abstraction={"I_vac_F_age_0": "I_vac_F","I_vac_F_age_1": "I_vac_F","I_vac_F_age_2": "I_vac_F"},
+                abstraction={f"I_vac_F_age_{i}": "I_vac_F" for i in range(num_age_groups)},
             ),
             Abstraction(
                 description="Abstract I wrt. vaccination status.",
@@ -1245,23 +1278,15 @@ class TestUseCases(unittest.TestCase):
             Abstraction(
                 description="Abstract S age groups wrt. unvaccination status.",
                 abstraction={
-                    "S_vac_F_age_0": "S_vac_F",
-                    "S_vac_F_age_1": "S_vac_F",
-                    "S_vac_F_age_2": "S_vac_F",
-                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_0_to__": "beta___to_____S_vac_F_to__",
-                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_1_to__": "beta___to_____S_vac_F_to__",
-                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_2_to__": "beta___to_____S_vac_F_to__",
+                    **{f"S_vac_F_age_{i}": "S_vac_F" for i in range(num_age_groups)},
+                    **{f"beta___to_____S_vac_F_to_____to_____S_vac_F_age_{i}_to__": "beta___to_____S_vac_F_to__" for i in range(num_age_groups)},
                 },
             ),
             Abstraction(
                 description="Abstract S age groups wrt. vaccination status.",
                 abstraction={
-                    "S_vac_T_age_0": "S_vac_T",
-                    "S_vac_T_age_1": "S_vac_T",
-                    "S_vac_T_age_2": "S_vac_T",
-                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_0_to__": "beta___to_____S_vac_T_to__",
-                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_1_to__": "beta___to_____S_vac_T_to__",
-                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_2_to__": "beta___to_____S_vac_T_to__",
+                    **{f"S_vac_T_age_{i}": "S_vac_T" for i in range(num_age_groups)},
+                    **{f"beta___to_____S_vac_T_to_____to_____S_vac_T_age_{i}_to__": "beta___to_____S_vac_T_to__" for i in range(num_age_groups)},
                 },
             ),
             Abstraction(
@@ -1283,7 +1308,7 @@ class TestUseCases(unittest.TestCase):
         for i, t in enumerate(transformation_sequence):
             next_model = current_model.transform(t)
             vac_models.append(next_model)
-            next_model.to_dot().render(f"vac_model_{i}"),
+            # next_model.to_dot().render(f"vac_model_{i}"),
             current_model = next_model
 
         # vac_models = list(
@@ -1309,19 +1334,19 @@ class TestUseCases(unittest.TestCase):
             #     )
             # )
 
-        list(
-            map(
-                lambda x, name: x.to_dot().render(f"vac_model_{name}"),
-                vac_models,
-                range(len(vac_models)),
-            )
-        )
+        # list(
+        #     map(
+        #         lambda x, name: x.to_dot().render(f"vac_model_{name}"),
+        #         vac_models,
+        #         range(len(vac_models)),
+        #     )
+        # )
 
         vac_model_params = [
             {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
             for m in vac_models
         ]
-        bounded_vac_models = [m.formulate_bounds() for m in [base_model] + vac_models]
+        bounded_vac_models = [m.formulate_bounds() for m in vac_models[-len(vac_abstractions):]]
 
         for m in bounded_vac_models:
             # infected_states_lb = [s.id for s in m.petrinet.model.states if s.id.startswith("I") and s.id.endswith("_lb")]
@@ -1386,8 +1411,8 @@ class TestUseCases(unittest.TestCase):
             ]
         ].drop_duplicates()
         self.l.info(runtimes)
-        runtimes.to_csv("stratify_analysis_runtimes.csv")
-        dfs.to_csv("stratify_analysis.csv")
+        runtimes.to_csv(f"stratify_analysis_runtimes_{num_age_groups}.csv")
+        dfs.to_csv(f"stratify_analysis_{num_age_groups}.csv")
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
         # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
 
