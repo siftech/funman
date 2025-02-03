@@ -324,4 +324,5 @@ auxiliary_packages/ibex_tests/num_constraint_test.o
 notes/.DS_Store
 resources/amr/petrinet/monthly-demo/.DS_Store
 notes/abstraction/main.synctex(busy)
-notes/abstraction/main.xdv
+**/*.xdv
+*.csv
