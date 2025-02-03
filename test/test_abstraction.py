@@ -910,8 +910,10 @@ class TestUseCases(unittest.TestCase):
 
     def test_sirhd_stratify_analysis(self):
 
-        epsilon = 0.000001
-        timepoints = [float(t) for t in list(range(0, 151, 10))]
+        epsilon = 0.0001
+        N= 150000000.0
+        max_I = 0.3 * N  #3.542629e+07
+        timepoints = [float(t) for t in list(range(0, 201, 10))]
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -929,7 +931,7 @@ class TestUseCases(unittest.TestCase):
         # Add constraint on I
         sirhd_stratified_request.constraints.append(
             StateVariableConstraint(
-                name="I upper", variable="I", interval=Interval(ub=35500000.0), soft=False
+                name="I upper", variable="I", interval=Interval(ub=max_I), soft=False
             )
         )
 
@@ -948,8 +950,18 @@ class TestUseCases(unittest.TestCase):
         age_0 = StratumAttributeValue(name="0")
         age_1 = StratumAttributeValue(name="1")
         age_2 = StratumAttributeValue(name="2")
+        age_3 = StratumAttributeValue(name="3")
+        age_4 = StratumAttributeValue(name="4")
+        age_5 = StratumAttributeValue(name="5")
+        age_6 = StratumAttributeValue(name="6")
+        age_7 = StratumAttributeValue(name="7")
+        age_8 = StratumAttributeValue(name="8")
+        age_9 = StratumAttributeValue(name="9")
+        
         age_stratum_attr = StratumAttribute(
-            name="age", values={age_0, age_1, age_2}
+            name="age", values={age_0, age_1, age_2
+            # , age_3, age_4, age_5, age_6, age_7, age_8, age_9
+            }
         )
         age_stratum = Stratum(
             values={
@@ -957,6 +969,13 @@ class TestUseCases(unittest.TestCase):
                     StratumAttributeValueSet(values={age_0}),
                     StratumAttributeValueSet(values={age_1}),
                     StratumAttributeValueSet(values={age_2}),
+                    # StratumAttributeValueSet(values={age_3}),
+                    # StratumAttributeValueSet(values={age_4}),
+                    # StratumAttributeValueSet(values={age_5}),
+                    # StratumAttributeValueSet(values={age_6}),
+                    # StratumAttributeValueSet(values={age_7}),
+                    # StratumAttributeValueSet(values={age_8}),
+                    # StratumAttributeValueSet(values={age_9})
                 }
             }
         )
@@ -969,7 +988,7 @@ class TestUseCases(unittest.TestCase):
                 description="Stratify S and beta wrt. vaccination status.  Set beta values for strata.",
                 base_state="S",
                 stratum=vac_stratum,
-                self_strata_transitions=True,
+                self_strata_transitions=0.01,
                 base_parameters={
                     "beta": {
                         StrataTransition(
@@ -1002,7 +1021,7 @@ class TestUseCases(unittest.TestCase):
                 description="Stratify S_vac_T wrt. age group",
                 base_state="S_vac_T",
                 stratum=age_stratum,
-                self_strata_transitions=True,
+                self_strata_transitions=0.01,
                 base_parameters={
                     "beta___to_____S_vac_T_to__": {
                         StrataTransition(
@@ -1053,7 +1072,7 @@ class TestUseCases(unittest.TestCase):
                 description="Stratify S_vac_F wrt. age group",
                 base_state="S_vac_F",
                 stratum=age_stratum,
-                self_strata_transitions=True,
+                self_strata_transitions=0.01,
                 base_parameters={
                     "beta___to_____S_vac_F_to__": {
                         StrataTransition(
@@ -1100,49 +1119,129 @@ class TestUseCases(unittest.TestCase):
                     }
                 },
             ),
-            # Stratification(
-            #     description="Stratify I wrt. vaccination status.",
-            #     base_state="I",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
-            # Stratification(
-            #     description="Stratify R wrt. vaccination status.",
-            #     base_state="R",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
-            # Stratification(
-            #     description="Stratify H wrt. vaccination status.",
-            #     base_state="H",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
-            # Stratification(
-            #     description="Stratify D wrt. vaccination status.",
-            #     base_state="D",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
+            Stratification(
+                description="Stratify I wrt. vaccination status.",
+                base_state="I",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify I_vac_T wrt. age.",
+                base_state="I_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify I_vac_F wrt. age.",
+                base_state="I_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify R wrt. vaccination status.",
+                base_state="R",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify R_vac_T wrt. age.",
+                base_state="R_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify R_vac_F wrt. age.",
+                base_state="R_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify H wrt. vaccination status.",
+                base_state="H",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify H_vac_T wrt. age.",
+                base_state="H_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify H_vac_F wrt. age.",
+                base_state="H_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify D wrt. vaccination status.",
+                base_state="D",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify D_vac_T wrt. age.",
+                base_state="D_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify D_vac_F wrt. age.",
+                base_state="D_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
         ]
 
         vac_abstractions = [
-            # Abstraction(
-            #     description="Abstract D wrt. vaccination status.",
-            #     abstraction={"D_vac_F": "D", "D_vac_T": "D"},
-            # ),
-            # Abstraction(
-            #     description="Abstract H wrt. vaccination status.",
-            #     abstraction={"H_vac_F": "H", "H_vac_T": "H"},
-            # ),
-            # Abstraction(
-            #     description="Abstract R wrt. vaccination status.",
-            #     abstraction={"R_vac_F": "R", "R_vac_T": "R"},
-            # ),
-            # Abstraction(
-            #     description="Abstract I wrt. vaccination status.",
-            #     abstraction={"I_vac_F": "I", "I_vac_T": "I"},
-            # ),
+            Abstraction(
+                description="Abstract D_vac_T wrt. age.",
+                abstraction={"D_vac_T_age_0": "D_vac_T","D_vac_T_age_1": "D_vac_T","D_vac_T_age_2": "D_vac_T"},
+            ),
+            Abstraction(
+                description="Abstract D_vac_F wrt. age.",
+                abstraction={"D_vac_F_age_0": "D_vac_F","D_vac_F_age_1": "D_vac_F","D_vac_F_age_2": "D_vac_F"},
+            ),
+            Abstraction(
+                description="Abstract D wrt. vaccination status.",
+                abstraction={"D_vac_F": "D", "D_vac_T": "D"},
+            ),
+            Abstraction(
+                description="Abstract H_vac_T wrt. age.",
+                abstraction={"H_vac_T_age_0": "H_vac_T","H_vac_T_age_1": "H_vac_T","H_vac_T_age_2": "H_vac_T"},
+            ),
+            Abstraction(
+                description="Abstract H_vac_F wrt. age.",
+                abstraction={"H_vac_F_age_0": "H_vac_F","H_vac_F_age_1": "H_vac_F","H_vac_F_age_2": "H_vac_F"},
+            ),
+            Abstraction(
+                description="Abstract H wrt. vaccination status.",
+                abstraction={"H_vac_F": "H", "H_vac_T": "H"},
+            ),
+            Abstraction(
+                description="Abstract R_vac_T wrt. age.",
+                abstraction={"R_vac_T_age_0": "R_vac_T","R_vac_T_age_1": "R_vac_T","R_vac_T_age_2": "R_vac_T"},
+            ),
+            Abstraction(
+                description="Abstract R_vac_F wrt. age.",
+                abstraction={"R_vac_F_age_0": "R_vac_F","R_vac_F_age_1": "R_vac_F","R_vac_F_age_2": "R_vac_F"},
+            ),
+            Abstraction(
+                description="Abstract R wrt. vaccination status.",
+                abstraction={"R_vac_F": "R", "R_vac_T": "R"},
+            ),
+            Abstraction(
+                description="Abstract I_vac_T wrt. age.",
+                abstraction={"I_vac_T_age_0": "I_vac_T","I_vac_T_age_1": "I_vac_T","I_vac_T_age_2": "I_vac_T"},
+            ),
+            Abstraction(
+                description="Abstract I_vac_F wrt. age.",
+                abstraction={"I_vac_F_age_0": "I_vac_F","I_vac_F_age_1": "I_vac_F","I_vac_F_age_2": "I_vac_F"},
+            ),
+            Abstraction(
+                description="Abstract I wrt. vaccination status.",
+                abstraction={"I_vac_F": "I", "I_vac_T": "I"},
+            ),
             Abstraction(
                 description="Abstract S age groups wrt. unvaccination status.",
                 abstraction={
@@ -1222,7 +1321,6 @@ class TestUseCases(unittest.TestCase):
             {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
             for m in vac_models
         ]
-
         bounded_vac_models = [m.formulate_bounds() for m in [base_model] + vac_models]
 
         for m in bounded_vac_models:

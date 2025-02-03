@@ -124,11 +124,15 @@ class SympyBoundedSubstituter(BaseModel):
     def _substitute_symbol(self, expr, sub_min: bool, op_type=REAL):
         sym = str(expr)
         bound = "lb" if sub_min else "ub"
-        return (
-            self.bound_symbols[expr][bound]
-            if not sym.endswith("_lb") and not sym.endswith("_ub")
-            else expr
-        )
+        try:
+            result = (
+                self.bound_symbols[expr][bound]
+                if not sym.endswith("_lb") and not sym.endswith("_ub")
+                else expr
+            )
+        except KeyError as e:
+            raise e
+        return result
 
     def _substitute_real(self, expr, sub_min: bool):
         return expr

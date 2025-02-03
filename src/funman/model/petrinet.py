@@ -561,7 +561,7 @@ class Stratification(BaseModel):
     base_parameters: Union[List[str], StratifiedParameterMapping] = []
     partition: StratumPartition = StratumPartition()
     stratum: Stratum  # interpreted as cross product over attribute values
-    self_strata_transitions: bool = False
+    self_strata_transitions: float = 0.0
     cross_strata_transitions: bool = False
     only_natural_transitions: bool = (
         True  # only stratify transitions that are not persistence
@@ -1334,7 +1334,19 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             else {}
         )
 
+    def parameter_substitution(self, param_name, bound):
+        if self.petrinet.metadata:
+            all_params = self.petrinet.metadata.get("abstracted_parameters", {})
+            values = [bounds[bound] for t, ps in all_params.items() for p, bounds in ps.items() if p == param_name]
+            if len(values) > 0:
+                return max(values) if bound == "ub" else min(values)
+            else:
+                return None
+        else:
+            return None
+
     def _parameter_lb(self, param_name: str):
+        metadata_lb = self.parameter_substitution(param_name, "lb")
         return next(
             (
                 self._try_float(p.distribution.parameters["minimum"])
@@ -1343,9 +1355,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
             for p in self.petrinet.semantics.ode.parameters
             if p.id == param_name
-        )
+        ) if not metadata_lb else metadata_lb
 
     def _parameter_ub(self, param_name: str):
+        metadata_ub = self.parameter_substitution(param_name, "ub")
         return next(
             (
                 self._try_float(p.distribution.parameters["maximum"])
@@ -1354,7 +1367,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
             for p in self.petrinet.semantics.ode.parameters
             if p.id == param_name
-        )
+        ) if not metadata_ub else metadata_ub
 
     def _state_vars(self) -> List[State]:
         return self.petrinet.model.states
@@ -1814,7 +1827,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     def stratified_state_id(self, state_var, index, strata):
         return f"{state_var}_{'_'.join([str(s) for s in strata])}_{index}"
 
-    def stratified_parameter_id(self, parameter, strata_transition):
+    def stratified_parameter_id(self, parameter, strata_transitions):
         return (
             f"{parameter}__{'_'.join([str(st) for st in strata_transitions])}"
         )
@@ -1873,9 +1886,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 ]
             )
         )
-        transition_probability_value = 1.0 / float(
-            len(state_strata_transitions)
-        )  # FIXME needs to use the number of interpretations making each transition as a weight
+        transition_probability_value = stratification.self_strata_transitions
+        # 1.0 / float(
+        #     len(state_strata_transitions)
+        # )  # FIXME needs to use the number of interpretations making each transition as a weight
         for state_strata_transition in state_strata_transitions:
             strat_tr_map = tr_map.stratify(
                 stratification,
@@ -1923,6 +1937,16 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 new_parameters.append(transition_probability)
 
         return new_transitions, new_rates, new_parameters
+
+    def get_rate_transition_probability(self, rate, parameters):
+        if isinstance(rate, sympy.Symbol):
+            probability_parameter = str(rate)
+            proability_parameter = probability_parameter if probability_parameter.startswith("p_cross_") else None
+        try:
+             probability_parameter = next(iter([str(s) for s in rate.free_symbols if str(s).startswith("p_cross_")]))
+        except StopIteration as e:
+            probability_parameter =  None
+        return parameters[probability_parameter].value if probability_parameter else 1.0
 
     def stratify_transition(
         self, transition: Transition, stratification: Stratification
@@ -1991,6 +2015,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         )
 
         strata_transition_probability_by_input = {}
+        old_value = self.get_rate_transition_probability(old_rate, old_parameters)
         for (
             input_key,
             input_strata_transitions,
@@ -2000,10 +2025,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 for sts in input_strata_transitions
             ]
             transition_probability = [
-                val / total_interpretations for val in num_interpretations
+               (val / total_interpretations) for val in num_interpretations
             ]
+            total_probability = sum(transition_probability)
+            normalized_transition_probability = [old_value*p/total_probability for p in transition_probability]
             strata_transition_probability_by_input[input_key] = (
-                transition_probability
+                normalized_transition_probability
             )
         input_keys = list(strata_transitions_by_input.keys())
         input_keys.sort()
@@ -2017,6 +2044,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     state_var,
                     self.state_strata(state_var),
                     state_strata_transition,
+                    # stratification.self_strata_transitions
                     transition_probability,
                 )
                 if strat_tr_map is None:
@@ -2303,7 +2331,17 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
         }
 
-        if self_strata_transition:
+        # Normalize the cross strata transition probabilities across the new transitions.
+        # Its possible to generate transitions with the same input, but different output
+        # from different pre-stratification transitions
+        normalized_stratified_transitions_rates_params  = stratified_transitions_rates_params
+        # (
+        #     self.normalize_stratified_transitions(
+        #         stratified_transitions_rates_params
+        #     )
+        # )
+
+        if self_strata_transition > 0.0:
             (
                 self_strata_transitions,
                 self_strata_rates,
@@ -2317,7 +2355,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 self_strata_parameters,
             ):
                 t_id = t.id
-                stratified_transitions_rates_params[t.id] = ([t], [r], [p])
+                normalized_stratified_transitions_rates_params[t.id] = ([t], [r], [p])
             # new_model.petrinet.model.transitions.root += (
             #     self_strata_transitions
             # )
@@ -2326,14 +2364,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             #     self_strata_parameters
             # )
 
-        # Normalize the cross strata transition probabilities across the new transitions.
-        # Its possible to generate transitions with the same input, but different output
-        # from different pre-stratification transitions
-        normalized_stratified_transitions_rates_params = (
-            self.normalize_stratified_transitions(
-                stratified_transitions_rates_params
-            )
-        )
+
 
         # Transitions
         stratification._transition_ancestors = {
@@ -2584,6 +2615,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         return grouped_transitions, grouped_rates
 
     def consolidate_grouped_transitions(self, grouped_transitions):
+        # FIXME Use transition maps and strata to do naming based on an extension of the base transition name
         consolidated_transitions = []
         for g in grouped_transitions:
             if len(g) == 1:
@@ -3099,42 +3131,72 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
         ]
 
+        # The transition parameters need to be combined by summing their values whenever they are abstracted together.
+
         # When introducing transition probabilities, we need to determine which are part of the same distribution.  Those corresponding to transitions with the same inputs (i.e., are applicable to the same states) must sum to 1.0.
-        grouped_transition_parameters = {}
-        for trans, arp in zip(
-            new_transitions, aggregated_rates_and_parameters
+        # grouped_transition_parameters = {}
+        parameter_values = self._parameter_values()
+        transition_parameters = []
+        for i, (trans, arp) in enumerate(zip(
+            new_transitions, aggregated_rates_and_parameters)
         ):
             if len(arp["transition_parameters"]) > 0:
-                related_parameters = grouped_transition_parameters.get(
-                    tuple(trans.input), set({})
+                # Define a new transition parameter that is equal to sum of transition parameters in the group
+                try:
+                    transition_parameter_values = {p: parameter_values[p] for p in arp["transition_parameters"]}
+                except KeyError as e:
+                    raise e
+                sum_of_values = sum(transition_parameter_values.values())
+                trans_map = new_model.transition_map(trans)
+                strata_transitions = [st.strata_transition for st in trans_map.state_transitions]
+                param_id = trans_map.cross_strata_transition_probability(trans_map.state_transitions)
+                # param_id = new_model.stratified_parameter_id("p_cross_", strata_transitions)
+                tp = Parameter(
+                    id=param_id,
+                    name=param_id,
+                    description=param_id,
+                    value=sum_of_values,
+                    grounding=None,
+                    distribution=None,
+                    units=None,
                 )
-                related_parameters = related_parameters.union(
-                    set(arp["transition_parameters"])
-                )
-                grouped_transition_parameters[tuple(trans.input)] = (
-                    related_parameters
-                )
-        agg_param_ids = [p.id for p in aggregated_parameters]
-        transition_parameters = [
-            Parameter(
-                id=str(p),
-                name=str(p),
-                description=str(p),
-                value=1.0 / float(len(param_group)),
-                grounding=None,
-                distribution=None,
-                units=None,
-            )
-            for param_group in grouped_transition_parameters.values()
-            for p in param_group
-            if p not in agg_param_ids
-        ]
+                transition_parameters.append(tp)
+                new_rates[i].expression=param_id
+        #         related_parameters = grouped_transition_parameters.get(
+        #             tuple(trans.input), set({})
+        #         )
+        #         related_parameters = related_parameters.union(
+        #             set(arp["transition_parameters"])
+        #         )
+        #         grouped_transition_parameters[tuple(trans.input)] = (
+        #             related_parameters
+        #         )
+        # agg_param_ids = [p.id for p in aggregated_parameters]
+        # transition_parameters = [
+        #     Parameter(
+        #         id=str(p),
+        #         name=str(p),
+        #         description=str(p),
+        #         value=0.01, # FIXME
+        #         #1.0 / float(len(param_group)),
+        #         grounding=None,
+        #         distribution=None,
+        #         units=None,
+        #     )
+        #     for param_group in grouped_transition_parameters.values()
+        #     for p in param_group
+        #     if p not in agg_param_ids
+        # ]
 
         new_parameters = (
             unchanged_parameters
             + aggregated_parameters
-            + transition_parameters
+            
         )
+        np_ids = [p.id for p in new_parameters]
+        for tp in transition_parameters:
+            if tp.id not in np_ids:
+                new_parameters.append(tp)
 
         new_initials = [
             # Initial.model_copy(st)
