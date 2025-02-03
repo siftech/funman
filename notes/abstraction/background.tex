@@ -137,28 +137,28 @@ as:
 \end{eqnarray*}
 
 
-\begin{definition}
-	The stratification $\text{Stratify}_{Q}(\Omega,
-		\Theta) = (\Omega_Q, \Theta_Q)$ of a Petrinet and semantics  with
-	respect to a specification $Q = (x, {\cal D}, P')$ defines a new Petrinet and
-	semantics with the following properties:
-	\begin{itemize}
-		\item Parameters: For each $p \in P' \subseteq P$,
-		\item States: For each element $D_i$ of the partition ${\cal D}= [D_0 | D_1| \ldots]$, define
-		      $X' = X\backslash \{x\} \cup \{x_{D_i} |  {\cal D} = [D_0 | D_1| \ldots]\}$
-		\item Transitions: For each transition $z \in Z^{in(x)}\cup Z^{out(x)}$
-		      and partition $D_i$, define each $z_{D_i}$ so that:
-		      \begin{itemize}
-			      \item $E'_{in} = E_{in} \backslash \{(z, x)\} \cup \{(z_{D_i},
-				            x_{D_i})| {\cal D} = [D_0 | D_1| \ldots]\}$ if $z \in
-				            Z^{in(x)}$.
-			      \item $E'_{out} = E_{out} \backslash \{(x, z)\} \cup \{(x_{D_i},
-				            z_{D_i})| {\cal D} = [D_0 | D_1| \ldots]\}$ if $z \in
-				            Z^{in(x)}$.
-			      \item ${\cal R}({\bf p},{\bf x}, z_{D_i})$
-		      \end{itemize}
-		\item Initial State
-		\item Parameter Values:
-		\item Transition Rates:
-	\end{itemize}
-\end{definition}
+% \begin{definition}
+% 	The stratification $\text{Stratify}_{Q}(\Omega,
+% 		\Theta) = (\Omega_Q, \Theta_Q)$ of a Petrinet and semantics  with
+% 	respect to a specification $Q = (x, {\cal D}, P')$ defines a new Petrinet and
+% 	semantics with the following properties:
+% 	\begin{itemize}
+% 		\item Parameters: For each $p \in P' \subseteq P$,
+% 		\item States: For each element $D_i$ of the partition ${\cal D}= [D_0 | D_1| \ldots]$, define
+% 		      $X' = X\backslash \{x\} \cup \{x_{D_i} |  {\cal D} = [D_0 | D_1| \ldots]\}$
+% 		\item Transitions: For each transition $z \in Z^{in(x)}\cup Z^{out(x)}$
+% 		      and partition $D_i$, define each $z_{D_i}$ so that:
+% 		      \begin{itemize}
+% 			      \item $E'_{in} = E_{in} \backslash \{(z, x)\} \cup \{(z_{D_i},
+% 				            x_{D_i})| {\cal D} = [D_0 | D_1| \ldots]\}$ if $z \in
+% 				            Z^{in(x)}$.
+% 			      \item $E'_{out} = E_{out} \backslash \{(x, z)\} \cup \{(x_{D_i},
+% 				            z_{D_i})| {\cal D} = [D_0 | D_1| \ldots]\}$ if $z \in
+% 				            Z^{in(x)}$.
+% 			      \item ${\cal R}({\bf p},{\bf x}, z_{D_i})$
+% 		      \end{itemize}
+% 		\item Initial State
+% 		\item Parameter Values:
+% 		\item Transition Rates:
+% 	\end{itemize}
+% \end{definition}
