@@ -389,12 +389,13 @@ class AnalysisScenario(ABC, BaseModel):
         )
         timeseries = simulator.sim()
 
-        observable_timeseries = self.compute_observables(
-            timeseries, parameters
-        )
-        for k, v in observable_timeseries.items():
-            timeseries.data.append(v)
-            timeseries.columns.append(k)
+        if timeseries:
+            observable_timeseries = self.compute_observables(
+                timeseries, parameters
+            )
+            for k, v in observable_timeseries.items():
+                timeseries.data.append(v)
+                timeseries.columns.append(k)
             
         # timeseries = np.array([[tvect[t], timeseries[t]] for t in range(len(tvect))])
         return timeseries

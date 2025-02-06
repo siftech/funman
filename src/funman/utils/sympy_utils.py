@@ -26,6 +26,7 @@ from pysmt.shortcuts import (
 from pysmt.walkers import IdentityDagWalker
 from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
 from sympy.logic.boolalg import BooleanTrue
+from sympy import SympifyError
 
 l = logging.getLogger(__name__)
 
@@ -279,7 +280,10 @@ def to_sympy(
         unreserved_symbols = [replace_reserved(s) for s in str_symbols]
         clean_expr = replace_reserved(formula)
         symbol_map = {s: symbols(s) for s in unreserved_symbols}
-        expr = sympify(clean_expr, symbol_map)
+        try:
+            expr = sympify(clean_expr, symbol_map)
+        except SympifyError as e:
+            raise e
     elif isinstance(formula, FNode):
         expr = SympySerializer().to_sympy(formula)
     elif isinstance(formula, Expr):

@@ -480,8 +480,9 @@ class FunmanResults(BaseModel):
                 df = (
                     df.rename(columns={"timer_t": "time"})
                     .set_index("time", drop=True)
-                    .drop(columns=["index"])
                 )
+                if "index" in df.columns:
+                    df = df.drop(columns=["index"])
 
             df = df.reindex(sorted(df.columns), axis=1)
 

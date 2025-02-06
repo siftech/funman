@@ -573,7 +573,7 @@ class TestUseCases(unittest.TestCase):
             base_state="S",
             base_parameters=["beta"],
             stratum=vac_stratum,
-            self_strata_transitions=True,
+            self_strata_transitions=0.01,
             cross_strata_transitions=True,
         )
         stratification_I = Stratification(
@@ -762,14 +762,14 @@ class TestUseCases(unittest.TestCase):
                     "S_vac_T": "S",
                     "S_vac_F": "S",
                     **{b.id: "beta" for b in betas},
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
                 }
             )
         )
@@ -783,14 +783,14 @@ class TestUseCases(unittest.TestCase):
                     "I_vac_T": "I",
                     "I_vac_F": "I",
                     **{b.id: "beta" for b in betas},
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
                 }
             )
         )
@@ -1574,13 +1574,13 @@ class TestUseCases(unittest.TestCase):
                 f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
             )
             df["I_bound"] = len(result.parameter_space.true_points()) > 0
-            df = df.set_index(["model_index", "index"])
+            df = df.set_index(["model_index"])
             m.append(df)
         dfs = pd.concat(m)
-        runtimes = dfs.reset_index(["index"])[
+        runtimes = dfs[
             [
                 c
-                for c in ["runtime (s)", "description", "I_bound"]
+                for c in ["runtime (s)"]
                 if c in dfs.columns
             ]
         ].drop_duplicates()
