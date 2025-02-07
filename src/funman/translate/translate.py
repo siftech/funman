@@ -493,9 +493,8 @@ class Encoder(ABC, BaseModel):
 
         # Normalize if constant value
         parameter_assignments = {
-            self._encode_state_var(replace_reserved(k.name)): Real(
-                float(k.interval.lb)
-            )
+            # self._encode_state_var(replace_reserved(k.name)):
+            self._encode_state_var(k.name): Real(float(k.interval.lb))
             for k in parameters
             if k.interval.lb == k.interval.ub
         }
