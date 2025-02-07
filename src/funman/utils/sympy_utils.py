@@ -263,7 +263,9 @@ def rev_replace_reserved(str_expr):
 
     for rc, nc in reserved_chars.items():
         if isinstance(str_expr, str) and has_reserved_char(str_expr, nc):
-            for g in re.finditer(re.compile(f"[A-Za-z]+.*?({nc})"), str_expr):
+            for g in re.finditer(
+                re.compile(f"([A-Za-z]|[^\u0000-\u007F])+.*?({nc})"), str_expr
+            ):
                 str_expr = (
                     f"{str_expr[:g.end()-len(nc)]}{rc}{str_expr[g.end():]}"
                 )
