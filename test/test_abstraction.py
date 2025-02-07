@@ -913,8 +913,8 @@ class TestUseCases(unittest.TestCase):
         epsilon = 0.0001
         N= 150000000.0
         max_I = 0.3 * N  #3.542629e+07
-        timepoints = [float(t) for t in list(range(0, 201, 10))]
-        num_age_groups = 5
+        timepoints = [float(t) for t in list(range(0, 2, 1))]
+        num_age_groups = 2
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)

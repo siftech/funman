@@ -1304,12 +1304,20 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
     _transition_rates_lambda_cache: Dict[str, Union[Callable, str]] = {}
     _transition_maps: Dict[str, TransitionMap] = {}
 
+    def transition_io_id(self, transition: Transition) -> str:
+        ins = transition.input
+        ins.sort()
+        outs = transition.output
+        outs.sort()
+        return f"t_{ins}_{outs}"
+
     def transition_map(self, transition: Transition) -> TransitionMap:
-        if transition.id not in self._transition_maps:
+        t_id = self.transition_io_id(transition)
+        if t_id not in self._transition_maps:
             transition_map = TransitionMap()
             transition_map.initialize(transition, self)
-            self._transition_maps[transition.id] = transition_map
-        return self._transition_maps[transition.id]
+            self._transition_maps[t_id] = transition_map
+        return self._transition_maps[t_id]
 
     def num_elements(self):
         num_elts = (
@@ -3258,6 +3266,35 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                 rate.expression = rate.expression.replace(tp.id, "1")
                     else:
                         transition_parameters.append(tp)
+
+        # Abstraction can also add transition parameters
+        new_transition_maps = [new_model.transition_map(t) for t in new_transitions]
+        new_transition_groups = {}
+        for ntm in new_transition_maps:
+            inputs = tuple(ntm.inputs())
+            group = new_transition_groups.get(inputs, [])
+            group.append(ntm)
+            new_transition_groups[inputs] = group
+
+        # Any transition group added by abstraction needs to add transition probabilities
+        for group, transitions in new_transition_groups.items():
+            if len(transitions) > 1 and any([t for t in transitions if not any(ot for ot in old_untouched_transitions if self.transition_map(ot) == t)]):
+                transition_probabilities = [t.cross_strata_transition_probability(t.state_transitions) for t in transitions]
+                for t, tp in zip(transitions, transition_probabilities):
+                    if not any([p for p in transition_parameters if p.id == tp]):
+                        r = next(iter((r for r in new_rates if r.target == t.transition_id)))
+                        r.expression = f"{tp}*{r.expression}"
+                        transition_parameters.append(
+                            Parameter(
+                                id=str(tp),
+                                name=str(tp),
+                                description=str(tp),
+                                value=1.0 / float(len(transitions)),
+                                grounding=None,
+                                distribution=None,
+                                units=None,
+                        ))
+
                 # sum_of_values = sum(transition_parameter_values.values())
                 # trans_map = new_model.transition_map(trans)
                 # strata_transitions = [st.strata_transition for st in trans_map.state_transitions]
