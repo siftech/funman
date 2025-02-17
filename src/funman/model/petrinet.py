@@ -2871,29 +2871,49 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         # Replace states in the transitions
         subbed_state_ids = set(abstraction.keys())
+        target_state_ids = set(abstraction.values())
         old_untouched_transitions = (
-            [  # transitions not involved in abstraction
-                t
+            {  # transitions not involved in abstraction
+                t.id: t
                 for t in self.petrinet.model.transitions
                 if not any(
-                    [s for s in t.input + t.output if s in subbed_state_ids]
+                    [s for s in t.input + t.output if s in subbed_state_ids.union(target_state_ids)]
                 )
-            ]
+            }
         )
+        old_untouched_rates = [
+            r for r in self.petrinet.semantics.ode.rates if r.target in old_untouched_transitions
+        ]
+
+        
+        
         old_to_be_abstracted_transitions = {
             t.id : t    for t in self.petrinet.model.transitions
             if abstraction.is_transition_abstracted(t)
         }
+
+        parameters_in_pre_abstracted_transitions_strs = set([str(s) for t in old_to_be_abstracted_transitions.values() for s in self._transition_rate(t)[0].free_symbols])
+        # Parameters only appearing in untouched transitions (parameters may be in multiple transitions)
+        old_untouched_parameter_strs = set([str(s) for t in old_untouched_transitions.values() for s in self._transition_rate(t)[0].free_symbols]).difference(parameters_in_pre_abstracted_transitions_strs)
+        old_untouched_parameters = [
+            p for p in self.petrinet.semantics.ode.parameters if p.id in old_untouched_parameter_strs 
+        ]
         new_to_be_abstracted_transitions = {  # transitions with substitutions
             t_id : abstraction.abstract_transition(t)
             for t_id, t in old_to_be_abstracted_transitions.items()
         }
         subbed_transitions = (
-            old_untouched_transitions + list(new_to_be_abstracted_transitions.values())
+            list(old_untouched_transitions.values()) + list(new_to_be_abstracted_transitions.values())
         )
-        grouped_transitions, grouped_rates = self.group_abstract_transitions(
+        pre_grouped_transitions, pre_grouped_rates = self.group_abstract_transitions(
             subbed_transitions
         )
+        grouped_transitions =[]
+        grouped_rates = []
+        for group, rates in zip(pre_grouped_transitions, pre_grouped_rates):
+            if any([t in new_to_be_abstracted_transitions.values() for t in group]):
+                grouped_transitions.append(group)
+                grouped_rates.append(rates)
 
         # Convert grouped transitions into a single transition
         consolidated_transitions = self.consolidate_grouped_transitions(
@@ -3095,7 +3115,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 }
                 
                 transition_param_min = {
-                    stp : abstract_transition_probability 
+                    stp : f"{abstract_transition_probability}/{len(starting_transition_params)}"
                     for stp in starting_transition_params
                 }
                 constant_substitution = {}
@@ -3116,6 +3136,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                             }
                         )
                     )
+                    pass
                 except sympy.SympifyError as e:
                     raise e
             else:
@@ -3188,6 +3209,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 prev_transition_groups.append(g)
                 candidate_rates.append(r)
 
+        new_model.petrinet.model.transitions.root += old_untouched_transitions.values()
         new_model.petrinet.model.transitions.root += new_transitions
 
         aggregated_rates_and_parameters = [
@@ -3278,7 +3300,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         # Any transition group added by abstraction needs to add transition probabilities
         for group, transitions in new_transition_groups.items():
-            if len(transitions) > 1 and any([t for t in transitions if not any(ot for ot in old_untouched_transitions if self.transition_map(ot) == t)]):
+            if len(transitions) > 1 and any([t for t in transitions if not any(ot for ot in old_untouched_transitions.values() if self.transition_map(ot) == t)]):
                 transition_probabilities = [t.cross_strata_transition_probability(t.state_transitions) for t in transitions]
                 for t, tp in zip(transitions, transition_probabilities):
                     if not any([p for p in transition_parameters if p.id == tp]):
@@ -3340,7 +3362,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         new_parameters = (
             unchanged_parameters
             + aggregated_parameters
-            + transition_parameters
+            + transition_parameters 
+            + old_untouched_parameters
         )
         np_ids = [p.id for p in new_parameters]
         for tp in transition_parameters:
@@ -3390,9 +3413,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         new_model.petrinet.semantics = Semantics(
             ode=OdeSemantics(
-                rates=new_rates,  # [*new_rates, *other_rates.values(), *self_strata_rates],
+                rates=new_rates + old_untouched_rates,  # [*new_rates, *other_rates.values(), *self_strata_rates],
                 initials=new_initials,  # new_initials,
-                parameters=new_parameters,
+                parameters=new_parameters + [p for p in old_untouched_parameters if p not in new_parameters],
                 observables=None,  # new_observables,
                 time=self.petrinet.semantics.ode.time,
             ),
