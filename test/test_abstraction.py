@@ -949,17 +949,6 @@ class TestUseCases(unittest.TestCase):
         )
 
         age_values = [StratumAttributeValue(name=str(i)) for i in range(num_age_groups)]
-        # age_0 = StratumAttributeValue(name="0")
-        # age_1 = StratumAttributeValue(name="1")
-        # age_2 = StratumAttributeValue(name="2")
-        # age_3 = StratumAttributeValue(name="3")
-        # age_4 = StratumAttributeValue(name="4")
-        # age_5 = StratumAttributeValue(name="5")
-        # age_6 = StratumAttributeValue(name="6")
-        # age_7 = StratumAttributeValue(name="7")
-        # age_8 = StratumAttributeValue(name="8")
-        # age_9 = StratumAttributeValue(name="9")
-        
         age_stratum_attr = StratumAttribute(
             name="age", values=age_values
             # {age_0, age_1, age_2
@@ -971,16 +960,6 @@ class TestUseCases(unittest.TestCase):
                 age_stratum_attr: {
                     StratumAttributeValueSet(values={age_value})
                     for age_value in age_values
-                    # StratumAttributeValueSet(values={age_0}),
-                    # StratumAttributeValueSet(values={age_1}),
-                    # StratumAttributeValueSet(values={age_2}),
-                    # StratumAttributeValueSet(values={age_3}),
-                    # StratumAttributeValueSet(values={age_4}),
-                    # StratumAttributeValueSet(values={age_5}),
-                    # StratumAttributeValueSet(values={age_6}),
-                    # StratumAttributeValueSet(values={age_7}),
-                    # StratumAttributeValueSet(values={age_8}),
-                    # StratumAttributeValueSet(values={age_9})
                 }
             }
         )
@@ -1021,7 +1000,6 @@ class TestUseCases(unittest.TestCase):
                     }
                 },
             ),
-            # FIXME Has an extra self transition that shouldn't be there
             Stratification(
                 description="Stratify S_vac_T wrt. age group",
                 base_state="S_vac_T",
@@ -1042,48 +1020,7 @@ class TestUseCases(unittest.TestCase):
                             ),
                             output_stratum=StratumValuation(),
                         ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.5)))
-                        for i, age_value in enumerate(age_values)
-                        # StrataTransition(
-                        #     input_stratum=StratumValuation(
-                        #         values={
-                        #             age_stratum_attr: StratumAttributeValueSet(
-                        #                 values={age_0}
-                        #             ),
-                        #             vac_stratum_attr: StratumAttributeValueSet(
-                        #                 values={vac_T}
-                        #             ),
-                        #         }
-                        #     ),
-                        #     output_stratum=StratumValuation(),
-                        # ): beta.value
-                        # - 2 * epsilon,
-                        # StrataTransition(
-                        #     input_stratum=StratumValuation(
-                        #         values={
-                        #             age_stratum_attr: StratumAttributeValueSet(
-                        #                 values={age_1}
-                        #             ),
-                        #             vac_stratum_attr: StratumAttributeValueSet(
-                        #                 values={vac_T}
-                        #             ),
-                        #         }
-                        #     ),
-                        #     output_stratum=StratumValuation(),
-                        # ): beta.value,
-                        # StrataTransition(
-                        #     input_stratum=StratumValuation(
-                        #         values={
-                        #             age_stratum_attr: StratumAttributeValueSet(
-                        #                 values={age_2}
-                        #             ),
-                        #             vac_stratum_attr: StratumAttributeValueSet(
-                        #                 values={vac_T}
-                        #             ),
-                        #         }
-                        #     ),
-                        #     output_stratum=StratumValuation(),
-                        # ): beta.value
-                        # + 2 * epsilon,
+                        for i, age_value in enumerate(age_values)                       
                     }
                 },
             ),
@@ -1108,47 +1045,6 @@ class TestUseCases(unittest.TestCase):
                             output_stratum=StratumValuation(),
                         ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.75)))
                         for i, age_value in enumerate(age_values)
-                        # StrataTransition(
-                        #     input_stratum=StratumValuation(
-                        #         values={
-                        #             age_stratum_attr: StratumAttributeValueSet(
-                        #                 values={age_0}
-                        #             ),
-                        #             vac_stratum_attr: StratumAttributeValueSet(
-                        #                 values={vac_F}
-                        #             ),
-                        #         }
-                        #     ),
-                        #     output_stratum=StratumValuation(),
-                        # ): beta.value
-                        # - 3 * epsilon,
-                        # StrataTransition(
-                        #     input_stratum=StratumValuation(
-                        #         values={
-                        #             age_stratum_attr: StratumAttributeValueSet(
-                        #                 values={age_1}
-                        #             ),
-                        #             vac_stratum_attr: StratumAttributeValueSet(
-                        #                 values={vac_F}
-                        #             ),
-                        #         }
-                        #     ),
-                        #     output_stratum=StratumValuation(),
-                        # ): beta.value,
-                        # StrataTransition(
-                        #     input_stratum=StratumValuation(
-                        #         values={
-                        #             age_stratum_attr: StratumAttributeValueSet(
-                        #                 values={age_2}
-                        #             ),
-                        #             vac_stratum_attr: StratumAttributeValueSet(
-                        #                 values={vac_F}
-                        #             ),
-                        #         }
-                        #     ),
-                        #     output_stratum=StratumValuation(),
-                        # ): beta.value
-                        # + 3 * epsilon,
                     }
                 },
             ),
