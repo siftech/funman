@@ -1,0 +1,87 @@
+Stratification is an operation that refines a model to capture finer detail about subpopulations.  For example, Example \ref{ex:base} is a stratification of the SIR model that captures two susceptible groups that have different infection rates $\beta_1$ and $\beta_2$.  Stratifications also capture how the subpopulations change and interact.  For example, if the subpopulations refer to whether individuals have been vaccinated or not, then it is possible for unvaccinated individuals to become vaccinated. Similarly, individuals becoming infected may be exposed to susceptible individuals that have been vaccinated or not, each with a different infection rate.  Transitions between strata can occur in conjunction with another transition (e.g., simultaneously becoming infected and vaccinated), or via ``self'' transitions (e.g., transitioning between susceptible groups when vaccinated). Stratification can also be partial, meaning that states like $S_1$ and $S_2$ are stratified, but $I$ and $R$ are not.  This is useful when, for example, the recovery rate is the same for all subpopulations and there is no benefit to stratifying $I$ or $R$.
+
+We require several pieces of information to describe these cases with stratification operations.  Without loss of generality, we assume that a stratification refers to a single state variable $x$, and that it is refined into a number of strata.  In order to support different abstracts, we define stratification as a partition of a set of levels.  Each stratum corresponds to one element of the partition.  Under this definition, abstraction can analogously combine a subset of the levels.  For example, if we stratify $S$ with respect to attribute $vac$ (for vaccinated), then it has two levels $\{T, F\}$ (for true and false).  Similarly, we use attribute $age$, then it may have three levels $\{young, midddle, elderly\}$.  A partition of the $age$ attribute could define $[\{young, middle\}| \{elderly\}]$ so that there are two strata corresponding to the non-elderly and the elderly.
+
+Stratifying a state variable also impacts the transitions involving the variable (as either an input or output).  For each transition, the stratification must define transition refinements.  For example, when we refine $S$, we must also refine the $inf$ transition, because $S$ is an input.
+
+In addition to a state variable, a stratification can involve a number of parameters. Each transition involving the original state variable will also be stratified, and its necessary to specify how the transition rate parameters change.  We also define how a transition is stratified by the possible intra-strata transitions.  For example, the $age$ partition above defines two strata, and the stratification can define transitions between these.  Each transition has an equal number of inputs and outputs, meant to preserve the flow in and out of the transition.  The $inf$ transition has inputs $[S, I]$ and outputs $[I, I]$.  We make two assumptions to reduce the number of stratifications: 1) there is a ``natural'' transition as part of the transition, and 2) the total flow of a transition is distributed across the constituent stratified transitions.  The $inf$ transition comprises two state-to-state transitions (a one-to-one mapping from the inputs to outputs) $S$ to $I$ and $I$ to $I$. We refer to the $S$ to $I$ transition as a natural transition, and the $I$ to $I$, as a noop transition.  Intuitively, only one individual is infected, changing state from $S$ to $I$, and they are infected by an individual that is infected before and after the contact, persisting in the state $I$.  We assume that any change of stratum co-occuring with the transition is associated with the natural transition, and that the noop state-to-state transition does not change between strata.  In the stratified SIR model, this means that if we stratify both $S$ and $I$, there can be state-to-state transitions $S_1$ to $I_1$ or $S_1$ to $I_2$ (where 1 and 2 refer to different strata).  However, the state-to-state noop transitions will either be $I_1$ to $I_1$ or $I_2$ to $I_2$.  Because the parameters help define the transition rate, they may be different for transitions that have the state-to-state transition $S_1$ to $I_1$ versus $S_1$ to $I_2$.  Under our assumptions, there are eight possible stratified transitions of $inf$ if both $S$ and $I$ are stratified over two strata -- four possible $S$ to $I$ state-to-state transitions and two $I$ to $I$, amounting to eight combinations.  Each of these stratified transitions my use a different instance of the transition rate parameters, and stratifying $inf$ in this way could require eight different values of $\beta$.  Omitting $\beta$ from the stratification is equivalent to stating that all instances of $\beta$ are identical.  In addition to the stated parameters, it is also sometimes necessary to introduce a transition probability parameter.  For example, when there is a transition $S_1$ to $I_1$ and $S_1$ to $I_2$, an individual may only transition to one of $I_1$ or $I_2$.  Without modifying the transition rate, the model will not preserve the total flow.  We associate a probability distribution $P(S|I)$ to preserve the flow, and introduce parameters of the form $p_{S_1|I_1}$ and $p_{S_2|I_1}$ that correspond to the cases represented by the distribution.  Following these assumptions, we are able to specify a stratification as follows.
+
+Stratification involves defining a few concepts: stratum attributes (discrete dimensions that distinguish related model elements), stratum valuations (sets of stratum attribute value assignments), transition components (input-output pairs of states for each transition), and strata transitions (input-output pairs of strata for each transition component).  The stratification operator defines how to augment the model in terms of these concepts.  Intuitively, each state and transition has an associated stratum valuation that defines values of attributes consistent with them.  Stratifying a transition involves stratifying each transition component and refining the associated strata transition.
+
+% [A, B] -> [C, D], alternative sets of transition components = [((A, C), (B, D)), ((A, D), (B, C))]
+
+\begin{definition}
+	A stratum attribute $a \in A$ is a discrete finite variable with domain $d(a) = \{v_1, v_2, \ldots\}$, where each value $v_i$ is also referred to as a level $a$.
+\end{definition}
+
+\begin{definition}
+	Each stratum $s \in S$ has a valuation $V(s) \subseteq d(a_1) \times d(a_2) \times \ldots$ that associates a set of levels for each stratum attribute $a_i$ with the stratum.
+\end{definition}
+
+We can assume that each element of a base model corresponds to a single stratum $s$ where $V(s) = d(a_1) \times d(a_2) \times \ldots$.  Stratification operators partition the stratum of model elements into sub-strata.
+
+\begin{definition}
+	A transition component $t \in T(z)$ is a pair $(x_i, x_o)$ where $(x_i, z) \in E$ and $(z, x_o) \in E$.
+\end{definition}
+
+The transition components express the possible one to one mappings of inputs and outputs.  There may be several such mappings, but we assume for the sake of simplicity, that there is a single unique mapping.  This single mapping includes at most one ``natural'' transition component and zero or more ``noop'' components.  Natural transitions involve a change of state where the input and output state are not equal.  The noop transitions require that the input and output states are identical.  This assumption imposes a restriction on the possible transitions needed to have a single set of transition components describing a transition.
+
+\begin{definition}
+	A stratum transition $(s, s')$ represents a transition from one stratum valuation to another, and can be paired with a transition component to signify a simultaneous change in stratum and state.
+\end{definition}
+
+\begin{definition}
+	Stratifying a stratum $s$, where $V(s) = d(a_1) \times d(a_2) \times \ldots$, with respect to stratum attribute $a$ and the partition ${\cal D}= [D_0 | D_1| \ldots]$ of the attribute's values, will result in a set of strata, defined by the set of valuations $\{V(s) \cap_a D_i | {\cal D}= [D_0 | D_1| \ldots]\}$ where $V(s) \cap_a D_i = d(a_1) \times \ldots \times d(a) \cap D_i \times \ldots$.
+\end{definition}
+
+\begin{definition}
+	Stratifying a state $x$ associated with stratum $s$ defines a set of state and stratum pairs $\{(x_{s_i}, s_i)\}$ where each pair corresponds to an element $D_i$ of the partition ${\cal D}$.
+\end{definition}
+
+\begin{definition}
+	Stratifying a transition component $t = (x_{in}, x_{out}) \in T(z)$ defines a set of transition component and strata transition pairs $\{((x_{in}, x_{out}), (s_i(x_{in}), s_i(x_{out})) | {\cal D}= [D_0 | D_1| \ldots, V(s_i(x_{in})) = V(s_i(x_{in})) \cap_a D_i, V(s_i(x_{out})) = V(s_i(x_{out})) \cap_a D_i \}
+\end{definition}
+
+
+
+\begin{definition}
+	The stratification $\text{Stratify}_{Q}(\Omega,
+		\Theta) = (\Omega_Q, \Theta_Q)$ of a Petrinet and semantics  with
+	respect to a specification $Q = (x, {\cal D}, P', {\cal P}')$ defines a new Petrinet and
+	semantics with the following properties:
+	\begin{itemize}
+		\item Parameters: For each $p \in P' \subseteq P$,
+		\item Parameter Values: ${\cal P}'$
+		\item States: For each element $D_i$ of the partition ${\cal D}= [D_0 | D_1| \ldots]$, define a new set of states
+		      $X' = X\backslash \{x\} \cup \{x_{D_i} |  {\cal D} = [D_0 | D_1| \ldots]\}$.  The stratum valuation for each new state $x_{D_i}$ is $\d()$
+		\item Transitions: For each transition $z \in Z^{in(x)}\cup Z^{out(x)}$ (where $x$ is an input or output), we create stratified transitions by first creating stratified state to state transitions for natural transitions and noop transitions (if present).  The cross-product of these two sets of state to state transitions defines the set of stratified transitions.  A natural transition will (by definition) only have $x$ as an input or an output, but not both.  Similarly, a noop transition will have $x$ as both an input and an output.  A transition can be comprised of either one or both a natural transition and noop transition. Let $Z_{noop}(z, x)$ and $Z_{natural}(x, z)$ and $Z_{natural}(z, x)$ denote sets of stratified state to state transitions.  Then,
+		      \begin{eqnarray*}
+			      Z_{noop}(z, x) &=& \{((x, D_i \cap D(x)), (x, D_i\cap D(x))) | (x, z) \in Z, (z, x) Z,  {\cal D} = [D_0 | D_1| \ldots]\}\\
+			      Z_{natural}(x, z) &=& \{((x, D_i\cap D(x)), (y, D(y))) | (x, z) \in Z, (z, y) Z, x\not=y,  {\cal D} = [D_0 | D_1| \ldots]\}\\
+			      Z_{natural}(z, x) &=& \{((y, D(y)), (x, D_j\cap D(x))) | (y, z) \in Z, (z, x) Z, x\not=y,  {\cal D} = [D_0 | D_1| \ldots]\}
+		      \end{eqnarray*}
+		      where $D(y)$ is the pre-existing stratum of $y$ (and similarly for $D(x)$)
+		      The cross product of the non-empty sets of stratified state to state transitions will include either one or two state to state transitions that have stratum paired with each input and output.
+
+		      according to the cases:
+		      \begin{itemize}
+			      \item when $x$ is a noop transition (both and input and output), create a transition for each stratum $D_i$.
+			      \item when $x$
+		      \end{itemize}
+
+		      (where $x$ is both an input and output of a natural transition, in cases where there is no noop transition), it is possible to transition between
+		      strata defined by the partitions $D_i$ and $D_j$.  For each such strata transition define $z_{D_i\rightarrow D_j}$ so that:
+		      \begin{itemize}
+			      \item $E'_{in} = E_{in} \backslash \{(z, x)\} \cup \{(z_{D_i\rightarrow D_j},
+				            x_{D_j})| {\cal D} = [D_0 | D_1| \ldots]\}$ if $z \in
+				            Z^{in(x)}$.
+			      \item $E'_{out} = E_{out} \backslash \{(x, z)\} \cup \{(x_{D_i}, z_{D_i\rightarrow D_j}
+				            )| {\cal D} = [D_0 | D_1| \ldots]\}$ if $z \in
+				            Z^{out(x)}$.
+			      \item ${\cal R}({\bf p},{\bf x}, z_{D_i\rightarrow D_j}) = {\cal R}({\bf p},{\bf x}, z)[{\cal P}'({\bf p}, D_, D_j)\backslash {\bf p}]$
+		      \end{itemize}
+		\item Initial State
+		\item Parameter Values:
+		\item Transition Rates:
+	\end{itemize}
+\end{definition}
