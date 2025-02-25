@@ -2863,6 +2863,20 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         return result
 
+    def group_transitions_with_abstract_ancestor(self, transitions):
+        if len(transitions) == 0:
+            return [transitions]
+
+        groups = [[transitions[0]]]
+        for t in transitions[1:]:
+            for g in groups:
+                if self.has_common_ancestor(
+                    t.transition_id, g[0].transition_id
+                ):
+                    g.append(t)
+                    break
+        return groups
+
     def abstract(self, abstraction: Abstraction):
         # Get existing state variables
         abstraction.base_states = {s.id: s for s in self._state_vars()}
@@ -3405,75 +3419,113 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     else:
                         transition_parameters.append(tp)
 
-        # # Abstraction can also add transition parameters
-        # new_transition_maps = [new_model.transition_map(t) for t in new_transitions]
-        # new_transition_groups = {}
-        # for ntm in new_transition_maps:
-        #     inputs = tuple(ntm.inputs())
-        #     group = new_transition_groups.get(inputs, [])
-        #     group.append(ntm)
-        #     new_transition_groups[inputs] = group
+        # Abstraction can also add transition parameters
+        # If there are transitions that have a common input, have the same abstract parent, and have different outputs, then we need transition probabilities for them.
 
-        # # Any transition group added by abstraction needs to add transition probabilities
-        # for group, transitions in new_transition_groups.items():
-        #     if len(transitions) > 1 and any([t for t in transitions if not any(ot for ot in old_untouched_transitions.values() if self.transition_map(ot) == t)]):
-        #         transition_probabilities = [t.cross_strata_transition_probability(t.state_transitions) for t in transitions]
-        #         for t, tp in zip(transitions, transition_probabilities):
-        #             if not any([p for p in transition_parameters if p.id == tp]):
-        #                 r = next(iter((r for r in new_rates if r.target == t.transition_id)))
-        #                 r.expression = f"{tp}*{r.expression}"
-        #                 transition_parameters.append(
-        #                     Parameter(
-        #                         id=str(tp),
-        #                         name=str(tp),
-        #                         description=str(tp),
-        #                         value=1.0 / float(len(transitions)),
-        #                         grounding=None,
-        #                         distribution=None,
-        #                         units=None,
-        #                 ))
+        # These are state to state maps for each transition we created by abstraction
+        # We'll check if these have a common input and common ancestor
+        new_transition_maps = [
+            new_model.transition_map(t) for t in new_transitions
+        ]
+        # These groups are those that have identical inputs
+        new_transition_groups = {}
+        for ntm in new_transition_maps:
+            inputs = tuple(ntm.inputs())
+            group = new_transition_groups.get(inputs, [])
+            group.append(ntm)
+            new_transition_groups[inputs] = group
 
-        #         # sum_of_values = sum(transition_parameter_values.values())
-        #         # trans_map = new_model.transition_map(trans)
-        #         # strata_transitions = [st.strata_transition for st in trans_map.state_transitions]
-        #         # param_id = trans_map.cross_strata_transition_probability(trans_map.state_transitions)
-        #         # # param_id = new_model.stratified_parameter_id("p_cross_", strata_transitions)
-        #         # tp = Parameter(
-        #         #     id=param_id,
-        #         #     name=param_id,
-        #         #     description=param_id,
-        #         #     value=sum_of_values,
-        #         #     grounding=None,
-        #         #     distribution=None,
-        #         #     units=None,
-        #         # )
-        #         # transition_parameters.append(tp)
-        #         # new_rates[i].expression=param_id
-        # #         related_parameters = grouped_transition_parameters.get(
-        # #             tuple(trans.input), set({})
-        # #         )
-        # #         related_parameters = related_parameters.union(
-        # #             set(arp["transition_parameters"])
-        # #         )
-        # #         grouped_transition_parameters[tuple(trans.input)] = (
-        # #             related_parameters
-        # #         )
-        # # agg_param_ids = [p.id for p in aggregated_parameters]
-        # # transition_parameters = [
-        # #     Parameter(
-        # #         id=str(p),
-        # #         name=str(p),
-        # #         description=str(p),
-        # #         value=0.01, # FIXME
-        # #         #1.0 / float(len(param_group)),
-        # #         grounding=None,
-        # #         distribution=None,
-        # #         units=None,
-        # #     )
-        # #     for param_group in grouped_transition_parameters.values()
-        # #     for p in param_group
-        # #     if p not in agg_param_ids
-        # # ]
+        # Any transition group added by abstraction needs to add transition probabilities
+        for group, transitions in new_transition_groups.items():
+            for subgroup in self.group_transitions_with_abstract_ancestor(
+                transitions
+            ):
+                # ensure that group has at least one transition that is new because of the abstraction
+                if len(transitions) > 1 and any(
+                    [
+                        t
+                        for t in subgroup
+                        if not any(
+                            ot
+                            for ot in old_untouched_transitions.values()
+                            if self.transition_map(ot) == t
+                        )
+                    ]
+                ):
+                    transition_probabilities = [
+                        t.cross_strata_transition_probability(
+                            t.state_transitions
+                        )
+                        for t in subgroup
+                    ]
+                    for t, tp in zip(transitions, transition_probabilities):
+                        # Add a transition parameter for any transition that does not already have one
+                        if not any(
+                            [p for p in transition_parameters if p.id == tp]
+                        ):
+                            r = next(
+                                iter(
+                                    (
+                                        r
+                                        for r in new_rates
+                                        if r.target == t.transition_id
+                                    )
+                                )
+                            )
+                            r.expression = f"{tp}*{r.expression}"
+                            transition_parameters.append(
+                                Parameter(
+                                    id=str(tp),
+                                    name=str(tp),
+                                    description=str(tp),
+                                    value=1.0 / float(len(subgroup)),
+                                    grounding=None,
+                                    distribution=None,
+                                    units=None,
+                                )
+                            )
+
+                # sum_of_values = sum(transition_parameter_values.values())
+                # trans_map = new_model.transition_map(trans)
+                # strata_transitions = [st.strata_transition for st in trans_map.state_transitions]
+                # param_id = trans_map.cross_strata_transition_probability(trans_map.state_transitions)
+                # # param_id = new_model.stratified_parameter_id("p_cross_", strata_transitions)
+                # tp = Parameter(
+                #     id=param_id,
+                #     name=param_id,
+                #     description=param_id,
+                #     value=sum_of_values,
+                #     grounding=None,
+                #     distribution=None,
+                #     units=None,
+                # )
+                # transition_parameters.append(tp)
+                # new_rates[i].expression=param_id
+        #         related_parameters = grouped_transition_parameters.get(
+        #             tuple(trans.input), set({})
+        #         )
+        #         related_parameters = related_parameters.union(
+        #             set(arp["transition_parameters"])
+        #         )
+        #         grouped_transition_parameters[tuple(trans.input)] = (
+        #             related_parameters
+        #         )
+        # agg_param_ids = [p.id for p in aggregated_parameters]
+        # transition_parameters = [
+        #     Parameter(
+        #         id=str(p),
+        #         name=str(p),
+        #         description=str(p),
+        #         value=0.01, # FIXME
+        #         #1.0 / float(len(param_group)),
+        #         grounding=None,
+        #         distribution=None,
+        #         units=None,
+        #     )
+        #     for param_group in grouped_transition_parameters.values()
+        #     for p in param_group
+        #     if p not in agg_param_ids
+        # ]
 
         new_parameters = (
             unchanged_parameters

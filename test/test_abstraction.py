@@ -356,17 +356,6 @@ class TestUseCases(unittest.TestCase):
         ].timepoints = timepoints
 
         runner = Runner()
-        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
-
-        # import matplotlib.pyplot as plt
-
-        # base_result.plot()
-        # plt.savefig("sirhd")
-
-        assert (
-            base_result
-        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         vac_T = StratumAttributeValue(name="T")
@@ -437,14 +426,6 @@ class TestUseCases(unittest.TestCase):
             0
         ].timepoints = timepoints
 
-        stratified_result = runner.run(
-            stratified_model_SI.petrinet, sirhd_stratified_request
-        )
-
-        assert (
-            stratified_result
-        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         # Abstract and bound stratified Base model
         abstract_model = stratified_model_SI.abstract(
             Abstraction(
@@ -463,6 +444,18 @@ class TestUseCases(unittest.TestCase):
         bounded_abstract_model.to_dot().render(
             "sirhd_strat_SI_bounded_abstract_S"
         )
+
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        stratified_result = runner.run(
+            stratified_model_SI.petrinet, sirhd_stratified_request
+        )
+        assert (
+            stratified_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
         # Setup request by removing compartmental constraint that won't be correct
         # for a bounded model
