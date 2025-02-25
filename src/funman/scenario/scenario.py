@@ -7,8 +7,8 @@ from typing import Dict, List, Optional, Union
 import numpy as np
 import sympy
 from pydantic import BaseModel, ConfigDict
-from pysmt.shortcuts import TRUE, And, Solver
 from pysmt.logics import QF_NRA
+from pysmt.shortcuts import TRUE, And, Solver
 
 from funman import (
     NEG_INFINITY,
@@ -396,7 +396,7 @@ class AnalysisScenario(ABC, BaseModel):
             for k, v in observable_timeseries.items():
                 timeseries.data.append(v)
                 timeseries.columns.append(k)
-            
+
         # timeseries = np.array([[tvect[t], timeseries[t]] for t in range(len(tvect))])
         return timeseries
 
@@ -532,9 +532,13 @@ class AnalysisScenario(ABC, BaseModel):
         # [Point(label=LABEL_UNKNOWN, values={**{p.name: p.interval.lb for p in self.parameters}, **{f"{var}_0": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()},**{f"{var}_{tp}": float(self.model._get_init_value(var, self, config).constant_value()) for var in self.model._state_var_names()}})] if results is None else
 
         for point in points:
-            timeseries = self.run_point_simulation(
-                point, point.relevant_timepoints(self.model)
-            ) if not point.simulation else point.simulation
+            timeseries = (
+                self.run_point_simulation(
+                    point, point.relevant_timepoints(self.model)
+                )
+                if not point.simulation
+                else point.simulation
+            )
             sim_results.append((point, timeseries))
             point.simulation = timeseries
 

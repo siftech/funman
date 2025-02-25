@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import Dict, List, Literal, Optional, Union
 
@@ -8,8 +9,6 @@ from funman.config import FUNMANConfig
 from funman.model import FunmanModel
 from funman.representation import Interval
 from funman.representation.parameter import ModelParameter
-
-import logging
 
 l = logging.getLogger(__name__)
 
