@@ -911,8 +911,8 @@ class TestUseCases(unittest.TestCase):
     def test_sirhd_stratify_analysis(self):
 
         epsilon = 0.0001
-        N= 150000000.0
-        max_I = 0.3 * N  #3.542629e+07
+        N = 150000000.0
+        max_I = 0.3 * N  # 3.542629e+07
         timepoints = [float(t) for t in list(range(0, 2, 1))]
         num_age_groups = 2
 
@@ -932,7 +932,10 @@ class TestUseCases(unittest.TestCase):
         # Add constraint on I
         sirhd_stratified_request.constraints.append(
             StateVariableConstraint(
-                name="I upper", variable="I", interval=Interval(ub=max_I), soft=False
+                name="I upper",
+                variable="I",
+                interval=Interval(ub=max_I),
+                soft=False,
             )
         )
 
@@ -948,9 +951,13 @@ class TestUseCases(unittest.TestCase):
             }
         )
 
-        age_values = [StratumAttributeValue(name=str(i)) for i in range(num_age_groups)]
+        age_values = [
+            StratumAttributeValue(name=str(i)) for i in range(num_age_groups)
+        ]
+        
         age_stratum_attr = StratumAttribute(
-            name="age", values=age_values
+            name="age",
+            values=age_values,
             # {age_0, age_1, age_2
             # , age_3, age_4, age_5, age_6, age_7, age_8, age_9
             # }
@@ -1020,7 +1027,7 @@ class TestUseCases(unittest.TestCase):
                             ),
                             output_stratum=StratumValuation(),
                         ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.5)))
-                        for i, age_value in enumerate(age_values)                       
+                        for i, age_value in enumerate(age_values)
                     }
                 },
             ),
@@ -1043,7 +1050,11 @@ class TestUseCases(unittest.TestCase):
                                 }
                             ),
                             output_stratum=StratumValuation(),
-                        ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.75)))
+                        ): beta.value
+                        + (
+                            epsilon
+                            * (float(i) - (float(num_age_groups) * 0.75))
+                        )
                         for i, age_value in enumerate(age_values)
                     }
                 },
@@ -1125,11 +1136,17 @@ class TestUseCases(unittest.TestCase):
         vac_abstractions = [
             Abstraction(
                 description="Abstract D_vac_T wrt. age.",
-                abstraction={f"D_vac_T_age_{i}": "D_vac_T" for i in range(num_age_groups)},
+                abstraction={
+                    f"D_vac_T_age_{i}": "D_vac_T"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract D_vac_F wrt. age.",
-                abstraction={f"D_vac_F_age_{i}": "D_vac_F" for i in range(num_age_groups)},
+                abstraction={
+                    f"D_vac_F_age_{i}": "D_vac_F"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract D wrt. vaccination status.",
@@ -1137,11 +1154,17 @@ class TestUseCases(unittest.TestCase):
             ),
             Abstraction(
                 description="Abstract H_vac_T wrt. age.",
-                abstraction={f"H_vac_T_age_{i}": "H_vac_T" for i in range(num_age_groups)},
+                abstraction={
+                    f"H_vac_T_age_{i}": "H_vac_T"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract H_vac_F wrt. age.",
-                abstraction={f"H_vac_F_age_{i}": "H_vac_F" for i in range(num_age_groups)},
+                abstraction={
+                    f"H_vac_F_age_{i}": "H_vac_F"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract H wrt. vaccination status.",
@@ -1149,11 +1172,17 @@ class TestUseCases(unittest.TestCase):
             ),
             Abstraction(
                 description="Abstract R_vac_T wrt. age.",
-                abstraction={f"R_vac_T_age_{i}": "R_vac_T" for i in range(num_age_groups)},
+                abstraction={
+                    f"R_vac_T_age_{i}": "R_vac_T"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract R_vac_F wrt. age.",
-                abstraction={f"R_vac_F_age_{i}": "R_vac_F" for i in range(num_age_groups)},
+                abstraction={
+                    f"R_vac_F_age_{i}": "R_vac_F"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract R wrt. vaccination status.",
@@ -1161,11 +1190,17 @@ class TestUseCases(unittest.TestCase):
             ),
             Abstraction(
                 description="Abstract I_vac_T wrt. age.",
-                abstraction={f"I_vac_T_age_{i}": "I_vac_T" for i in range(num_age_groups)},
+                abstraction={
+                    f"I_vac_T_age_{i}": "I_vac_T"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract I_vac_F wrt. age.",
-                abstraction={f"I_vac_F_age_{i}": "I_vac_F" for i in range(num_age_groups)},
+                abstraction={
+                    f"I_vac_F_age_{i}": "I_vac_F"
+                    for i in range(num_age_groups)
+                },
             ),
             Abstraction(
                 description="Abstract I wrt. vaccination status.",
@@ -1174,15 +1209,27 @@ class TestUseCases(unittest.TestCase):
             Abstraction(
                 description="Abstract S age groups wrt. unvaccination status.",
                 abstraction={
-                    **{f"S_vac_F_age_{i}": "S_vac_F" for i in range(num_age_groups)},
-                    **{f"beta___to_____S_vac_F_to_____to_____S_vac_F_age_{i}_to__": "beta___to_____S_vac_F_to__" for i in range(num_age_groups)},
+                    **{
+                        f"S_vac_F_age_{i}": "S_vac_F"
+                        for i in range(num_age_groups)
+                    },
+                    **{
+                        f"beta___to_____S_vac_F_to_____to_____S_vac_F_age_{i}_to__": "beta___to_____S_vac_F_to__"
+                        for i in range(num_age_groups)
+                    },
                 },
             ),
             Abstraction(
                 description="Abstract S age groups wrt. vaccination status.",
                 abstraction={
-                    **{f"S_vac_T_age_{i}": "S_vac_T" for i in range(num_age_groups)},
-                    **{f"beta___to_____S_vac_T_to_____to_____S_vac_T_age_{i}_to__": "beta___to_____S_vac_T_to__" for i in range(num_age_groups)},
+                    **{
+                        f"S_vac_T_age_{i}": "S_vac_T"
+                        for i in range(num_age_groups)
+                    },
+                    **{
+                        f"beta___to_____S_vac_T_to_____to_____S_vac_T_age_{i}_to__": "beta___to_____S_vac_T_to__"
+                        for i in range(num_age_groups)
+                    },
                 },
             ),
             Abstraction(
@@ -1242,7 +1289,9 @@ class TestUseCases(unittest.TestCase):
             {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
             for m in vac_models
         ]
-        bounded_vac_models = [m.formulate_bounds() for m in vac_models[-len(vac_abstractions):]]
+        bounded_vac_models = [
+            m.formulate_bounds() for m in vac_models[-len(vac_abstractions) :]
+        ]
 
         for m in bounded_vac_models:
             # infected_states_lb = [s.id for s in m.petrinet.model.states if s.id.startswith("I") and s.id.endswith("_lb")]
@@ -1302,8 +1351,11 @@ class TestUseCases(unittest.TestCase):
         dfs = pd.concat(m)
 
         runtimes = dfs.reset_index(["time"])[
-            ["runtime (s)", "description", "I_bound"
-            # , "I", *[b for b in dfs.columns if b.startswith("beta")]
+            [
+                "runtime (s)",
+                "description",
+                "I_bound",
+                # , "I", *[b for b in dfs.columns if b.startswith("beta")]
             ]
         ].drop_duplicates()
         self.l.info(runtimes)
@@ -1474,11 +1526,7 @@ class TestUseCases(unittest.TestCase):
             m.append(df)
         dfs = pd.concat(m)
         runtimes = dfs[
-            [
-                c
-                for c in ["runtime (s)"]
-                if c in dfs.columns
-            ]
+            [c for c in ["runtime (s)"] if c in dfs.columns]
         ].drop_duplicates()
         self.l.info(runtimes)
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T

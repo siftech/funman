@@ -455,7 +455,8 @@ class FunmanResults(BaseModel):
                     + 1,
                 )
                 df = (
-                    df.set_index("index").infer_objects(copy=False)
+                    df.set_index("index")
+                    .infer_objects(copy=False)
                     .reindex(new_index)
                     .interpolate(method=interpolate)
                 )
@@ -477,9 +478,8 @@ class FunmanResults(BaseModel):
             # df = df.reindex(range(max_time+1), fill_value=None)
 
             if time_var and any("timer_t" in x for x in df.columns):
-                df = (
-                    df.rename(columns={"timer_t": "time"})
-                    .set_index("time", drop=True)
+                df = df.rename(columns={"timer_t": "time"}).set_index(
+                    "time", drop=True
                 )
                 if "index" in df.columns:
                     df = df.drop(columns=["index"])

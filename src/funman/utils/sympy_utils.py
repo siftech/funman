@@ -24,9 +24,18 @@ from pysmt.shortcuts import (
     get_env,
 )
 from pysmt.walkers import IdentityDagWalker
-from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
+from sympy import (
+    Abs,
+    Add,
+    Expr,
+    Rational,
+    SympifyError,
+    exp,
+    series,
+    symbols,
+    sympify,
+)
 from sympy.logic.boolalg import BooleanTrue
-from sympy import SympifyError
 
 l = logging.getLogger(__name__)
 
