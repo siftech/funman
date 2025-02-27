@@ -2305,10 +2305,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 #     if p not in new_parameters:
                 #         new_parameters.append(p)
                 #     rate_expr = rate_expr * sympy.Symbol(p.id)
-                for p in strat_tr_map.cross_stratam_transition_parameters:
-                    if p not in new_parameters:
-                        new_parameters.append(p)
-                    rate_expr = rate_expr * sympy.Symbol(p.id)
+
+                # FIXME need to restrict addition of transition probabilities to cases where there are stratified transitions with identical inputs. 
+                if len(strata_transitions_by_input[input_key]) > 1 or tr_map.transition_id.startswith("self_"):
+                    for p in strat_tr_map.cross_stratam_transition_parameters:
+                        if p not in new_parameters:
+                            new_parameters.append(p)
+                        rate_expr = rate_expr * sympy.Symbol(p.id)
                 new_rate = Rate(target=new_id, expression=str(rate_expr))
                 new_rates.append(new_rate)
 
@@ -2496,16 +2499,16 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             ) = self.strata_self_transitions(
                 stratification, original_var, stratum
             )
-            for t, r, p in zip(
-                self_strata_transitions,
-                self_strata_rates,
-                self_strata_parameters,
-            ):
-                t_id = t.id
-                normalized_stratified_transitions_rates_params[t.id] = (
-                    [t],
-                    [r],
-                    [p],
+            # for t, r, p in zip(
+            #     self_strata_transitions,
+            #     self_strata_rates,
+            #     self_strata_parameters,
+            # ):
+                # t_id = t.id
+            normalized_stratified_transitions_rates_params[original_var.id] = (
+                    self_strata_transitions,
+                    self_strata_rates,
+                    self_strata_parameters
                 )
             # new_model.petrinet.model.transitions.root += (
             #     self_strata_transitions
@@ -2869,12 +2872,16 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
         groups = [[transitions[0]]]
         for t in transitions[1:]:
+            found_group = False
             for g in groups:
                 if self.has_common_ancestor(
                     t.transition_id, g[0].transition_id
                 ):
                     g.append(t)
+                    found_group = True
                     break
+            if not found_group:
+                groups.append([t])
         return groups
 
     def abstract(self, abstraction: Abstraction):
@@ -3441,7 +3448,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 transitions
             ):
                 # ensure that group has at least one transition that is new because of the abstraction
-                if len(transitions) > 1 and any(
+                if len(subgroup) > 1 and any(
                     [
                         t
                         for t in subgroup
@@ -3458,7 +3465,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                         )
                         for t in subgroup
                     ]
-                    for t, tp in zip(transitions, transition_probabilities):
+                    for t, tp in zip(subgroup, transition_probabilities):
                         # Add a transition parameter for any transition that does not already have one
                         if not any(
                             [p for p in transition_parameters if p.id == tp]
@@ -3472,7 +3479,14 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                     )
                                 )
                             )
-                            r.expression = f"{tp}*{r.expression}"
+                            sym_rate = to_sympy(r.expression, self._symbols())
+                            rate_symbols = sym_rate.free_symbols
+                            try:
+                                probability_symbol = next(iter([sym for sym in rate_symbols if str(sym).startswith("p_cross")]))
+                                sym_rate = sym_rate.subs({probability_symbol: to_sympy(tp, self._symbols())})
+                                r.expression = str(sym_rate)
+                            except StopIteration:
+                                r.expression = f"{tp}*{r.expression}"
                             transition_parameters.append(
                                 Parameter(
                                     id=str(tp),

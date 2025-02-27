@@ -541,12 +541,6 @@ class TestUseCases(unittest.TestCase):
         ].timepoints = timepoints
 
         runner = Runner()
-        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
-
-        assert (
-            base_result
-        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         vac_T = StratumAttributeValue(name="T")
@@ -708,6 +702,13 @@ class TestUseCases(unittest.TestCase):
                     b.value -= epsilon
                 else:
                     b.value += epsilon
+
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
 
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
