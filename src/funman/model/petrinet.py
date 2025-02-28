@@ -3221,7 +3221,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 }
 
                 transition_param_min = {
-                    stp: f"{abstract_transition_probability}/{len(starting_transition_params)}"
+                    # stp: f"{abstract_transition_probability}/{len(starting_transition_params)}"
+                    stp: abstract_transition_probability
                     for stp in starting_transition_params
                 }
                 constant_substitution = {}
