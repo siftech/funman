@@ -709,7 +709,6 @@ class TestUseCases(unittest.TestCase):
             base_result
         ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
-
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
                 f.read()
@@ -948,7 +947,7 @@ class TestUseCases(unittest.TestCase):
         age_values = [
             StratumAttributeValue(name=str(i)) for i in range(num_age_groups)
         ]
-        
+
         age_stratum_attr = StratumAttribute(
             name="age",
             values=age_values,
@@ -1020,7 +1019,11 @@ class TestUseCases(unittest.TestCase):
                                 }
                             ),
                             output_stratum=StratumValuation(),
-                        ): beta.value + (epsilon*(float(i)-(float(num_age_groups)*0.5)))
+                        ): beta.value
+                        + (
+                            epsilon
+                            * (float(i) - (float(num_age_groups) * 0.5))
+                        )
                         for i, age_value in enumerate(age_values)
                     }
                 },
