@@ -561,37 +561,12 @@ class TestUseCases(unittest.TestCase):
             base_parameters=["beta"],
             stratum=vac_stratum,
             self_strata_transitions=0.01,
-            cross_strata_transitions=True,
+            cross_strata_transitions=0.01,
         )
         stratification_I = Stratification(
             base_state="I",
             stratum=vac_stratum,
-            cross_strata_transitions=True,
-        )
-
-        stratified_model_S = base_model.stratify(stratification_S)
-        stratified_model_S.to_dot().render("sirhd_strat_S")
-        stratified_model_S_parameters = stratified_model_S._parameter_names()
-
-        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
-        stratified_model_S_expected_parameters = [
-            "N",
-            "pir",
-            "pih",
-            "rih",
-            "phd",
-            "rhd",
-            "phr",
-            "rhr",
-            "rir",
-            "beta___to_____S_vac_F_to__",
-            "beta___to_____S_vac_T_to__",
-            "p_cross_S_vac_T_to_S_vac_F_",
-            "p_cross_S_vac_F_to_S_vac_T_",
-        ]
-
-        self.model_has_expected_parameters(
-            stratified_model_S, stratified_model_S_expected_parameters
+            cross_strata_transitions=0.01,
         )
 
         stratified_model_I = base_model.stratify(stratification_I)
@@ -617,38 +592,6 @@ class TestUseCases(unittest.TestCase):
         ]
         self.model_has_expected_parameters(
             stratified_model_I, stratified_model_I_expected_parameters
-        )
-
-        stratified_model_SI = stratified_model_S.stratify(stratification_I)
-        stratified_model_SI.to_dot().render("sirhd_strat_SI")
-        stratified_model_SI_parameters = stratified_model_SI._parameter_names()
-
-        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
-        stratified_model_SI_expected_parameters = [
-            "N",
-            "pir",
-            "pih",
-            "rih",
-            "phd",
-            "rhd",
-            "phr",
-            "rhr",
-            "rir",
-            "beta___to_____S_vac_T_to__",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_",
-            "beta___to_____S_vac_F_to__",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_",
-            "p_cross_S_vac_T_to_S_vac_F_",
-            "p_cross_S_vac_F_to_S_vac_T_",
-        ]
-        self.model_has_expected_parameters(
-            stratified_model_SI, stratified_model_SI_expected_parameters
         )
 
         stratified_model_IS = stratified_model_I.stratify(stratification_S)
@@ -682,6 +625,67 @@ class TestUseCases(unittest.TestCase):
         self.model_has_expected_parameters(
             stratified_model_IS, stratified_model_IS_expected_parameters
         )
+
+        stratified_model_S = base_model.stratify(stratification_S)
+        stratified_model_S.to_dot().render("sirhd_strat_S")
+        stratified_model_S_parameters = stratified_model_S._parameter_names()
+
+        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
+        stratified_model_S_expected_parameters = [
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_F_to__",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
+        ]
+
+        self.model_has_expected_parameters(
+            stratified_model_S, stratified_model_S_expected_parameters
+        )
+
+
+
+        stratified_model_SI = stratified_model_S.stratify(stratification_I)
+        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+        stratified_model_SI_parameters = stratified_model_SI._parameter_names()
+
+        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
+        stratified_model_SI_expected_parameters = [
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_",
+            "beta___to_____S_vac_F_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
+        ]
+        self.model_has_expected_parameters(
+            stratified_model_SI, stratified_model_SI_expected_parameters
+        )
+
+
 
         assert (
             len(

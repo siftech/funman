@@ -582,7 +582,7 @@ class Stratification(BaseModel):
     partition: StratumPartition = StratumPartition()
     stratum: Stratum  # interpreted as cross product over attribute values
     self_strata_transitions: float = 0.0
-    cross_strata_transitions: bool = False
+    cross_strata_transitions: float = 0.0
     only_natural_transitions: bool = (
         True  # only stratify transitions that are not persistence
     )
@@ -809,6 +809,7 @@ class Abstraction(BaseModel):
 class StrataTransition(BaseModel):
     input_stratum: Optional[StratumValuation] = None
     output_stratum: Optional[StratumValuation] = None
+    probability: float = 1.0
 
     def __str__(self):
         return f"_{self.input_stratum}_to_{self.output_stratum}"
@@ -1022,20 +1023,25 @@ class StateTransition(BaseModel):
         for input_level in possible_input_levels:
             for output_level in possible_output_levels:
                 if (
-                    stratification.cross_strata_transitions
+                    stratification.cross_strata_transitions > 0.0
                     and self.is_natural_transition()
                 ) or (
                     stratification.self_strata_transitions and self_transition
                 ):
+
+                    in_stratum = input_level.intersection(
+                                self.strata_transition.input_stratum
+                            )
+                    out_stratum = output_level.intersection(
+                                self.strata_transition.output_stratum
+                            )
+                    probability = stratification.cross_strata_transitions if in_stratum != out_stratum else 1.0-stratification.cross_strata_transitions
                     # allow levels to be different
                     legal_strata_transitions.append(
                         StrataTransition(
-                            input_stratum=input_level.intersection(
-                                self.strata_transition.input_stratum
-                            ),
-                            output_stratum=output_level.intersection(
-                                self.strata_transition.output_stratum
-                            ),
+                            input_stratum=in_stratum,
+                            output_stratum=out_stratum,
+                            probability = probability*self.strata_transition.probability
                         )
                     )
                 elif input_level.subsumed_by(
@@ -1050,6 +1056,7 @@ class StateTransition(BaseModel):
                             output_stratum=output_level.intersection(
                                 self.strata_transition.output_stratum
                             ),
+                            probability = self.strata_transition.probability
                         )
                     )
         return legal_strata_transitions
@@ -2162,16 +2169,18 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             input_key,
             input_strata_transitions,
         ) in strata_transitions_by_input.items():
-            num_interpretations = [
-                prod([float(st.num_output_interpretations()) for st in sts])
-                for sts in input_strata_transitions
-            ]
-            transition_probability = [
-                (val / total_interpretations) for val in num_interpretations
-            ]
+            # num_interpretations = [
+            #     prod([float(st.num_output_interpretations()) for st in sts])
+            #     for sts in input_strata_transitions
+            # ]
+            # transition_probability = [
+            #     (val / total_interpretations) for val in num_interpretations
+            # ]
+            
+            transition_probability = [prod([st.probability for st in sts]) for sts in input_strata_transitions ]
             total_probability = sum(transition_probability)
             normalized_transition_probability = [
-                old_value * p / total_probability
+                p / total_probability
                 for p in transition_probability
             ]
             strata_transition_probability_by_input[input_key] = (
