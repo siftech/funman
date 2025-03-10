@@ -561,12 +561,12 @@ class TestUseCases(unittest.TestCase):
             base_parameters=["beta"],
             stratum=vac_stratum,
             self_strata_transitions=0.01,
-            cross_strata_transitions=0.01,
+            cross_strata_transitions=0.002,
         )
         stratification_I = Stratification(
             base_state="I",
             stratum=vac_stratum,
-            cross_strata_transitions=0.01,
+            cross_strata_transitions=0.002,
         )
 
         stratified_model_I = base_model.stratify(stratification_I)
@@ -720,6 +720,7 @@ class TestUseCases(unittest.TestCase):
         # sirhd_request.config.use_compartmental_constraints = False
         # sirhd_request.config.save_smtlib = "./out"
         sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.config.verbosity = 5
         sirhd_stratified_request.structure_parameters[0].schedules[
             0
         ].timepoints = timepoints
