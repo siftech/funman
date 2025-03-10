@@ -1041,7 +1041,7 @@ class StateTransition(BaseModel):
                         StrataTransition(
                             input_stratum=in_stratum,
                             output_stratum=out_stratum,
-                            probability = probability*self.strata_transition.probability
+                            probability = probability
                         )
                     )
                 elif input_level.subsumed_by(
@@ -2184,7 +2184,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 for p in transition_probability
             ]
             strata_transition_probability_by_input[input_key] = (
-                normalized_transition_probability
+                # normalized_transition_probability
+                transition_probability # Don't normalize here
             )
         input_keys = list(strata_transitions_by_input.keys())
         input_keys.sort()
@@ -2318,13 +2319,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
 
                 # FIXME need to restrict addition of transition probabilities to cases where there are stratified transitions with identical inputs.
 
-                if len(
-                    strata_transitions_by_input[input_key]
-                ) > 1 or tr_map.transition_id.startswith("self_"):
-                    for p in strat_tr_map.cross_stratam_transition_parameters:
-                        if p not in new_parameters:
-                            transition_parameters.append(p)
-                        rate_expr = rate_expr * sympy.Symbol(p.id)
+                # if len(
+                #     strata_transitions_by_input[input_key]
+                # ) > 1 or tr_map.transition_id.startswith("self_"):
+                for p in strat_tr_map.cross_stratam_transition_parameters:
+                    if p not in new_parameters:
+                        transition_parameters.append(p)
+                    rate_expr = rate_expr * sympy.Symbol(p.id)
                 new_rate = Rate(target=new_id, expression=str(rate_expr))
                 new_rates.append(new_rate)
 
@@ -2373,7 +2374,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         strata_transitions_by_input = {}
         cross_strata_parameter_by_transition = {}
         for strps in stratified_transitions_rates_params.values():
-            trs, rates, params = strps
+            # trs, rates, params = strps
+            trs = strps['transitions']
+            rates = strps['rates']
+            params = strps['transition_parameters']
             for trans, rate in zip(trs, rates):
                 input_key = tuple(trans.input)
                 input_key_transitions = strata_transitions_by_input.get(
@@ -2399,6 +2403,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     for t in input_strata_transitions
                     if t.id in cross_strata_parameter_by_transition
                 ]
+                # [prod([st.probability for st in sts]) for sts in input_strata_transitions ]
                 norm = sum(unnormalized_probabilities)
                 normalized_probabilities = [
                     p / norm for p in unnormalized_probabilities
@@ -2501,13 +2506,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         # Its possible to generate transitions with the same input, but different output
         # from different pre-stratification transitions
         normalized_stratified_transitions_rates_params = (
-            stratified_transitions_rates_params
+            self.normalize_stratified_transitions(
+                stratified_transitions_rates_params
+            )
         )
-        # (
-        #     self.normalize_stratified_transitions(
-        #         stratified_transitions_rates_params
-        #     )
-        # )
 
         if self_strata_transition > 0.0:
             (
