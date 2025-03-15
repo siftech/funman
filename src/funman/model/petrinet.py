@@ -1,4 +1,5 @@
 import copy
+from decimal import DivisionByZero
 import itertools
 import logging
 from collections import Counter
@@ -1035,15 +1036,19 @@ class StateTransition(BaseModel):
                     out_stratum = output_level.intersection(
                                 self.strata_transition.output_stratum
                             )
-                    probability = stratification.cross_strata_transitions if in_stratum != out_stratum else 1.0-stratification.cross_strata_transitions
-                    # allow levels to be different
-                    legal_strata_transitions.append(
-                        StrataTransition(
-                            input_stratum=in_stratum,
-                            output_stratum=out_stratum,
-                            probability = probability
+                    if self_transition:
+                        probability = stratification.self_strata_transitions
+                    else:
+                        probability = stratification.cross_strata_transitions if in_stratum != out_stratum else 1.0-stratification.cross_strata_transitions
+                    if probability > 0.0:
+                        # allow levels to be different
+                        legal_strata_transitions.append(
+                            StrataTransition(
+                                input_stratum=in_stratum,
+                                output_stratum=out_stratum,
+                                probability = probability
+                            )
                         )
-                    )
                 elif input_level.subsumed_by(
                     output_level
                 ) or output_level.subsumed_by(input_level):
@@ -2179,10 +2184,14 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             
             transition_probability = [prod([st.probability for st in sts]) for sts in input_strata_transitions ]
             total_probability = sum(transition_probability)
-            normalized_transition_probability = [
-                p / total_probability
-                for p in transition_probability
-            ]
+
+            try:
+                normalized_transition_probability = [
+                    p / total_probability
+                    for p in transition_probability
+                ]
+            except ZeroDivisionError as e:
+                raise e
             strata_transition_probability_by_input[input_key] = (
                 # normalized_transition_probability
                 transition_probability # Don't normalize here
@@ -2302,8 +2311,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     s: 1
                     for s in old_rate.free_symbols
                     if str(s).startswith("p_cross_")
-                    and len(strat_tr_map.cross_stratam_transition_parameters)
-                    > 0
+                    # and len(strat_tr_map.cross_stratam_transition_parameters)
+                    # > 0
                 }
                 all_sub = {
                     **input_subs,
@@ -2379,6 +2388,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             rates = strps['rates']
             params = strps['transition_parameters']
             for trans, rate in zip(trs, rates):
+                if trans.id.startswith("self_"):
+                    continue # Don't normalize self transitions between strata
+
                 input_key = tuple(trans.input)
                 input_key_transitions = strata_transitions_by_input.get(
                     input_key, []
@@ -2398,26 +2410,32 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 input_key,
                 input_strata_transitions,
             ) in strata_transitions_by_input.items():
-                unnormalized_probabilities = [
-                    cross_strata_parameter_by_transition[t.id].value
-                    for t in input_strata_transitions
-                    if t.id in cross_strata_parameter_by_transition
-                ]
-                # [prod([st.probability for st in sts]) for sts in input_strata_transitions ]
-                norm = sum(unnormalized_probabilities)
-                normalized_probabilities = [
-                    p / norm for p in unnormalized_probabilities
-                ]
-                for t, p in zip(
-                    input_strata_transitions, normalized_probabilities
+                for subgroup in self.group_transitions_with_abstract_ancestor(
+                    input_strata_transitions
                 ):
-                    try:
-                        if t.id in cross_strata_parameter_by_transition:
-                            cross_strata_parameter_by_transition[
-                                t.id
-                            ].value = p
-                    except KeyError as e:
-                        raise e
+                    # if len(subgroup) > 1:
+
+
+                    unnormalized_probabilities = [
+                        cross_strata_parameter_by_transition[t.id].value
+                        for t in subgroup
+                        if t.id in cross_strata_parameter_by_transition
+                    ]
+                    # [prod([st.probability for st in sts]) for sts in input_strata_transitions ]
+                    norm = sum(unnormalized_probabilities)
+                    normalized_probabilities = [
+                        p / norm for p in unnormalized_probabilities
+                    ]
+                    for t, p in zip(
+                        subgroup, normalized_probabilities
+                    ):
+                        try:
+                            if t.id in cross_strata_parameter_by_transition:
+                                cross_strata_parameter_by_transition[
+                                    t.id
+                                ].value = p
+                        except KeyError as e:
+                            raise e
         return stratified_transitions_rates_params
 
     def stratify(self, stratification: Stratification):
@@ -2502,11 +2520,47 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             )
         }
 
+        stratification._transition_ancestors = {
+            st.id: t_id
+            for t_id, t in stratified_transitions_rates_params.items()
+            for st in t["transitions"]
+        }
+
+        new_states = list(new_vars.values()) + [
+            s for s in self.petrinet.model.states.root if s != original_var
+        ]
+
+        new_model = GeneratedPetriNetModel(
+            petrinet=Model(
+                header=self.petrinet.header,
+                properties=self.petrinet.properties,
+                model=Model1(
+                    states=new_states,
+                    transitions= list(other_transitions.values()),
+                ),
+            )
+        )
+        
+        new_metadata = copy.deepcopy(self.petrinet.metadata)
+        transformations = new_metadata.get("transformations", [])
+        transformations.append(stratification)
+        new_metadata["transformations"] = transformations
+
+        state_strata = new_metadata.get("state_strata", {})
+        state_strata.update(new_vars_strata)
+        new_metadata["state_strata"] = state_strata
+
+        # ancestors are reltations between states, transitions, and parameters
+        ancestors = new_metadata.get("ancestors", [])
+        ancestors.append(stratification._ancestors())
+        new_metadata["ancestors"] = ancestors
+        new_model.petrinet.metadata = new_metadata
+
         # Normalize the cross strata transition probabilities across the new transitions.
         # Its possible to generate transitions with the same input, but different output
         # from different pre-stratification transitions
         normalized_stratified_transitions_rates_params = (
-            self.normalize_stratified_transitions(
+            new_model.normalize_stratified_transitions(
                 stratified_transitions_rates_params
             )
         )
@@ -2540,16 +2594,14 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             # )
 
         # Transitions
-        stratification._transition_ancestors = {
-            st.id: t_id
-            for t_id, t in normalized_stratified_transitions_rates_params.items()
-            for st in t["transitions"]
-        }
+
         new_transitions = [
             tr
             for t in normalized_stratified_transitions_rates_params.values()
             for tr in t["transitions"]
         ]
+        new_model.petrinet.model.transitions.root += new_transitions
+
         new_rates = [
             r
             for t in normalized_stratified_transitions_rates_params.values()
@@ -2567,21 +2619,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             if r.target in other_transitions
         }
 
-        new_states = list(new_vars.values()) + [
-            s for s in self.petrinet.model.states.root if s != original_var
-        ]
 
-        new_model = GeneratedPetriNetModel(
-            petrinet=Model(
-                header=self.petrinet.header,
-                properties=self.petrinet.properties,
-                model=Model1(
-                    states=new_states,
-                    transitions=new_transitions
-                    + list(other_transitions.values()),
-                ),
-            )
-        )
+
+
 
         # update with new states by splitting old state values
         original_init_value = to_sympy(
@@ -2639,19 +2679,8 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             # + transition_probability_parameters
         )
 
-        new_metadata = copy.deepcopy(self.petrinet.metadata)
-        transformations = new_metadata.get("transformations", [])
-        transformations.append(stratification)
-        new_metadata["transformations"] = transformations
-        state_strata = new_metadata.get("state_strata", {})
-        state_strata.update(new_vars_strata)
-        new_metadata["state_strata"] = state_strata
+       
 
-        # ancestors are reltations between states, transitions, and parameters
-        ancestors = new_metadata.get("ancestors", [])
-        ancestors.append(stratification._ancestors())
-        new_metadata["ancestors"] = ancestors
-        new_model.petrinet.metadata = new_metadata
 
         transition_parameters, new_rates = (
             self.correct_transition_probabilities(
@@ -2679,7 +2708,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             for p in new_parameters
             if any(
                 [
-                    p.id in r.expression
+                    p.id in [str(s) for s in to_sympy(r.expression, self._symbols()).free_symbols]
                     for r in [*new_rates, *other_rates.values()]
                 ]
             )
@@ -2908,8 +2937,10 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         for t in transitions[1:]:
             found_group = False
             for g in groups:
+                id1 = t.transition_id if isinstance(t, TransitionMap) else t.id
+                id2 = g[0].transition_id if isinstance(g[0], TransitionMap) else g[0].id
                 if self.has_common_ancestor(
-                    t.transition_id, g[0].transition_id
+                    id1, id2 
                 ):
                     g.append(t)
                     found_group = True

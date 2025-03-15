@@ -535,7 +535,8 @@ class TestUseCases(unittest.TestCase):
             sirhd_base_request = FunmanWorkRequest.model_validate_json(
                 f.read()
             )
-        sirhd_base_request.config.mode = "mode_odeint"
+        sirhd_base_request.config.mode = "mode_smt"
+        sirhd_base_request.config.save_smtlib = "./out"
         sirhd_base_request.structure_parameters[0].schedules[
             0
         ].timepoints = timepoints
@@ -719,7 +720,7 @@ class TestUseCases(unittest.TestCase):
             )
         # sirhd_request.config.use_compartmental_constraints = False
         # sirhd_request.config.save_smtlib = "./out"
-        sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.config.mode = "mode_smt"
         sirhd_stratified_request.config.verbosity = 5
         sirhd_stratified_request.structure_parameters[0].schedules[
             0
@@ -823,12 +824,18 @@ class TestUseCases(unittest.TestCase):
         # for a bounded model
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_request = FunmanWorkRequest.model_validate_json(f.read())
-        # sirhd_request.config.use_compartmental_constraints = False
-        # sirhd_request.config.save_smtlib = "./out"
-        sirhd_request.config.mode = "mode_odeint"
+        sirhd_request.config.use_compartmental_constraints = False
+        sirhd_request.config.save_smtlib = "./out"
+        sirhd_request.config.mode = "mode_smt"
         sirhd_request.structure_parameters[0].schedules[
             0
         ].timepoints = timepoints
+
+        bounded_base_model = base_model.formulate_bounds()
+        bounded_base_result = runner.run(
+            bounded_base_model.petrinet,
+            sirhd_request,
+        )
 
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet,
@@ -1251,6 +1258,8 @@ class TestUseCases(unittest.TestCase):
 
         current_model = base_model
         for i, t in enumerate(transformation_sequence):
+            if i == 8:
+                pass
             next_model = current_model.transform(t)
             vac_models.append(next_model)
             # next_model.to_dot().render(f"vac_model_{i}"),
