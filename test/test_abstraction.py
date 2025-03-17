@@ -1262,7 +1262,7 @@ class TestUseCases(unittest.TestCase):
                 pass
             next_model = current_model.transform(t)
             vac_models.append(next_model)
-            # next_model.to_dot().render(f"vac_model_{i}"),
+            next_model.to_dot(detail=False).render(f"vac_model_{i}"),
             current_model = next_model
 
         # vac_models = list(
@@ -1341,6 +1341,7 @@ class TestUseCases(unittest.TestCase):
 
         m = []
         for i, result in enumerate(results):
+            model_size = result.model.model_size()
             df = result.dataframe()
             df["description"] = (
                 result.model.petrinet.metadata["transformation_description"]
@@ -1355,6 +1356,8 @@ class TestUseCases(unittest.TestCase):
                 f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
             )
             df["I_bound"] = len(result.parameter_space.true_points()) > 0
+            df["nodes"] = model_size["nodes"]
+            df["edges"] = model_size["edges"]
             # df = df.set_index(["model_index", "index"])
             df.index = df.index.rename("time")
             df = df.reset_index().set_index(["model_index", "time"])
@@ -1364,6 +1367,8 @@ class TestUseCases(unittest.TestCase):
         runtimes = dfs.reset_index(["time"])[
             [
                 "runtime (s)",
+                "nodes",
+                "edges",
                 "description",
                 "I_bound",
                 # , "I", *[b for b in dfs.columns if b.startswith("beta")]
@@ -1504,13 +1509,13 @@ class TestUseCases(unittest.TestCase):
             )
         )
 
-        list(
-            map(
-                lambda x, name: x.to_dot().render(f"vac_model_{name}"),
-                vac_models,
-                range(len(vac_models)),
-            )
-        )
+        # list(
+        #     map(
+        #         lambda x, name: x.to_dot().render(f"vac_model_{name}"),
+        #         vac_models,
+        #         range(len(vac_models)),
+        #     )
+        # )
 
         vac_model_params = [
             {p.id: p.value for p in m.petrinet.semantics.ode.parameters}

@@ -105,7 +105,7 @@ class AbstractPetriNetModel(FunmanModel):
         else:
             return 0
 
-    def to_dot(self, values={}):
+    def to_dot(self, detail=True, values={}):
         """
         Create a dot object for visualizing the graph.
 
@@ -143,8 +143,11 @@ class AbstractPetriNetModel(FunmanModel):
                     substitute(t, variable_values)
                     for t in transition_parameters
                 ]
-                transition_name = f"{transition_id}({transition_parameters}) = {transition_parameter_value}"
-                dot.node(transition_name, _attributes={"shape": "box"})
+                transition_name = f"{transition_id}({transition_parameters}) = {transition_parameter_value}" 
+                node_attributes = {"shape": "box"}
+                if not detail:
+                    node_attributes["label"] = transition_id
+                dot.node(transition_name, _attributes=node_attributes)
                 # state var to transition
                 for edge in self._input_edges():
                     if (
@@ -163,8 +166,11 @@ class AbstractPetriNetModel(FunmanModel):
                         ) / self._num_flow_from_transition_to_state(
                             state_var_id, transition_id
                         )
+
+                        edge_label = f"{flow}" if detail else None
+
                         dot.edge(
-                            transition_name, state_var_name, label=f"{flow}"
+                            transition_name, state_var_name, label=edge_label
                         )
 
         return dot
@@ -3075,6 +3081,9 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                                 )
                             )
         return transition_parameters, new_rates
+
+    def model_size(self):
+        return {"edges" : sum(len(t.input) + len(t.output) for t in self._transitions())/2, "nodes": len(self._transitions().root) + len(self._state_vars().root)}
 
     def abstract(self, abstraction: Abstraction):
         # Get existing state variables
