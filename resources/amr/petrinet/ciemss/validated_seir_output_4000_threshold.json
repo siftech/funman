@@ -1,0 +1,2262 @@
+{
+  "id": "xyz",
+  "model": {
+    "name": "model_4013b59d-1066-4bd5-bd7c-774c89ea7769",
+    "init_values": {},
+    "parameter_bounds": {},
+    "petrinet": {
+      "header": {
+        "name": "seir_model",
+        "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+        "schema_name": "petrinet",
+        "description": "SEIR model (base case)",
+        "model_version": "0.1"
+      },
+      "properties": {},
+      "model": {
+        "states": [
+          {
+            "id": "S",
+            "name": "S",
+            "description": null,
+            "grounding": {
+              "identifiers": {
+                "ido": "0000514"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "person",
+              "expression_mathml": "<ci>person</ci>"
+            }
+          },
+          {
+            "id": "I",
+            "name": "I",
+            "description": null,
+            "grounding": {
+              "identifiers": {
+                "ido": "0000511"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "person",
+              "expression_mathml": "<ci>person</ci>"
+            }
+          },
+          {
+            "id": "E",
+            "name": "E",
+            "description": null,
+            "grounding": {
+              "identifiers": {
+                "apollosv": "0000154"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "person",
+              "expression_mathml": "<ci>person</ci>"
+            }
+          },
+          {
+            "id": "R",
+            "name": "R",
+            "description": null,
+            "grounding": {
+              "identifiers": {
+                "ido": "0000592"
+              },
+              "modifiers": {}
+            },
+            "units": {
+              "expression": "person",
+              "expression_mathml": "<ci>person</ci>"
+            }
+          }
+        ],
+        "transitions": [
+          {
+            "id": "t1",
+            "input": [
+              "I",
+              "S"
+            ],
+            "output": [
+              "I",
+              "E"
+            ],
+            "grounding": null,
+            "properties": {
+              "name": "t1",
+              "description": null,
+              "grounding": null
+            }
+          },
+          {
+            "id": "t2",
+            "input": [
+              "E"
+            ],
+            "output": [
+              "I"
+            ],
+            "grounding": null,
+            "properties": {
+              "name": "t2",
+              "description": null,
+              "grounding": null
+            }
+          },
+          {
+            "id": "t3",
+            "input": [
+              "I"
+            ],
+            "output": [
+              "R"
+            ],
+            "grounding": null,
+            "properties": {
+              "name": "t3",
+              "description": null,
+              "grounding": null
+            }
+          }
+        ]
+      },
+      "semantics": {
+        "ode": {
+          "rates": [
+            {
+              "target": "t1",
+              "expression": "I*S*beta/N",
+              "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
+            },
+            {
+              "target": "t2",
+              "expression": "E*sigma",
+              "expression_mathml": "<apply><times/><ci>E</ci><ci>sigma</ci></apply>"
+            },
+            {
+              "target": "t3",
+              "expression": "I*gamma",
+              "expression_mathml": "<apply><times/><ci>I</ci><ci>gamma</ci></apply>"
+            }
+          ],
+          "initials": [
+            {
+              "target": "S",
+              "expression": "100000.0 - 4*I0",
+              "expression_mathml": "<apply><minus/><cn>100000.0</cn><apply><times/><cn>4</cn><ci>I0</ci></apply></apply>"
+            },
+            {
+              "target": "I",
+              "expression": "I0",
+              "expression_mathml": "<ci>I0</ci>"
+            },
+            {
+              "target": "E",
+              "expression": "3*I0",
+              "expression_mathml": "<apply><times/><cn>3</cn><ci>I0</ci></apply>"
+            },
+            {
+              "target": "R",
+              "expression": "0",
+              "expression_mathml": "<cn>0</cn>"
+            }
+          ],
+          "parameters": [
+            {
+              "id": "N",
+              "name": null,
+              "description": null,
+              "value": 100000,
+              "grounding": null,
+              "distribution": null,
+              "units": {
+                "expression": "1",
+                "expression_mathml": "<cn>1</cn>"
+              }
+            },
+            {
+              "id": "beta",
+              "name": null,
+              "description": null,
+              "value": 0.37,
+              "grounding": null,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.35,
+                  "maximum": 0.4
+                }
+              },
+              "units": {
+                "expression": "1/day",
+                "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+              }
+            },
+            {
+              "id": "sigma",
+              "name": null,
+              "description": null,
+              "value": 0.5,
+              "grounding": null,
+              "distribution": null,
+              "units": {
+                "expression": "1/day",
+                "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+              }
+            },
+            {
+              "id": "gamma",
+              "name": null,
+              "description": null,
+              "value": 0.25,
+              "grounding": null,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 0.1667,
+                  "maximum": 0.3333
+                }
+              },
+              "units": {
+                "expression": "1/day",
+                "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+              }
+            },
+            {
+              "id": "I0",
+              "name": null,
+              "description": null,
+              "value": 3,
+              "grounding": null,
+              "distribution": {
+                "type": "StandardUniform1",
+                "parameters": {
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              },
+              "units": {
+                "expression": "1/day",
+                "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+              }
+            }
+          ],
+          "observables": [],
+          "time": {
+            "id": "t",
+            "units": {
+              "expression": "date",
+              "expression_mathml": "<ci>date</ci>"
+            }
+          }
+        },
+        "typing": null,
+        "span": []
+      },
+      "metadata": {
+        "annotations": {
+          "authors": [],
+          "references": [],
+          "locations": [],
+          "pathogens": [],
+          "diseases": [],
+          "hosts": [],
+          "model_types": []
+        },
+        "source": null,
+        "gollmCard": null,
+        "gollmExtractions": null,
+        "templateCard": null
+      },
+      "id": "1a48ec40-28b5-4206-924c-7f98ddbb57e2",
+      "createdOn": "2025-02-26T21:38:51.609+00:00",
+      "updatedOn": "2025-02-26T21:39:58.881+00:00",
+      "name": "seir_model",
+      "fileNames": [],
+      "temporary": false,
+      "publicAsset": false
+    }
+  },
+  "progress": {
+    "progress": 1,
+    "coverage_of_search_space": 1,
+    "coverage_of_representable_space": 0
+  },
+  "request": {
+    "query": null,
+    "constraints": [
+      {
+        "soft": true,
+        "name": "Constraint 1",
+        "timepoints": {
+          "lb": 0,
+          "ub": 100,
+          "closed_upper_bound": true,
+          "original_width": 100,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "additive_bounds": {
+          "lb": 0,
+          "ub": 1.7976931348623157e+308,
+          "closed_upper_bound": false,
+          "original_width": 1.7976931348623157e+308,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "variables": [
+          "S",
+          "I",
+          "E",
+          "R"
+        ],
+        "weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "derivative": false
+      },
+      {
+        "soft": true,
+        "name": "Constraint 2",
+        "timepoints": {
+          "lb": 0,
+          "ub": 100,
+          "closed_upper_bound": true,
+          "original_width": 100,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "additive_bounds": {
+          "lb": -1.7976931348623157e+308,
+          "ub": 4000,
+          "closed_upper_bound": false,
+          "original_width": 1.7976931348623157e+308,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "variables": [
+          "I"
+        ],
+        "weights": [
+          1
+        ],
+        "derivative": false
+      }
+    ],
+    "parameters": [
+      {
+        "name": "N",
+        "interval": {
+          "lb": 100000,
+          "ub": 100000,
+          "closed_upper_bound": true,
+          "original_width": 0,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "label": "any"
+      },
+      {
+        "name": "beta",
+        "interval": {
+          "lb": 0.35,
+          "ub": 0.4,
+          "closed_upper_bound": false,
+          "original_width": 0.050000000000000044,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "label": "all"
+      },
+      {
+        "name": "sigma",
+        "interval": {
+          "lb": 0.5,
+          "ub": 0.5,
+          "closed_upper_bound": true,
+          "original_width": 0,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "label": "any"
+      },
+      {
+        "name": "gamma",
+        "interval": {
+          "lb": 0.1667,
+          "ub": 0.3333,
+          "closed_upper_bound": false,
+          "original_width": 0.1666,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "label": "all"
+      },
+      {
+        "name": "I0",
+        "interval": {
+          "lb": 1,
+          "ub": 5,
+          "closed_upper_bound": false,
+          "original_width": 4,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "label": "all"
+      }
+    ],
+    "config": {
+      "tolerance": 0.2,
+      "queue_timeout": 1,
+      "number_of_processes": 1,
+      "wait_timeout": null,
+      "wait_action_timeout": 0.05,
+      "solver": "dreal",
+      "num_steps": 2,
+      "step_size": 1,
+      "num_initial_boxes": 1,
+      "solver_timeout": null,
+      "initial_state_tolerance": 0,
+      "save_smtlib": null,
+      "dreal_precision": 0.1,
+      "dreal_log_level": "off",
+      "constraint_noise": 0,
+      "dreal_mcts": true,
+      "substitute_subformulas": false,
+      "normalization_constant": 1,
+      "use_compartmental_constraints": false,
+      "compartmental_constraint_noise": 0.01,
+      "normalize": false,
+      "simplify_query": false,
+      "series_approximation_threshold": null,
+      "profile": false,
+      "taylor_series_order": null,
+      "corner_points": false,
+      "verbosity": 0,
+      "use_transition_symbols": false,
+      "uniform_box_splits": false,
+      "dreal_prefer_parameters": null,
+      "point_based_evaluation": false,
+      "prioritize_box_entropy": true,
+      "mode": "mode_smt",
+      "random_seed": 0
+    },
+    "structure_parameters": [
+      {
+        "name": "schedules",
+        "interval": {
+          "lb": -1.7976931348623157e+308,
+          "ub": 1.7976931348623157e+308,
+          "closed_upper_bound": false,
+          "original_width": null,
+          "normalized": false,
+          "unnormalized_lb": null,
+          "unnormalized_ub": null
+        },
+        "label": "any",
+        "schedules": [
+          {
+            "timepoints": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50,
+              60,
+              70,
+              80,
+              90,
+              100
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "done": true,
+  "error": false,
+  "error_message": null,
+  "parameter_space": {
+    "num_dimensions": 6,
+    "true_boxes": [
+      {
+        "type": "box",
+        "label": "true",
+        "bounds": {
+          "N": {
+            "lb": 100000,
+            "ub": 100000,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "beta": {
+            "lb": 0.35,
+            "ub": 0.4,
+            "closed_upper_bound": false,
+            "original_width": 0.050000000000000044,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "sigma": {
+            "lb": 0.5,
+            "ub": 0.5,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "gamma": {
+            "lb": 0.1667,
+            "ub": 0.3333,
+            "closed_upper_bound": false,
+            "original_width": 0.16660000000000003,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "I0": {
+            "lb": 1,
+            "ub": 5,
+            "closed_upper_bound": false,
+            "original_width": 4,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "timestep": {
+            "lb": 0,
+            "ub": 0,
+            "closed_upper_bound": true,
+            "original_width": 10,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          }
+        },
+        "explanation": {
+          "expression": "(((((((((((((((solve_step_0 & (I0 < 5.0)) & disj56) & ((assume_Constraint_2_0 | (! disj1)) | (! (I_0 < 4000.0)))) & ((assume_Constraint_1_0 | ((((R_0 + E_0) + I_0) + S_0) < 0.0)) | (! disj3))) & (disj1 | (! conj0))) & (disj3 | (! conj0))) & (conj0 | (! solve_step_0))) & (((((I_0 < 4000.0) | (I0 < 1.0)) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (I0 < 5.0)))) & ((R_0 = 0.0) | (! conj0))) & ((E_0 = (3.0 * I0)) | (! conj0))) & ((I_0 = I0) | (! conj0))) & ((S_0 = (100000.0 - (4.0 * I0))) | (! conj0))) & ((((((((I0 < 1.0) | (! (I_0 < 4000.0))) | (! ((((R_0 + E_0) + I_0) + S_0) < 0.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0)))) & (((! assume_Constraint_2_0) | (! assume_Constraint_1_0)) | (! disj56))) & (! (I0 < 1.0)))",
+          "symbols": [
+            "R_0",
+            "conj0",
+            "assume_Constraint_2_0",
+            "I0",
+            "solve_step_0",
+            "E_0",
+            "S_0",
+            "I_0",
+            "assume_Constraint_1_0",
+            "disj56",
+            "disj1",
+            "disj3"
+          ],
+          "relevant_assumptions": [
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": 0,
+                  "ub": 1.7976931348623157e+308,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "S",
+                  "I",
+                  "E",
+                  "R"
+                ],
+                "weights": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "derivative": false
+              }
+            },
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": -1.7976931348623157e+308,
+                  "ub": 4000,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "I"
+                ],
+                "weights": [
+                  1
+                ],
+                "derivative": false
+              }
+            }
+          ]
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "corner_points": [],
+        "points": [
+          {
+            "type": "point",
+            "label": "true",
+            "values": {
+              "R_0": 0,
+              "assume_Constraint_2": 1,
+              "assume_Constraint_2_0": 1,
+              "N": 100000,
+              "sigma": 0.5,
+              "I0": 2.416185019188717,
+              "beta": 0.3599919065431425,
+              "gamma": 0.2301938326300423,
+              "solve_step_0": 1,
+              "timer_t_0": 0,
+              "S_0": 99990.33525992325,
+              "I_0": 2.416185019188717,
+              "assume_Constraint_1": 1,
+              "assume_Constraint_1_0": 1,
+              "E_0": 7.248555057566151,
+              "timestep": 0
+            },
+            "normalized_values": null,
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            },
+            "simulation": null
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "label": "true",
+        "bounds": {
+          "N": {
+            "lb": 100000,
+            "ub": 100000,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "beta": {
+            "lb": 0.35,
+            "ub": 0.4,
+            "closed_upper_bound": false,
+            "original_width": 0.050000000000000044,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "sigma": {
+            "lb": 0.5,
+            "ub": 0.5,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "gamma": {
+            "lb": 0.1667,
+            "ub": 0.3333,
+            "closed_upper_bound": false,
+            "original_width": 0.16660000000000003,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "I0": {
+            "lb": 1,
+            "ub": 5,
+            "closed_upper_bound": false,
+            "original_width": 4,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "timestep": {
+            "lb": 1,
+            "ub": 1,
+            "closed_upper_bound": true,
+            "original_width": 10,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          }
+        },
+        "explanation": {
+          "expression": "((((((((((((((((((((((((((((((solve_step_0 & (sigma = 1/2)) & (N = 100000.0)) & (I0 < 5.0)) & (gamma < 33329999999999999/100000000000000000)) & (beta < 40000000000000003/100000000000000000)) & solve_step_1) & disj61) & (conj0 | (! solve_step_0))) & (((((I_0 < 4000.0) | (I0 < 1.0)) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (I0 < 5.0)))) & ((R_0 = 0.0) | (! conj0))) & ((E_0 = (3.0 * I0)) | (! conj0))) & ((I_0 = I0) | (! conj0))) & ((S_0 = (100000.0 - (4.0 * I0))) | (! conj0))) & (((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_10 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0)))))))) & (((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! ((((R_10 + E_10) + I_10) + S_10) < 0.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0))))))) & ((assume_Constraint_2_10 | (! disj10)) | (! (I_10 < 4000.0)))) & ((assume_Constraint_1_10 | ((((R_10 + E_10) + I_10) + S_10) < 0.0)) | (! disj12))) & (disj10 | (! conj3))) & (disj12 | (! conj3))) & (conj3 | (! solve_step_1))) & ((R_10 = (R_0 + (10.0 * (gamma * I_0)))) | (! conj3))) & ((E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))) | (! conj3))) & ((I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))) | (! conj3))) & ((S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))) | (! conj3))) & ((conj40 | conj41) | (! disj61))) & ((! assume_Constraint_2_10) | (! conj40))) & ((! assume_Constraint_1_10) | (! conj41))) & (! (I0 < 1.0))) & (! (gamma < 16669999999999999/100000000000000000))) & (! (beta < 17499999999999999/50000000000000000)))",
+          "symbols": [
+            "N",
+            "beta",
+            "sigma",
+            "gamma",
+            "I0",
+            "solve_step_0",
+            "solve_step_1",
+            "disj61",
+            "disj10",
+            "S_0",
+            "disj12",
+            "I_0",
+            "conj40",
+            "conj41",
+            "E_0",
+            "conj0",
+            "R_0",
+            "conj3",
+            "S_10",
+            "I_10",
+            "E_10",
+            "R_10",
+            "assume_Constraint_1_10",
+            "assume_Constraint_2_10"
+          ],
+          "relevant_assumptions": [
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": 0,
+                  "ub": 1.7976931348623157e+308,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "S",
+                  "I",
+                  "E",
+                  "R"
+                ],
+                "weights": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "derivative": false
+              }
+            },
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": -1.7976931348623157e+308,
+                  "ub": 4000,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "I"
+                ],
+                "weights": [
+                  1
+                ],
+                "derivative": false
+              }
+            }
+          ]
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "corner_points": [],
+        "points": [
+          {
+            "type": "point",
+            "label": "true",
+            "values": {
+              "R_0": 0,
+              "assume_Constraint_2": 1,
+              "assume_Constraint_2_0": 1,
+              "N": 100000,
+              "sigma": 0.5,
+              "I0": 2.0648718242759023,
+              "beta": 0.3585919519052042,
+              "gamma": 0.2906355507374905,
+              "solve_step_0": 1,
+              "timer_t_0": 0,
+              "S_0": 99991.74051270289,
+              "I_0": 2.0648718242759023,
+              "assume_Constraint_1": 1,
+              "assume_Constraint_1_0": 1,
+              "E_0": 6.1946154728277065,
+              "solve_step_10": 0,
+              "timer_t_10": 10,
+              "S_10": 99984.3486473445,
+              "I_10": 27.007169256008943,
+              "E_10": -17.392333863092826,
+              "R_10": 6.0012744433738625,
+              "assume_Constraint_1_10": 1,
+              "assume_Constraint_2_10": 1,
+              "timestep": 1
+            },
+            "normalized_values": null,
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            },
+            "simulation": null
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "label": "true",
+        "bounds": {
+          "N": {
+            "lb": 100000,
+            "ub": 100000,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "beta": {
+            "lb": 0.35,
+            "ub": 0.4,
+            "closed_upper_bound": false,
+            "original_width": 0.050000000000000044,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "sigma": {
+            "lb": 0.5,
+            "ub": 0.5,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "gamma": {
+            "lb": 0.1667,
+            "ub": 0.3333,
+            "closed_upper_bound": false,
+            "original_width": 0.16660000000000003,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "I0": {
+            "lb": 1,
+            "ub": 5,
+            "closed_upper_bound": false,
+            "original_width": 4,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "timestep": {
+            "lb": 2,
+            "ub": 2,
+            "closed_upper_bound": true,
+            "original_width": 10,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          }
+        },
+        "explanation": {
+          "expression": "(((((((((((((((((((((((((((((((((((((solve_step_0 & (sigma = 1/2)) & (N = 100000.0)) & (I0 < 5.0)) & (gamma < 33329999999999999/100000000000000000)) & (beta < 40000000000000003/100000000000000000)) & solve_step_2) & solve_step_1) & disj66) & (conj0 | (! solve_step_0))) & (((((I_0 < 4000.0) | (I0 < 1.0)) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (I0 < 5.0)))) & ((R_0 = 0.0) | (! conj0))) & ((E_0 = (3.0 * I0)) | (! conj0))) & ((I_0 = I0) | (! conj0))) & ((S_0 = (100000.0 - (4.0 * I0))) | (! conj0))) & (((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_10 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0)))))))) & ((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_20 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10)))))))) & ((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! ((((R_20 + E_20) + I_20) + S_20) < 0.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10))))))) & (conj3 | (! solve_step_1))) & ((R_10 = (R_0 + (10.0 * (gamma * I_0)))) | (! conj3))) & ((E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))) | (! conj3))) & ((I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))) | (! conj3))) & ((S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))) | (! conj3))) & ((assume_Constraint_2_20 | (! disj19)) | (! (I_20 < 4000.0)))) & ((assume_Constraint_1_20 | ((((R_20 + E_20) + I_20) + S_20) < 0.0)) | (! disj21))) & (disj19 | (! conj8))) & (disj21 | (! conj8))) & (conj8 | (! solve_step_2))) & ((R_20 = (R_10 + (10.0 * (gamma * I_10)))) | (! conj8))) & ((E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))) | (! conj8))) & ((I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))) | (! conj8))) & ((S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))) | (! conj8))) & ((conj53 | conj54) | (! disj66))) & ((! assume_Constraint_2_20) | (! conj53))) & ((! assume_Constraint_1_20) | (! conj54))) & (! (I0 < 1.0))) & (! (gamma < 16669999999999999/100000000000000000))) & (! (beta < 17499999999999999/50000000000000000)))",
+          "symbols": [
+            "N",
+            "beta",
+            "sigma",
+            "gamma",
+            "I0",
+            "solve_step_0",
+            "I_20",
+            "E_20",
+            "R_20",
+            "S_20",
+            "solve_step_1",
+            "solve_step_2",
+            "S_0",
+            "I_0",
+            "assume_Constraint_1_20",
+            "E_0",
+            "R_0",
+            "conj0",
+            "conj3",
+            "assume_Constraint_2_20",
+            "conj8",
+            "S_10",
+            "I_10",
+            "E_10",
+            "R_10",
+            "disj66",
+            "disj19",
+            "disj21",
+            "conj53",
+            "conj54"
+          ],
+          "relevant_assumptions": [
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": 0,
+                  "ub": 1.7976931348623157e+308,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "S",
+                  "I",
+                  "E",
+                  "R"
+                ],
+                "weights": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "derivative": false
+              }
+            },
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": -1.7976931348623157e+308,
+                  "ub": 4000,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "I"
+                ],
+                "weights": [
+                  1
+                ],
+                "derivative": false
+              }
+            }
+          ]
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "corner_points": [],
+        "points": [
+          {
+            "type": "point",
+            "label": "true",
+            "values": {
+              "R_0": 0,
+              "assume_Constraint_2": 1,
+              "assume_Constraint_2_0": 1,
+              "N": 100000,
+              "sigma": 0.5,
+              "I0": 3.540488333069904,
+              "beta": 0.3603941681975918,
+              "gamma": 0.1747287672478473,
+              "solve_step_0": 1,
+              "timer_t_0": 0,
+              "S_0": 99985.83804666772,
+              "I_0": 3.540488333069904,
+              "assume_Constraint_1": 1,
+              "assume_Constraint_1_0": 1,
+              "E_0": 10.621464999209712,
+              "solve_step_10": 0,
+              "timer_t_10": 10,
+              "S_10": 99973.08012966088,
+              "I_10": 50.46155359849524,
+              "E_10": -29.72585996335982,
+              "R_10": 6.186259730623222,
+              "assume_Constraint_1_10": 1,
+              "assume_Constraint_2_10": 1,
+              "S_20": 99791.242301779,
+              "I_20": -186.29265206330612,
+              "E_20": 300.65798257764726,
+              "R_20": 94.37001731484663,
+              "assume_Constraint_1_20": 1,
+              "assume_Constraint_2_20": 1,
+              "timer_t_20": 20,
+              "timestep": 2
+            },
+            "normalized_values": null,
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            },
+            "simulation": null
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "label": "true",
+        "bounds": {
+          "N": {
+            "lb": 100000,
+            "ub": 100000,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "beta": {
+            "lb": 0.35,
+            "ub": 0.4,
+            "closed_upper_bound": false,
+            "original_width": 0.050000000000000044,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "sigma": {
+            "lb": 0.5,
+            "ub": 0.5,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "gamma": {
+            "lb": 0.1667,
+            "ub": 0.3333,
+            "closed_upper_bound": false,
+            "original_width": 0.16660000000000003,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "I0": {
+            "lb": 1,
+            "ub": 5,
+            "closed_upper_bound": false,
+            "original_width": 4,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "timestep": {
+            "lb": 3,
+            "ub": 3,
+            "closed_upper_bound": true,
+            "original_width": 10,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          }
+        },
+        "explanation": {
+          "expression": "((((((((((((((((((((((((((((((((((((((((((((solve_step_0 & (sigma = 1/2)) & (N = 100000.0)) & (I0 < 5.0)) & (gamma < 33329999999999999/100000000000000000)) & (beta < 40000000000000003/100000000000000000)) & solve_step_3) & solve_step_2) & solve_step_1) & disj71) & (conj0 | (! solve_step_0))) & (((((I_0 < 4000.0) | (I0 < 1.0)) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (I0 < 5.0)))) & ((R_0 = 0.0) | (! conj0))) & ((E_0 = (3.0 * I0)) | (! conj0))) & ((I_0 = I0) | (! conj0))) & ((S_0 = (100000.0 - (4.0 * I0))) | (! conj0))) & (((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_10 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0)))))))) & ((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_20 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10)))))))) & ((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_30 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20))))))) & (((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (I_30 < 4000.0))) | (! ((((R_30 + E_30) + I_30) + S_30) < 0.0))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20))))))) & (conj3 | (! solve_step_1))) & ((R_10 = (R_0 + (10.0 * (gamma * I_0)))) | (! conj3))) & ((E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))) | (! conj3))) & ((I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))) | (! conj3))) & ((S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))) | (! conj3))) & (conj8 | (! solve_step_2))) & ((R_20 = (R_10 + (10.0 * (gamma * I_10)))) | (! conj8))) & ((E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))) | (! conj8))) & ((I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))) | (! conj8))) & ((S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))) | (! conj8))) & ((assume_Constraint_2_30 | (! disj28)) | (! (I_30 < 4000.0)))) & ((assume_Constraint_1_30 | ((((R_30 + E_30) + I_30) + S_30) < 0.0)) | (! disj30))) & (disj28 | (! conj13))) & (disj30 | (! conj13))) & (conj13 | (! solve_step_3))) & ((R_30 = (R_20 + (10.0 * (gamma * I_20)))) | (! conj13))) & ((E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))) | (! conj13))) & ((I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))) | (! conj13))) & ((S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))) | (! conj13))) & ((conj65 | conj66) | (! disj71))) & ((! assume_Constraint_2_30) | (! conj65))) & ((! assume_Constraint_1_30) | (! conj66))) & (! (I0 < 1.0))) & (! (gamma < 16669999999999999/100000000000000000))) & (! (beta < 17499999999999999/50000000000000000)))",
+          "symbols": [
+            "N",
+            "beta",
+            "sigma",
+            "gamma",
+            "I0",
+            "disj71",
+            "disj28",
+            "S_0",
+            "disj30",
+            "I_0",
+            "conj65",
+            "conj66",
+            "E_0",
+            "R_0",
+            "S_30",
+            "I_30",
+            "E_30",
+            "R_30",
+            "assume_Constraint_1_30",
+            "assume_Constraint_2_30",
+            "solve_step_0",
+            "I_20",
+            "E_20",
+            "R_20",
+            "S_20",
+            "solve_step_1",
+            "solve_step_2",
+            "solve_step_3",
+            "conj0",
+            "conj3",
+            "conj8",
+            "conj13",
+            "S_10",
+            "I_10",
+            "E_10",
+            "R_10"
+          ],
+          "relevant_assumptions": [
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": 0,
+                  "ub": 1.7976931348623157e+308,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "S",
+                  "I",
+                  "E",
+                  "R"
+                ],
+                "weights": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "derivative": false
+              }
+            },
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": -1.7976931348623157e+308,
+                  "ub": 4000,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "I"
+                ],
+                "weights": [
+                  1
+                ],
+                "derivative": false
+              }
+            }
+          ]
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "corner_points": [],
+        "points": [
+          {
+            "type": "point",
+            "label": "true",
+            "values": {
+              "R_0": 0,
+              "assume_Constraint_2": 1,
+              "assume_Constraint_2_0": 1,
+              "N": 100000,
+              "sigma": 0.5,
+              "I0": 3.1804137264508707,
+              "beta": 0.3602540324702894,
+              "gamma": 0.24225048378037922,
+              "solve_step_0": 1,
+              "timer_t_0": 0,
+              "S_0": 99987.27834509421,
+              "I_0": 3.1804137264508707,
+              "assume_Constraint_1": 1,
+              "assume_Constraint_1_0": 1,
+              "E_0": 9.541241179352612,
+              "solve_step_10": 0,
+              "timer_t_10": 10,
+              "S_10": 99975.82223792492,
+              "I_10": 43.18204755604861,
+              "E_10": -26.708857548121824,
+              "R_10": 7.704572067165317,
+              "assume_Constraint_1_10": 1,
+              "assume_Constraint_2_10": 1,
+              "S_20": 99820.2947822402,
+              "I_20": -194.97093902038662,
+              "E_20": 262.3736659417483,
+              "R_20": 112.3133514145548,
+              "assume_Constraint_1_20": 1,
+              "assume_Constraint_2_20": 1,
+              "timer_t_20": 20,
+              "assume_Constraint_2_30": 1,
+              "timer_t_30": 30,
+              "S_30": 100521.408326276,
+              "I_30": 1589.1451282587905,
+              "E_30": -1750.7233517063105,
+              "R_30": -359.9622907554799,
+              "assume_Constraint_1_30": 1,
+              "timestep": 3
+            },
+            "normalized_values": null,
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            },
+            "simulation": null
+          }
+        ]
+      },
+      {
+        "type": "box",
+        "label": "true",
+        "bounds": {
+          "N": {
+            "lb": 100000,
+            "ub": 100000,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "beta": {
+            "lb": 0.35,
+            "ub": 0.4,
+            "closed_upper_bound": false,
+            "original_width": 0.050000000000000044,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "sigma": {
+            "lb": 0.5,
+            "ub": 0.5,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "gamma": {
+            "lb": 0.1667,
+            "ub": 0.3333,
+            "closed_upper_bound": false,
+            "original_width": 0.16660000000000003,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "I0": {
+            "lb": 1,
+            "ub": 5,
+            "closed_upper_bound": false,
+            "original_width": 4,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "timestep": {
+            "lb": 4,
+            "ub": 4,
+            "closed_upper_bound": true,
+            "original_width": 10,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          }
+        },
+        "explanation": {
+          "expression": "(((((((((((((((((((((((((((((((((((((((((((((((((((((((solve_step_0 & (sigma = 1/2)) & (N = 100000.0)) & (I0 < 5.0)) & (gamma < 33329999999999999/100000000000000000)) & (beta < 40000000000000003/100000000000000000)) & solve_step_4) & solve_step_3) & solve_step_2) & solve_step_1) & disj76) & (conj0 | (! solve_step_0))) & (((((I_0 < 4000.0) | (I0 < 1.0)) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (I0 < 5.0)))) & ((R_0 = 0.0) | (! conj0))) & ((E_0 = (3.0 * I0)) | (! conj0))) & ((I_0 = I0) | (! conj0))) & ((S_0 = (100000.0 - (4.0 * I0))) | (! conj0))) & (((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_10 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0)))))))) & ((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_20 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10)))))))) & (((((((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_30 < 4000.0)) | (I_40 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))))) | (! (R_40 = (R_30 + (10.0 * (gamma * I_30)))))) | (! (E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))))) | (! (I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))))) | (! (S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30))))))) & ((((((((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_30 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))))) | (! (I_40 < 4000.0))) | (! ((((R_40 + E_40) + I_40) + S_40) < 0.0))) | (! (R_40 = (R_30 + (10.0 * (gamma * I_30)))))) | (! (E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))))) | (! (I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))))) | (! (S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30))))))) & (((((((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (I_40 < 4000.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (I_30 < 4000.0))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))))) | (! (R_40 = (R_30 + (10.0 * (gamma * I_30)))))) | (! (E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))))) | (! (I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))))) | (! (S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30))))))) & ((((((((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (I_30 < 4000.0))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))))) | (! (I_40 < 4000.0))) | (! ((((R_40 + E_40) + I_40) + S_40) < 0.0))) | (! (R_40 = (R_30 + (10.0 * (gamma * I_30)))))) | (! (E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))))) | (! (I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))))) | (! (S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30))))))) & (conj3 | (! solve_step_1))) & ((R_10 = (R_0 + (10.0 * (gamma * I_0)))) | (! conj3))) & ((E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))) | (! conj3))) & ((I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))) | (! conj3))) & ((S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))) | (! conj3))) & (conj8 | (! solve_step_2))) & ((R_20 = (R_10 + (10.0 * (gamma * I_10)))) | (! conj8))) & ((E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))) | (! conj8))) & ((I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))) | (! conj8))) & ((S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))) | (! conj8))) & (assume_Constraint_2_30 | (! conj76))) & (disj32 | (! conj13))) & (conj13 | (! solve_step_3))) & (((I_30 < 4000.0) | (! assume_Constraint_2_30)) | (! disj32))) & ((R_30 = (R_20 + (10.0 * (gamma * I_20)))) | (! conj13))) & ((E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))) | (! conj13))) & ((I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))) | (! conj13))) & ((S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))) | (! conj13))) & ((assume_Constraint_2_40 | (! disj37)) | (! (I_40 < 4000.0)))) & ((assume_Constraint_1_40 | ((((R_40 + E_40) + I_40) + S_40) < 0.0)) | (! disj39))) & (disj37 | (! conj18))) & (disj39 | (! conj18))) & (conj18 | (! solve_step_4))) & ((R_40 = (R_30 + (10.0 * (gamma * I_30)))) | (! conj18))) & ((E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))) | (! conj18))) & ((I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))) | (! conj18))) & ((S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30)))) | (! conj18))) & ((conj76 | conj77) | (! disj76))) & ((! assume_Constraint_2_40) | (! conj76))) & ((! assume_Constraint_1_40) | (! conj77))) & (! (I0 < 1.0))) & (! (gamma < 16669999999999999/100000000000000000))) & (! (beta < 17499999999999999/50000000000000000)))",
+          "symbols": [
+            "N",
+            "beta",
+            "sigma",
+            "gamma",
+            "I0",
+            "disj76",
+            "conj76",
+            "disj37",
+            "disj39",
+            "conj77",
+            "S_0",
+            "I_40",
+            "I_0",
+            "R_40",
+            "E_40",
+            "S_40",
+            "E_0",
+            "R_0",
+            "assume_Constraint_1_40",
+            "assume_Constraint_2_40",
+            "S_30",
+            "I_30",
+            "E_30",
+            "R_30",
+            "assume_Constraint_2_30",
+            "solve_step_0",
+            "I_20",
+            "E_20",
+            "R_20",
+            "S_20",
+            "solve_step_1",
+            "solve_step_2",
+            "solve_step_3",
+            "solve_step_4",
+            "disj32",
+            "conj0",
+            "conj3",
+            "conj8",
+            "conj13",
+            "conj18",
+            "S_10",
+            "I_10",
+            "E_10",
+            "R_10"
+          ],
+          "relevant_assumptions": [
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": 0,
+                  "ub": 1.7976931348623157e+308,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "S",
+                  "I",
+                  "E",
+                  "R"
+                ],
+                "weights": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "derivative": false
+              }
+            },
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": -1.7976931348623157e+308,
+                  "ub": 4000,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "I"
+                ],
+                "weights": [
+                  1
+                ],
+                "derivative": false
+              }
+            }
+          ]
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "corner_points": [],
+        "points": [
+          {
+            "type": "point",
+            "label": "true",
+            "values": {
+              "R_0": 0,
+              "assume_Constraint_2": 1,
+              "assume_Constraint_2_0": 1,
+              "N": 100000,
+              "sigma": 0.5,
+              "I0": 4.03878254347356,
+              "beta": 0.36024352068784427,
+              "gamma": 0.22496829917271532,
+              "solve_step_0": 1,
+              "timer_t_0": 0,
+              "S_0": 99983.8448698261,
+              "I_0": 4.03878254347356,
+              "assume_Constraint_1": 1,
+              "assume_Constraint_1_0": 1,
+              "E_0": 12.116347630420679,
+              "solve_step_10": 0,
+              "timer_t_10": 10,
+              "S_10": 99969.29776788151,
+              "I_10": 55.5345403002536,
+              "E_10": -33.91828857708378,
+              "R_10": 9.08598039532335,
+              "assume_Constraint_1_10": 1,
+              "assume_Constraint_2_10": 1,
+              "S_20": 99769.29960746157,
+              "I_20": -238.99201335298173,
+              "E_20": 335.6713147282771,
+              "R_20": 134.0210911631398,
+              "assume_Constraint_1_20": 1,
+              "assume_Constraint_2_20": 1,
+              "timer_t_20": 20,
+              "assume_Constraint_2_30": 1,
+              "timer_t_30": 30,
+              "S_30": 100628.26662805416,
+              "I_30": 1977.0282337290423,
+              "E_30": -2201.6422023043506,
+              "R_30": -403.63517646182186,
+              "assume_Constraint_1_30": 1,
+              "S_40": 93461.35917805447,
+              "I_40": -13478.93236145891,
+              "E_40": 15973.338993502519,
+              "R_40": 4044.0916473063926,
+              "assume_Constraint_1_40": 1,
+              "assume_Constraint_2_40": 1,
+              "timer_t_40": 40,
+              "timestep": 4
+            },
+            "normalized_values": null,
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            },
+            "simulation": null
+          }
+        ]
+      }
+    ],
+    "false_boxes": [
+      {
+        "type": "box",
+        "label": "false",
+        "bounds": {
+          "N": {
+            "lb": 100000,
+            "ub": 100000,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "beta": {
+            "lb": 0.35,
+            "ub": 0.4,
+            "closed_upper_bound": false,
+            "original_width": 0.050000000000000044,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "sigma": {
+            "lb": 0.5,
+            "ub": 0.5,
+            "closed_upper_bound": true,
+            "original_width": 0,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "gamma": {
+            "lb": 0.1667,
+            "ub": 0.3333,
+            "closed_upper_bound": false,
+            "original_width": 0.16660000000000003,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "I0": {
+            "lb": 1,
+            "ub": 5,
+            "closed_upper_bound": false,
+            "original_width": 4,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          },
+          "timestep": {
+            "lb": 5,
+            "ub": 10,
+            "closed_upper_bound": true,
+            "original_width": 10,
+            "normalized": false,
+            "unnormalized_lb": null,
+            "unnormalized_ub": null
+          }
+        },
+        "explanation": {
+          "expression": "(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((assume_Constraint_2_0 & solve_step_0) & (sigma = 1/2)) & (N = 100000.0)) & (I0 < 5.0)) & (gamma < 33329999999999999/100000000000000000)) & (beta < 40000000000000003/100000000000000000)) & solve_step_4) & solve_step_3) & solve_step_2) & solve_step_1) & solve_step_5) & assume_Constraint_2_10) & assume_Constraint_2_20) & assume_Constraint_2_30) & assume_Constraint_2_40) & assume_Constraint_2_50) & assume_Constraint_1_50) & (disj5 | (! conj0))) & (conj0 | (! solve_step_0))) & (((I_0 < 4000.0) | (! assume_Constraint_2_0)) | (! disj5))) & ((R_0 = 0.0) | (! conj0))) & ((E_0 = (3.0 * I0)) | (! conj0))) & ((I_0 = I0) | (! conj0))) & ((S_0 = (100000.0 - (4.0 * I0))) | (! conj0))) & (((((((((((((((((((((((((((((((((((((((I0 < 1.0) | (gamma < 16669999999999999/100000000000000000)) | (beta < 17499999999999999/50000000000000000)) | ((((R_50 + E_50) + I_50) + S_50) < 0.0)) | (! (I_0 < 4000.0))) | (! (sigma = 1/2))) | (! (N = 100000.0))) | (! (R_0 = 0.0))) | (! (E_0 = (3.0 * I0)))) | (! (I_0 = I0))) | (! (S_0 = (100000.0 - (4.0 * I0))))) | (! (I0 < 5.0))) | (! (gamma < 33329999999999999/100000000000000000))) | (! (beta < 40000000000000003/100000000000000000))) | (! (I_10 < 4000.0))) | (! (R_10 = (R_0 + (10.0 * (gamma * I_0)))))) | (! (E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))))) | (! (I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))))) | (! (S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))))) | (! (I_20 < 4000.0))) | (! (R_20 = (R_10 + (10.0 * (gamma * I_10)))))) | (! (E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))))) | (! (I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))))) | (! (S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))))) | (! (I_30 < 4000.0))) | (! (R_30 = (R_20 + (10.0 * (gamma * I_20)))))) | (! (E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))))) | (! (I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))))) | (! (S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))))) | (! (I_40 < 4000.0))) | (! (R_40 = (R_30 + (10.0 * (gamma * I_30)))))) | (! (E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))))) | (! (I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))))) | (! (S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30)))))) | (! (I_50 < 4000.0))) | (! (R_50 = (R_40 + (10.0 * (gamma * I_40)))))) | (! (E_50 = (E_40 + (10.0 * ((-1.0 * (sigma * E_40)) + (((beta * (N ^ -1.0)) * I_40) * S_40))))))) | (! (I_50 = (I_40 + (10.0 * ((-1.0 * (gamma * I_40)) + (sigma * E_40))))))) | (! (S_50 = (S_40 - (10.0 * (((beta * (N ^ -1.0)) * I_40) * S_40))))))) & (disj14 | (! conj3))) & (conj3 | (! solve_step_1))) & (((I_10 < 4000.0) | (! assume_Constraint_2_10)) | (! disj14))) & ((R_10 = (R_0 + (10.0 * (gamma * I_0)))) | (! conj3))) & ((E_10 = (E_0 + (10.0 * ((-1.0 * (sigma * E_0)) + (((beta * (N ^ -1.0)) * I_0) * S_0))))) | (! conj3))) & ((I_10 = (I_0 + (10.0 * ((-1.0 * (gamma * I_0)) + (sigma * E_0))))) | (! conj3))) & ((S_10 = (S_0 - (10.0 * (((beta * (N ^ -1.0)) * I_0) * S_0)))) | (! conj3))) & (disj23 | (! conj8))) & (conj8 | (! solve_step_2))) & (((I_20 < 4000.0) | (! assume_Constraint_2_20)) | (! disj23))) & ((R_20 = (R_10 + (10.0 * (gamma * I_10)))) | (! conj8))) & ((E_20 = (E_10 + (10.0 * ((-1.0 * (sigma * E_10)) + (((beta * (N ^ -1.0)) * I_10) * S_10))))) | (! conj8))) & ((I_20 = (I_10 + (10.0 * ((-1.0 * (gamma * I_10)) + (sigma * E_10))))) | (! conj8))) & ((S_20 = (S_10 - (10.0 * (((beta * (N ^ -1.0)) * I_10) * S_10)))) | (! conj8))) & (disj32 | (! conj13))) & (conj13 | (! solve_step_3))) & (((I_30 < 4000.0) | (! assume_Constraint_2_30)) | (! disj32))) & ((R_30 = (R_20 + (10.0 * (gamma * I_20)))) | (! conj13))) & ((E_30 = (E_20 + (10.0 * ((-1.0 * (sigma * E_20)) + (((beta * (N ^ -1.0)) * I_20) * S_20))))) | (! conj13))) & ((I_30 = (I_20 + (10.0 * ((-1.0 * (gamma * I_20)) + (sigma * E_20))))) | (! conj13))) & ((S_30 = (S_20 - (10.0 * (((beta * (N ^ -1.0)) * I_20) * S_20)))) | (! conj13))) & (disj41 | (! conj18))) & (conj18 | (! solve_step_4))) & (((I_40 < 4000.0) | (! assume_Constraint_2_40)) | (! disj41))) & ((R_40 = (R_30 + (10.0 * (gamma * I_30)))) | (! conj18))) & ((E_40 = (E_30 + (10.0 * ((-1.0 * (sigma * E_30)) + (((beta * (N ^ -1.0)) * I_30) * S_30))))) | (! conj18))) & ((I_40 = (I_30 + (10.0 * ((-1.0 * (gamma * I_30)) + (sigma * E_30))))) | (! conj18))) & ((S_40 = (S_30 - (10.0 * (((beta * (N ^ -1.0)) * I_30) * S_30)))) | (! conj18))) & (disj49 | (! conj23))) & (disj50 | (! conj23))) & (conj23 | (! solve_step_5))) & (((I_50 < 4000.0) | (! assume_Constraint_2_50)) | (! disj50))) & ((R_50 = (R_40 + (10.0 * (gamma * I_40)))) | (! conj23))) & ((E_50 = (E_40 + (10.0 * ((-1.0 * (sigma * E_40)) + (((beta * (N ^ -1.0)) * I_40) * S_40))))) | (! conj23))) & ((I_50 = (I_40 + (10.0 * ((-1.0 * (gamma * I_40)) + (sigma * E_40))))) | (! conj23))) & ((S_50 = (S_40 - (10.0 * (((beta * (N ^ -1.0)) * I_40) * S_40)))) | (! conj23))) & (((! assume_Constraint_1_50) | (! disj49)) | (! ((((R_50 + E_50) + I_50) + S_50) < 0.0)))) & (! (I0 < 1.0))) & (! (gamma < 16669999999999999/100000000000000000))) & (! (beta < 17499999999999999/50000000000000000)))",
+          "symbols": [
+            "N",
+            "beta",
+            "sigma",
+            "gamma",
+            "I0",
+            "S_50",
+            "I_50",
+            "E_50",
+            "R_50",
+            "assume_Constraint_1_50",
+            "S_0",
+            "I_40",
+            "assume_Constraint_2_50",
+            "I_0",
+            "R_40",
+            "E_40",
+            "E_0",
+            "S_40",
+            "R_0",
+            "assume_Constraint_2_40",
+            "S_30",
+            "I_30",
+            "E_30",
+            "R_30",
+            "assume_Constraint_2_0",
+            "assume_Constraint_2_30",
+            "solve_step_0",
+            "I_20",
+            "E_20",
+            "R_20",
+            "S_20",
+            "solve_step_1",
+            "solve_step_2",
+            "solve_step_3",
+            "solve_step_4",
+            "solve_step_5",
+            "disj5",
+            "disj14",
+            "disj23",
+            "disj32",
+            "disj41",
+            "disj49",
+            "assume_Constraint_2_20",
+            "conj0",
+            "conj3",
+            "conj8",
+            "conj13",
+            "conj18",
+            "conj23",
+            "disj50",
+            "S_10",
+            "I_10",
+            "E_10",
+            "R_10",
+            "assume_Constraint_2_10"
+          ],
+          "relevant_assumptions": [
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 1",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": 0,
+                  "ub": 1.7976931348623157e+308,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "S",
+                  "I",
+                  "E",
+                  "R"
+                ],
+                "weights": [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                "derivative": false
+              }
+            },
+            {
+              "constraint": {
+                "soft": true,
+                "name": "Constraint 2",
+                "timepoints": {
+                  "lb": 0,
+                  "ub": 100,
+                  "closed_upper_bound": true,
+                  "original_width": 100,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "additive_bounds": {
+                  "lb": -1.7976931348623157e+308,
+                  "ub": 4000,
+                  "closed_upper_bound": false,
+                  "original_width": 1.7976931348623157e+308,
+                  "normalized": false,
+                  "unnormalized_lb": null,
+                  "unnormalized_ub": null
+                },
+                "variables": [
+                  "I"
+                ],
+                "weights": [
+                  1
+                ],
+                "derivative": false
+              }
+            }
+          ]
+        },
+        "schedule": {
+          "timepoints": [
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+          ]
+        },
+        "corner_points": [],
+        "points": [
+          {
+            "type": "point",
+            "label": "false",
+            "values": {
+              "R_0": 0,
+              "assume_Constraint_2": 0,
+              "assume_Constraint_2_0": 1,
+              "N": 100000,
+              "sigma": 0.5,
+              "I0": 2.5363588237190466,
+              "beta": 0.3602436716706835,
+              "gamma": 0.1939725354727331,
+              "solve_step_0": 1,
+              "timer_t_0": 0,
+              "S_0": 99989.85456470512,
+              "I_0": 2.5363588237190466,
+              "assume_Constraint_1": 1,
+              "assume_Constraint_1_0": 1,
+              "E_0": 7.60907647115714,
+              "solve_step_10": 0,
+              "timer_t_10": 10,
+              "S_10": 99980.71841954756,
+              "I_10": 35.66190166044997,
+              "E_10": -21.30016072706211,
+              "R_10": 4.919839519054772,
+              "assume_Constraint_1_10": 1,
+              "assume_Constraint_2_10": 1,
+              "S_20": 99852.27344661538,
+              "I_20": -140.0131968234481,
+              "E_20": 213.6455910561705,
+              "R_20": 74.0941343676423,
+              "assume_Constraint_1_20": 1,
+              "assume_Constraint_2_20": 1,
+              "timer_t_20": 20,
+              "assume_Constraint_2_30": 1,
+              "timer_t_30": 30,
+              "S_30": 100355.91701166194,
+              "I_30": 1199.8014960667829,
+              "E_30": -1358.2247579989926,
+              "R_30": -197.49301350755925,
+              "assume_Constraint_1_30": 1,
+              "S_40": 96018.32457249149,
+              "I_40": -7918.605887387222,
+              "E_40": 9770.482498938694,
+              "R_40": 2129.79237938922,
+              "assume_Constraint_1_40": 1,
+              "assume_Constraint_2_40": 1,
+              "timer_t_40": 40,
+              "S_50": 123408.81014559939,
+              "I_50": 56293.73944937318,
+              "E_50": -66472.33128201263,
+              "R_50": -13230.128282423564,
+              "assume_Constraint_1_50": 1,
+              "assume_Constraint_2_50": 0,
+              "timer_t_50": 50,
+              "timestep": 5
+            },
+            "normalized_values": null,
+            "schedule": {
+              "timepoints": [
+                0,
+                10,
+                20,
+                30,
+                40,
+                50,
+                60,
+                70,
+                80,
+                90,
+                100
+              ]
+            },
+            "simulation": null
+          }
+        ]
+      }
+    ],
+    "unknown_points": []
+  },
+  "timing": {
+    "start_time": "2025-03-12T17:53:21.114692",
+    "end_time": null,
+    "total_time": null,
+    "solver_time": null,
+    "encoding_time": null,
+    "progress_timeseries": [
+      [
+        "2025-03-12T17:53:22.985699",
+        1
+      ]
+    ],
+    "additional_time": {}
+  },
+  "contracted_model": {
+    "header": {
+      "name": "seir_model",
+      "schema_": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+      "schema_name": "petrinet",
+      "description": "SEIR model (base case)",
+      "model_version": "0.1"
+    },
+    "properties": {},
+    "model": {
+      "states": [
+        {
+          "id": "S",
+          "name": "S",
+          "description": null,
+          "grounding": {
+            "identifiers": {
+              "ido": "0000514"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        },
+        {
+          "id": "I",
+          "name": "I",
+          "description": null,
+          "grounding": {
+            "identifiers": {
+              "ido": "0000511"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        },
+        {
+          "id": "E",
+          "name": "E",
+          "description": null,
+          "grounding": {
+            "identifiers": {
+              "apollosv": "0000154"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        },
+        {
+          "id": "R",
+          "name": "R",
+          "description": null,
+          "grounding": {
+            "identifiers": {
+              "ido": "0000592"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        }
+      ],
+      "transitions": [
+        {
+          "id": "t1",
+          "input": [
+            "I",
+            "S"
+          ],
+          "output": [
+            "I",
+            "E"
+          ],
+          "grounding": null,
+          "properties": {
+            "name": "t1",
+            "description": null,
+            "grounding": null
+          }
+        },
+        {
+          "id": "t2",
+          "input": [
+            "E"
+          ],
+          "output": [
+            "I"
+          ],
+          "grounding": null,
+          "properties": {
+            "name": "t2",
+            "description": null,
+            "grounding": null
+          }
+        },
+        {
+          "id": "t3",
+          "input": [
+            "I"
+          ],
+          "output": [
+            "R"
+          ],
+          "grounding": null,
+          "properties": {
+            "name": "t3",
+            "description": null,
+            "grounding": null
+          }
+        }
+      ]
+    },
+    "semantics": {
+      "ode": {
+        "rates": [
+          {
+            "target": "t1",
+            "expression": "I*S*beta/N",
+            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
+          },
+          {
+            "target": "t2",
+            "expression": "E*sigma",
+            "expression_mathml": "<apply><times/><ci>E</ci><ci>sigma</ci></apply>"
+          },
+          {
+            "target": "t3",
+            "expression": "I*gamma",
+            "expression_mathml": "<apply><times/><ci>I</ci><ci>gamma</ci></apply>"
+          }
+        ],
+        "initials": [
+          {
+            "target": "S",
+            "expression": "100000.0 - 4*I0",
+            "expression_mathml": "<apply><minus/><cn>100000.0</cn><apply><times/><cn>4</cn><ci>I0</ci></apply></apply>"
+          },
+          {
+            "target": "I",
+            "expression": "I0",
+            "expression_mathml": "<ci>I0</ci>"
+          },
+          {
+            "target": "E",
+            "expression": "3*I0",
+            "expression_mathml": "<apply><times/><cn>3</cn><ci>I0</ci></apply>"
+          },
+          {
+            "target": "R",
+            "expression": "0",
+            "expression_mathml": "<cn>0</cn>"
+          }
+        ],
+        "parameters": [
+          {
+            "id": "N",
+            "name": null,
+            "description": null,
+            "value": 100000,
+            "grounding": null,
+            "distribution": null,
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            }
+          },
+          {
+            "id": "beta",
+            "name": null,
+            "description": null,
+            "value": 0.37,
+            "grounding": null,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 0.35,
+                "maximum": 0.4
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            }
+          },
+          {
+            "id": "sigma",
+            "name": null,
+            "description": null,
+            "value": 0.5,
+            "grounding": null,
+            "distribution": null,
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            }
+          },
+          {
+            "id": "gamma",
+            "name": null,
+            "description": null,
+            "value": 0.25,
+            "grounding": null,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 0.1667,
+                "maximum": 0.3333
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            }
+          },
+          {
+            "id": "I0",
+            "name": null,
+            "description": null,
+            "value": 3,
+            "grounding": null,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 1,
+                "maximum": 5
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            }
+          }
+        ],
+        "observables": [],
+        "time": {
+          "id": "t",
+          "units": {
+            "expression": "date",
+            "expression_mathml": "<ci>date</ci>"
+          }
+        }
+      },
+      "typing": null,
+      "span": []
+    },
+    "metadata": {
+      "annotations": {
+        "authors": [],
+        "references": [],
+        "locations": [],
+        "pathogens": [],
+        "diseases": [],
+        "hosts": [],
+        "model_types": []
+      },
+      "source": null,
+      "gollmCard": null,
+      "gollmExtractions": null,
+      "templateCard": null
+    },
+    "id": "1a48ec40-28b5-4206-924c-7f98ddbb57e2",
+    "createdOn": "2025-02-26T21:38:51.609+00:00",
+    "updatedOn": "2025-02-26T21:39:58.881+00:00",
+    "name": "seir_model",
+    "fileNames": [],
+    "temporary": false,
+    "publicAsset": false
+  },
+  "modelConfigurationId": "ed29c860-0b20-4b71-9369-5f4c5221abf7"
+}
