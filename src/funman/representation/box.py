@@ -456,7 +456,8 @@ class Box(BaseModel):
         bool
             the box contains the point
         """
-        return all(
+        try:
+            contains = all(
             [
                 interval.contains_value(
                     point.values[p], denormalize_bounds=denormalize_bounds
@@ -464,6 +465,9 @@ class Box(BaseModel):
                 for p, interval in self.bounds.items()
             ]
         )
+        except KeyError as e:
+            raise e
+        return contains
 
     def equal(
         self, b2: "Box", param_list: List[str] = None
