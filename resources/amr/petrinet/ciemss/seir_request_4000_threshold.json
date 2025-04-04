@@ -1,0 +1,370 @@
+{
+  "model": {
+    "id": "1d7d09fc-7cfd-4546-b8ae-d50f5337e6bb",
+    "createdOn": "2025-02-26T21:38:51.609+00:00",
+    "updatedOn": "2025-02-26T21:39:58.881+00:00",
+    "name": "seir_model",
+    "fileNames": [],
+    "temporary": false,
+    "publicAsset": false,
+    "header": {
+      "name": "seir_model",
+      "description": "SEIR model (base case)",
+      "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+      "schema_name": "petrinet",
+      "model_version": "0.1"
+    },
+    "model": {
+      "transitions": [
+        {
+          "id": "t1",
+          "input": [
+            "I",
+            "S"
+          ],
+          "output": [
+            "I",
+            "E"
+          ],
+          "properties": {
+            "name": "t1"
+          }
+        },
+        {
+          "id": "t2",
+          "input": [
+            "E"
+          ],
+          "output": [
+            "I"
+          ],
+          "properties": {
+            "name": "t2"
+          }
+        },
+        {
+          "id": "t3",
+          "input": [
+            "I"
+          ],
+          "output": [
+            "R"
+          ],
+          "properties": {
+            "name": "t3"
+          }
+        }
+      ],
+      "states": [
+        {
+          "id": "S",
+          "name": "S",
+          "grounding": {
+            "identifiers": {
+              "ido": "0000514"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        },
+        {
+          "id": "I",
+          "name": "I",
+          "grounding": {
+            "identifiers": {
+              "ido": "0000511"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        },
+        {
+          "id": "E",
+          "name": "E",
+          "grounding": {
+            "identifiers": {
+              "apollosv": "0000154"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        },
+        {
+          "id": "R",
+          "name": "R",
+          "grounding": {
+            "identifiers": {
+              "ido": "0000592"
+            },
+            "modifiers": {}
+          },
+          "units": {
+            "expression": "person",
+            "expression_mathml": "<ci>person</ci>"
+          }
+        }
+      ]
+    },
+    "properties": {},
+    "semantics": {
+      "ode": {
+        "rates": [
+          {
+            "target": "t1",
+            "expression": "I*S*beta/N",
+            "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>S</ci><ci>beta</ci></apply><ci>N</ci></apply>"
+          },
+          {
+            "target": "t2",
+            "expression": "E*sigma",
+            "expression_mathml": "<apply><times/><ci>E</ci><ci>sigma</ci></apply>"
+          },
+          {
+            "target": "t3",
+            "expression": "I*gamma",
+            "expression_mathml": "<apply><times/><ci>I</ci><ci>gamma</ci></apply>"
+          }
+        ],
+        "initials": [
+          {
+            "target": "S",
+            "expression": "100000.0 - 4*I0",
+            "expression_mathml": "<apply><minus/><cn>100000.0</cn><apply><times/><cn>4</cn><ci>I0</ci></apply></apply>"
+          },
+          {
+            "target": "I",
+            "expression": "I0",
+            "expression_mathml": "<ci>I0</ci>"
+          },
+          {
+            "target": "E",
+            "expression": "3*I0",
+            "expression_mathml": "<apply><times/><cn>3</cn><ci>I0</ci></apply>"
+          },
+          {
+            "target": "R",
+            "expression": "0",
+            "expression_mathml": "<cn>0</cn>"
+          }
+        ],
+        "parameters": [
+          {
+            "id": "N",
+            "value": 100000,
+            "units": {
+              "expression": "1",
+              "expression_mathml": "<cn>1</cn>"
+            },
+            "conceptReference": "N"
+          },
+          {
+            "id": "beta",
+            "value": 0.37,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 0.35,
+                "maximum": 0.4
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            },
+            "conceptReference": "beta"
+          },
+          {
+            "id": "sigma",
+            "value": 0.5,
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            },
+            "conceptReference": "sigma"
+          },
+          {
+            "id": "gamma",
+            "value": 0.25,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 0.1667,
+                "maximum": 0.3333
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            },
+            "conceptReference": "gamma"
+          },
+          {
+            "id": "I0",
+            "value": 3,
+            "distribution": {
+              "type": "StandardUniform1",
+              "parameters": {
+                "minimum": 1,
+                "maximum": 5
+              }
+            },
+            "units": {
+              "expression": "1/day",
+              "expression_mathml": "<apply><power/><ci>day</ci><cn>-1</cn></apply>"
+            },
+            "conceptReference": "I0"
+          }
+        ],
+        "observables": [],
+        "time": {
+          "id": "t",
+          "units": {
+            "expression": "date",
+            "expression_mathml": "<ci>date</ci>"
+          }
+        }
+      },
+      "span": [],
+      "typing": null
+    },
+    "metadata": {
+      "annotations": {
+        "authors": [],
+        "references": [],
+        "locations": [],
+        "pathogens": [],
+        "diseases": [],
+        "hosts": [],
+        "model_types": []
+      },
+      "source": null,
+      "gollmCard": null,
+      "gollmExtractions": null,
+      "templateCard": null
+    }
+  },
+  "request": {
+    "constraints": [
+      {
+        "name": "Constraint 1",
+        "variables": [
+          "S",
+          "I",
+          "E",
+          "R"
+        ],
+        "weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "additive_bounds": {
+          "lb": 0
+        },
+        "timepoints": {
+          "lb": 0,
+          "ub": 100,
+          "closed_upper_bound": true
+        }
+      },
+      {
+        "name": "Constraint 2",
+        "variables": [
+          "I"
+        ],
+        "weights": [
+          1
+        ],
+        "additive_bounds": {
+          "ub": 4000
+        },
+        "timepoints": {
+          "lb": 0,
+          "ub": 100,
+          "closed_upper_bound": true
+        }
+      }
+    ],
+    "parameters": [
+      {
+        "name": "N",
+        "label": "any",
+        "interval": {
+          "lb": 100000,
+          "ub": 100000
+        }
+      },
+      {
+        "name": "beta",
+        "label": "all",
+        "interval": {
+          "lb": 0.35,
+          "ub": 0.4
+        }
+      },
+      {
+        "name": "sigma",
+        "label": "any",
+        "interval": {
+          "lb": 0.5,
+          "ub": 0.5
+        }
+      },
+      {
+        "name": "gamma",
+        "label": "all",
+        "interval": {
+          "lb": 0.1667,
+          "ub": 0.3333
+        }
+      },
+      {
+        "name": "I0",
+        "label": "all",
+        "interval": {
+          "lb": 1,
+          "ub": 5
+        }
+      }
+    ],
+    "structure_parameters": [
+      {
+        "name": "schedules",
+        "schedules": [
+          {
+            "timepoints": [
+              0,
+              10,
+              20,
+              30,
+              40,
+              50,
+              60,
+              70,
+              80,
+              90,
+              100
+            ]
+          }
+        ]
+      }
+    ],
+    "config": {
+      "use_compartmental_constraints": false,
+      "normalization_constant": 1,
+      "normalize": false,
+      "tolerance": 0.2,
+      "verbosity": 0
+    }
+  }
+}

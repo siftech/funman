@@ -494,7 +494,7 @@ class Encoder(ABC, BaseModel):
         # Normalize if constant value
         parameter_assignments = {
             # self._encode_state_var(replace_reserved(k.name)):
-            self._encode_state_var(k.name): Real(float(k.interval.lb))
+            self._encode_state_var(k._escaped_name): Real(float(k.interval.lb))
             for k in parameters
             if k.interval.lb == k.interval.ub
         }
@@ -876,7 +876,7 @@ class Encoder(ABC, BaseModel):
             self.box_to_smt(
                 Box(
                     bounds={
-                        p.name: p.interval.model_copy()
+                        p._escaped_name: p.interval.model_copy()
                         for p in parameters
                         if isinstance(p, ModelParameter)
                     },

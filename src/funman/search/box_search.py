@@ -18,6 +18,7 @@ from queue import PriorityQueue as PQueueSP
 from queue import Queue as QueueSP
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
+from funman.utils.sympy_utils import rev_replace_reserved
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
@@ -331,7 +332,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _extract_point(self, model, box: Box):
         point = Point(
             values={
-                p[0].symbol_name(): (
+                rev_replace_reserved(p[0].symbol_name()): (
                     (
                         (
                             float(p[1].constant_value())
