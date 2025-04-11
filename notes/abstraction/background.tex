@@ -1,109 +1,174 @@
 \begin{definition}
-	A Petrinet $\Omega$ is a directed graph $(V, E)$ with vertices $V=(V_x,
-		V_z)$ partitioned into sets $V_x$ of state vertices and $V_z$ of transition
-	vertices, and edges $E=(E_{out}, E_{in})$ partitioned into collections $E_{out}$ of
-	flow-out and $E_{in}$ flow-in edges (relative to state vertices).
-\end{definition}
-
-
-
-\begin{definition}
-	A flow-out edge $e \in E_{out}$ comprises a pair of vertices $(v_x,v_z)$, where
-	$v_x \in V_x$ is a state vertex, $v_z \in V_z$ is a transition vertex, and the
-	flow is directed from $v_x$ to $v_z$.
+	A Petrinet $\Omega$ is a directed graph $(V, E)$ with vertices $V=(V_X,
+		V_Z)$ partitioned into sets $V_X$ of state vertices and $V_Z$ of transition
+	vertices.
 \end{definition}
 
 \begin{definition}
-	A flow-in edge $e \in E_{in}$ comprises a pair of vertices $(v_z,v_x)$,
-	similar to a flow-out edge, except that the flow is directed from $v_z$ to
-	$v_x$.
+	Let $E(v) = E^{in}(v) \cup E^{out}(v)$ for each $v\in V$ denote edges of
+	the form   $(v, v') \in E^{out}(v)$ or  $(v', v) \in E^{in}(v)$ where $v$ is
+	the respective source or target.
 \end{definition}
 
 \begin{example}
-	The SIR model that stratifies the $S$ state variable into $S_1$ and $S_2$
-	for two susceptible populations and defines $\Omega$ by:
+	The SIR model defines $\Omega$ by:
 	\begin{eqnarray*}
-		V_x &=& \{v_{S_1}, v_{S_2}, v_{I}, v_{R}\}\\
-		V_z &=& \{v_{inf_1}, v_{inf_2}, v_{rec}\}\\
-		E_{in} &=& ((v_{inf_1}, v_{S_1}), (v_{inf_1}, v_{I}), (v_{inf_1}, v_{I}), (v_{inf_2}, v_{S_2}), (v_{inf_2}, v_{I}),
-		(v_{inf_2}, v_{I}), (v_{rec}, v_{R}))\\
-		E_{out} &=& ((v_{S_1}, v_{inf_1}), (v_{S_2}, v_{inf_2}),(v_{I}, v_{inf_1}), (v_{I}, v_{rec}))
+		V_X &=& \{v_{S}, v_{I}, v_{R}\}\\
+		V_Z &=& \{ v_{inf}, v_{rec}\}\\
+		E &=& \{ (v_{S}, v_{inf}),(v_{I}, v_{inf}), (v_{inf}, v_{I}), (v_{inf}, v_{I}),  (v_{I}, v_{rec}), (v_{rec}, v_{R})\}
 	\end{eqnarray*}
 \end{example}
 
 \begin{figure}
-	\centering    \includegraphics[width=.5\linewidth]{fig/sir/sir_stratified_model.pdf}
-	\caption{\label{fig:sir_stratified_model} SIR model stratified with two
-		populations in the $S$ state ($S_1$ and $S_2$), each with a unique $\beta$
-		parameter ($\beta_1$ and $\beta_2$).}
+	\centering    \includegraphics[width=.25\linewidth]{fig/sir/sir_model.pdf}
+	\caption{\label{fig:sir_model} SIR model.}
 \end{figure}
+
 
 \begin{definition}
 	The ODE semantics $\Theta$ of the Petrinet $\Omega$ defines a tuple $(P, X,
 		Z, {\cal I}, {\cal P}, {\cal X}, {\cal Z}, {\cal R})$ where
 	\begin{itemize}
 		\item $P$ is a set of parameters;
-		\item $X$ is a set of state variables;
+		\item $D$ is a set of of discrete state variables, and for each $d \in
+		D$, $dom(d)$ is a finite set of values;
+		\item $X$ is a set of continuous state variables;
 		\item $Z$ is a set of transitions;
-		\item ${\cal I}: S \rightarrow \reals$ assigns the initial value of
-		      state variables to a real number;
 		\item ${\cal P}: P \rightarrow \reals \cup \reals \times \reals$ assigns
 		      parameters to a real number, or a pair of real numbers defining an
 		      interval;
-		\item ${\cal X}: X \rightarrow V_x$ assigns state variables to state
-		      vertices;
-		\item ${\cal Z}: Z \rightarrow V_z$ assigns transtions to transition
+		\item ${\cal X}: V_X  \rightarrow X$ assigns a
+		continuous variable to each state
+		vertex;
+		\item ${\cal D}: V_X \rightarrow 2^{St}$, where $St = dom(d_1) \times \ldots
+		\times dom(d_{|D|})$ is the set of all discrete states.
+		\item ${\cal I}: X \rightarrow \reals$ assigns the initial value of
+		      continuous state variables to a real number;
+		\item ${\cal Z}: Z \rightarrow V_z$ assigns transitions to transition
 		      vertices; and
-		\item ${\cal R}: {\bf P} \times {\bf X} \times Z \rightarrow \reals$
+		\item ${\cal R}: {\bf P} \times {\bf V_X} \times Z \rightarrow \reals$
 		      defines the rate of each transition  $z \in Z$ in terms of the set of
 		      parameter vectors ${\bf P}$ and state variable vectors ${\bf X}$.
 	\end{itemize}
 	The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
-	partial derivative $\frac{d {\bf x}}{dt}$, so that for each state variable
-	$x \in X$:
+	partial derivative $\frac{d {\bf x_{St}}{dt}$, so that for each state vertex
+	$v_{x_S} \in V_X$:
 
 	\begin{equation}\label{eqn:flow}
-		\frac{dx}{dt} = \sum_{z \in Z^{in(x)}} {\cal R}({\bf p}, {\bf x}, z) - \sum_{z \in Z^{out(x)} } {\cal R}({\bf p}, {\bf x}, z)
+		\frac{dx_S}{dt} = \sum_{(v_z, v_{x_S}) \in E} {\cal R}({\bf p}, {\bf x_S}, z) - \sum_{(v_{x_S}, v_z)\in E}  {\cal R}({\bf p}, {\bf x_S}, z)
 	\end{equation}
-	\noindent where $Z^{in(x)} = \{z \in Z | (z, x) \in E_{in}\}$ and
-	$z^{out(x)}=\{z \in Z| (x, z) \in E_{out}\}$ are the transition
-	vertices that flow in and out of the vertex $v_x$, respectively. We denote
-	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t) = (\frac{dx_1}{dt},
-		\frac{dx_2}{dt}, \ldots)^T$, the gradient comprised of components defined in
-	Equation \eqref{eqn:flow}.
+	\noindent We denote
+	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x_S}, t) = (\frac{dx_{S,1}}{dt},
+		\frac{dx_{S,2}}{dt}, \ldots)^T$, the gradient comprised of components defined in
+	Equation \ref{eqn:flow}.
 \end{definition}
 
+
+\begin{definition}
+	A balanced-flow Petrinet preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$
+\end{definition}
+
+\begin{definition}
+Each balanced-flow Petrinet transition $z$ defines a set of state transitions
+ $st(z) = \{(v_x, z,
+v_x')\}$ that match each $x_1 \in E^{in}(z)$ with exactly one $v_x' \in
+E^{out}(z)$, and each $v_x'\in
+E^{out}(z)$ with exactly one $v_x\in E^{in}(z)$
+\end{definition}
+
+\begin{definition}
+	An independent-transition Petrinet requires that for each transition, there
+	is exactly one $(v_x, z, v_x') \in st(z)$ where $v_x\not= v_x'$.
+\end{definition}
+
+A balanced-flow, independent-transition Petrinet permits only a single state
+change with each transition.  The remaining state transitions define the variables that impact this state change, and no transition
+allows more than one state change.  These definitions become important for
+defining Petrinet stratification, as described in the following section.
+
 In the following, we simplify the definition of a Petrinet and associated
-semantics because the graph vertices and the semantic elements are one to one.  We drop
-the vertex terminology by assuming the following:
-\begin{itemize}
-	\item States: given $X$, $V_x$ and ${\cal X}$, referring to a state
-	      variable $x \in X$ is synonymous with $v_x$ because ${\cal X}(x) = v_x$.
-	\item Transitions: given $Z$, $V_z$ and ${\cal Z}$, referring to a state
-	      variable $z \in Z$ is synonymous with $v_z$ because ${\cal Z}(z) = v_z$.
-	\item Edges: Each edge $e \in E$ corresponds to a pair of vertices $(v_x,
-		      v_z)$ or $(v_z, v_x)$, and it is (respectively) synonymous to pairs $(x, z)$
-	      or $(z, x)$.
-\end{itemize}
+semantics because the graph vertices and the semantic elements are one to one. 
+%  We drop
+% the vertex terminology by assuming the following:
+% \begin{itemize}
+% 	\item States: given $X$, $V_x$ and ${\cal X}$, referring to a state
+% 	      variable $x \in X$ is synonymous with $v_x$ because ${\cal X}(x) = v_x$.
+% 	\item Transitions: given $Z$, $V_z$ and ${\cal Z}$, referring to a state
+% 	      variable $z \in Z$ is synonymous with $v_z$ because ${\cal Z}(z) = v_z$.
+% 	\item Edges: Each edge $e \in E$ corresponds to a pair of vertices $(v_x,
+% 		      v_z)$ or $(v_z, v_x)$, and it is (respectively) synonymous to pairs $(x, z)$
+% 	      or $(z, x)$.
+% \end{itemize}
+
+
+% \begin{example}\label{ex:base}
+% 	The stratified SIR model defines $\Theta$ (dropping ${\cal X}$ and ${\cal
+% 				Z}$ per above) by:
+% 	\begin{eqnarray*}
+% 		P &=& \{\beta_1, \beta_2, \gamma\}\\
+% 		X &=& \{S_1, S_2, I, R\}\\
+% 		Z &=& \{inf_1, inf_2, rec\}\\
+% 		{\cal I} &=& \left\{
+% 		\begin{array}{ll}
+% 			0.45 & :S_1 \\
+% 			0.45 & :S_2 \\
+% 			0.1  & :I   \\
+% 			0.0  & :R
+% 		\end{array}\right.\\
+% 		{\cal P}&=& \left\{
+% 		\begin{array}{ll}
+% 			1e{-7} & :\beta_1 \\
+% 			2e{-7} & :\beta_2 \\
+% 			1e{-5} & :\gamma
+% 		\end{array}\right.\\
+% 		\\
+% 		% {\cal X} &=& \left\{ 
+% 		%     \begin{array}{ll}
+% 		%         v_{x} & : x \in X
+% 		%     \end{array}\right.\\
+% 		% {\cal Z} &=& \left\{ 
+% 		%     \begin{array}{ll}
+% 		%         v_{z} & : z \in Z
+% 		%     \end{array}\right.\\
+% 		{\cal R} &=& \left\{
+% 		\begin{array}{ll}
+% 			\beta_1 S_1 I & : z_{inf_1} \\
+% 			\beta_2 S_2 I & : z_{inf_2} \\
+% 			\gamma I      & : z_{rec}   \\
+% 		\end{array}\right.\\
+% 	\end{eqnarray*}
+% \end{example}
+
 
 \begin{example}\label{ex:base}
-	The stratified SIR model defines $\Theta$ (dropping ${\cal X}$ and ${\cal
-				Z}$ per above) by:
+	The SIR model defines $\Theta$ by:
 	\begin{eqnarray*}
-		P &=& \{\beta_1, \beta_2, \gamma\}\\
-		X &=& \{S_1, S_2, I, R\}\\
-		Z &=& \{inf_1, inf_2, rec\}\\
+		P &=& \{\beta, \gamma\}\\
+		X &=& \{S, I, R\}\\
+		D &=& \{vac\}, dom(vac) = \{T, F\}\\
+		St &=& \{(vac_T), (vac_F)\}
+		Z &=& \{inf, rec\}\\
+		{\cal X} &=& \left\{
+			\begin{array}{ll}
+				v_I & I \\
+				v_S & S \\
+				v_R & R
+			\end{array}\right.\\
+			{\cal D} &=& \left\{
+				\begin{array}{ll}
+					v_I & St\\
+					v_S & St\\
+					v_R & St\\
+				\end{array}\right.\\
 		{\cal I} &=& \left\{
 		\begin{array}{ll}
-			0.45 & :S_1 \\
-			0.45 & :S_2 \\
-			0.1  & :I   \\
-			0.0  & :R
+			0.9 & :S \\
+			0.1 & :I \\
+			0.0 & :R
 		\end{array}\right.\\
 		{\cal P}&=& \left\{
 		\begin{array}{ll}
-			1e{-7} & :\beta_1 \\
-			2e{-7} & :\beta_2 \\
+			2e{-7} & :\beta  \\
 			1e{-5} & :\gamma
 		\end{array}\right.\\
 		\\
@@ -117,13 +182,11 @@ the vertex terminology by assuming the following:
 		%     \end{array}\right.\\
 		{\cal R} &=& \left\{
 		\begin{array}{ll}
-			\beta_1 S_1 I & : z_{inf_1} \\
-			\beta_2 S_2 I & : z_{inf_2} \\
-			\gamma I      & : z_{rec}   \\
+			\beta S I & : z_{inf} \\
+			\gamma I  & : z_{rec} \\
 		\end{array}\right.\\
 	\end{eqnarray*}
 \end{example}
-
 
 Using the partial derivatives defined by the Petrinet graph and semantics, we
 can define the state vector at given time $t+dt$ with the forward Euler method
