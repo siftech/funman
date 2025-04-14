@@ -5,7 +5,7 @@
 \end{definition}
 
 \begin{definition}
-	Let $E(v) = E^{in}(v) \cup E^{out}(v)$ for each $v\in V$ denote edges of
+	Let $E(v) = E^{in}(v) \cup E^{out}(v)$, and for each $v\in V$ denote edges of
 	the form   $(v, v') \in E^{out}(v)$ or  $(v', v) \in E^{in}(v)$ where $v$ is
 	the respective source or target.
 \end{definition}
@@ -26,11 +26,11 @@
 
 
 \begin{definition}
-	The ODE semantics $\Theta$ of the Petrinet $\Omega$ defines a tuple $(P, X,
+	The ODE semantics $\Theta$ of the Petrinet $\Omega$ defines a tuple $(P, D, X,
 		Z, {\cal I}, {\cal P}, {\cal X}, {\cal Z}, {\cal R})$ where
 	\begin{itemize}
 		\item $P$ is a set of parameters;
-		\item $D$ is a set of of discrete state variables, and for each $d \in
+		\item $D$ is a set of discrete state variables, and for each $d \in
 		D$, $dom(d)$ is a finite set of values;
 		\item $X$ is a set of continuous state variables;
 		\item $Z$ is a set of transitions;
@@ -40,7 +40,8 @@
 		\item ${\cal X}: V_X  \rightarrow X$ assigns a
 		continuous variable to each state
 		vertex;
-		\item ${\cal D}: V_X \rightarrow 2^{St}$, where $St = dom(d_1) \times \ldots
+		\item ${\cal D}: V_X \rightarrow 2^{St}$ maps a set of discrete states
+		to each $v \in V_X$, where $St = dom(d_1) \times \ldots
 		\times dom(d_{|D|})$ is the set of all discrete states.
 		\item ${\cal I}: X \rightarrow \reals$ assigns the initial value of
 		      continuous state variables to a real number;
@@ -50,16 +51,27 @@
 		      defines the rate of each transition  $z \in Z$ in terms of the set of
 		      parameter vectors ${\bf P}$ and state variable vectors ${\bf X}$.
 	\end{itemize}
-	The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
-	partial derivative $\frac{d {\bf x_{St}}{dt}$, so that for each state vertex
-	$v_{x_S} \in V_X$:
+
+ The semantics associates a pair $({\cal X}(v),{\cal D}(v)) = (x, S)$ with each vertex $v \in V_X$ where $x
+\in X$ and $S \subseteq St$.  We assume that the mapping of continuous variables
+and discrete states to vertices is complete, so that for each $x \in X$ there is a
+$v \in V_X$ where ${\cal X}(v) = x$.  The set of vertices $V(x)=\{v \in V_X | {\cal
+X}(v) = x\}$ associated with $x$ also partition the discrete states, so
+that $St = \bigcup_{v\in V(x)}{\cal D}(v)$ and for each $v_1, v_2 \in V(x)$,
+${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.  
+
+Let ${\bf x}$ denote the vector of pairs $(x, S)$ mapped to vertices in $V_X$,
+and let
+$x_S$ denote an element of ${\bf x}$. The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
+partial derivative $\frac{d {\bf x}}{dt}$, so that for each $x_S$ which maps to
+a vertex $v$:
 
 	\begin{equation}\label{eqn:flow}
-		\frac{dx_S}{dt} = \sum_{(v_z, v_{x_S}) \in E} {\cal R}({\bf p}, {\bf x_S}, z) - \sum_{(v_{x_S}, v_z)\in E}  {\cal R}({\bf p}, {\bf x_S}, z)
+		\frac{dx_S}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
 	\end{equation}
+	
 	\noindent We denote
-	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x_S}, t) = (\frac{dx_{S,1}}{dt},
-		\frac{dx_{S,2}}{dt}, \ldots)^T$, the gradient comprised of components defined in
+	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient comprised of components defined in
 	Equation \ref{eqn:flow}.
 \end{definition}
 
@@ -69,16 +81,16 @@
 \end{definition}
 
 \begin{definition}
-Each balanced-flow Petrinet transition $z$ defines a set of state transitions
- $st(z) = \{(v_x, z,
-v_x')\}$ that match each $x_1 \in E^{in}(z)$ with exactly one $v_x' \in
-E^{out}(z)$, and each $v_x'\in
-E^{out}(z)$ with exactly one $v_x\in E^{in}(z)$
+Each balanced-flow Petrinet transition $z$ defines a set of state transitions 
+ $st(z) = \{((x, S), z,
+ (x', S')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, S),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', S')\}$ that match each input state with exactly one output state, and
+ vice versa.
 \end{definition}
 
 \begin{definition}
 	An independent-transition Petrinet requires that for each transition, there
-	is exactly one $(v_x, z, v_x') \in st(z)$ where $v_x\not= v_x'$.
+	is exactly one $(x, S), z,
+	(x', S') \in st(z)$ where $(x, S)\not= (x', S')$.
 \end{definition}
 
 A balanced-flow, independent-transition Petrinet permits only a single state
@@ -146,19 +158,19 @@ semantics because the graph vertices and the semantic elements are one to one.
 		P &=& \{\beta, \gamma\}\\
 		X &=& \{S, I, R\}\\
 		D &=& \{vac\}, dom(vac) = \{T, F\}\\
-		St &=& \{(vac_T), (vac_F)\}
+		St &=& \{(vac_T), (vac_F)\}\\
 		Z &=& \{inf, rec\}\\
 		{\cal X} &=& \left\{
 			\begin{array}{ll}
-				v_I & I \\
-				v_S & S \\
-				v_R & R
+				v_S & :S \\
+				v_I & :I \\
+				v_R & :R
 			\end{array}\right.\\
 			{\cal D} &=& \left\{
 				\begin{array}{ll}
-					v_I & St\\
-					v_S & St\\
-					v_R & St\\
+					v_I & :St\\
+					v_S & :St\\
+					v_R & :St\\
 				\end{array}\right.\\
 		{\cal I} &=& \left\{
 		\begin{array}{ll}
