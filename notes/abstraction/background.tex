@@ -47,7 +47,7 @@
 		      continuous state variables to a real number;
 		\item ${\cal Z}: Z \rightarrow V_z$ assigns transitions to transition
 		      vertices; and
-		\item ${\cal R}: {\bf P} \times {\bf V_X} \times Z \rightarrow \reals$
+		\item ${\cal R}: {\bf P} \times V_X \times Z \rightarrow \reals$
 		      defines the rate of each transition  $z \in Z$ in terms of the set of
 		      parameter vectors ${\bf P}$ and state variable vectors ${\bf X}$.
 	\end{itemize}
@@ -66,7 +66,7 @@
 
 
 \begin{definition}
-	A balanced-flow Petrinet preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$
+	A balanced-flow Petrinet preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
 \end{definition}
 
 \begin{definition}
