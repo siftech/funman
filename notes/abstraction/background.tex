@@ -1,6 +1,6 @@
 \begin{definition}
-	A Petrinet $\Omega$ is a directed graph $(V, E)$ with vertices $V=(V_X,
-		V_Z)$ partitioned into sets $V_X$ of state vertices and $V_Z$ of transition
+	A Petrinet $\Omega$ is a directed graph $(V, E)$ with vertices $V=V_X \cup
+		V_Z$ partitioned into sets $V_X$ of state vertices and $V_Z$ of transition
 	vertices.
 \end{definition}
 
@@ -17,6 +17,7 @@
 		V_Z &=& \{ v_{inf}, v_{rec}\}\\
 		E &=& \{ (v_{S}, v_{inf}),(v_{I}, v_{inf}), (v_{inf}, v_{I}), (v_{inf}, v_{I}),  (v_{I}, v_{rec}), (v_{rec}, v_{R})\}
 	\end{eqnarray*}
+        This is also depicted in Figure \ref{fig:sir_model}.
 \end{example}
 
 \begin{figure}
@@ -34,7 +35,7 @@
 		D$, $dom(d)$ is a finite set of values;
 		\item $X$ is a set of continuous state variables;
 		\item $Z$ is a set of transitions;
-		\item ${\cal P}: P \rightarrow \reals \cup \reals \times \reals$ assigns
+		\item ${\cal P}: P \rightarrow \reals \cup (\reals \times \reals)$ assigns
 		      parameters to a real number, or a pair of real numbers defining an
 		      interval;
 		\item ${\cal X}: V_X  \rightarrow X$ assigns a
