@@ -2,7 +2,17 @@ Stratification is an operation that refines a model to capture finer detail
 about subpopulations.  For instance, we can stratify the SIR model by splitting the susceptible state $(S, \{(vac_T), (vac_F)\})$ into two subpopulations $(S, \{(vac_T)\})$ and $(S, \{(vac_F)\})$.  State refinements imply transition and parameter refinements.  For example, stratifying $S$ implies that the $inf$ transition becomes stratified to represent how two different subpopulations (vaccinated or not) become infected.  Modifying the $\beta$ parameter for the stratified $inf$ transitions reflects how vaccinated individuals become infected at a lower rate.
 
 \begin{definition}
-Stratifying a state $(x, S)$ of $\Omega, \Theta$ into a set $\{(x, S_1), \ldots, (x, S_N), ...\}$ results in a new $\Omega', \Theta'$, as follows:
+A stratification operator 
+
+\begin{eqnarray*}
+        St: \Omega \rightarrow \Omega'
+        St(\Omega, \Theta, x) = (\Omega', \Theta', \{x_1, \ldots, x_N\})
+\end{eqnarray*}
+
+defines a mapping from state variable $x$ to a set of state variables
+$\{x_1,\ldots, x_N\}$.  The result of applying the operator  is a new Petrinet
+$\Omega'$ and semantics $\Theta'$, as follows:
+
 \begin{itemize}
 	\item $V_X' = V_X \backslash \{v\}\cup \{v_1, \ldots, v_N\}$ where $({\cal X}(v),{\cal D}(v)) = (x, S)$, $({\cal X}'(v_i),{\cal D}'(v_i)) = (x, S_i)$ for $i \in [1, N]$, and $S = S_1 \cup \ldots \cup S_N$.
 	
@@ -61,7 +71,7 @@ one element of the partition.  Under this definition, abstraction can
 analogously combine a subset of the levels.  For example, if we stratify $S$
 with respect to attribute $vac$ (for vaccinated), then it has two levels $\{T,
 F\}$ (for true and false).  Similarly, we use attribute $age$, then it may have
-three levels $\{young, midddle, elderly\}$.  A partition of the $age$ attribute
+three levels $\{young, middle, elderly\}$.  A partition of the $age$ attribute
 could define $[\{young, middle\}| \{elderly\}]$ so that there are two strata
 corresponding to the non-elderly and the elderly.
 
