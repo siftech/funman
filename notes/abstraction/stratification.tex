@@ -2,7 +2,13 @@ Stratification is an operation that refines a model to capture finer detail
 about subpopulations.  
 
 \begin{definition}
-A stratification operator $St = (\Omega, \Theta, x, \{x_1,\ldots, x_N\})$
+A stratification operator 
+
+\begin{eqnarray*}
+        St: \Omega \rightarrow \Omega'
+        St(\Omega, \Theta, x) = (\Omega', \Theta', \{x_1, \ldots, x_N\})
+\end{eqnarray*}
+
 defines a mapping from state variable $x$ to a set of state variables
 $\{x_1,\ldots, x_N\}$.  The result of applying the operator  is a new Petrinet
 $\Omega'$ and semantics $\Theta'$, as follows:
@@ -80,7 +86,7 @@ one element of the partition.  Under this definition, abstraction can
 analogously combine a subset of the levels.  For example, if we stratify $S$
 with respect to attribute $vac$ (for vaccinated), then it has two levels $\{T,
 F\}$ (for true and false).  Similarly, we use attribute $age$, then it may have
-three levels $\{young, midddle, elderly\}$.  A partition of the $age$ attribute
+three levels $\{young, middle, elderly\}$.  A partition of the $age$ attribute
 could define $[\{young, middle\}| \{elderly\}]$ so that there are two strata
 corresponding to the non-elderly and the elderly.
 
