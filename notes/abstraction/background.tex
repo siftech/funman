@@ -1,5 +1,5 @@
 \begin{definition}
-	A Petrinet $\Omega$ is a directed graph $(V, E)$ with vertices $V=V_X \cup
+	A \Petrinet{} $\Omega$ is a directed graph $(V, E)$ with vertices $V=V_X \cup
 		V_Z$ partitioned into sets $V_X$ of state vertices and $V_Z$ of transition
 	vertices.
 \end{definition}
@@ -55,7 +55,7 @@ formalization to simplify stratification and abstraction definitions.
 
 
 \begin{definition}
-	The ODE semantics $\Theta$ of the Petrinet $\Omega$ defines a tuple $(P, D, X,
+	The ODE semantics $\Theta$ of the \Petrinet{} $\Omega$ defines a tuple $(P, D, X,
 		Z, {\cal P}, {\cal X}, {\cal D}, {\cal I}, {\cal Z}, {\cal R})$ where
 	\begin{itemize}
 		\item $P$ is a set of parameters;
@@ -92,7 +92,7 @@ formalization to simplify stratification and abstraction definitions.
 	that $G = \bigcup_{v\in V(x)}{\cal D}(v)$ and for each $v_1, v_2 \in V(x)$,
 	${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.
 
-	The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
+	The elements of the \Petrinet{} $\Omega$ and semantics $\Theta$ define the
 	partial derivative $\frac{d {\bf x}}{dt}$, so that for each $(x, g)$ which maps to
 	a vertex $v$:
 
@@ -107,27 +107,28 @@ formalization to simplify stratification and abstraction definitions.
 
 
 \begin{definition}
-	A balanced-flow Petrinet preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
+	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
 \end{definition}
 
 \begin{definition}
-	Each balanced-flow Petrinet transition $z$ defines a set of state transitions
+
+	Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
 	$st(z) = \{((x, g), z,
 		(x', g')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, g),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', g')\}$ that match each input state with exactly one output state, and
 	vice versa.
 \end{definition}
 
 \begin{definition}
-	An independent-transition Petrinet requires that for each transition, there
+	An independent-transition \Petrinet{} requires that for each transition, there
 	is exactly one $((x, g), z,
 		(x', g')) \in st(z)$ where $(x, S)\not= (x', S')$.
+
 \end{definition}
 
-A balanced-flow, independent-transition Petrinet permits only a single state
+A balanced-flow, independent-transition \Petrinet{} permits only a single state
 change with each transition.  The remaining state transitions define the variables that impact this state change, and no transition
 allows more than one state change.  These definitions become important for
-defining Petrinet stratification, as described in the following section.
-
+defining \Petrinet{} stratification, as described in the following section.
 
 %  We drop
 % the vertex terminology by assuming the following:
@@ -229,7 +230,7 @@ defining Petrinet stratification, as described in the following section.
 	\end{eqnarray*}
 \end{example}
 
-Using the partial derivatives defined by the Petrinet graph and semantics, we
+Using the partial derivatives defined by the \Petrinet{} graph and semantics, we
 can define the state vector at given time $t+dt$ with the forward Euler method
 as:
 
