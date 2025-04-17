@@ -34,9 +34,9 @@ V_X$ then $v' \in V_Z$ and if $v \in V_Z$, then $v' \in V_X$.
         The SIR model is depicted in Figure \ref{fig:sir_model}.
 \end{example}
 
-\begin{figure}
-	\centering    \includegraphics[width=.25\linewidth]{fig/sir/sir_model.pdf}
-	\caption{\label{fig:sir_model} SIR model.}
+\begin{figure}[ht]
+	\centering    \includegraphics[width=.5\linewidth]{fig/sir/sir-simple}
+	\caption{\label{fig:sir_model} Simple SIR model.}
 \end{figure}
 
 We develop the semantics by associating state variables to each
@@ -160,6 +160,7 @@ change with each transition.  That is, all flows out of a transition node either
 The other edges into the state transitions involve no net flow; they simply serve to identify other variables that influence the rate of the state change.
 These definitions become important for
 defining \Petrinet{} stratification, as described in the following section.
+For example, in Figure \ref{fig:sir_model}, flow through the ``infection'' node is entirely from susceptible to infected, S $\rightarrow$ inf $\rightarrow$ I in the figure.  There is also an edge from infected to infection (I $\rightarrow$ inf), but this reflects only the influence of the number already infected on the rate of flow from S to I: there is no flow backwards.
 
 \textcolor{red}{I edited the above a little bit.  Did I get it right?}
 
