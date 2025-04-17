@@ -1,23 +1,28 @@
 \begin{definition}
 	A \Petrinet{} $\Omega$ is a directed graph $(V, E)$ with vertices $V=V_X \cup
-		V_Z$ partitioned into sets $V_X$ of state vertices and $V_Z$ of transition
+		V_Z$ where $V_X$ are state vertices and $V_Z$ are transition
 	vertices.
 \end{definition}
 
 \begin{definition}
-	Let $E(v) = E^{in}(v) \cup E^{out}(v)$, and for each $v\in V$ denote edges of
-	the form   $(v, v') \in E^{out}(v)$ or  $(v', v) \in E^{in}(v)$ where $v$ is
-	the respective source or target.
+	Let $E(v) = E^{in}(v) \cup E^{out}(v)$, and for all $e = (v, v') \in E$,
+        $e \in E^{out}(v)$ and  $e \in E^{in}(v')$.
+        Further, % for all $(v, v') \in E$,
+        if $v \in
+V_X$ then $v' \in V_Z$ and if $v \in V_Z$, then $v' \in V_X$.
 \end{definition}
+
+\newcommand{\vinf}{v_{\mathit{inf}}}
+\newcommand{\vrec}{v_{\mathit{rec}}}
 
 \begin{example}
 	The SIR model defines $\Omega$ by:
 	\begin{eqnarray*}
 		V_X &=& \{v_{S}, v_{I}, v_{R}\}\\
-		V_Z &=& \{ v_{inf}, v_{rec}\}\\
-		E &=& \{ (v_{S}, v_{inf}),(v_{I}, v_{inf}), (v_{inf}, v_{I}), (v_{inf}, v_{I}),  (v_{I}, v_{rec}), (v_{rec}, v_{R})\}
+		V_Z &=& \{ \vinf, \vrec\}\\
+		E &=& \{ (v_{S}, \vinf),(v_{I}, \vinf{}), (\vinf{}, v_{I}), (\vinf{}, v_{I}),  (v_{I}, \vrec{}), (\vrec{}, v_{R})\}
 	\end{eqnarray*}
-	This is also depicted in Figure \ref{fig:sir_model}.
+        The SIR model is depicted in Figure \ref{fig:sir_model}.
 \end{example}
 
 \begin{figure}
@@ -88,10 +93,9 @@ formalization to simplify stratification and abstraction definitions.
 		\in X$ and $g \subseteq G$.  We assume that the mapping of state variables
 	to vertices is complete, so that for each $x \in X$ there is a
 	$v \in V_X$ where ${\cal X}(v) = x$.  The set of vertices $V(x)=\{v \in V_X | {\cal
-		X}(v) = x\}$ associated with $x$ also partition the groups, so
+		X}(v) = x\}$ associated with $x$ also partitions the groups, so
 	that $G = \bigcup_{v\in V(x)}{\cal D}(v)$ and for each $v_1, v_2 \in V(x)$,
 	${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.
-
 	The elements of the \Petrinet{} $\Omega$ and semantics $\Theta$ define the
 	partial derivative $\frac{d {\bf x}}{dt}$, so that for each $(x, g)$ which maps to
 	a vertex $v$:
@@ -101,21 +105,28 @@ formalization to simplify stratification and abstraction definitions.
 	\end{equation}
 
 	\noindent We denote
-	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient comprised of components defined in
+	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient made up of components defined in
 	Equation \ref{eqn:flow}.
 \end{definition}
 
 
 \begin{definition}
-	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
+	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that its inflows and outflows balance: $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
 \end{definition}
 
 \begin{definition}
+Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
 
-	Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
-	$st(z) = \{((x, g), z,
-		(x', g')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, g),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', g')\}$ that match each input state with exactly one output state, and
-	vice versa.
+\begin{equation*}
+  \begin{split}
+    st(z) = \{((x, g), z, (x', g')) | & (v, z) \in E^{in}(z), \\
+                                      & ({\cal X}(v),{\cal D}(v)) = (x, g),  \\
+                                      & (z, v') \in E^{out}(z), \\
+                                      & ({\cal X}(v'),{\cal D}(v')) = (x', g')\}
+  \end{split}
+\end{equation*}
+
+each of whose elements matches an input state with exactly one output state, and vice versa.
 \end{definition}
 
 \begin{definition}
@@ -164,11 +175,11 @@ defining \Petrinet{} stratification, as described in the following section.
 % 			1e{-5} & :\gamma
 % 		\end{array}\right.\\
 % 		\\
-% 		% {\cal X} &=& \left\{ 
+% 		% {\cal X} &=& \left\{
 % 		%     \begin{array}{ll}
 % 		%         v_{x} & : x \in X
 % 		%     \end{array}\right.\\
-% 		% {\cal Z} &=& \left\{ 
+% 		% {\cal Z} &=& \left\{
 % 		%     \begin{array}{ll}
 % 		%         v_{z} & : z \in Z
 % 		%     \end{array}\right.\\
@@ -214,11 +225,11 @@ defining \Petrinet{} stratification, as described in the following section.
 			1e{-5} & :\gamma
 		\end{array}\right.\\
 		\\
-		% {\cal X} &=& \left\{ 
+		% {\cal X} &=& \left\{
 		%     \begin{array}{ll}
 		%         v_{x} & : x \in X
 		%     \end{array}\right.\\
-		% {\cal Z} &=& \left\{ 
+		% {\cal Z} &=& \left\{
 		%     \begin{array}{ll}
 		%         v_{z} & : z \in Z
 		%     \end{array}\right.\\
