@@ -52,7 +52,6 @@
 		      defines the rate of each transition  $z \in Z$ in terms of the set of
 		      parameter vectors ${\bf P}$ and state variable vectors ${\bf X}$.
 	\end{itemize}
-<<<<<<< HEAD
 
  The semantics associates a pair $({\cal X}(v),{\cal D}(v)) = (x, S)$ with each vertex $v \in V_X$ where $x
 \in X$ and $S \subseteq St$.  We assume that the mapping of continuous variables
@@ -64,14 +63,9 @@ ${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.
 
 Let ${\bf x}$ denote the vector of pairs $(x, S)$ mapped to vertices in $V_X$,
 and let
-$x_S$ denote an element of ${\bf x}$. The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
+$x_S$ denote an element of ${\bf x}$. The elements of the \Petrinet{} $\Omega$ and semantics $\Theta$ define the
 partial derivative $\frac{d {\bf x}}{dt}$, so that for each $x_S$ which maps to
 a vertex $v$:
-=======
-	The elements of the \Petrinet{} $\Omega$ and semantics $\Theta$ define the
-	partial derivative $\frac{d {\bf x_{St}}}{dt}$, so that for each state vertex
-	$v_{x_S} \in V_X$:
->>>>>>> 183b078 (Revise "Petrinet" to "Petri net.")
 
 	\begin{equation}\label{eqn:flow}
 		\frac{dx_S}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
@@ -84,37 +78,20 @@ a vertex $v$:
 
 
 \begin{definition}
-<<<<<<< HEAD
-	A balanced-flow Petrinet preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
+	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
 \end{definition}
 
 \begin{definition}
-Each balanced-flow Petrinet transition $z$ defines a set of state transitions 
+Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions 
  $st(z) = \{((x, S), z,
  (x', S')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, S),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', S')\}$ that match each input state with exactly one output state, and
  vice versa.
 \end{definition}
 
 \begin{definition}
-	An independent-transition Petrinet requires that for each transition, there
+	An independent-transition \Petrinet{} requires that for each transition, there
 	is exactly one $(x, S), z,
 	(x', S') \in st(z)$ where $(x, S)\not= (x', S')$.
-=======
-	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$
-\end{definition}
-
-\begin{definition}
-Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
- $st(z) = \{(v_x, z,
-v_x')\}$ that match each $x_1 \in E^{in}(z)$ with exactly one $v_x' \in
-E^{out}(z)$, and each $v_x'\in
-E^{out}(z)$ with exactly one $v_x\in E^{in}(z)$
-\end{definition}
-
-\begin{definition}
-	An independent-transition \Petrinet{} requires that for each transition, there
-	is exactly one $(v_x, z, v_x') \in st(z)$ where $v_x\not= v_x'$.
->>>>>>> 183b078 (Revise "Petrinet" to "Petri net.")
 \end{definition}
 
 A balanced-flow, independent-transition \Petrinet{} permits only a single state
