@@ -2,49 +2,61 @@ Stratification is an operation that refines a model to capture finer detail
 about subpopulations.  For instance, we can stratify the SIR model by splitting the susceptible state $(S, \{(vac_T), (vac_F)\})$ into two subpopulations $(S, \{(vac_T)\})$ and $(S, \{(vac_F)\})$.  State refinements imply transition and parameter refinements.  For example, stratifying $S$ implies that the $inf$ transition becomes stratified to represent how two different subpopulations (vaccinated or not) become infected.  Modifying the $\beta$ parameter for the stratified $inf$ transitions reflects how vaccinated individuals become infected at a lower rate.
 
 \begin{definition}
-A stratification operator 
+	A stratification operator
 
-\begin{eqnarray*}
-        St: \Omega \rightarrow \Omega'
-        St(\Omega, \Theta, x) = (\Omega', \Theta', \{x_1, \ldots, x_N\})
-\end{eqnarray*}
-
-defines a mapping from state variable $x$ to a set of state variables
-$\{x_1,\ldots, x_N\}$.  The result of applying the operator  is a new Petrinet
-$\Omega'$ and semantics $\Theta'$, as follows:
-
-\begin{itemize}
-	\item $V_X' = V_X \backslash \{v\}\cup \{v_1, \ldots, v_N\}$ where $({\cal X}(v),{\cal D}(v)) = (x, S)$, $({\cal X}'(v_i),{\cal D}'(v_i)) = (x, S_i)$ for $i \in [1, N]$, and $S = S_1 \cup \ldots \cup S_N$.
-	
-	\item $Z' = Z \backslash \{z | z \in Z(x,S)\} \cup \{z_1, \ldots, z_M |  z \in Z(x,S)\}$, and $V_Z' = V_Z \backslash \{v\} \cup \{v_1, \ldots, v_M\}$ where ${\cal Z}(v)=z$, ${\cal Z}'(v_i) = z_i$ for each new transition $z_i$. The stratification defines a set of new transitions $\{z_1,\ldots,z_M\}$ by i) stratifying each state transition in $st(z)$ into a set of state transitions, ii) taking the cross-product of the state transition sets, and iii) defining $M$ new state transition sets $st(z_i)$ each according to an element of the cross-product.  Stratifying a state transition $((w, R), z, (y, T)) \in st(z)$, according to the new states $\{(x, S_1),\ldots, (x, S_N)\}$ corresponds to one of the following cases:
-	\begin{enumerate}
-		\item If $w, y \not= x$, then the resulting set of state transitions is $\{((w, R), z, (y, T))\}$ when the state transition is unchanged because it does not depend on $x$.
-		\item If $w = x, y \not= x$, then the resulting set of state transitions is $\{((x, R\cap S_i), z, (y, T))| (x,S_i) \in \{(x, S_1),\ldots, (x, S_N)\}\}$ when the	source state is $x$.
-		\item If $w \not= x, y = x$, then the resulting set of state transitions is $\{((w, R), z, (x, T\cap S_i))| (x,S_i) \in \{(x, S_1),\ldots, (x, S_N)\}\}$ when the target state is $x$.
-		\item If $w,y = x$, then the resulting set of state transitions is $\{((x, R\cap S_i), z, (x, T\cap S_j))| (x,S_i), (x,S_j) \in \{(x, S_1),\ldots, (x, S_N)\}\}$ when the source and target state are $x$.
-	\end{enumerate}
-	
-	\item In cases 3) and 4) above, the flow from each source state is divided
-	across $N$ state transitions.  The sum of the rates
-	associated with the transitions for each source state must equal the
-	original rate associated with $((w, R), z, (y, T))$.  In these cases, the new rates
-	preserve the flow by introducing a parameter $p_j$ for each transition and
-	ensuring that for 3) $\sum_{j=1}^N  p_{j} = 1$ and for 4) $\sum_{j=1}^N
-	p_{ij} = 1$ for each $i = 1\ldots N$.  These parameters represent the
-	probability of transitioning from $(w, R)$ to $ (x, T\cap S_i)$  or from $(x, R\cap S_i)$ to $(x, T\cap S_j)$, respectively.
-	\item Let $E' = E \backslash \left(\bigcup_{z \in Z(x,S)} E(z)\right) \cup \bigcup_{z \in Z(x,S)} E(z)\bigcup_{i=1}^M E(z_i)$, where For each set of state transitions $st(z_i)$, $E(z_i) = E^{in}(z_i) \cup E^{out}(z_i)$, $E^{in}(z_i) =\{((w, R), z_i) | ((w, R), z_i, (y, T)) \in st(z_i)\}$, and  $E^{out}(z_i) =\{(z_i, (y, T)) | ((w, R), z_i, (y, T)) \in st(z_i)\}$.  
-	\item Let ${\cal R}'({\bf p}', {\bf x}', z') ={\cal R}({\bf p}, {\bf x}, z)[(x, S)/(x, S_i), \ldots, (x, S)/(x, S_N)]$  , for each $z \in Z'$ substitute occurrences of $(x, S)$ with $(x, S_i)$ 
-	
-	\begin{eqnarray*}\label{eqn:stratified-rate}
-		{\cal R}'({\bf p}', {\bf x}', z') = \left\{
-			\begin{array}{lll}
-				{\cal R}({\bf p}, {\bf x}, z) &: z \not\in Z(x, S)\\
-				{\cal R}({\bf p}', (x, S_i), z_i) &: z \in Z(x, S), ((x, S), z) \in E
-			\end{array}
-		\right.
+	\begin{eqnarray*}
+		St&:& \Omega \rightarrow \Omega'\\
+		St(\Omega, \Theta, (x, g)) &=& (\Omega', \Theta')
 	\end{eqnarray*}
-	
-\end{itemize}
+
+	defines a mapping from state variable $(x, g)$ to a set of state variables
+	$\{(x, g_1),\ldots, (x, g_N)\}$.  We assume that there is a unique $v\in V$ where $({\cal X}(v),{\cal D}(v)) = (x, g)$. The result of applying the operator  is a new Petrinet
+	$\Omega'$ and semantics $\Theta'$, as follows:
+
+	\begin{itemize}
+		\item $V_X' = V_X \backslash \{v\}\cup \{v_1, \ldots, v_N\}$ where $({\cal X}(v),{\cal D}(v)) = (x, g)$, $({\cal X}'(v_i),{\cal D}'(v_i)) = (x, g_i)$ for $i \in [1, N]$, $g = g_1 \cup \ldots \cup g_N$, and $g_i \cap g_j = \emptyset$ for $i\not=j$. $V_{Z'} = V_Z \backslash V_z(v) \cup \{v_{z'} |  z' \in St_z((x, g), \{(x, g_1),\ldots, (x, g_N)\})\}$ where $V_z(v) = \{z\in Z | (v_z, v) \in E \} \cup \{z\in Z | (v, v_z) \in E\}$ and $St_z((x, g), \{g_1,\ldots, g_N\})$ is the operator for stratifying a transition with respect to $x$.
+		\item $E'= E \backslash E_Z(v) \cup E_{Z'}(v)$ where $E_Z(v) = \{(v, v_z) \in E \} \cup \{(v_z, v) \in E \}$ and $E_{Z'}(v) = \{(v_i, v_{z_i})\}$
+
+		      Let $E' = E \backslash \left(\bigcup_{z \in Z(x,S)} E(z)\right) \cup \bigcup_{z \in Z(x,S)} E(z)\bigcup_{i=1}^M E(z_i)$, where For each set of state transitions $st(z_i)$, $E(z_i) = E^{in}(z_i) \cup E^{out}(z_i)$, $E^{in}(z_i) =\{((w, R), z_i) | ((w, R), z_i, (y, T)) \in st(z_i)\}$, and  $E^{out}(z_i) =\{(z_i, (y, T)) | ((w, R), z_i, (y, T)) \in st(z_i)\}$.
+
+		\item $P' = P \backslash P_{St}^- \cup P_{St}^+$, where $P_{St}^-$ and $P_{St}^+$ are the respective parameters removed or added because of the stratification, as defined below.
+		\item $D' = D$
+		\item $X' = X$
+
+
+		\item $Z' = Z \backslash \{z \in Z| v_z \in V_z(v), {\cal Z}(v_z) = z\} \cup \{z_i |  z_i \in St_z((x, g), \{(x, g_1),\ldots, (x, g_N), v_z \in V_z(v), {\cal Z}(v_z) = z \}\}$ is the set of transitions from $Z$ that do not involve $(x, g)$ and the transitions added by stratifying transitions in $Z$ involving $(x, g)$. The stratification defines a set of new transitions $\{z_1,\ldots,z_M\}$ by i) stratifying each state transition in $st(z)$ into a set of state transitions, ii) taking the cross-product of the state transition sets, and iii) defining $M$ new state transition sets $st(z_i)$ each according to an element of the cross-product.  Stratifying a state transition $((w, R), z, (y, T)) \in st(z)$, according to the new states $\{(x, S_1),\ldots, (x, S_N)\}$ corresponds to one of the following cases:
+		      \begin{enumerate}
+			      \item If $w, y \not= x$, then the resulting set of state transitions is $\{((w, R), z, (y, T))\}$ when the state transition is unchanged because it does not depend on $x$.
+			      \item If $w = x, y \not= x$, then the resulting set of state transitions is $\{((x, R\cap S_i), z, (y, T))| (x,S_i) \in \{(x, S_1),\ldots, (x, S_N)\}\}$ when the	source state is $x$.
+			      \item If $w \not= x, y = x$, then the resulting set of state transitions is $\{((w, R), z, (x, T\cap S_i))| (x,S_i) \in \{(x, S_1),\ldots, (x, S_N)\}\}$ when the target state is $x$.
+			      \item If $w,y = x$, then the resulting set of state transitions is $\{((x, R\cap S_i), z, (x, T\cap S_j))| (x,S_i), (x,S_j) \in \{(x, S_1),\ldots, (x, S_N)\}\}$ when the source and target state are $x$.
+		      \end{enumerate}
+
+		      In cases 3) and 4) above, the flow from each source state is divided
+		      across $N$ state transitions.  The sum of the rates
+		      associated with the transitions for each source state must equal the
+		      original rate associated with $((w, R), z, (y, T))$.  In these cases, the new rates
+		      preserve the flow by introducing a parameter $p_j$ for each transition and
+		      ensuring that for 3) $\sum_{j=1}^N  p_{j} = 1$ and for 4) $\sum_{j=1}^N
+			      p_{ij} = 1$ for each $i = 1\ldots N$.  These parameters represent the
+		      probability of transitioning from $(w, R)$ to $ (x, T\cap S_i)$  or from $(x, R\cap S_i)$ to $(x, T\cap S_j)$, respectively.
+		\item ${\cal P}'$
+		\item ${\cal X}'$
+		\item ${\cal D}'$
+		\item ${\cal I}'$
+		\item ${\cal Z}'$
+		\item Let ${\cal R}'({\bf p}', {\bf x}', z') ={\cal R}({\bf p}, {\bf x}, z)[(x, S)/(x, S_i), \ldots, (x, S)/(x, S_N)]$  , for each $z \in Z'$ substitute occurrences of $(x, S)$ with $(x, S_i)$
+
+		      \begin{eqnarray*}\label{eqn:stratified-rate}
+			      {\cal R}'({\bf p}', {\bf x}', z') = \left\{
+			      \begin{array}{lll}
+				      {\cal R}({\bf p}, {\bf x}, z)     & : z \not\in Z(x, S)                \\
+				      {\cal R}({\bf p}', (x, S_i), z_i) & : z \in Z(x, S), ((x, S), z) \in E
+			      \end{array}
+			      \right.
+		      \end{eqnarray*}
+
+	\end{itemize}
 \end{definition}
 
 For example, Example \ref{ex:base} is a stratification of the SIR model that
@@ -70,7 +82,7 @@ stratification as a partition of a set of levels.  Each stratum corresponds to
 one element of the partition.  Under this definition, abstraction can
 analogously combine a subset of the levels.  For example, if we stratify $S$
 with respect to attribute $vac$ (for vaccinated), then it has two levels $\{T,
-F\}$ (for true and false).  Similarly, we use attribute $age$, then it may have
+	F\}$ (for true and false).  Similarly, we use attribute $age$, then it may have
 three levels $\{young, middle, elderly\}$.  A partition of the $age$ attribute
 could define $[\{young, middle\}| \{elderly\}]$ so that there are two strata
 corresponding to the non-elderly and the elderly.
@@ -142,7 +154,7 @@ transition component and refining the associated strata transition.
 
 \begin{definition}
 	Each stratum $s \in S$ has a valuation $V(s) \subseteq d(a_1) \times d(a_2)
-	\times \ldots$ that associates a set of levels for each stratum attribute
+		\times \ldots$ that associates a set of levels for each stratum attribute
 	$a_i$ with the stratum.
 \end{definition}
 
@@ -152,7 +164,7 @@ partition the stratum of model elements into sub-strata.
 
 \begin{definition}
 	A transition component $t \in T(z)$ is a pair $(x_i, x_o)$ where $(x_i, z)
-	\in E$ and $(z, x_o) \in E$.
+		\in E$ and $(z, x_o) \in E$.
 \end{definition}
 
 The transition components express the possible one to one mappings of inputs and
@@ -173,11 +185,11 @@ describing a transition.
 
 \begin{definition}
 	Stratifying a stratum $s$, where $V(s) = d(a_1) \times d(a_2) \times
-	\ldots$, with respect to stratum attribute $a$ and the partition ${\cal D}=
-	[D_0 | D_1| \ldots]$ of the attribute's values, will result in a set of
+		\ldots$, with respect to stratum attribute $a$ and the partition ${\cal D}=
+			[D_0 | D_1| \ldots]$ of the attribute's values, will result in a set of
 	strata, defined by the set of valuations $\{V(s) \cap_a D_i | {\cal D}= [D_0
-	| D_1| \ldots]\}$ where $V(s) \cap_a D_i = d(a_1) \times \ldots \times d(a)
-	\cap D_i \times \ldots$.
+				| D_1| \ldots]\}$ where $V(s) \cap_a D_i = d(a_1) \times \ldots \times d(a)
+		\cap D_i \times \ldots$.
 \end{definition}
 
 \begin{definition}
@@ -189,9 +201,9 @@ describing a transition.
 \begin{definition}
 	Stratifying a transition component $t = (x_{in}, x_{out}) \in T(z)$ defines
 	a set of transition component and strata transition pairs $\{((x_{in},
-	x_{out}), (s_i(x_{in}), s_i(x_{out})) | {\cal D}= [D_0 | D_1| \ldots,
-	V(s_i(x_{in})) = V(s_i(x_{in})) \cap_a D_i, V(s_i(x_{out})) =
-	V(s_i(x_{out})) \cap_a D_i \}$
+		x_{out}), (s_i(x_{in}), s_i(x_{out})) | {\cal D}= [D_0 | D_1| \ldots,
+		V(s_i(x_{in})) = V(s_i(x_{in})) \cap_a D_i, V(s_i(x_{out})) =
+		V(s_i(x_{out})) \cap_a D_i \}$
 \end{definition}
 
 
@@ -199,33 +211,33 @@ describing a transition.
 \begin{definition}
 	The stratification $\text{Stratify}_{Q}(\Omega, \Theta) = (\Omega_Q,
 		\Theta_Q)$ of a Petrinet and semantics  with respect to a specification
-		$Q = (x, {\cal D}, P', {\cal P}')$ defines a new Petrinet and semantics
-		with the following properties:
+	$Q = (x, {\cal D}, P', {\cal P}')$ defines a new Petrinet and semantics
+	with the following properties:
 	\begin{itemize}
 		\item Parameters: For each $p \in P' \subseteq P$,
 		\item Parameter Values: ${\cal P}'$
 		\item States: For each element $D_i$ of the partition ${\cal D}= [D_0 |
-		      D_1| \ldots]$, define a new set of states $X' = X\backslash \{x\}
-		      \cup \{x_{D_i} |  {\cal D} = [D_0 | D_1| \ldots]\}$.  The stratum
+					      D_1| \ldots]$, define a new set of states $X' = X\backslash \{x\}
+			      \cup \{x_{D_i} |  {\cal D} = [D_0 | D_1| \ldots]\}$.  The stratum
 		      valuation for each new state $x_{D_i}$ is $\d()$
 		\item Transitions: For each transition $z \in Z^{in(x)}\cup Z^{out(x)}$
-		(where $x$ is an input or output), we create stratified transitions by
-		first creating stratified state to state transitions for natural
-		transitions and noop transitions (if present).  The cross-product of
-		these two sets of state to state transitions defines the set of
-		stratified transitions.  A natural transition will (by definition) only
-		have $x$ as an input or an output, but not both.  Similarly, a noop
-		transition will have $x$ as both an input and an output.  A transition
-		can be comprised of either one or both a natural transition and noop
-		transition. Let $Z_{noop}(z, x)$ and $Z_{natural}(x, z)$ and
-		$Z_{natural}(z, x)$ denote sets of stratified state to state
-		transitions.  Then,
+		      (where $x$ is an input or output), we create stratified transitions by
+		      first creating stratified state to state transitions for natural
+		      transitions and noop transitions (if present).  The cross-product of
+		      these two sets of state to state transitions defines the set of
+		      stratified transitions.  A natural transition will (by definition) only
+		      have $x$ as an input or an output, but not both.  Similarly, a noop
+		      transition will have $x$ as both an input and an output.  A transition
+		      can be comprised of either one or both a natural transition and noop
+		      transition. Let $Z_{noop}(z, x)$ and $Z_{natural}(x, z)$ and
+		      $Z_{natural}(z, x)$ denote sets of stratified state to state
+		      transitions.  Then,
 		      \begin{eqnarray*}
 			      Z_{noop}(z, x) &=& \{((x, D_i \cap D(x)), (x, D_i\cap D(x))) |
 			      (x, z) \in Z, (z, x) Z,  {\cal D} = [D_0 | D_1| \ldots]\}\\
 			      Z_{natural}(x, z) &=& \{((x, D_i\cap D(x)), (y, D(y))) | (x,
 			      z) \in Z, (z, y) Z, x\not=y,  {\cal D} = [D_0 | D_1|
-			      \ldots]\}\\
+					      \ldots]\}\\
 			      Z_{natural}(z, x) &=& \{((y, D(y)), (x, D_j\cap D(x))) | (y,
 			      z) \in Z, (z, x) Z, x\not=y,  {\cal D} = [D_0 | D_1| \ldots]\}
 		      \end{eqnarray*}
@@ -238,7 +250,7 @@ describing a transition.
 		      according to the cases:
 		      \begin{itemize}
 			      \item when $x$ is a noop transition (both and input and
-			      output), create a transition for each stratum $D_i$.
+			            output), create a transition for each stratum $D_i$.
 			      \item when $x$
 		      \end{itemize}
 
@@ -246,17 +258,17 @@ describing a transition.
 		      cases where there is no noop transition), it is possible to
 		      transition between strata defined by the partitions $D_i$ and
 		      $D_j$.  For each such strata transition define $z_{D_i\rightarrow
-		      D_j}$ so that:
+					      D_j}$ so that:
 		      \begin{itemize}
 			      \item $E'_{in} = E_{in} \backslash \{(z, x)\} \cup
 				            \{(z_{D_i\rightarrow D_j}, x_{D_j})| {\cal D} = [D_0
-				            | D_1| \ldots]\}$ if $z \in Z^{in(x)}$.
+						            | D_1| \ldots]\}$ if $z \in Z^{in(x)}$.
 			      \item $E'_{out} = E_{out} \backslash \{(x, z)\} \cup
 				            \{(x_{D_i}, z_{D_i\rightarrow D_j} )| {\cal D} =
-				            [D_0 | D_1| \ldots]\}$ if $z \in Z^{out(x)}$.
+					            [D_0 | D_1| \ldots]\}$ if $z \in Z^{out(x)}$.
 			      \item ${\cal R}({\bf p},{\bf x}, z_{D_i\rightarrow D_j}) =
-			      {\cal R}({\bf p},{\bf x}, z)[{\cal P}'({\bf p}, D_,
-			      D_j)\backslash {\bf p}]$
+				            {\cal R}({\bf p},{\bf x}, z)[{\cal P}'({\bf p}, D_,
+						            D_j)\backslash {\bf p}]$
 		      \end{itemize}
 		\item Initial State
 		\item Parameter Values:

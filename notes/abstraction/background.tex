@@ -17,7 +17,7 @@
 		V_Z &=& \{ v_{inf}, v_{rec}\}\\
 		E &=& \{ (v_{S}, v_{inf}),(v_{I}, v_{inf}), (v_{inf}, v_{I}), (v_{inf}, v_{I}),  (v_{I}, v_{rec}), (v_{rec}, v_{R})\}
 	\end{eqnarray*}
-        This is also depicted in Figure \ref{fig:sir_model}.
+	This is also depicted in Figure \ref{fig:sir_model}.
 \end{example}
 
 \begin{figure}
@@ -25,52 +25,81 @@
 	\caption{\label{fig:sir_model} SIR model.}
 \end{figure}
 
+We develop the semantics by associating state variables to each
+state vertex of the graph, such as $S$, $I$, and $R$. The transitions and their
+associated rates encode the ODE system that models how the state changes.  For
+example, the initial state vector ${\bf x}(0) = (S(0), I(0), R(0))$ assigns a value to each state
+variable.
+
+These state variables
+assume homogenous subpopulations that become infected and recover at the same rates.
+Stratification and abstraction operate on the model to either partition or
+aggregate the subpopulations associated with each state variable to better
+capture these rates. For example, we may distinguish subpopulations
+with different vaccination status, gender, or age, and there will be a different
+value of $S$, $I$, and $R$ for each.
+
+We facilitate this by extending the state description with discrete variables.
+Each assignment to the discrete variables describes a different subpopulation.
+For example, $(I, \{(vac=T,
+	gender=M, age=child)\})$ and $(I, \{(vac=T, gender=F, age=child)\})$ refer to
+the number of infected, vaccinated children of each gender.  While we can
+accomplish this distinction by properly indexing the state variables as
+$I_{TMC}$, and $I_{TFC}$, it is helpful to express state variables as pairs of
+the form $(x, g)$, where $g$ (a group) is a set of assignments to the discrete variables.
+For example, if gender is not relevant to infection
+rates, then we define the susceptible population as $(S, g)$, where $g=
+	\{(vac=T, gender=M, age=child), (vac=T, gender=F, age=child)\}$.  It is possible
+to think of $g$ as a variable indexing scheme, however, we introduce this
+formalization to simplify stratification and abstraction definitions.
+
 
 \begin{definition}
 	The ODE semantics $\Theta$ of the Petrinet $\Omega$ defines a tuple $(P, D, X,
-		Z, {\cal I}, {\cal P}, {\cal X}, {\cal Z}, {\cal R})$ where
+		Z, {\cal P}, {\cal X}, {\cal D}, {\cal I}, {\cal Z}, {\cal R})$ where
 	\begin{itemize}
 		\item $P$ is a set of parameters;
 		\item $D$ is a set of discrete state variables, and for each $d \in
-		D$, $dom(d)$ is a finite set of values;
+			      D$, $dom(d)$ is a finite set of values;
 		\item $X$ is a set of continuous state variables;
 		\item $Z$ is a set of transitions;
 		\item ${\cal P}: P \rightarrow \reals \cup (\reals \times \reals)$ assigns
 		      parameters to a real number, or a pair of real numbers defining an
 		      interval;
 		\item ${\cal X}: V_X  \rightarrow X$ assigns a
-		continuous variable to each state
-		vertex;
-		\item ${\cal D}: V_X \rightarrow 2^{St}$ maps a set of discrete states
-		to each $v \in V_X$, where $St = dom(d_1) \times \ldots
-		\times dom(d_{|D|})$ is the set of all discrete states.
+		      continuous variable to each state
+		      vertex;
+		\item ${\cal D}: V_X \rightarrow 2^{G}$ maps a group description $g
+			      \subseteq G$ where $G=dom(d_1) \times \ldots
+			      \times dom(d_{|D|})$
+		      to each $v \in V_X$.
 		\item ${\cal I}: X \rightarrow \reals$ assigns the initial value of
 		      continuous state variables to a real number;
-		\item ${\cal Z}: Z \rightarrow V_z$ assigns transitions to transition
+		\item ${\cal Z}: V_Z  \rightarrow Z$ assigns transitions to transition
 		      vertices; and
-		\item ${\cal R}: {\bf P} \times V_X \times Z \rightarrow \reals$
+		\item ${\cal R}: {\bf P} \times {\bf X} \times Z \rightarrow \reals$
 		      defines the rate of each transition  $z \in Z$ in terms of the set of
-		      parameter vectors ${\bf P}$ and state variable vectors ${\bf X}$.
+		      parameter vectors ${\bf P}$ and state vectors ${\bf X}$. Each
+		      component of the state vector ${\bf x}$ defines the value some $(x, g)$
+		      mapped to a state vertex,
 	\end{itemize}
 
- The semantics associates a pair $({\cal X}(v),{\cal D}(v)) = (x, S)$ with each vertex $v \in V_X$ where $x
-\in X$ and $S \subseteq St$.  We assume that the mapping of continuous variables
-and discrete states to vertices is complete, so that for each $x \in X$ there is a
-$v \in V_X$ where ${\cal X}(v) = x$.  The set of vertices $V(x)=\{v \in V_X | {\cal
-X}(v) = x\}$ associated with $x$ also partition the discrete states, so
-that $St = \bigcup_{v\in V(x)}{\cal D}(v)$ and for each $v_1, v_2 \in V(x)$,
-${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.  
+	The semantics associates a pair $({\cal X}(v),{\cal D}(v)) = (x, g)$ with each vertex $v \in V_X$ where $x
+		\in X$ and $g \subseteq G$.  We assume that the mapping of state variables
+	to vertices is complete, so that for each $x \in X$ there is a
+	$v \in V_X$ where ${\cal X}(v) = x$.  The set of vertices $V(x)=\{v \in V_X | {\cal
+		X}(v) = x\}$ associated with $x$ also partition the groups, so
+	that $G = \bigcup_{v\in V(x)}{\cal D}(v)$ and for each $v_1, v_2 \in V(x)$,
+	${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.
 
-Let ${\bf x}$ denote the vector of pairs $(x, S)$ mapped to vertices in $V_X$,
-and let
-$x_S$ denote an element of ${\bf x}$. The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
-partial derivative $\frac{d {\bf x}}{dt}$, so that for each $x_S$ which maps to
-a vertex $v$:
+	The elements of the Petrinet $\Omega$ and semantics $\Theta$ define the
+	partial derivative $\frac{d {\bf x}}{dt}$, so that for each $(x, g)$ which maps to
+	a vertex $v$:
 
 	\begin{equation}\label{eqn:flow}
-		\frac{dx_S}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
+		\frac{d(x, g)}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
 	\end{equation}
-	
+
 	\noindent We denote
 	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient comprised of components defined in
 	Equation \ref{eqn:flow}.
@@ -82,16 +111,16 @@ a vertex $v$:
 \end{definition}
 
 \begin{definition}
-Each balanced-flow Petrinet transition $z$ defines a set of state transitions 
- $st(z) = \{((x, S), z,
- (x', S')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, S),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', S')\}$ that match each input state with exactly one output state, and
- vice versa.
+	Each balanced-flow Petrinet transition $z$ defines a set of state transitions
+	$st(z) = \{((x, g), z,
+		(x', g')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, g),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', g')\}$ that match each input state with exactly one output state, and
+	vice versa.
 \end{definition}
 
 \begin{definition}
 	An independent-transition Petrinet requires that for each transition, there
-	is exactly one $(x, S), z,
-	(x', S') \in st(z)$ where $(x, S)\not= (x', S')$.
+	is exactly one $((x, g), z,
+		(x', g')) \in st(z)$ where $(x, S)\not= (x', S')$.
 \end{definition}
 
 A balanced-flow, independent-transition Petrinet permits only a single state
@@ -99,8 +128,7 @@ change with each transition.  The remaining state transitions define the variabl
 allows more than one state change.  These definitions become important for
 defining Petrinet stratification, as described in the following section.
 
-In the following, we simplify the definition of a Petrinet and associated
-semantics because the graph vertices and the semantic elements are one to one. 
+
 %  We drop
 % the vertex terminology by assuming the following:
 % \begin{itemize}
@@ -154,30 +182,30 @@ semantics because the graph vertices and the semantic elements are one to one.
 
 
 \begin{example}\label{ex:base}
-	The SIR model defines $\Theta$ by:
+	The base SIR model defines $\Theta$ by:
 	\begin{eqnarray*}
 		P &=& \{\beta, \gamma\}\\
-		X &=& \{S, I, R\}\\
 		D &=& \{vac\}, dom(vac) = \{T, F\}\\
-		St &=& \{(vac_T), (vac_F)\}
+		X &=& \{S, I, R\}\\
+		G &=& \{(vac=T), (vac=F)\}\\
 		Z &=& \{inf, rec\}\\
 		{\cal X} &=& \left\{
-			\begin{array}{ll}
-				v_S & :S \\
-				v_I & :I \\
-				v_R & :R
-			\end{array}\right.\\
-			{\cal D} &=& \left\{
-				\begin{array}{ll}
-					v_I & :St\\
-					v_S & :St\\
-					v_R & :St\\
-				\end{array}\right.\\
+		\begin{array}{ll}
+			v_S & :S \\
+			v_I & :I \\
+			v_R & :R
+		\end{array}\right.\\
+		{\cal D} &=& \left\{
+		\begin{array}{ll}
+			v_I & :G \\
+			v_S & :G \\
+			v_R & :G \\
+		\end{array}\right.\\
 		{\cal I} &=& \left\{
 		\begin{array}{ll}
-			0.9 & :S \\
-			0.1 & :I \\
-			0.0 & :R
+			0.9 & :(S, G) \\
+			0.1 & :(I, G) \\
+			0.0 & :(R, G)
 		\end{array}\right.\\
 		{\cal P}&=& \left\{
 		\begin{array}{ll}
