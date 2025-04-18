@@ -111,18 +111,18 @@ formalization to simplify stratification and abstraction definitions.
 \end{definition}
 
 \begin{definition}
-
-	Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
-	$st(z) = \{((x, g), z,
+	Each balanced-flow \Petrinet{} transition $z$ defines a set of transition components
+	$T(z) = \{((x, g), z,
 		(x', g')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, g),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', g')\}$ that match each input state with exactly one output state, and
 	vice versa.
 \end{definition}
 
+
 \begin{definition}
 	An independent-transition \Petrinet{} requires that for each transition, there
 	is exactly one $((x, g), z,
-		(x', g')) \in st(z)$ where $(x, S)\not= (x', S')$.
-
+		(x', g')) \in T(z)$ where $(x, g)\not= (x', g')$, and for all other
+	transition components $(x, g)= (x', g')$.
 \end{definition}
 
 A balanced-flow, independent-transition \Petrinet{} permits only a single state
