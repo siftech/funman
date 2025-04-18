@@ -1,28 +1,42 @@
+\newcommand{\vinf}{v_{\mathit{inf}}}
+\newcommand{\vrec}{v_{\mathit{rec}}}
+\newcommand{\edgesIn}{E^{\mathit{in}}}
+\newcommand{\edgesOut}{E^{\mathit{out}}}
+\newcommand{\parent}{\operatorname{par}}
+\newcommand{\child}{\operatorname{child}}
+\newcommand{\parents}{\operatorname{pars}}
+\newcommand{\children}{\operatorname{desc}}
+
+
 \begin{definition}
 	A \Petrinet{} $\Omega$ is a directed graph $(V, E)$ with vertices $V=V_X \cup
-		V_Z$ partitioned into sets $V_X$ of state vertices and $V_Z$ of transition
+		V_Z$ where $V_X$ are state vertices and $V_Z$ are transition
 	vertices.
 \end{definition}
 
 \begin{definition}
-	Let $E(v) = E^{in}(v) \cup E^{out}(v)$, and for each $v\in V$ denote edges of
-	the form   $(v, v') \in E^{out}(v)$ or  $(v', v) \in E^{in}(v)$ where $v$ is
-	the respective source or target.
+	Let $E(v) = \edgesIn{}(v) \cup \edgesOut{}(v)$, and for all $e = (v, v') \in E$,
+        $e \in \edgesOut{}(v)$ and  $e \in \edgesIn{}(v')$.
+        We define the \emph{parent} and \emph{child} of an edge, $\parent( (v, v') ) = v$ and $\child( (v, v') ) = v'$.
+        We define the parents (descendents) of a vertex, $\parents(v)$ ($\children(v)$) as the set of parents (children) of the edges in and out, respectively. 
+        Further, % for all $(v, v') \in E$,
+        if $v \in
+V_X$ then $v' \in V_Z$ and if $v \in V_Z$, then $v' \in V_X$.
 \end{definition}
 
 \begin{example}
 	The SIR model defines $\Omega$ by:
 	\begin{eqnarray*}
 		V_X &=& \{v_{S}, v_{I}, v_{R}\}\\
-		V_Z &=& \{ v_{inf}, v_{rec}\}\\
-		E &=& \{ (v_{S}, v_{inf}),(v_{I}, v_{inf}), (v_{inf}, v_{I}), (v_{inf}, v_{I}),  (v_{I}, v_{rec}), (v_{rec}, v_{R})\}
+		V_Z &=& \{ \vinf, \vrec\}\\
+		E &=& \{ (v_{S}, \vinf),(v_{I}, \vinf{}), (\vinf{}, v_{I}), (\vinf{}, v_{I}),  (v_{I}, \vrec{}), (\vrec{}, v_{R})\}
 	\end{eqnarray*}
-	This is also depicted in Figure \ref{fig:sir_model}.
+        The SIR model is depicted in Figure \ref{fig:sir_model}.
 \end{example}
 
-\begin{figure}
-	\centering    \includegraphics[width=.25\linewidth]{fig/sir/sir_model.pdf}
-	\caption{\label{fig:sir_model} SIR model.}
+\begin{figure}[ht]
+	\centering    \includegraphics[width=.5\linewidth]{fig/sir/sir-simple}
+	\caption{\label{fig:sir_model} Simple SIR model.}
 \end{figure}
 
 We develop the semantics by associating state variables to each
@@ -43,16 +57,13 @@ We facilitate this by extending the state description with discrete variables.
 Each assignment to the discrete variables describes a different subpopulation.
 For example, $(I, \{(vac=T,
 	gender=M, age=child)\})$ and $(I, \{(vac=T, gender=F, age=child)\})$ refer to
-the number of infected, vaccinated children of each gender.  While we can
-accomplish this distinction by properly indexing the state variables as
-$I_{TMC}$, and $I_{TFC}$, it is helpful to express state variables as pairs of
-the form $(x, g)$, where $g$ (a group) is a set of assignments to the discrete variables.
+the number of infected, vaccinated male children and female children, respectively.  We could
+capture fully-specified discrete states by indexing the state variables to give, for example,
+$I_{TMC}$, and $I_{TFC}$.
+However, later when construct abstractions, it will be more convenient to refer to \emph{sets} of assignments to the discrete variables, of the form $(x, g)$, where $g$ is a \emph{set} of assignments to the discrete variables.
 For example, if gender is not relevant to infection
-rates, then we define the susceptible population as $(S, g)$, where $g=
-	\{(vac=T, gender=M, age=child), (vac=T, gender=F, age=child)\}$.  It is possible
-to think of $g$ as a variable indexing scheme, however, we introduce this
-formalization to simplify stratification and abstraction definitions.
-
+rates, we could define the set of susceptible, vaccinated children as $(S, g)$, where $g=
+	\{(vac=T, gender=M, age=child), (vac=T, gender=F, age=child)\}$.
 
 \begin{definition}
 	The ODE semantics $\Theta$ of the \Petrinet{} $\Omega$ defines a tuple $(P, D, X,
@@ -88,10 +99,9 @@ formalization to simplify stratification and abstraction definitions.
 		\in X$ and $g \subseteq G$.  We assume that the mapping of state variables
 	to vertices is complete, so that for each $x \in X$ there is a
 	$v \in V_X$ where ${\cal X}(v) = x$.  The set of vertices $V(x)=\{v \in V_X | {\cal
-		X}(v) = x\}$ associated with $x$ also partition the groups, so
+		X}(v) = x\}$ associated with $x$ also partitions the groups, so
 	that $G = \bigcup_{v\in V(x)}{\cal D}(v)$ and for each $v_1, v_2 \in V(x)$,
 	${\cal D}(v_1)\cap{\cal D}(v_2) = \emptyset$.
-
 	The elements of the \Petrinet{} $\Omega$ and semantics $\Theta$ define the
 	partial derivative $\frac{d {\bf x}}{dt}$, so that for each $(x, g)$ which maps to
 	a vertex $v$:
@@ -100,21 +110,40 @@ formalization to simplify stratification and abstraction definitions.
 		\frac{d(x, g)}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
 	\end{equation}
 
+        {\color{red}
+          \textbf{Alternative?}
+        \ldots so that for each vertex $v$:
+
+
+	\begin{equation*}%\label{eqn:flow}
+		\frac{d({\cal X}(v))}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
+	\end{equation*}
+
+        The above modification drops mention of the state variables corresponding to $v$ because I \emph{think} they are not relevant.}
+
 	\noindent We denote
-	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient comprised of components defined in
+	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient made up of components defined in
 	Equation \ref{eqn:flow}.
 \end{definition}
 
 
 \begin{definition}
-	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that $|E^{in}(v_z)| = |E^{out}(v_z)|$ for each $v_z \in V_Z$.
+	A balanced-flow \Petrinet{} preserves the flow through each transition by requiring that its inflows and outflows balance: $|\edgesIn{}(v_z)| = |\edgesOut{}(v_z)|$ for each $v_z \in V_Z$.
 \end{definition}
 
 \begin{definition}
-	Each balanced-flow \Petrinet{} transition $z$ defines a set of transition components
-	$T(z) = \{((x, g), z,
-		(x', g')) | (v, z) \in E^{in}(z), ({\cal X}(v),{\cal D}(v)) = (x, g),  (z, v') \in E^{out}(z), ({\cal X}(v'),{\cal D}(v')) = (x', g')\}$ that match each input state with exactly one output state, and
-	vice versa.
+
+	Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
+	\begin{equation*}
+		\begin{split}
+		T(z) = \{((x, g), z, (x', g')) | & (v, z) \in \edgesIn{}(z),\\
+										 & ({\cal X}(v),{\cal D}(v)) = (x, g), \\  
+										 & (z, v') \in \edgesOut{}(z), \\
+										 & ({\cal X}(v'),{\cal D}(v')) = (x', g')\}
+		\end{split}
+	\end{equation*}
+
+each of whose elements matches an input state with exactly one output state, and vice versa.
 \end{definition}
 
 
@@ -122,13 +151,18 @@ formalization to simplify stratification and abstraction definitions.
 	An independent-transition \Petrinet{} requires that for each transition, there
 	is exactly one $((x, g), z,
 		(x', g')) \in T(z)$ where $(x, g)\not= (x', g')$, and for all other
-	transition components $(x, g)= (x', g')$.
+	transition components $(x, g)= (x', g')$. 
+
 \end{definition}
 
 A balanced-flow, independent-transition \Petrinet{} permits only a single state
-change with each transition.  The remaining state transitions define the variables that impact this state change, and no transition
-allows more than one state change.  These definitions become important for
+change with each transition.  That is, all flows out of a transition node either return to one of its input nodes or flow into a single output node. 
+The other edges into the state transitions involve no net flow; they simply serve to identify other variables that influence the rate of the state change.
+These definitions become important for
 defining \Petrinet{} stratification, as described in the following section.
+For example, in Figure \ref{fig:sir_model}, flow through the ``infection'' node is entirely from susceptible to infected, S $\rightarrow$ inf $\rightarrow$ I in the figure.  There is also an edge from infected to infection (I $\rightarrow$ inf), but this reflects only the influence of the number already infected on the rate of flow from S to I: there is no flow backwards.
+
+\textcolor{red}{I edited the above a little bit.  Did I get it right?}
 
 %  We drop
 % the vertex terminology by assuming the following:
@@ -164,11 +198,11 @@ defining \Petrinet{} stratification, as described in the following section.
 % 			1e{-5} & :\gamma
 % 		\end{array}\right.\\
 % 		\\
-% 		% {\cal X} &=& \left\{ 
+% 		% {\cal X} &=& \left\{
 % 		%     \begin{array}{ll}
 % 		%         v_{x} & : x \in X
 % 		%     \end{array}\right.\\
-% 		% {\cal Z} &=& \left\{ 
+% 		% {\cal Z} &=& \left\{
 % 		%     \begin{array}{ll}
 % 		%         v_{z} & : z \in Z
 % 		%     \end{array}\right.\\
@@ -183,7 +217,7 @@ defining \Petrinet{} stratification, as described in the following section.
 
 
 \begin{example}\label{ex:base}
-	The base SIR model defines $\Theta$ by:
+	A basic SIR model, ignoring the effect of vaccination ($vac$) is $\Theta =$
 	\begin{eqnarray*}
 		P &=& \{\beta, \gamma\}\\
 		D &=& \{vac\}, dom(vac) = \{T, F\}\\
@@ -214,18 +248,18 @@ defining \Petrinet{} stratification, as described in the following section.
 			1e{-5} & :\gamma
 		\end{array}\right.\\
 		\\
-		% {\cal X} &=& \left\{ 
+		% {\cal X} &=& \left\{
 		%     \begin{array}{ll}
 		%         v_{x} & : x \in X
 		%     \end{array}\right.\\
-		% {\cal Z} &=& \left\{ 
+		% {\cal Z} &=& \left\{
 		%     \begin{array}{ll}
 		%         v_{z} & : z \in Z
 		%     \end{array}\right.\\
 		{\cal R} &=& \left\{
 		\begin{array}{ll}
-			\beta S I & : z_{inf} \\
-			\gamma I  & : z_{rec} \\
+			\beta S I & : z_{\mathit{inf}} \\
+			\gamma I  & : z_{\mathit{rec}} \\
 		\end{array}\right.\\
 	\end{eqnarray*}
 \end{example}
@@ -240,7 +274,6 @@ as:
 	t)\\
 	{\bf x}(t+dt)&=& \nabla_{\Omega, \Theta}({\bf p},{\bf x}, t)dt+ {\bf x}(t)
 \end{eqnarray*}
-
 
 %%% Local Variables:
 %%% mode: LaTeX
