@@ -1,5 +1,5 @@
-Stratification is an operation that refines a model to capture finer detail
-about subpopulations.  For instance, we can stratify the SIR model by splitting the susceptible state $(S, \{(vac_T), (vac_F)\})$ into two subpopulations $(S, \{(vac_T)\})$ and $(S, \{(vac_F)\})$.  State refinements imply transition and parameter refinements.  For example, stratifying $S$ implies that the $inf$ transition becomes stratified to represent how two different subpopulations (vaccinated or not) become infected.  Modifying the $\beta$ parameter for the stratified $inf$ transitions reflects how vaccinated individuals become infected at a lower rate.
+Stratification is an operation that refines a model to capture finer detail about the discrete state space.
+In the SIR model, we use stratification to capture finer detail about subpopulations.  For instance, we can stratify the SIR model by splitting the susceptible state $(S, \{(vac_T), (vac_F)\})$ into two subpopulations $(S, \{(vac_T)\})$ and $(S, \{(vac_F)\})$.  State refinements imply transition and parameter refinements.  For example, stratifying $S$ implies that the $\infect$ transition becomes stratified to represent how two different subpopulations (vaccinated or not) become infected.  Modifying the $\beta$ parameter for the stratified $\infect$ transitions captures different rates of infection for the two populations.
 
 \begin{definition}
 	A stratification operator $St((\Omega, \Theta), ((x, g), (g_1, \ldots, g_N)))$,
