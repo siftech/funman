@@ -27,29 +27,59 @@ about subpopulations.  For instance, we can stratify the SIR model by splitting 
 			      \item If $x_a,x_b = x$, then the resulting set of state transitions is $\{((x, g_a\cap g_i), z, (x, g_b\cap g_j))| (x,g_i), (x,g_j) \in \{(x, g_1),\ldots, (x, g_N)\}\}$ when the source and target state are $x$.
 		      \end{enumerate}
 
-		      In cases 3) and 4) above, the flow from each source state is divided
-		      across $N$ state transitions.  The sum of the rates
-		      associated with the transitions for each source state must equal the
-		      original rate associated with $((x_a, g_a), z, (x_b, g_b))$.  In these cases, the new rates
-		      preserve the flow by introducing a parameter $p_j$ for each transition and
-		      ensuring that for 3) $\sum_{j=1}^N  p_{j} = 1$ and for 4) $\sum_{j=1}^N
-			      p_{ij} = 1$ for each $i = 1\ldots N$.  These parameters represent the
-		      probability of transitioning from $(x_a, g_a)$ to $ (x, g_b\cap g_j)$  or from $(x, g_a\cap g_i)$ to $(x, g_b\cap g_j)$, respectively.
-		\item ${\cal P}'$
-		\item ${\cal X}'$
-		\item ${\cal D}'$
-		\item ${\cal I}'$
-		\item ${\cal Z}'$
-		\item Let ${\cal R}'({\bf p}', {\bf x}', z') ={\cal R}({\bf p}, {\bf x}, z)[(x, S)/(x, g_i), \ldots, (x, S)/(x, g_N)]$  , for each $z \in Z'$ substitute occurrences of $(x, S)$ with $(x, g_i)$
+
+		\item \begin{eqnarray*}
+			      {\cal P}'(p) = & \left\{
+			      \begin{array}{ll}
+				      {\cal P}(p) : p \in P\backslash (P_G^-\cup P_G^+) \\
+				      {\cal P}(p) : p \in P\backslash P'
+			      \end{array}\right.
+		      \end{eqnarray*}
+		\item \begin{eqnarray*}\label{eqn:stratified-rate}
+			      {\cal X}'(v) = \left\{
+			      \begin{array}{lll}
+				      {\cal X}(v) & :  v \in V\cap V'       \\
+				      x           & :  v \in V'\backslash V
+			      \end{array}
+			      \right.
+		      \end{eqnarray*}
+
+		\item
+		      \begin{eqnarray*}\label{eqn:stratified-rate}
+			      {\cal D}'(v) = \left\{
+			      \begin{array}{lll}
+				      {\cal D}(v) & :  v \in V\cap V'                   \\
+				      g_i         & :  v \in V'\backslash V, v=v_{xg_i}
+			      \end{array}
+			      \right.
+		      \end{eqnarray*}
+		\item The initial value ${\cal I}'((x',g'))$ of each $(x', g')$, where $v_{x'g'}\in V'$, is either unchanged if $x' \not=x$, or defined so that ${\cal I}'((x,g)) = \sum_{i=1}^N {\cal I}'((x,g_i))$.  The total population associated with the stratified states $(x, g_i)$  is equal to that of the original state $(x,g)$.
+
+		\item ${\cal Z}'(v)$ is equal to ${\cal Z}(v)$ when $v \in V'\cap V$, meaning the corresponding transition was not stratified. Otherwise, ${\cal Z}'(v)$ maps each new vertex $v \in V'\backslash V$ to a distinct $z' \in Z'$.
+		\item Let ${\cal R}'({\bf p}', {\bf x}', z')$ denote the rate associated with a transition $z'\in Z'$, then
+		      % $={\cal R}({\bf p}, {\bf x}, z)[(x, S)/(x, g_i), \ldots, (x, S)/(x, g_N)]$  , for each $z \in Z'$ substitute occurrences of $(x, g)$ with $(x, g_i)$
 
 		      \begin{eqnarray*}\label{eqn:stratified-rate}
 			      {\cal R}'({\bf p}', {\bf x}', z') = \left\{
 			      \begin{array}{lll}
-				      {\cal R}({\bf p}, {\bf x}, z)     & : z \not\in Z(x, S)                \\
-				      {\cal R}({\bf p}', (x, g_i), z_i) & : z \in Z(x, S), ((x, S), z) \in E
+				      {\cal R}({\bf p}, {\bf x}, z)     & : v_z \not\in V_Z(v_{xg})   \\
+				      {\cal R}({\bf p}', {\bf x}', z_i) & : \begin{array}
+					      v_z \in V_Z(v_{xg}), \\
+					      z'=z_i,              \\
+					      z_i \in St_z((x, g), \{g_1,\ldots, g_N\})
+				      \end{array}
 			      \end{array}
 			      \right.
 		      \end{eqnarray*}
+		      where the rate remains unchanged if $z'$ does not depend upon $(x, g)$.  If $z'$ is a stratified transition $z_i$, then the rate is ${\cal R}({\bf p}', {\bf x}', z_i)$ relates to the pre-stratified rate ${\cal R}({\bf p}, {\bf x}, z)$, as follows. The stratified ${\cal R}({\bf p}', {\bf x}', z_i)$ substitutes $(s, g_i)$ for $(s, g)$ if there is a $t_k \in T(z)$ and $t_k' \in T(z_i)$ where $t_k = ((x, g), z, (x_b, g_b))$ and $t_k'= ((x, g_i), z_i, (x_b, g_b))$.  Similarly ${\cal R}({\bf p}', {\bf x}', z_i)$ substitutes  $p'$ for $p$, where ${\cal R}({\bf p}, {\bf x}, z)$ depends on $p$, $p \in P$,  $p' \in P'$, and $p'$ is unique to each stratified transition $z_i$.
+
+		      For each transition component in cases 3) and 4) above defining the new transitions, the flow from each source state is divided
+		      across $N$ state transitions.  The sum of the rates
+		      associated with the transitions for each source state must equal the
+		      original rate ${\cal R}({\bf p}, {\bf x}, z)$ associated with $((x_a, g_a), z, (x_b, g_b))$.  In these cases, the new rates ${\cal R}({\bf p}', {\bf x}', z_i)$
+		      preserve the flow by multiplying the rate by a parameter for each transition, according to how the primary transition component is stratified.  If the primary transition component is stratified according to case 3), then multiply the rate by $p_j$ where   $\sum_{j=1}^N  p_{j} = 1$.  If stratified according to case 4), then multiply the rate by $p_{ij}$ where  $\sum_{j=1}^N
+			      p_{ij} = 1$ for each $i = 1\ldots N$.  These parameters represent the
+		      probability of transitioning from $(x_a, g_a)$ to $ (x, g_b\cap g_j)$  or from $(x, g_a\cap g_i)$ to $(x, g_b\cap g_j)$, respectively.  The set $P_G^+$ is the set of all parameters substituted into or added by a stratified rate. The set $P_G^-$ is the set of all parameters substituted.
 
 	\end{itemize}
 \end{definition}
@@ -71,14 +101,49 @@ benefit to stratifying $I$ or $R$.
 
 
 
-
-\begin{definition}
-	Stratifying a transition component $t = (x_{in}, x_{out}) \in T(z)$ defines
-	a set of transition component and strata transition pairs $\{((x_{in},
-		x_{out}), (s_i(x_{in}), s_i(x_{out})) | {\cal D}= [D_0 | D_1| \ldots,
-		V(s_i(x_{in})) = V(s_i(x_{in})) \cap_a D_i, V(s_i(x_{out})) =
-		V(s_i(x_{out})) \cap_a D_i \}$
-\end{definition}
+\begin{example}\label{ex:stratified}
+	A stratified SIR model, accounting for the effect of vaccination ($vac$) on infection rates is $\Theta =$
+	\begin{eqnarray*}
+		P &=& \{\beta_{vac=T}, \beta_{vac=F}, \gamma\}\\
+		D &=& \{vac\}, dom(vac) = \{T, F\}\\
+		X &=& \{S, I, R\}\\
+		G &=& \{(vac=T), (vac=F)\}\\
+		Z &=& \{inf_{vac=T}, inf_{vac=F}, rec\}\\
+		{\cal X} &=& \left\{
+		\begin{array}{ll}
+			v_{S,vac=T} & :S \\
+			v_{S,vac=F} & :S \\
+			v_I         & :I \\
+			v_R         & :R
+		\end{array}\right.\\
+		{\cal D} &=& \left\{
+		\begin{array}{ll}
+			v_I         & :G           \\
+			v_{S,vac=T} & :\{(vac=T)\} \\
+			v_{S,vac=F} & :\{(vac=F)\} \\
+			v_R         & :G           \\
+		\end{array}\right.\\
+		{\cal I} &=& \left\{
+		\begin{array}{ll}
+			0.9 & :(S,\{(vac=T)\}) \\
+			0.9 & :(S,\{(vac=F)\}) \\
+			0.1 & :(I, G)          \\
+			0.0 & :(R, G)
+		\end{array}\right.\\
+		{\cal P}&=& \left\{
+		\begin{array}{ll}
+			2e{-7} & :\beta_{vac=T} \\
+			2e{-6} & :\beta_{vac=F} \\
+			1e{-5} & :\gamma
+		\end{array}\right.\\
+		{\cal R} &=& \left\{
+		\begin{array}{ll}
+			\beta_{vac=T} S_{vac=T} I & : z_{\mathit{inf_{vac=T}}} \\
+			\beta_{vac=F} S_{vac=F} I & : z_{\mathit{inf_{vac=F}}} \\
+			\gamma I                  & : z_{\mathit{rec}}         \\
+		\end{array}\right.\\
+	\end{eqnarray*}
+\end{example}
 
 
 
