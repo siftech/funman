@@ -28,31 +28,30 @@ In the SIR model, we use stratification to capture finer detail about subpopulat
 		      \end{enumerate}
 
 
-		\item \begin{eqnarray*}
+		\item $\! \begin{aligned}
 			      {\cal P}'(p) = & \left\{
 			      \begin{array}{ll}
 				      {\cal P}(p) : p \in P\backslash (P_G^-\cup P_G^+) \\
 				      {\cal P}(p) : p \in P\backslash P'
 			      \end{array}\right.
-		      \end{eqnarray*}
-		\item \begin{eqnarray*}\label{eqn:stratified-rate}
+		      \end{aligned}$
+		\item $\! \begin{aligned}\label{eqn:stratified-rate}
 			      {\cal X}'(v) = \left\{
 			      \begin{array}{lll}
 				      {\cal X}(v) & :  v \in V\cap V'       \\
 				      x           & :  v \in V'\backslash V
 			      \end{array}
 			      \right.
-		      \end{eqnarray*}
+		      \end{aligned}$
 
-		\item
-		      \begin{eqnarray*}\label{eqn:stratified-rate}
+		\item $\! \begin{aligned}\label{eqn:stratified-rate}
 			      {\cal D}'(v) = \left\{
 			      \begin{array}{lll}
 				      {\cal D}(v) & :  v \in V\cap V'                   \\
 				      g_i         & :  v \in V'\backslash V, v=v_{xg_i}
 			      \end{array}
 			      \right.
-		      \end{eqnarray*}
+		      \end{aligned}$
 		\item The initial value ${\cal I}'((x',g'))$ of each $(x', g')$, where $v_{x'g'}\in V'$, is either unchanged if $x' \not=x$, or defined so that ${\cal I}'((x,g)) = \sum_{i=1}^N {\cal I}'((x,g_i))$.  The total population associated with the stratified states $(x, g_i)$  is equal to that of the original state $(x,g)$.
 
 		\item ${\cal Z}'(v)$ is equal to ${\cal Z}(v)$ when $v \in V'\cap V$, meaning the corresponding transition was not stratified. Otherwise, ${\cal Z}'(v)$ maps each new vertex $v \in V'\backslash V$ to a distinct $z' \in Z'$.
@@ -62,9 +61,9 @@ In the SIR model, we use stratification to capture finer detail about subpopulat
 		      \begin{eqnarray*}\label{eqn:stratified-rate}
 			      {\cal R}'({\bf p}', {\bf x}', z') = \left\{
 			      \begin{array}{lll}
-				      {\cal R}({\bf p}, {\bf x}, z)     & : v_z \not\in V_Z(v_{xg})   \\
-				      {\cal R}({\bf p}', {\bf x}', z_i) & : \begin{array}
-					      v_z \in V_Z(v_{xg}), \\
+				      {\cal R}({\bf p}, {\bf x}, z) :     & v_z \not\in V_Z(v_{xg})   \\
+				      {\cal R}({\bf p}', {\bf x}', z_i) : & \begin{array}{l}
+                                        v_z \in V_Z(v_{xg}), \\
 					      z'=z_i,              \\
 					      z_i \in St_z((x, g), \{g_1,\ldots, g_N\})
 				      \end{array}
