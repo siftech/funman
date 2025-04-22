@@ -652,8 +652,6 @@ class TestUseCases(unittest.TestCase):
             stratified_model_S, stratified_model_S_expected_parameters
         )
 
-
-
         stratified_model_SI = stratified_model_S.stratify(stratification_I)
         stratified_model_SI.to_dot().render("sirhd_strat_SI")
         stratified_model_SI_parameters = stratified_model_SI._parameter_names()
@@ -685,8 +683,6 @@ class TestUseCases(unittest.TestCase):
         self.model_has_expected_parameters(
             stratified_model_SI, stratified_model_SI_expected_parameters
         )
-
-
 
         assert (
             len(

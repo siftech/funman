@@ -458,13 +458,13 @@ class Box(BaseModel):
         """
         try:
             contains = all(
-            [
-                interval.contains_value(
-                    point.values[p], denormalize_bounds=denormalize_bounds
-                )
-                for p, interval in self.bounds.items()
-            ]
-        )
+                [
+                    interval.contains_value(
+                        point.values[p], denormalize_bounds=denormalize_bounds
+                    )
+                    for p, interval in self.bounds.items()
+                ]
+            )
         except KeyError as e:
             raise e
         return contains

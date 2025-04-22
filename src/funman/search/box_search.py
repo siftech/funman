@@ -18,7 +18,6 @@ from queue import PriorityQueue as PQueueSP
 from queue import Queue as QueueSP
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
-from funman.utils.sympy_utils import rev_replace_reserved
 from pydantic import BaseModel, ConfigDict
 from pysmt.formula import FNode
 from pysmt.logics import QF_NRA
@@ -56,6 +55,7 @@ from funman.search import Box, ParameterSpace, Point, Search, SearchEpisode
 from funman.search.search import SearchStaticsMP, SearchStatistics
 from funman.translate.translate import EncodingOptions, EncodingSchedule
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
+from funman.utils.sympy_utils import rev_replace_reserved
 
 l = logging.getLogger(__name__)
 

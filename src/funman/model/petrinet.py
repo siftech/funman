@@ -1,5 +1,4 @@
 import copy
-from decimal import DivisionByZero
 import itertools
 import logging
 from collections import Counter
@@ -143,7 +142,7 @@ class AbstractPetriNetModel(FunmanModel):
                     substitute(t, variable_values)
                     for t in transition_parameters
                 ]
-                transition_name = f"{transition_id}({transition_parameters}) = {transition_parameter_value}" 
+                transition_name = f"{transition_id}({transition_parameters}) = {transition_parameter_value}"
                 node_attributes = {"shape": "box"}
                 if not detail:
                     node_attributes["label"] = transition_id
@@ -1037,22 +1036,26 @@ class StateTransition(BaseModel):
                 ):
 
                     in_stratum = input_level.intersection(
-                                self.strata_transition.input_stratum
-                            )
+                        self.strata_transition.input_stratum
+                    )
                     out_stratum = output_level.intersection(
-                                self.strata_transition.output_stratum
-                            )
+                        self.strata_transition.output_stratum
+                    )
                     if self_transition:
                         probability = stratification.self_strata_transitions
                     else:
-                        probability = stratification.cross_strata_transitions if in_stratum != out_stratum else 1.0-stratification.cross_strata_transitions
+                        probability = (
+                            stratification.cross_strata_transitions
+                            if in_stratum != out_stratum
+                            else 1.0 - stratification.cross_strata_transitions
+                        )
                     if probability > 0.0:
                         # allow levels to be different
                         legal_strata_transitions.append(
                             StrataTransition(
                                 input_stratum=in_stratum,
                                 output_stratum=out_stratum,
-                                probability = probability
+                                probability=probability,
                             )
                         )
                 elif input_level.subsumed_by(
@@ -1067,7 +1070,7 @@ class StateTransition(BaseModel):
                             output_stratum=output_level.intersection(
                                 self.strata_transition.output_stratum
                             ),
-                            probability = self.strata_transition.probability
+                            probability=self.strata_transition.probability,
                         )
                     )
         return legal_strata_transitions
@@ -2187,20 +2190,22 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             # transition_probability = [
             #     (val / total_interpretations) for val in num_interpretations
             # ]
-            
-            transition_probability = [prod([st.probability for st in sts]) for sts in input_strata_transitions ]
+
+            transition_probability = [
+                prod([st.probability for st in sts])
+                for sts in input_strata_transitions
+            ]
             total_probability = sum(transition_probability)
 
             try:
                 normalized_transition_probability = [
-                    p / total_probability
-                    for p in transition_probability
+                    p / total_probability for p in transition_probability
                 ]
             except ZeroDivisionError as e:
                 raise e
             strata_transition_probability_by_input[input_key] = (
                 # normalized_transition_probability
-                transition_probability # Don't normalize here
+                transition_probability  # Don't normalize here
             )
         input_keys = list(strata_transitions_by_input.keys())
         input_keys.sort()
@@ -2390,12 +2395,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         cross_strata_parameter_by_transition = {}
         for strps in stratified_transitions_rates_params.values():
             # trs, rates, params = strps
-            trs = strps['transitions']
-            rates = strps['rates']
-            params = strps['transition_parameters']
+            trs = strps["transitions"]
+            rates = strps["rates"]
+            params = strps["transition_parameters"]
             for trans, rate in zip(trs, rates):
                 if trans.id.startswith("self_"):
-                    continue # Don't normalize self transitions between strata
+                    continue  # Don't normalize self transitions between strata
 
                 input_key = tuple(trans.input)
                 input_key_transitions = strata_transitions_by_input.get(
@@ -2421,7 +2426,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 ):
                     # if len(subgroup) > 1:
 
-
                     unnormalized_probabilities = [
                         cross_strata_parameter_by_transition[t.id].value
                         for t in subgroup
@@ -2432,9 +2436,7 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                     normalized_probabilities = [
                         p / norm for p in unnormalized_probabilities
                     ]
-                    for t, p in zip(
-                        subgroup, normalized_probabilities
-                    ):
+                    for t, p in zip(subgroup, normalized_probabilities):
                         try:
                             if t.id in cross_strata_parameter_by_transition:
                                 cross_strata_parameter_by_transition[
@@ -2542,11 +2544,11 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                 properties=self.petrinet.properties,
                 model=Model1(
                     states=new_states,
-                    transitions= list(other_transitions.values()),
+                    transitions=list(other_transitions.values()),
                 ),
             )
         )
-        
+
         new_metadata = copy.deepcopy(self.petrinet.metadata)
         transformations = new_metadata.get("transformations", [])
         transformations.append(stratification)
@@ -2625,10 +2627,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             if r.target in other_transitions
         }
 
-
-
-
-
         # update with new states by splitting old state values
         original_init_value = to_sympy(
             next(
@@ -2685,9 +2683,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             # + transition_probability_parameters
         )
 
-       
-
-
         transition_parameters, new_rates = (
             self.correct_transition_probabilities(
                 new_model,
@@ -2714,7 +2709,13 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             for p in new_parameters
             if any(
                 [
-                    p.id in [str(s) for s in to_sympy(r.expression, self._symbols()).free_symbols]
+                    p.id
+                    in [
+                        str(s)
+                        for s in to_sympy(
+                            r.expression, self._symbols()
+                        ).free_symbols
+                    ]
                     for r in [*new_rates, *other_rates.values()]
                 ]
             )
@@ -2944,10 +2945,12 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
             found_group = False
             for g in groups:
                 id1 = t.transition_id if isinstance(t, TransitionMap) else t.id
-                id2 = g[0].transition_id if isinstance(g[0], TransitionMap) else g[0].id
-                if self.has_common_ancestor(
-                    id1, id2 
-                ):
+                id2 = (
+                    g[0].transition_id
+                    if isinstance(g[0], TransitionMap)
+                    else g[0].id
+                )
+                if self.has_common_ancestor(id1, id2):
                     g.append(t)
                     found_group = True
                     break
@@ -3083,7 +3086,14 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
         return transition_parameters, new_rates
 
     def model_size(self):
-        return {"edges" : sum(len(t.input) + len(t.output) for t in self._transitions())/2, "nodes": len(self._transitions().root) + len(self._state_vars().root)}
+        return {
+            "edges": sum(
+                len(t.input) + len(t.output) for t in self._transitions()
+            )
+            / 2,
+            "nodes": len(self._transitions().root)
+            + len(self._state_vars().root),
+        }
 
     def abstract(self, abstraction: Abstraction):
         # Get existing state variables
@@ -3444,7 +3454,6 @@ class GeneratedPetriNetModel(AbstractPetriNetModel):
                             }
                         )
                     )
-                    pass
                 except sympy.SympifyError as e:
                     raise e
             else:
