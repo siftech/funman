@@ -328,3 +328,5 @@ notes/abstraction/main.xdv
 sirhd_*
 vac_*
 undo_S.pdf
+**/*.xdv
+*.csv

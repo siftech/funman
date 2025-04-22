@@ -356,17 +356,6 @@ class TestUseCases(unittest.TestCase):
         ].timepoints = timepoints
 
         runner = Runner()
-        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
-
-        # import matplotlib.pyplot as plt
-
-        # base_result.plot()
-        # plt.savefig("sirhd")
-
-        assert (
-            base_result
-        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         vac_T = StratumAttributeValue(name="T")
@@ -437,14 +426,6 @@ class TestUseCases(unittest.TestCase):
             0
         ].timepoints = timepoints
 
-        stratified_result = runner.run(
-            stratified_model_SI.petrinet, sirhd_stratified_request
-        )
-
-        assert (
-            stratified_result
-        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         # Abstract and bound stratified Base model
         abstract_model = stratified_model_SI.abstract(
             Abstraction(
@@ -463,6 +444,18 @@ class TestUseCases(unittest.TestCase):
         bounded_abstract_model.to_dot().render(
             "sirhd_strat_SI_bounded_abstract_S"
         )
+
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
+        stratified_result = runner.run(
+            stratified_model_SI.petrinet, sirhd_stratified_request
+        )
+        assert (
+            stratified_result
+        ), f"Could not generate a result for stratified version of model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
 
         # Setup request by removing compartmental constraint that won't be correct
         # for a bounded model
@@ -542,18 +535,13 @@ class TestUseCases(unittest.TestCase):
             sirhd_base_request = FunmanWorkRequest.model_validate_json(
                 f.read()
             )
-        sirhd_base_request.config.mode = "mode_odeint"
+        sirhd_base_request.config.mode = "mode_smt"
+        sirhd_base_request.config.save_smtlib = "./out"
         sirhd_base_request.structure_parameters[0].schedules[
             0
         ].timepoints = timepoints
 
         runner = Runner()
-        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
-
-        assert (
-            base_result
-        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         vac_T = StratumAttributeValue(name="T")
@@ -573,38 +561,13 @@ class TestUseCases(unittest.TestCase):
             base_state="S",
             base_parameters=["beta"],
             stratum=vac_stratum,
-            self_strata_transitions=True,
-            cross_strata_transitions=True,
+            self_strata_transitions=0.01,
+            cross_strata_transitions=0.002,
         )
         stratification_I = Stratification(
             base_state="I",
             stratum=vac_stratum,
-            cross_strata_transitions=True,
-        )
-
-        stratified_model_S = base_model.stratify(stratification_S)
-        stratified_model_S.to_dot().render("sirhd_strat_S")
-        stratified_model_S_parameters = stratified_model_S._parameter_names()
-
-        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
-        stratified_model_S_expected_parameters = [
-            "N",
-            "pir",
-            "pih",
-            "rih",
-            "phd",
-            "rhd",
-            "phr",
-            "rhr",
-            "rir",
-            "beta___to_____S_vac_F_to__",
-            "beta___to_____S_vac_T_to__",
-            "p_cross_S_vac_T_to_S_vac_F_",
-            "p_cross_S_vac_F_to_S_vac_T_",
-        ]
-
-        self.model_has_expected_parameters(
-            stratified_model_S, stratified_model_S_expected_parameters
+            cross_strata_transitions=0.002,
         )
 
         stratified_model_I = base_model.stratify(stratification_I)
@@ -630,38 +593,6 @@ class TestUseCases(unittest.TestCase):
         ]
         self.model_has_expected_parameters(
             stratified_model_I, stratified_model_I_expected_parameters
-        )
-
-        stratified_model_SI = stratified_model_S.stratify(stratification_I)
-        stratified_model_SI.to_dot().render("sirhd_strat_SI")
-        stratified_model_SI_parameters = stratified_model_SI._parameter_names()
-
-        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
-        stratified_model_SI_expected_parameters = [
-            "N",
-            "pir",
-            "pih",
-            "rih",
-            "phd",
-            "rhd",
-            "phr",
-            "rhr",
-            "rir",
-            "beta___to_____S_vac_T_to__",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_",
-            "beta___to_____S_vac_F_to__",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_",
-            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_",
-            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_",
-            "p_cross_S_vac_T_to_S_vac_F_",
-            "p_cross_S_vac_F_to_S_vac_T_",
-        ]
-        self.model_has_expected_parameters(
-            stratified_model_SI, stratified_model_SI_expected_parameters
         )
 
         stratified_model_IS = stratified_model_I.stratify(stratification_S)
@@ -696,6 +627,67 @@ class TestUseCases(unittest.TestCase):
             stratified_model_IS, stratified_model_IS_expected_parameters
         )
 
+        stratified_model_S = base_model.stratify(stratification_S)
+        stratified_model_S.to_dot().render("sirhd_strat_S")
+        stratified_model_S_parameters = stratified_model_S._parameter_names()
+
+        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
+        stratified_model_S_expected_parameters = [
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_F_to__",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
+        ]
+
+        self.model_has_expected_parameters(
+            stratified_model_S, stratified_model_S_expected_parameters
+        )
+
+
+
+        stratified_model_SI = stratified_model_S.stratify(stratification_I)
+        stratified_model_SI.to_dot().render("sirhd_strat_SI")
+        stratified_model_SI_parameters = stratified_model_SI._parameter_names()
+
+        # # S stratification stratifies beta, allows cross strata transitions, and self strata transitions
+        stratified_model_SI_expected_parameters = [
+            "N",
+            "pir",
+            "pih",
+            "rih",
+            "phd",
+            "rhd",
+            "phr",
+            "rhr",
+            "rir",
+            "beta___to_____S_vac_T_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_",
+            "beta___to_____S_vac_F_to__",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_",
+            "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_",
+            "p_cross_S_vac_T_to_S_vac_F_",
+            "p_cross_S_vac_F_to_S_vac_T_",
+        ]
+        self.model_has_expected_parameters(
+            stratified_model_SI, stratified_model_SI_expected_parameters
+        )
+
+
+
         assert (
             len(
                 set(stratified_model_SI_parameters).symmetric_difference(
@@ -716,13 +708,20 @@ class TestUseCases(unittest.TestCase):
                 else:
                     b.value += epsilon
 
+        base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_base_request)
+
+        assert (
+            base_result
+        ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
+
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_stratified_request = FunmanWorkRequest.model_validate_json(
                 f.read()
             )
         # sirhd_request.config.use_compartmental_constraints = False
         # sirhd_request.config.save_smtlib = "./out"
-        sirhd_stratified_request.config.mode = "mode_odeint"
+        sirhd_stratified_request.config.mode = "mode_smt"
+        sirhd_stratified_request.config.verbosity = 5
         sirhd_stratified_request.structure_parameters[0].schedules[
             0
         ].timepoints = timepoints
@@ -762,14 +761,14 @@ class TestUseCases(unittest.TestCase):
                     "S_vac_T": "S",
                     "S_vac_F": "S",
                     **{b.id: "beta" for b in betas},
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_T_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross_I_vac_F_to_I_vac_F____to_I_vac_F_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_T_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross_I_vac_T_to_I_vac_T____to_I_vac_F_",
                 }
             )
         )
@@ -783,14 +782,14 @@ class TestUseCases(unittest.TestCase):
                     "I_vac_T": "I",
                     "I_vac_F": "I",
                     **{b.id: "beta" for b in betas},
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
-                    "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
-                    "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_F_to_I_vac_F___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_T_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_T_": "p_cross__to____S_vac_T_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_F_to_I_vac_F_": "p_cross__to____S_vac_F_to__",
+                    # "p_cross_I_vac_T_to_I_vac_T___S_vac_T_to_I_vac_F_": "p_cross__to____S_vac_T_to__",
                 }
             )
         )
@@ -825,12 +824,18 @@ class TestUseCases(unittest.TestCase):
         # for a bounded model
         with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
             sirhd_request = FunmanWorkRequest.model_validate_json(f.read())
-        # sirhd_request.config.use_compartmental_constraints = False
-        # sirhd_request.config.save_smtlib = "./out"
-        sirhd_request.config.mode = "mode_odeint"
+        sirhd_request.config.use_compartmental_constraints = False
+        sirhd_request.config.save_smtlib = "./out"
+        sirhd_request.config.mode = "mode_smt"
         sirhd_request.structure_parameters[0].schedules[
             0
         ].timepoints = timepoints
+
+        bounded_base_model = base_model.formulate_bounds()
+        bounded_base_result = runner.run(
+            bounded_base_model.petrinet,
+            sirhd_request,
+        )
 
         bounded_abstract_result = runner.run(
             bounded_abstract_model.petrinet,
@@ -910,8 +915,11 @@ class TestUseCases(unittest.TestCase):
 
     def test_sirhd_stratify_analysis(self):
 
-        epsilon = 0.000001
+        epsilon = 0.0001
+        N = 150000000.0
+        max_I = 0.3 * N  # 3.542629e+07
         timepoints = [float(t) for t in list(range(0, 2, 1))]
+        num_age_groups = 2
 
         runner = Runner()
         (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
@@ -929,27 +937,12 @@ class TestUseCases(unittest.TestCase):
         # Add constraint on I
         sirhd_stratified_request.constraints.append(
             StateVariableConstraint(
-                name="I upper", variable="I", interval=Interval(ub=1200)
+                name="I upper",
+                variable="I",
+                interval=Interval(ub=max_I),
+                soft=False,
             )
         )
-
-        # with open(BASE_SIRHD_REQUEST_PATH, "r") as f:
-        #     sirhd_base_request = FunmanWorkRequest.model_validate_json(
-        #         f.read()
-        #     )
-        # sirhd_base_request.config.mode = "mode_odeint"
-        # sirhd_base_request.structure_parameters[0].schedules[
-        #     0
-        # ].timepoints = timepoints
-
-        # runner = Runner()
-        # base_result = runner.run(BASE_SIRHD_MODEL_PATH, sirhd_stratified_request)
-
-        # assert (
-        #     base_result
-        # ), f"Could not generate a result for model: [{BASE_SIRHD_MODEL_PATH}], request: [{BASE_SIRHD_REQUEST_PATH}]"
-
-        # (base_model, _) = runner.get_model(BASE_SIRHD_MODEL_PATH)
 
         vac_T = StratumAttributeValue(name="T")
         vac_F = StratumAttributeValue(name="F")
@@ -963,18 +956,22 @@ class TestUseCases(unittest.TestCase):
             }
         )
 
-        age_0 = StratumAttributeValue(name="0")
-        age_1 = StratumAttributeValue(name="1")
-        age_2 = StratumAttributeValue(name="2")
+        age_values = [
+            StratumAttributeValue(name=str(i)) for i in range(num_age_groups)
+        ]
+
         age_stratum_attr = StratumAttribute(
-            name="age", values={age_0, age_1, age_2}
+            name="age",
+            values=age_values,
+            # {age_0, age_1, age_2
+            # , age_3, age_4, age_5, age_6, age_7, age_8, age_9
+            # }
         )
         age_stratum = Stratum(
             values={
                 age_stratum_attr: {
-                    StratumAttributeValueSet(values={age_0}),
-                    StratumAttributeValueSet(values={age_1}),
-                    StratumAttributeValueSet(values={age_2}),
+                    StratumAttributeValueSet(values={age_value})
+                    for age_value in age_values
                 }
             }
         )
@@ -987,7 +984,7 @@ class TestUseCases(unittest.TestCase):
                 description="Stratify S and beta wrt. vaccination status.  Set beta values for strata.",
                 base_state="S",
                 stratum=vac_stratum,
-                self_strata_transitions=True,
+                self_strata_transitions=0.01,
                 base_parameters={
                     "beta": {
                         StrataTransition(
@@ -1015,19 +1012,18 @@ class TestUseCases(unittest.TestCase):
                     }
                 },
             ),
-            # FIXME Has an extra self transition that shouldn't be there
             Stratification(
                 description="Stratify S_vac_T wrt. age group",
                 base_state="S_vac_T",
                 stratum=age_stratum,
-                self_strata_transitions=True,
+                self_strata_transitions=0.01,
                 base_parameters={
                     "beta___to_____S_vac_T_to__": {
                         StrataTransition(
                             input_stratum=StratumValuation(
                                 values={
                                     age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_0}
+                                        values={age_value}
                                     ),
                                     vac_stratum_attr: StratumAttributeValueSet(
                                         values={vac_T}
@@ -1036,34 +1032,11 @@ class TestUseCases(unittest.TestCase):
                             ),
                             output_stratum=StratumValuation(),
                         ): beta.value
-                        - 2 * epsilon,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_1}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_T}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_2}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_T}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value
-                        + 2 * epsilon,
+                        + (
+                            epsilon
+                            * (float(i) - (float(num_age_groups) * 0.5))
+                        )
+                        for i, age_value in enumerate(age_values)
                     }
                 },
             ),
@@ -1071,14 +1044,14 @@ class TestUseCases(unittest.TestCase):
                 description="Stratify S_vac_F wrt. age group",
                 base_state="S_vac_F",
                 stratum=age_stratum,
-                self_strata_transitions=True,
+                self_strata_transitions=0.01,
                 base_parameters={
                     "beta___to_____S_vac_F_to__": {
                         StrataTransition(
                             input_stratum=StratumValuation(
                                 values={
                                     age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_0}
+                                        values={age_value}
                                     ),
                                     vac_stratum_attr: StratumAttributeValueSet(
                                         values={vac_F}
@@ -1087,100 +1060,185 @@ class TestUseCases(unittest.TestCase):
                             ),
                             output_stratum=StratumValuation(),
                         ): beta.value
-                        - 3 * epsilon,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_1}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_F}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value,
-                        StrataTransition(
-                            input_stratum=StratumValuation(
-                                values={
-                                    age_stratum_attr: StratumAttributeValueSet(
-                                        values={age_2}
-                                    ),
-                                    vac_stratum_attr: StratumAttributeValueSet(
-                                        values={vac_F}
-                                    ),
-                                }
-                            ),
-                            output_stratum=StratumValuation(),
-                        ): beta.value
-                        + 3 * epsilon,
+                        + (
+                            epsilon
+                            * (float(i) - (float(num_age_groups) * 0.75))
+                        )
+                        for i, age_value in enumerate(age_values)
                     }
                 },
             ),
-            # Stratification(
-            #     description="Stratify I wrt. vaccination status.",
-            #     base_state="I",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
-            # Stratification(
-            #     description="Stratify R wrt. vaccination status.",
-            #     base_state="R",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
-            # Stratification(
-            #     description="Stratify H wrt. vaccination status.",
-            #     base_state="H",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
-            # Stratification(
-            #     description="Stratify D wrt. vaccination status.",
-            #     base_state="D",
-            #     stratum=vac_stratum,
-            #     self_strata_transitions=True,
-            # ),
+            Stratification(
+                description="Stratify I wrt. vaccination status.",
+                base_state="I",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify I_vac_T wrt. age.",
+                base_state="I_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify I_vac_F wrt. age.",
+                base_state="I_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify R wrt. vaccination status.",
+                base_state="R",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify R_vac_T wrt. age.",
+                base_state="R_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify R_vac_F wrt. age.",
+                base_state="R_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify H wrt. vaccination status.",
+                base_state="H",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify H_vac_T wrt. age.",
+                base_state="H_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify H_vac_F wrt. age.",
+                base_state="H_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify D wrt. vaccination status.",
+                base_state="D",
+                stratum=vac_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify D_vac_T wrt. age.",
+                base_state="D_vac_T",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
+            Stratification(
+                description="Stratify D_vac_F wrt. age.",
+                base_state="D_vac_F",
+                stratum=age_stratum,
+                self_strata_transitions=0.01,
+            ),
         ]
 
         vac_abstractions = [
-            # Abstraction(
-            #     description="Abstract D wrt. vaccination status.",
-            #     abstraction={"D_vac_F": "D", "D_vac_T": "D"},
-            # ),
-            # Abstraction(
-            #     description="Abstract H wrt. vaccination status.",
-            #     abstraction={"H_vac_F": "H", "H_vac_T": "H"},
-            # ),
-            # Abstraction(
-            #     description="Abstract R wrt. vaccination status.",
-            #     abstraction={"R_vac_F": "R", "R_vac_T": "R"},
-            # ),
-            # Abstraction(
-            #     description="Abstract I wrt. vaccination status.",
-            #     abstraction={"I_vac_F": "I", "I_vac_T": "I"},
-            # ),
+            Abstraction(
+                description="Abstract D_vac_T wrt. age.",
+                abstraction={
+                    f"D_vac_T_age_{i}": "D_vac_T"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract D_vac_F wrt. age.",
+                abstraction={
+                    f"D_vac_F_age_{i}": "D_vac_F"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract D wrt. vaccination status.",
+                abstraction={"D_vac_F": "D", "D_vac_T": "D"},
+            ),
+            Abstraction(
+                description="Abstract H_vac_T wrt. age.",
+                abstraction={
+                    f"H_vac_T_age_{i}": "H_vac_T"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract H_vac_F wrt. age.",
+                abstraction={
+                    f"H_vac_F_age_{i}": "H_vac_F"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract H wrt. vaccination status.",
+                abstraction={"H_vac_F": "H", "H_vac_T": "H"},
+            ),
+            Abstraction(
+                description="Abstract R_vac_T wrt. age.",
+                abstraction={
+                    f"R_vac_T_age_{i}": "R_vac_T"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract R_vac_F wrt. age.",
+                abstraction={
+                    f"R_vac_F_age_{i}": "R_vac_F"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract R wrt. vaccination status.",
+                abstraction={"R_vac_F": "R", "R_vac_T": "R"},
+            ),
+            Abstraction(
+                description="Abstract I_vac_T wrt. age.",
+                abstraction={
+                    f"I_vac_T_age_{i}": "I_vac_T"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract I_vac_F wrt. age.",
+                abstraction={
+                    f"I_vac_F_age_{i}": "I_vac_F"
+                    for i in range(num_age_groups)
+                },
+            ),
+            Abstraction(
+                description="Abstract I wrt. vaccination status.",
+                abstraction={"I_vac_F": "I", "I_vac_T": "I"},
+            ),
             Abstraction(
                 description="Abstract S age groups wrt. unvaccination status.",
                 abstraction={
-                    "S_vac_F_age_0": "S_vac_F",
-                    "S_vac_F_age_1": "S_vac_F",
-                    "S_vac_F_age_2": "S_vac_F",
-                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_0_to__": "beta___to_____S_vac_F_to__",
-                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_1_to__": "beta___to_____S_vac_F_to__",
-                    "beta___to_____S_vac_F_to_____to_____S_vac_F_age_2_to__": "beta___to_____S_vac_F_to__",
+                    **{
+                        f"S_vac_F_age_{i}": "S_vac_F"
+                        for i in range(num_age_groups)
+                    },
+                    **{
+                        f"beta___to_____S_vac_F_to_____to_____S_vac_F_age_{i}_to__": "beta___to_____S_vac_F_to__"
+                        for i in range(num_age_groups)
+                    },
                 },
             ),
             Abstraction(
                 description="Abstract S age groups wrt. vaccination status.",
                 abstraction={
-                    "S_vac_T_age_0": "S_vac_T",
-                    "S_vac_T_age_1": "S_vac_T",
-                    "S_vac_T_age_2": "S_vac_T",
-                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_0_to__": "beta___to_____S_vac_T_to__",
-                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_1_to__": "beta___to_____S_vac_T_to__",
-                    "beta___to_____S_vac_T_to_____to_____S_vac_T_age_2_to__": "beta___to_____S_vac_T_to__",
+                    **{
+                        f"S_vac_T_age_{i}": "S_vac_T"
+                        for i in range(num_age_groups)
+                    },
+                    **{
+                        f"beta___to_____S_vac_T_to_____to_____S_vac_T_age_{i}_to__": "beta___to_____S_vac_T_to__"
+                        for i in range(num_age_groups)
+                    },
                 },
             ),
             Abstraction(
@@ -1194,14 +1252,17 @@ class TestUseCases(unittest.TestCase):
             ),
         ]
 
+        # transformation_sequence = vac_stratifications + vac_abstractions
         transformation_sequence = vac_stratifications + vac_abstractions
         vac_models = []
 
         current_model = base_model
         for i, t in enumerate(transformation_sequence):
+            if i == 8:
+                pass
             next_model = current_model.transform(t)
             vac_models.append(next_model)
-            next_model.to_dot().render(f"vac_model_{i}"),
+            next_model.to_dot(detail=False).render(f"vac_model_{i}"),
             current_model = next_model
 
         # vac_models = list(
@@ -1227,20 +1288,21 @@ class TestUseCases(unittest.TestCase):
             #     )
             # )
 
-        list(
-            map(
-                lambda x, name: x.to_dot().render(f"vac_model_{name}"),
-                vac_models,
-                range(len(vac_models)),
-            )
-        )
+        # list(
+        #     map(
+        #         lambda x, name: x.to_dot().render(f"vac_model_{name}"),
+        #         vac_models,
+        #         range(len(vac_models)),
+        #     )
+        # )
 
         vac_model_params = [
             {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
             for m in vac_models
         ]
-
-        bounded_vac_models = [m.formulate_bounds() for m in vac_models]
+        bounded_vac_models = [
+            m.formulate_bounds() for m in vac_models[-len(vac_abstractions) :]
+        ]
 
         for m in bounded_vac_models:
             # infected_states_lb = [s.id for s in m.petrinet.model.states if s.id.startswith("I") and s.id.endswith("_lb")]
@@ -1261,19 +1323,25 @@ class TestUseCases(unittest.TestCase):
         #         additive_bounds={"ub": 1200},
         #     )
         # )
+        sirhd_stratified_request.config.use_compartmental_constraints = False
 
         results = [runner.run(base_model.petrinet, sirhd_stratified_request)]
         results += [
             runner.run(m.petrinet, sirhd_stratified_request)
-            for m in vac_models[0 : len(vac_stratifications) + 1]
+            for m in vac_models[0 : len(vac_stratifications)]
         ]
         results += [
             runner.run(m.petrinet, sirhd_stratified_request)
             for m in bounded_vac_models
         ]
+        # results = [
+        #     runner.run(m.petrinet, sirhd_stratified_request)
+        #     for m in bounded_vac_models
+        # ]
 
         m = []
         for i, result in enumerate(results):
+            model_size = result.model.model_size()
             df = result.dataframe()
             df["description"] = (
                 result.model.petrinet.metadata["transformation_description"]
@@ -1288,15 +1356,27 @@ class TestUseCases(unittest.TestCase):
                 f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
             )
             df["I_bound"] = len(result.parameter_space.true_points()) > 0
-            df = df.set_index(["model_index", "index"])
+            df["nodes"] = model_size["nodes"]
+            df["edges"] = model_size["edges"]
+            # df = df.set_index(["model_index", "index"])
+            df.index = df.index.rename("time")
+            df = df.reset_index().set_index(["model_index", "time"])
             m.append(df)
         dfs = pd.concat(m)
-        runtimes = dfs.reset_index(["index"])[
-            ["runtime (s)", "description", "I_bound"]
+
+        runtimes = dfs.reset_index(["time"])[
+            [
+                "runtime (s)",
+                "nodes",
+                "edges",
+                "description",
+                "I_bound",
+                # , "I", *[b for b in dfs.columns if b.startswith("beta")]
+            ]
         ].drop_duplicates()
         self.l.info(runtimes)
-        runtimes.to_csv("stratify_analysis_runtimes.csv")
-        dfs.to_csv("stratify_analysis.csv")
+        runtimes.to_csv(f"stratify_analysis_runtimes_{num_age_groups}.csv")
+        dfs.to_csv(f"stratify_analysis_{num_age_groups}.csv")
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T
         # S_df = pd.DataFrame([base_df.S, vac_model_df.S_vac_F, vac_model_df.S_vac_T, bounded_df.S_lb, bounded_df.S_ub]).T
 
@@ -1429,13 +1509,13 @@ class TestUseCases(unittest.TestCase):
             )
         )
 
-        list(
-            map(
-                lambda x, name: x.to_dot().render(f"vac_model_{name}"),
-                vac_models,
-                range(len(vac_models)),
-            )
-        )
+        # list(
+        #     map(
+        #         lambda x, name: x.to_dot().render(f"vac_model_{name}"),
+        #         vac_models,
+        #         range(len(vac_models)),
+        #     )
+        # )
 
         vac_model_params = [
             {p.id: p.value for p in m.petrinet.semantics.ode.parameters}
@@ -1458,15 +1538,11 @@ class TestUseCases(unittest.TestCase):
                 f"{result.timing.total_time.seconds}.{result.timing.total_time.microseconds}"
             )
             df["I_bound"] = len(result.parameter_space.true_points()) > 0
-            df = df.set_index(["model_index", "index"])
+            df = df.set_index(["model_index"])
             m.append(df)
         dfs = pd.concat(m)
-        runtimes = dfs.reset_index(["index"])[
-            [
-                c
-                for c in ["runtime (s)", "description", "I_bound"]
-                if c in dfs.columns
-            ]
+        runtimes = dfs[
+            [c for c in ["runtime (s)"] if c in dfs.columns]
         ].drop_duplicates()
         self.l.info(runtimes)
         # I_df = pd.DataFrame([base_df.I, vac_model_df.I_vac_F, vac_model_df.I_vac_T, bounded_df.I_lb, bounded_df.I_ub]).T

@@ -24,7 +24,17 @@ from pysmt.shortcuts import (
     get_env,
 )
 from pysmt.walkers import IdentityDagWalker
-from sympy import Abs, Add, Expr, Rational, exp, series, symbols, sympify
+from sympy import (
+    Abs,
+    Add,
+    Expr,
+    Rational,
+    SympifyError,
+    exp,
+    series,
+    symbols,
+    sympify,
+)
 from sympy.logic.boolalg import BooleanTrue
 
 l = logging.getLogger(__name__)
@@ -124,11 +134,15 @@ class SympyBoundedSubstituter(BaseModel):
     def _substitute_symbol(self, expr, sub_min: bool, op_type=REAL):
         sym = str(expr)
         bound = "lb" if sub_min else "ub"
-        return (
-            self.bound_symbols[expr][bound]
-            if not sym.endswith("_lb") and not sym.endswith("_ub")
-            else expr
-        )
+        try:
+            result = (
+                self.bound_symbols[expr][bound]
+                if not sym.endswith("_lb") and not sym.endswith("_ub")
+                else expr
+            )
+        except KeyError as e:
+            raise e
+        return result
 
     def _substitute_real(self, expr, sub_min: bool):
         return expr
@@ -277,7 +291,10 @@ def to_sympy(
         unreserved_symbols = [replace_reserved(s) for s in str_symbols]
         clean_expr = replace_reserved(formula)
         symbol_map = {s: symbols(s) for s in unreserved_symbols}
-        expr = sympify(clean_expr, symbol_map)
+        try:
+            expr = sympify(clean_expr, symbol_map)
+        except SympifyError as e:
+            raise e
     elif isinstance(formula, FNode):
         expr = SympySerializer().to_sympy(formula)
     elif isinstance(formula, Expr):
