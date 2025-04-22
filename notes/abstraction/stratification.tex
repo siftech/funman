@@ -1,0 +1,152 @@
+Stratification is an operation that refines a model to capture finer detail about the discrete state space.
+In the SIR model, we use stratification to capture finer detail about subpopulations.  For instance, we can stratify the SIR model by splitting the susceptible state $(S, \{(vac_T), (vac_F)\})$ into two subpopulations $(S, \{(vac_T)\})$ and $(S, \{(vac_F)\})$.  State refinements imply transition and parameter refinements.  For example, stratifying $S$ implies that the $\infect$ transition becomes stratified to represent how two different subpopulations (vaccinated or not) become infected.  Modifying the $\beta$ parameter for the stratified $\infect$ transitions captures different rates of infection for the two populations.
+
+\begin{definition}
+	A stratification operator $St((\Omega, \Theta), ((x, g), (g_1, \ldots, g_N)))$,
+	% \begin{eqnarray*}
+	% 	St&:& \Omega \rightarrow \Omega'\\
+	% 	St(\Omega, \Theta, (x, g)) &=& (\Omega', \Theta')
+	% \end{eqnarray*}
+	given a model $\Omega$, $\Theta$ and state variable $(x, g)$, defines a partition of $g$ into $(g_1, \ldots, g_N)$ so that $g=\bigcup_{i=1}^N g_i$ and for $i \not=j$, $g_i \not=g_j$.  The partition defines a new model $\Omega'$, $\Theta'$ that replaces $(x, g)$ with the states variables
+	$\{(x, g_1),\ldots, (x, g_N)\}$.  Assuming that there is a unique $v_{xg}\in V$ where $({\cal X}(v_{xg}),{\cal D}(v_{xg})) = (x, g)$, the new model defines:
+	\begin{itemize}
+		\item $D' = D$, $X' = X$
+		\item $V_X' = V_X \backslash \{v_{xg}\}\cup \{v_{xg_1}, \ldots, v_{xg_N}\}$, and $({\cal X}'(v_{xg_i}),{\cal D}'(v_{xg_i})) = (x, g_i)$ for $i \in [1, N]$.
+		\item $V_Z' = V_Z \backslash V_Z(v_{xg}) \cup \{v_{z'} |  z' \in St_z((x, g), \{(x, g_1),\ldots, (x, g_N)\})\}$ where the set of transition vertices involving $v_{xg}$ is $V_Z(v_{xg}) = \{z\in Z | (v_z, v_{xg}) \in E \} \cup \{z\in Z | (v_{xg}, v_z) \in E\}$ and $St_z((x, g), \{g_1,\ldots, g_N\})$ is the operator for stratifying a transition $z$.
+		\item $E'= E \backslash E_Z(v_{xg}) \cup E_{Z'}(v_{xg})$ where $E_Z(v_{xg}) = \{(v_{xg}, v_z) \in E \} \cup \{(v_z, v_{xg}) \in E, z \in Z \}$ and $E_{Z'}(v_{xg})$ (defined below) are the respective sets of edges involving a transition $z$ that depends upon $v_{xg}$ or involving a new transition $z'$ that depends upon some $v_{xgi}$.
+
+		\item $P' = P \backslash P_{St}^- \cup P_{St}^+$, where $P_{St}^-$ and $P_{St}^+$ are the respective parameters removed or added because of the stratification, as defined below.
+
+
+
+		\item $Z' = Z \backslash \{z \in Z| v_z \in V_Z(v_{xg})\} \cup \{z' |  z' \in St_z((x, g), \{g_1,\ldots, g_N\}), z \in Z \}\}$ is the set of transitions added by stratifying transitions in $Z$. The stratification defines a set of new transitions $\{z_1,\ldots,z_M\}$ by i) stratifying each transition component in $t_k \in T(z)$ into a set of transition components $T_k'$, and ii) defining new sets of transition components $T(z_i) \in T_1' \times \ldots T_{|T(z)|}$, each according to an element of the cross-product.  Stratifying a transition component $t = ((x_a, g_a), z, (x_b, g_b)) \in T(z)$, according to the new states $\{(x, g_1),\ldots, (x, g_N)\}$ corresponds to one of the following cases:
+		      \begin{enumerate}
+			      \item If $x_a, x_b \not= x$, then the resulting set of state transitions is $\{t\}$ when the state transition is unchanged because it does not depend on $x$.
+			      \item If $x_a = x, x_b \not= x$, then the resulting set of state transitions is $\{((x, g_a\cap g_i), z, (x_b, g_b))| (x,g_i) \in \{(x, g_1),\ldots, (x, g_N)\}\}$ when the	source state is $x$.
+			      \item If $x_a \not= x, x_b = x$, then the resulting set of state transitions is $\{((x_a, g_a), z, (x, g_b\cap g_i))| (x,g_i) \in \{(x, g_1),\ldots, (x, g_N)\}\}$ when the target state is $x$.
+			      \item If $x_a,x_b = x$, then the resulting set of state transitions is $\{((x, g_a\cap g_i), z, (x, g_b\cap g_j))| (x,g_i), (x,g_j) \in \{(x, g_1),\ldots, (x, g_N)\}\}$ when the source and target state are $x$.
+		      \end{enumerate}
+
+
+		\item $\! \begin{aligned}
+			      {\cal P}'(p) = & \left\{
+			      \begin{array}{ll}
+				      {\cal P}(p) : p \in P\backslash (P_G^-\cup P_G^+) \\
+				      {\cal P}(p) : p \in P\backslash P'
+			      \end{array}\right.
+		      \end{aligned}$
+		\item $\! \begin{aligned}\label{eqn:stratified-rate}
+			      {\cal X}'(v) = \left\{
+			      \begin{array}{lll}
+				      {\cal X}(v) & :  v \in V\cap V'       \\
+				      x           & :  v \in V'\backslash V
+			      \end{array}
+			      \right.
+		      \end{aligned}$
+
+		\item $\! \begin{aligned}\label{eqn:stratified-rate}
+			      {\cal D}'(v) = \left\{
+			      \begin{array}{lll}
+				      {\cal D}(v) & :  v \in V\cap V'                   \\
+				      g_i         & :  v \in V'\backslash V, v=v_{xg_i}
+			      \end{array}
+			      \right.
+		      \end{aligned}$
+		\item The initial value ${\cal I}'((x',g'))$ of each $(x', g')$, where $v_{x'g'}\in V'$, is either unchanged if $x' \not=x$, or defined so that ${\cal I}'((x,g)) = \sum_{i=1}^N {\cal I}'((x,g_i))$.  The total population associated with the stratified states $(x, g_i)$  is equal to that of the original state $(x,g)$.
+
+		\item ${\cal Z}'(v)$ is equal to ${\cal Z}(v)$ when $v \in V'\cap V$, meaning the corresponding transition was not stratified. Otherwise, ${\cal Z}'(v)$ maps each new vertex $v \in V'\backslash V$ to a distinct $z' \in Z'$.
+		\item Let ${\cal R}'({\bf p}', {\bf x}', z')$ denote the rate associated with a transition $z'\in Z'$, then
+		      % $={\cal R}({\bf p}, {\bf x}, z)[(x, S)/(x, g_i), \ldots, (x, S)/(x, g_N)]$  , for each $z \in Z'$ substitute occurrences of $(x, g)$ with $(x, g_i)$
+
+		      \begin{eqnarray*}\label{eqn:stratified-rate}
+			      {\cal R}'({\bf p}', {\bf x}', z') = \left\{
+			      \begin{array}{lll}
+				      {\cal R}({\bf p}, {\bf x}, z) :     & v_z \not\in V_Z(v_{xg})   \\
+				      {\cal R}({\bf p}', {\bf x}', z_i) : & \begin{array}{l}
+                                        v_z \in V_Z(v_{xg}), \\
+					      z'=z_i,              \\
+					      z_i \in St_z((x, g), \{g_1,\ldots, g_N\})
+				      \end{array}
+			      \end{array}
+			      \right.
+		      \end{eqnarray*}
+		      where the rate remains unchanged if $z'$ does not depend upon $(x, g)$.  If $z'$ is a stratified transition $z_i$, then the rate is ${\cal R}({\bf p}', {\bf x}', z_i)$ relates to the pre-stratified rate ${\cal R}({\bf p}, {\bf x}, z)$, as follows. The stratified ${\cal R}({\bf p}', {\bf x}', z_i)$ substitutes $(s, g_i)$ for $(s, g)$ if there is a $t_k \in T(z)$ and $t_k' \in T(z_i)$ where $t_k = ((x, g), z, (x_b, g_b))$ and $t_k'= ((x, g_i), z_i, (x_b, g_b))$.  Similarly ${\cal R}({\bf p}', {\bf x}', z_i)$ substitutes  $p'$ for $p$, where ${\cal R}({\bf p}, {\bf x}, z)$ depends on $p$, $p \in P$,  $p' \in P'$, and $p'$ is unique to each stratified transition $z_i$.
+
+		      For each transition component in cases 3) and 4) above defining the new transitions, the flow from each source state is divided
+		      across $N$ state transitions.  The sum of the rates
+		      associated with the transitions for each source state must equal the
+		      original rate ${\cal R}({\bf p}, {\bf x}, z)$ associated with $((x_a, g_a), z, (x_b, g_b))$.  In these cases, the new rates ${\cal R}({\bf p}', {\bf x}', z_i)$
+		      preserve the flow by multiplying the rate by a parameter for each transition, according to how the primary transition component is stratified.  If the primary transition component is stratified according to case 3), then multiply the rate by $p_j$ where   $\sum_{j=1}^N  p_{j} = 1$.  If stratified according to case 4), then multiply the rate by $p_{ij}$ where  $\sum_{j=1}^N
+			      p_{ij} = 1$ for each $i = 1\ldots N$.  These parameters represent the
+		      probability of transitioning from $(x_a, g_a)$ to $ (x, g_b\cap g_j)$  or from $(x, g_a\cap g_i)$ to $(x, g_b\cap g_j)$, respectively.  The set $P_G^+$ is the set of all parameters substituted into or added by a stratified rate. The set $P_G^-$ is the set of all parameters substituted.
+
+	\end{itemize}
+\end{definition}
+
+For example, Example \ref{ex:base} is a stratification of the SIR model that
+captures two susceptible groups that have different infection rates $\beta_1$
+and $\beta_2$.  Stratifications also capture how the subpopulations change and
+interact.  For example, if the subpopulations refer to whether individuals have
+been vaccinated or not, then it is possible for unvaccinated individuals to
+become vaccinated. Similarly, individuals becoming infected may be exposed to
+susceptible individuals that have been vaccinated or not, each with a different
+infection rate.  Transitions between strata can occur in conjunction with
+another transition (e.g., simultaneously becoming infected and vaccinated), or
+via ``self'' transitions (e.g., transitioning between susceptible groups when
+vaccinated). Stratification can also be partial, meaning that states like $S_1$
+and $S_2$ are stratified, but $I$ and $R$ are not.  This is useful when, for
+example, the recovery rate is the same for all subpopulations and there is no
+benefit to stratifying $I$ or $R$.
+
+
+
+\begin{example}\label{ex:stratified}
+	A stratified SIR model, accounting for the effect of vaccination ($vac$) on infection rates is $\Theta =$
+	\begin{eqnarray*}
+		P &=& \{\beta_{vac=T}, \beta_{vac=F}, \gamma\}\\
+		D &=& \{vac\}, dom(vac) = \{T, F\}\\
+		X &=& \{S, I, R\}\\
+		G &=& \{(vac=T), (vac=F)\}\\
+		Z &=& \{inf_{vac=T}, inf_{vac=F}, rec\}\\
+		{\cal X} &=& \left\{
+		\begin{array}{ll}
+			v_{S,vac=T} & :S \\
+			v_{S,vac=F} & :S \\
+			v_I         & :I \\
+			v_R         & :R
+		\end{array}\right.\\
+		{\cal D} &=& \left\{
+		\begin{array}{ll}
+			v_I         & :G           \\
+			v_{S,vac=T} & :\{(vac=T)\} \\
+			v_{S,vac=F} & :\{(vac=F)\} \\
+			v_R         & :G           \\
+		\end{array}\right.\\
+		{\cal I} &=& \left\{
+		\begin{array}{ll}
+			0.9 & :(S,\{(vac=T)\}) \\
+			0.9 & :(S,\{(vac=F)\}) \\
+			0.1 & :(I, G)          \\
+			0.0 & :(R, G)
+		\end{array}\right.\\
+		{\cal P}&=& \left\{
+		\begin{array}{ll}
+			2e{-7} & :\beta_{vac=T} \\
+			2e{-6} & :\beta_{vac=F} \\
+			1e{-5} & :\gamma
+		\end{array}\right.\\
+		{\cal R} &=& \left\{
+		\begin{array}{ll}
+			\beta_{vac=T} S_{vac=T} I & : z_{\mathit{inf_{vac=T}}} \\
+			\beta_{vac=F} S_{vac=F} I & : z_{\mathit{inf_{vac=F}}} \\
+			\gamma I                  & : z_{\mathit{rec}}         \\
+		\end{array}\right.\\
+	\end{eqnarray*}
+\end{example}
+
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:
