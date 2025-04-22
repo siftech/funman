@@ -2,12 +2,16 @@ name: Build LaTeX document
 on: [push]
 jobs:
   build_latex:
-    runs-on: texlive/texlive:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
       - name: Compile LaTeX document
         working-directory: notes/abstraction
+        image: docker.io/texlive/texlive:latest
+        # credentials:
+        #   username: <YOUR_USERNAME>
+        #   password: ${{  secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
         run: latexmk -pdf main.tex
       - name: Upload PDF file
         uses: actions/upload-artifact@v4
