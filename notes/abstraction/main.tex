@@ -1,7 +1,6 @@
 \documentclass[10pt,letterpaper]{article}
 
 \usepackage{amsmath}
-\usepackage{}
 % \usepackage{mathbb}
 % \usepackage[amsmath]{ntheorem}
 \usepackage{amsfonts}
@@ -12,12 +11,14 @@
 \usepackage[caption=false]{subfig}
 \usepackage{xspace}
 \usepackage{color}
+\usepackage{ifthen}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newtheorem{definition}{Definition}
 \newtheorem{example}{Example}
 
+% abbreviations
 \newcommand{\funman}{FUNMAN\xspace}
 \newcommand{\region}{\bf X}
 \newcommand{\posregion}{{\region}^+}
@@ -29,7 +30,6 @@
 \newcommand{\bounds}{{\bf B}}
 \newcommand{\parameters}{{\bf p}}
 \newcommand{\parameterbox}{{\bf p}^{[]}}
-\newcommand{\reals}{{\mathbb{R}}}
 \newcommand{\Petrinet}{Petri net\xspace}
 \newcommand{\Petrinets}{Petri nets\xspace}
 
@@ -43,6 +43,14 @@
 \newcommand{\parents}{\operatorname{pars}}
 \newcommand{\children}{\operatorname{descs}}
 \newcommand{\infect}{\mathit{inf}}
+\newcommand{\reals}{{\mathbb{R}}}
+
+% comments
+\newboolean{draft}
+% FIXME Set to false before submission
+\setboolean{draft}{true}
+\newcommand{\from}[2]{\ifthenelse{\boolean{draft}}{\textcolor{red}{\noindent\textbf{//}\textbf{Note from #1:}\ #2\textbf{//}}}{}}
+\newcommand{\rpg}[1]{\from{rpg}{#1}}
 
 % \setlength{\floatsep}{ 1.0pt plus 2.0pt minus 2.0pt}
 
@@ -53,7 +61,9 @@
 
 \section{Introduction}
 
-We describe methods to stratify and abstract (de-stratify) \Petrinets{} for compartmental models.  The motivation for abstracting a \Petrinet{} is to reduce its size, which becomes exponential in the number of stratified variables.  Reducing the size of the model can have a significant impact on runtime, and it is possible to answer useful queries with the abstract model.  The following sections include a background (defining the models), a description of stratification and abstraction, an approach needed to bound the abstracted models (or to perform parameter synthesis directly in a simulator), and then a comparison of simulation results for several variations of a baseline model that applies stratification, bounding, and abstraction.  
+We describe methods to stratify (refine) and de-stratify (abstract) \Petrinets{} for compartmental models.  The motivation for abstracting a \Petrinet{} is to reduce its size, which can become exponential in the number of stratified variables.  Reducing the size of the model can have a significant impact on runtime, while it may still be possible to answer useful queries (more efficiently) with an abstracted model.  The following sections include background (defining the models), a description of stratification and abstraction, an approach to bound the abstracted models (or to perform parameter synthesis directly in a simulator), and then a comparison of simulation results for several variations of a baseline model that applies stratification, bounding, and abstraction.  
+
+\rpg{In the above, do we need a definition of compartmental models?  If this goes only to people who know a little about epidemiology, probably not, but if it goes to a CS audience, maybe we do.  If so, we could add it to background; LMK if you want me to do this.}
 
 \section{Background}
 \input{background}
