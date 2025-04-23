@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Compile LaTeX document
         working-directory: notes/abstraction
-        run: latexmk -pdf main.tex
+        run: latexmk -pdf -Werror main.tex
       - name: Upload PDF file
         uses: actions/upload-artifact@v4
         with:
