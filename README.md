@@ -23,9 +23,12 @@ The `funman` package performs Functional Model Analysis by processing a request 
 
 # Quickstart
 
-This section explains how to run `funman`, and the following section describes the analysis request in more detail.
+This section explains how to run `funman`, and the following section describes the analysis request in more detail. The following are required for `funman` to run:
+- docker
+- python3
+- The python 'requests' package
 
-We recommend using a pre-built docker image to run or develop the `funman` source, due to a few build dependencies.  To run `funman` via its API, (in the `funman` root directory) start the API with the script:
+We recommend using a pre-built docker image to run or develop the `funman` source, due to a few build dependencies. To run `funman` via its API, (in the `funman` root directory) start the API with the script:
 
 ```bash
 sh terarium/scripts/run-api-in-docker.sh
@@ -34,7 +37,7 @@ sh terarium/scripts/run-api-in-docker.sh
 This will pull the latest release of the `funman` API image and start a new container.  Then, to submit analysis requests to the API, run the following script:
 
 ```bash
-terarium/run_example.sh petrinet-sir
+terarium/run_example.sh sir
 ```
 
 This script will run a request, as specified in `resources/terarium-tests.json`.
@@ -42,51 +45,15 @@ This script will run a request, as specified in `resources/terarium-tests.json`.
 Running the example will POST a model analysis request, wait, and then GET the results.  `funman` analysis runs in an anytime fashion, and the GET request may return only partial results.  The example will generate the following output:
 
 ```
-Running example 'petrinet-sir':
-{
-  "name": "petrinet-sir",
-  "model-path": "amr/petrinet/terrarium-tests/sir.json",
-  "request-path": "amr/petrinet/terrarium-tests/sir_request.json"
-}
-################################################################################
-################################################################################
-Making POST request to http://127.0.0.1:8190/api/queries with contents:
+~/repositories/funman/terarium ~/repositories/funman
 {
     "model": <Contents of /home/danbryce/funman/resources/amr/petrinet/terrarium-tests/sir.json>
     "request": <Contents of /home/danbryce/funman/resources/amr/petrinet/terrarium-tests/sir_request.json>
 }
-################################################################################
-################################################################################
-Response for query:
-{
-  "id": "cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f",
-  "model": "Removed for brevity",
-  "request": "Removed for brevity"
-}
-################################################################################
-################################################################################
-Work Id is 'cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f'
-Waiting for 5 seconds...
-################################################################################
-################################################################################
-Making GET request to http://127.0.0.1:8190/api/queries/cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f:
-{
-  "id": "cfabd91c-4a6a-42aa-8d10-e88b4ca2dd5f",
-  "model": "Removed for brevity",
-  "progress": {
-    "progress": 0.6918088739568541,
-    "coverage_of_search_space": 0.6918088739568541
-  },
-  "request": "Removed for brevity",
-  "parameter_space": {
-    "num_dimensions": 6,
-    "true_boxes": [ {"Removed for brevity"}, {"Removed for brevity"}, ...]
-    "false_boxes": [ {"Removed for brevity"}, {"Removed for brevity"}, ...]
-  }
-}
+~/repositories/funman
 ```
 
-The response is the status of the query, which includes the model and request used in the query, as well as progress and the current parameter space.  
+The response is the status of the query, which includes the model and request used in the query, as well as progress and the current parameter space.
 
 # Quickstart Example Description
 
@@ -118,7 +85,7 @@ Solving this analysis problem generates a parameter space, as summarized by the 
 
 The plot illustrates the parameter space as a matrix of 2D plots for each pair of parameters. (This example includes parameters $S0$, $I0$, and $R0$ for the initial state assignment).  `funman` introduces the `timestep` as an additional parameter to support reasoning about different time spans.  This `timestep` is important for many scenarios because the constraints may be satsified or not under different assumptions about the scenario time span.    
 
-The upper left plot for $\beta$-$\gamma$ projects all boxes onto $\beta$ and $\gamma$, indicating that there are values of the other parameters where any assignment to the pair will satisfy the constraint.  Unsurprisingly, larger values for $\beta$ and smaller values for $\gamma$ result in more scenario time spans where the constraints are satisfied (darker green regions include more true regions that are stacked/projected onto $\beta$ and $\gamma$). 
+The upper left plot for $\beta-\gamma$ projects all boxes onto $\beta$ and $\gamma$, indicating that there are values of the other parameters where any assignment to the pair will satisfy the constraint.  Unsurprisingly, larger values for $\beta$ and smaller values for $\gamma$ result in more scenario time spans where the constraints are satisfied (darker green regions include more true regions that are stacked/projected onto $\beta$ and $\gamma$). 
 
 The lower left plots for $\beta$-timestep and $\gamma$-timestep help to interpret the $\beta$-$\gamma$ plot.  Timesteps 5-10 (corresponding to 50-100 days) include several false regions (also stacked) where the constraints are not satisfied, and a few true regions where they are satisfied.  
 
@@ -295,6 +262,7 @@ The documentation at [https://siftech.github.io/funman/use_cases.html](https://s
 - .pylintrc: pylint config
 - LICENSE
 - Makefile
+- Makefile.prev
 - Makefile.uncharted: Uncharted's custom make
 - README.md
 - pyproject.toml: project configuration
@@ -302,32 +270,6 @@ The documentation at [https://siftech.github.io/funman/use_cases.html](https://s
 - requirements-dev.txt: development dependencies
 - setup.py: pip install configuration
 
-
-### Pre-commit hooks
-`funman` has a set of pre-commit hooks to help with code uniformity. These hooks
-will share the same rules as any automated testing so it is recommended to
-install the hooks locally to ease the development process.
-
-To use the pre-commit hooks you with need the tools listed in
-`requirements-dev.txt`. These should be installed in the same environment where
-you git tooling operates.
-```bash
-pip install -r requirements-dev.txt
-```
-
-Once install you should be able to run the following from the root of the repo:
-```bash
-make install-pre-commit-hooks
-```
-
-Once installed you should begin to receive isort/black feedback when
-committing. These should not alter the code during a commit but instead just
-fail and prevent a commit if the code does not conform to the specification.
-
-To autoformat the entire repo you can use:
-```bash
-make format
-```
 
 ### Code coverage
 Pytest is configured to generate code coverage, and requires the `pytest-cov`
