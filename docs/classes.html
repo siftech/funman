@@ -47,12 +47,13 @@
             
   <section id="class-diagram">
 <h1>Class Diagram<a class="headerlink" href="#class-diagram" title="Permalink to this heading">¶</a></h1>
-<div class="graphviz"><object data="_images/graphviz-5d5e7450e94d9074a84583c3e746440b5c14b845.svg" type="image/svg+xml" class="graphviz">
+<div class="graphviz"><object data="_images/graphviz-0ab9eec69bfae921e28431b18384c5ec5af7127f.svg" type="image/svg+xml" class="graphviz">
 <p class="warning">digraph &quot;classes&quot; {
 rankdir=BT
 charset=&quot;utf-8&quot;
 &quot;funman.model.petrinet.AbstractPetriNetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AbstractPetriNetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.regnet.AbstractRegnetModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AbstractRegnetModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.Abstraction&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Abstraction&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenario&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AnalysisScenario&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenarioResult&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;AnalysisScenarioResult&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.scenario.scenario.AnalysisScenarioResultException&quot; [color=&quot;black&quot;, fontcolor=&quot;red&quot;, label=&lt;AnalysisScenarioResultException&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
@@ -187,10 +188,19 @@ charset=&quot;utf-8&quot;
 &quot;funman.search.simulator_check.SimulatorCheck&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SimulatorCheck&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.simulator.SimulatorModel&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SimulatorModel&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.State&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;State&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StateTransition&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StateTransition&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.representation.constraint.StateVariableConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StateVariableConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.States&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;States&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.representation.parameter.StepSize&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StepSize&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.server.storage.Storage&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Storage&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StrataTransition&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StrataTransition&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.Stratification&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Stratification&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.Stratum&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Stratum&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StratumAttribute&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StratumAttribute&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StratumAttributeValue&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StratumAttributeValue&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StratumAttributeValueSet&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StratumAttributeValueSet&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StratumPartition&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StratumPartition&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StratumValuation&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StratumValuation&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.representation.parameter.StructureParameter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;StructureParameter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.sympy_utils.SympyBoundedSubstituter&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SympyBoundedSubstituter&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.utils.sympy_utils.SympySerializer&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;SympySerializer&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
@@ -201,6 +211,7 @@ charset=&quot;utf-8&quot;
 &quot;funman.representation.representation.Timeseries&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Timeseries&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.representation.constraint.TimeseriesConstraint&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;TimeseriesConstraint&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.Transition&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Transition&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.TransitionMap&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;TransitionMap&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.Transitions&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Transitions&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.TypingSemantics&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;TypingSemantics&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.Unit&quot; [color=&quot;black&quot;, fontcolor=&quot;black&quot;, label=&lt;Unit&gt;, shape=&quot;record&quot;, style=&quot;solid&quot;];
@@ -286,6 +297,8 @@ charset=&quot;utf-8&quot;
 &quot;funman.model.generated_models.petrinet.Model&quot; -&gt; &quot;funman.model.generated_models.petrinet.TypingSemantics&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;system&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.Model&quot; -&gt; &quot;funman.model.petrinet.GeneratedPetriNetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;petrinet&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.Model1&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.State&quot; -&gt; &quot;funman.model.petrinet.StateTransition&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;input&quot;, style=&quot;solid&quot;];
+&quot;funman.model.generated_models.petrinet.State&quot; -&gt; &quot;funman.model.petrinet.StateTransition&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;output&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.States&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model1&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;states&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.petrinet.Transitions&quot; -&gt; &quot;funman.model.generated_models.petrinet.Model1&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;transitions&quot;, style=&quot;solid&quot;];
 &quot;funman.model.generated_models.regnet.Header&quot; -&gt; &quot;funman.model.generated_models.regnet.Model&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;header&quot;, style=&quot;solid&quot;];
@@ -294,6 +307,8 @@ charset=&quot;utf-8&quot;
 &quot;funman.model.model.FunmanModel&quot; -&gt; &quot;funman.representation.constraint.ModelConstraint&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
 &quot;funman.model.model.FunmanModel&quot; -&gt; &quot;funman.search.simulate.Simulator&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;model&quot;, style=&quot;solid&quot;];
 &quot;funman.model.petrinet.PetrinetDynamics&quot; -&gt; &quot;funman.model.petrinet.PetrinetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;petrinet&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.Stratum&quot; -&gt; &quot;funman.model.petrinet.Stratification&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;stratum&quot;, style=&quot;solid&quot;];
+&quot;funman.model.petrinet.StratumPartition&quot; -&gt; &quot;funman.model.petrinet.Stratification&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;partition&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.Query&quot; -&gt; &quot;funman.representation.constraint.QueryConstraint&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;query&quot;, style=&quot;solid&quot;];
 &quot;funman.model.query.Query&quot; -&gt; &quot;funman.scenario.simulation.SimulationScenario&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;query&quot;, style=&quot;solid&quot;];
 &quot;funman.model.regnet.RegnetDynamics&quot; -&gt; &quot;funman.model.regnet.RegnetModel&quot; [arrowhead=&quot;diamond&quot;, arrowtail=&quot;none&quot;, fontcolor=&quot;green&quot;, label=&quot;regnet&quot;, style=&quot;solid&quot;];

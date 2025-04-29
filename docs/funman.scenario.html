@@ -132,6 +132,18 @@
          &quot;title&quot;: &quot;Empty Volume Ok&quot;,
          &quot;type&quot;: &quot;boolean&quot;
       },
+      &quot;init_time&quot;: {
+         &quot;anyOf&quot;: [
+            {
+               &quot;type&quot;: &quot;integer&quot;
+            },
+            {
+               &quot;type&quot;: &quot;number&quot;
+            }
+         ],
+         &quot;default&quot;: 0.0,
+         &quot;title&quot;: &quot;Init Time&quot;
+      },
       &quot;model&quot;: {
          &quot;anyOf&quot;: [
             {
@@ -419,7 +431,7 @@
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -559,7 +571,7 @@
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -635,7 +647,7 @@
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -680,7 +692,7 @@
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -721,7 +733,7 @@
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -751,7 +763,7 @@
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -787,7 +799,7 @@
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1327,7 +1339,7 @@
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1718,7 +1730,7 @@
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -2163,7 +2175,6 @@
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -2882,7 +2893,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3164,6 +3175,18 @@ search statistics.</p>
                &quot;title&quot;: &quot;Empty Volume Ok&quot;,
                &quot;type&quot;: &quot;boolean&quot;
             },
+            &quot;init_time&quot;: {
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;type&quot;: &quot;integer&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;number&quot;
+                  }
+               ],
+               &quot;default&quot;: 0.0,
+               &quot;title&quot;: &quot;Init Time&quot;
+            },
             &quot;model&quot;: {
                &quot;anyOf&quot;: [
                   {
@@ -3259,7 +3282,7 @@ search statistics.</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3335,7 +3358,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3403,7 +3426,7 @@ search statistics.</p>
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3444,7 +3467,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3474,7 +3497,7 @@ search statistics.</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3510,7 +3533,7 @@ search statistics.</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -4140,7 +4163,7 @@ search statistics.</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -4651,7 +4674,7 @@ search statistics.</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -5130,7 +5153,6 @@ search statistics.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -5659,6 +5681,18 @@ points in the region are valid (true) parameters for the model or invalid
          &quot;title&quot;: &quot;Empty Volume Ok&quot;,
          &quot;type&quot;: &quot;boolean&quot;
       },
+      &quot;init_time&quot;: {
+         &quot;anyOf&quot;: [
+            {
+               &quot;type&quot;: &quot;integer&quot;
+            },
+            {
+               &quot;type&quot;: &quot;number&quot;
+            }
+         ],
+         &quot;default&quot;: 0.0,
+         &quot;title&quot;: &quot;Init Time&quot;
+      },
       &quot;model&quot;: {
          &quot;anyOf&quot;: [
             {
@@ -5946,7 +5980,7 @@ points in the region are valid (true) parameters for the model or invalid
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6086,7 +6120,7 @@ points in the region are valid (true) parameters for the model or invalid
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6162,7 +6196,7 @@ points in the region are valid (true) parameters for the model or invalid
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6207,7 +6241,7 @@ points in the region are valid (true) parameters for the model or invalid
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6248,7 +6282,7 @@ points in the region are valid (true) parameters for the model or invalid
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6278,7 +6312,7 @@ points in the region are valid (true) parameters for the model or invalid
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6314,7 +6348,7 @@ points in the region are valid (true) parameters for the model or invalid
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6854,7 +6888,7 @@ points in the region are valid (true) parameters for the model or invalid
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -7245,7 +7279,7 @@ points in the region are valid (true) parameters for the model or invalid
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -7690,7 +7724,6 @@ points in the region are valid (true) parameters for the model or invalid
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -8392,7 +8425,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8646,7 +8679,7 @@ search statistics.</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8722,7 +8755,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8790,7 +8823,7 @@ search statistics.</p>
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8831,7 +8864,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8861,7 +8894,7 @@ search statistics.</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8897,7 +8930,7 @@ search statistics.</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -9530,6 +9563,18 @@ search statistics.</p>
                &quot;title&quot;: &quot;Empty Volume Ok&quot;,
                &quot;type&quot;: &quot;boolean&quot;
             },
+            &quot;init_time&quot;: {
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;type&quot;: &quot;integer&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;number&quot;
+                  }
+               ],
+               &quot;default&quot;: 0.0,
+               &quot;title&quot;: &quot;Init Time&quot;
+            },
             &quot;model&quot;: {
                &quot;anyOf&quot;: [
                   {
@@ -9650,7 +9695,7 @@ search statistics.</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -10161,7 +10206,7 @@ search statistics.</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -10640,7 +10685,6 @@ search statistics.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -11143,6 +11187,18 @@ search statistics.</p>
          &quot;title&quot;: &quot;Empty Volume Ok&quot;,
          &quot;type&quot;: &quot;boolean&quot;
       },
+      &quot;init_time&quot;: {
+         &quot;anyOf&quot;: [
+            {
+               &quot;type&quot;: &quot;integer&quot;
+            },
+            {
+               &quot;type&quot;: &quot;number&quot;
+            }
+         ],
+         &quot;default&quot;: 0.0,
+         &quot;title&quot;: &quot;Init Time&quot;
+      },
       &quot;model&quot;: {
          &quot;anyOf&quot;: [
             {
@@ -11430,7 +11486,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -11570,7 +11626,7 @@ search statistics.</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -11646,7 +11702,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -11691,7 +11747,7 @@ search statistics.</p>
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -11732,7 +11788,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -11762,7 +11818,7 @@ search statistics.</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -11798,7 +11854,7 @@ search statistics.</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -12338,7 +12394,7 @@ search statistics.</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -12729,7 +12785,7 @@ search statistics.</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -13174,7 +13230,6 @@ search statistics.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -13560,6 +13615,7 @@ search statistics.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.constraints" title="funman.scenario.scenario.AnalysisScenario.constraints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constraints</span> <span class="pre">(List[funman.representation.constraint.StateVariableConstraint</span> <span class="pre">|</span> <span class="pre">funman.representation.constraint.LinearConstraint]</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.empty_volume_ok" title="funman.scenario.scenario.AnalysisScenario.empty_volume_ok"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty_volume_ok</span> <span class="pre">(bool)</span></code></a></p></li>
+<li><p><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.init_time" title="funman.scenario.scenario.AnalysisScenario.init_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_time</span> <span class="pre">(int</span> <span class="pre">|</span> <span class="pre">float)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.model" title="funman.scenario.scenario.AnalysisScenario.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model</span> <span class="pre">(funman.model.petrinet.GeneratedPetriNetModel</span> <span class="pre">|</span> <span class="pre">funman.model.regnet.GeneratedRegnetModel</span> <span class="pre">|</span> <span class="pre">funman.model.regnet.RegnetModel</span> <span class="pre">|</span> <span class="pre">funman.model.petrinet.PetrinetModel</span> <span class="pre">|</span> <span class="pre">funman.model.decapode.DecapodeModel</span> <span class="pre">|</span> <span class="pre">funman.model.bilayer.BilayerModel</span> <span class="pre">|</span> <span class="pre">funman.model.encoded.EncodedModel</span> <span class="pre">|</span> <span class="pre">funman.model.ensemble.EnsembleModel)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.normalization_constant" title="funman.scenario.scenario.AnalysisScenario.normalization_constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normalization_constant</span> <span class="pre">(float</span> <span class="pre">|</span> <span class="pre">None)</span></code></a></p></li>
 <li><p><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.parameters" title="funman.scenario.scenario.AnalysisScenario.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span> <span class="pre">(List[funman.model.generated_models.petrinet.Parameter</span> <span class="pre">|</span> <span class="pre">funman.representation.parameter.ModelParameter</span> <span class="pre">|</span> <span class="pre">funman.representation.parameter.StructureParameter])</span></code></a></p></li>
@@ -13576,6 +13632,11 @@ search statistics.</p>
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="funman.scenario.scenario.AnalysisScenario.empty_volume_ok">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">empty_volume_ok</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#funman.scenario.scenario.AnalysisScenario.empty_volume_ok" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="funman.scenario.scenario.AnalysisScenario.init_time">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#funman.scenario.scenario.AnalysisScenario.init_time" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
@@ -13611,6 +13672,11 @@ search statistics.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.scenario.scenario.AnalysisScenario.encode_timeseries_verification">
 <span class="sig-name descname"><span class="pre">encode_timeseries_verification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.representation.html#funman.representation.representation.Point" title="funman.representation.representation.Point"><span class="pre">Point</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeseries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.representation.html#funman.representation.representation.Timeseries" title="funman.representation.representation.Timeseries"><span class="pre">Timeseries</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.scenario.scenario.AnalysisScenario.encode_timeseries_verification" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.scenario.scenario.AnalysisScenario.escaped_parameter_map">
+<span class="sig-name descname"><span class="pre">escaped_parameter_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#funman.scenario.scenario.AnalysisScenario.escaped_parameter_map" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -13657,6 +13723,11 @@ search statistics.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.scenario.scenario.AnalysisScenario.num_timepoints">
 <span class="sig-name descname"><span class="pre">num_timepoints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#funman.scenario.scenario.AnalysisScenario.num_timepoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.scenario.scenario.AnalysisScenario.parameter_map">
+<span class="sig-name descname"><span class="pre">parameter_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="funman.model.generated_models.html#funman.model.generated_models.petrinet.Parameter" title="funman.model.generated_models.petrinet.Parameter"><span class="pre">Parameter</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#funman.scenario.scenario.AnalysisScenario.parameter_map" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -13843,6 +13914,18 @@ search statistics.</p>
          &quot;title&quot;: &quot;Empty Volume Ok&quot;,
          &quot;type&quot;: &quot;boolean&quot;
       },
+      &quot;init_time&quot;: {
+         &quot;anyOf&quot;: [
+            {
+               &quot;type&quot;: &quot;integer&quot;
+            },
+            {
+               &quot;type&quot;: &quot;number&quot;
+            }
+         ],
+         &quot;default&quot;: 0.0,
+         &quot;title&quot;: &quot;Init Time&quot;
+      },
       &quot;model&quot;: {
          &quot;$ref&quot;: &quot;#/$defs/SimulatorModel&quot;
       },
@@ -13874,7 +13957,7 @@ search statistics.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -13902,7 +13985,6 @@ search statistics.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -14252,7 +14334,7 @@ search statistics.</p>
       &quot;SimulatorModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -14492,7 +14574,7 @@ method.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -14520,7 +14602,6 @@ method.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -14926,6 +15007,18 @@ method.</p>
                &quot;title&quot;: &quot;Empty Volume Ok&quot;,
                &quot;type&quot;: &quot;boolean&quot;
             },
+            &quot;init_time&quot;: {
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;type&quot;: &quot;integer&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;number&quot;
+                  }
+               ],
+               &quot;default&quot;: 0.0,
+               &quot;title&quot;: &quot;Init Time&quot;
+            },
             &quot;model&quot;: {
                &quot;$ref&quot;: &quot;#/$defs/SimulatorModel&quot;
             },
@@ -14944,7 +15037,7 @@ method.</p>
       &quot;SimulatorModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -15187,6 +15280,7 @@ is capable of solving.</p>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario</span></code></a><ul>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.constraints"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.constraints</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.empty_volume_ok"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.empty_volume_ok</span></code></a></li>
+<li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.init_time"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.init_time</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.model"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.model</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.normalization_constant"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.normalization_constant</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.parameters"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.parameters</span></code></a></li>
@@ -15194,6 +15288,7 @@ is capable of solving.</p>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.check_simulation"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.check_simulation()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.compute_observables"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.compute_observables()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.encode_timeseries_verification"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.encode_timeseries_verification()</span></code></a></li>
+<li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.escaped_parameter_map"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.escaped_parameter_map()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.get_kind"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.get_kind()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.get_search"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.get_search()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.initialize"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.initialize()</span></code></a></li>
@@ -15201,6 +15296,7 @@ is capable of solving.</p>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.model_post_init"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.model_post_init()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.num_dimensions"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.num_dimensions()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.num_timepoints"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.num_timepoints()</span></code></a></li>
+<li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.parameter_map"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.parameter_map()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.parameters_of_type"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.parameters_of_type()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.representable_space_volume"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.representable_space_volume()</span></code></a></li>
 <li><a class="reference internal" href="#funman.scenario.scenario.AnalysisScenario.run_point_simulation"><code class="docutils literal notranslate"><span class="pre">AnalysisScenario.run_point_simulation()</span></code></a></li>

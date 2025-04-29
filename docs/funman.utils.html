@@ -191,6 +191,11 @@
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.math_utils.get_number_from_string">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">get_number_from_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.math_utils.get_number_from_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="funman.utils.math_utils.gt">
 <span class="sig-prename descclassname"><span class="pre">funman.utils.math_utils.</span></span><span class="sig-name descname"><span class="pre">gt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lhs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.math_utils.gt" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -269,7 +274,7 @@ an UnsupportedOperatorError exception is given.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.utils.smtlib_utils.model_to_dict">
-<span class="sig-prename descclassname"><span class="pre">funman.utils.smtlib_utils.</span></span><span class="sig-name descname"><span class="pre">model_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.smtlib_utils.model_to_dict" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">funman.utils.smtlib_utils.</span></span><span class="sig-name descname"><span class="pre">model_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">escaped_parameter_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.smtlib_utils.model_to_dict" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -280,6 +285,11 @@ an UnsupportedOperatorError exception is given.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.utils.smtlib_utils.smtlibscript_from_formula_list">
 <span class="sig-prename descclassname"><span class="pre">funman.utils.smtlib_utils.</span></span><span class="sig-name descname"><span class="pre">smtlibscript_from_formula_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formulas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.smtlib_utils.smtlibscript_from_formula_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.smtlib_utils.str_smtlib">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.smtlib_utils.</span></span><span class="sig-name descname"><span class="pre">str_smtlib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formula</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.smtlib_utils.str_smtlib" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
@@ -432,8 +442,13 @@ an UnsupportedOperatorError exception is given.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="funman.utils.sympy_utils.has_reserved">
-<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">has_reserved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.has_reserved" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.has_reserved_char">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">has_reserved_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.has_reserved_char" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.has_reserved_word">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">has_reserved_word</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.has_reserved_word" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -444,6 +459,11 @@ an UnsupportedOperatorError exception is given.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="funman.utils.sympy_utils.replace_reserved">
 <span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">replace_reserved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.replace_reserved" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="funman.utils.sympy_utils.rev_replace_reserved">
+<span class="sig-prename descclassname"><span class="pre">funman.utils.sympy_utils.</span></span><span class="sig-name descname"><span class="pre">rev_replace_reserved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_expr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.utils.sympy_utils.rev_replace_reserved" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -554,6 +574,7 @@ an UnsupportedOperatorError exception is given.</p>
 </li>
 <li><a class="reference internal" href="#funman-utils-math-utils-module">funman.utils.math_utils module</a><ul>
 <li><a class="reference internal" href="#funman.utils.math_utils.div"><code class="docutils literal notranslate"><span class="pre">div()</span></code></a></li>
+<li><a class="reference internal" href="#funman.utils.math_utils.get_number_from_string"><code class="docutils literal notranslate"><span class="pre">get_number_from_string()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.math_utils.gt"><code class="docutils literal notranslate"><span class="pre">gt()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.math_utils.gte"><code class="docutils literal notranslate"><span class="pre">gte()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.math_utils.lt"><code class="docutils literal notranslate"><span class="pre">lt()</span></code></a></li>
@@ -578,6 +599,7 @@ an UnsupportedOperatorError exception is given.</p>
 <li><a class="reference internal" href="#funman.utils.smtlib_utils.model_to_dict"><code class="docutils literal notranslate"><span class="pre">model_to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.smtlib_utils.smtlibscript_from_formula"><code class="docutils literal notranslate"><span class="pre">smtlibscript_from_formula()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.smtlib_utils.smtlibscript_from_formula_list"><code class="docutils literal notranslate"><span class="pre">smtlibscript_from_formula_list()</span></code></a></li>
+<li><a class="reference internal" href="#funman.utils.smtlib_utils.str_smtlib"><code class="docutils literal notranslate"><span class="pre">str_smtlib()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#funman-utils-sympy-utils-module">funman.utils.sympy_utils module</a><ul>
@@ -603,9 +625,11 @@ an UnsupportedOperatorError exception is given.</p>
 <li><a class="reference internal" href="#funman.utils.sympy_utils.SympySerializer.walk_times"><code class="docutils literal notranslate"><span class="pre">SympySerializer.walk_times()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#funman.utils.sympy_utils.has_reserved"><code class="docutils literal notranslate"><span class="pre">has_reserved()</span></code></a></li>
+<li><a class="reference internal" href="#funman.utils.sympy_utils.has_reserved_char"><code class="docutils literal notranslate"><span class="pre">has_reserved_char()</span></code></a></li>
+<li><a class="reference internal" href="#funman.utils.sympy_utils.has_reserved_word"><code class="docutils literal notranslate"><span class="pre">has_reserved_word()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.sympy_utils.rate_expr_to_pysmt"><code class="docutils literal notranslate"><span class="pre">rate_expr_to_pysmt()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.sympy_utils.replace_reserved"><code class="docutils literal notranslate"><span class="pre">replace_reserved()</span></code></a></li>
+<li><a class="reference internal" href="#funman.utils.sympy_utils.rev_replace_reserved"><code class="docutils literal notranslate"><span class="pre">rev_replace_reserved()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.sympy_utils.series_approx"><code class="docutils literal notranslate"><span class="pre">series_approx()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.sympy_utils.substitute"><code class="docutils literal notranslate"><span class="pre">substitute()</span></code></a></li>
 <li><a class="reference internal" href="#funman.utils.sympy_utils.sympy_subs"><code class="docutils literal notranslate"><span class="pre">sympy_subs()</span></code></a></li>

@@ -499,7 +499,7 @@
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -753,7 +753,7 @@
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -829,7 +829,7 @@
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1085,12 +1085,19 @@
                &quot;type&quot;: &quot;boolean&quot;
             },
             &quot;dreal_prefer_parameters&quot;: {
-               &quot;default&quot;: [],
-               &quot;items&quot;: {
-                  &quot;type&quot;: &quot;string&quot;
-               },
-               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;,
-               &quot;type&quot;: &quot;array&quot;
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;items&quot;: {
+                        &quot;type&quot;: &quot;string&quot;
+                     },
+                     &quot;type&quot;: &quot;array&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;null&quot;
+                  }
+               ],
+               &quot;default&quot;: null,
+               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;
             },
             &quot;point_based_evaluation&quot;: {
                &quot;default&quot;: false,
@@ -1124,7 +1131,7 @@
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1367,7 +1374,7 @@
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1403,7 +1410,7 @@
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -2074,7 +2081,7 @@
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -2567,7 +2574,7 @@
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3136,7 +3143,6 @@
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -3586,7 +3592,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.server.query.FunmanResults.dataframe">
-<span class="sig-name descname"><span class="pre">dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.representation.html#funman.representation.representation.Point" title="funman.representation.representation.Point"><span class="pre">Point</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.server.query.FunmanResults.dataframe" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.representation.html#funman.representation.representation.Point" title="funman.representation.representation.Point"><span class="pre">Point</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.server.query.FunmanResults.dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract a timeseries as a Pandas dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3707,6 +3713,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.server.query.FunmanResults.time_horizon">
+<span class="sig-name descname"><span class="pre">time_horizon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.server.query.FunmanResults.time_horizon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="funman.server.query.FunmanResults.update_parameter_space">
@@ -4194,12 +4205,19 @@
                &quot;type&quot;: &quot;boolean&quot;
             },
             &quot;dreal_prefer_parameters&quot;: {
-               &quot;default&quot;: [],
-               &quot;items&quot;: {
-                  &quot;type&quot;: &quot;string&quot;
-               },
-               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;,
-               &quot;type&quot;: &quot;array&quot;
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;items&quot;: {
+                        &quot;type&quot;: &quot;string&quot;
+                     },
+                     &quot;type&quot;: &quot;array&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;null&quot;
+                  }
+               ],
+               &quot;default&quot;: null,
+               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;
             },
             &quot;point_based_evaluation&quot;: {
                &quot;default&quot;: false,
@@ -4233,7 +4251,7 @@
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -4943,6 +4961,11 @@
 <span class="sig-name descname"><span class="pre">parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="funman.representation.html#funman.representation.parameter.ModelParameter" title="funman.representation.parameter.ModelParameter"><span class="pre">ModelParameter</span></a></span></span><a class="headerlink" href="#funman.server.query.FunmanWorkRequest.parameter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="funman.server.query.FunmanWorkRequest.time_horizon">
+<span class="sig-name descname"><span class="pre">time_horizon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#funman.server.query.FunmanWorkRequest.time_horizon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class pydantic_model">
@@ -5229,7 +5252,7 @@ request : A copy of the request associated with this response</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -5369,7 +5392,7 @@ request : A copy of the request associated with this response</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -5655,12 +5678,19 @@ request : A copy of the request associated with this response</p>
                &quot;type&quot;: &quot;boolean&quot;
             },
             &quot;dreal_prefer_parameters&quot;: {
-               &quot;default&quot;: [],
-               &quot;items&quot;: {
-                  &quot;type&quot;: &quot;string&quot;
-               },
-               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;,
-               &quot;type&quot;: &quot;array&quot;
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;items&quot;: {
+                        &quot;type&quot;: &quot;string&quot;
+                     },
+                     &quot;type&quot;: &quot;array&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;null&quot;
+                  }
+               ],
+               &quot;default&quot;: null,
+               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;
             },
             &quot;point_based_evaluation&quot;: {
                &quot;default&quot;: false,
@@ -5694,7 +5724,7 @@ request : A copy of the request associated with this response</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -5845,7 +5875,7 @@ request : A copy of the request associated with this response</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -5881,7 +5911,7 @@ request : A copy of the request associated with this response</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6462,7 +6492,7 @@ request : A copy of the request associated with this response</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6835,7 +6865,7 @@ request : A copy of the request associated with this response</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -7329,7 +7359,6 @@ request : A copy of the request associated with this response</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -7931,6 +7960,7 @@ request : A copy of the request associated with this response</p>
 <li><a class="reference internal" href="#funman.server.query.FunmanResults.stop"><code class="docutils literal notranslate"><span class="pre">FunmanResults.stop()</span></code></a></li>
 <li><a class="reference internal" href="#funman.server.query.FunmanResults.symbol_timeseries"><code class="docutils literal notranslate"><span class="pre">FunmanResults.symbol_timeseries()</span></code></a></li>
 <li><a class="reference internal" href="#funman.server.query.FunmanResults.symbol_values"><code class="docutils literal notranslate"><span class="pre">FunmanResults.symbol_values()</span></code></a></li>
+<li><a class="reference internal" href="#funman.server.query.FunmanResults.time_horizon"><code class="docutils literal notranslate"><span class="pre">FunmanResults.time_horizon()</span></code></a></li>
 <li><a class="reference internal" href="#funman.server.query.FunmanResults.update_parameter_space"><code class="docutils literal notranslate"><span class="pre">FunmanResults.update_parameter_space()</span></code></a></li>
 </ul>
 </li>
@@ -7954,6 +7984,7 @@ request : A copy of the request associated with this response</p>
 <li><a class="reference internal" href="#funman.server.query.FunmanWorkRequest.structure_parameters"><code class="docutils literal notranslate"><span class="pre">FunmanWorkRequest.structure_parameters</span></code></a></li>
 <li><a class="reference internal" href="#funman.server.query.FunmanWorkRequest.check_unique_names"><code class="docutils literal notranslate"><span class="pre">FunmanWorkRequest.check_unique_names</span></code></a></li>
 <li><a class="reference internal" href="#funman.server.query.FunmanWorkRequest.parameter"><code class="docutils literal notranslate"><span class="pre">FunmanWorkRequest.parameter()</span></code></a></li>
+<li><a class="reference internal" href="#funman.server.query.FunmanWorkRequest.time_horizon"><code class="docutils literal notranslate"><span class="pre">FunmanWorkRequest.time_horizon()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#funman.server.query.FunmanWorkUnit"><code class="docutils literal notranslate"><span class="pre">FunmanWorkUnit</span></code></a><ul>

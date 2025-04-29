@@ -47,7 +47,7 @@
             
   <section id="package-diagram">
 <h1>Package Diagram<a class="headerlink" href="#package-diagram" title="Permalink to this heading">¶</a></h1>
-<div class="graphviz"><object data="_images/graphviz-20eaf17a40e30f2d44a5ca5f53062e027a773aff.svg" type="image/svg+xml" class="graphviz">
+<div class="graphviz"><object data="_images/graphviz-ebc72a5f45c6bdcf34808cd659ac1debc43ff97d.svg" type="image/svg+xml" class="graphviz">
 <p class="warning">digraph &quot;packages&quot; {
 rankdir=BT
 charset=&quot;utf-8&quot;
@@ -219,6 +219,7 @@ charset=&quot;utf-8&quot;
 &quot;funman.representation.constraint&quot; -&gt; &quot;funman.representation.interval&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.constraint&quot; -&gt; &quot;funman.representation.parameter&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.constraint&quot; -&gt; &quot;funman.representation.representation&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.constraint&quot; -&gt; &quot;funman.utils.sympy_utils&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.explanation&quot; -&gt; &quot;funman.representation.assumption&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.interval&quot; -&gt; &quot;funman.constants&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.interval&quot; -&gt; &quot;funman.utils.logging&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
@@ -227,11 +228,13 @@ charset=&quot;utf-8&quot;
 &quot;funman.representation.parameter&quot; -&gt; &quot;funman.representation.encoding_schedule&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.parameter&quot; -&gt; &quot;funman.representation.interval&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.parameter&quot; -&gt; &quot;funman.representation.symbol&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.parameter&quot; -&gt; &quot;funman.utils.sympy_utils&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.parameter_space&quot; -&gt; &quot;funman.representation.box&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.parameter_space&quot; -&gt; &quot;funman.representation.explanation&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.representation&quot; -&gt; &quot;funman&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.representation&quot; -&gt; &quot;funman.constants&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.representation.representation&quot; -&gt; &quot;funman.model.model&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.representation.representation&quot; -&gt; &quot;funman.utils.math_utils&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.scenario&quot; -&gt; &quot;funman.scenario.consistency&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.scenario&quot; -&gt; &quot;funman.scenario.parameter_synthesis&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.scenario&quot; -&gt; &quot;funman.scenario.scenario&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
@@ -275,6 +278,7 @@ charset=&quot;utf-8&quot;
 &quot;funman.search.box_search&quot; -&gt; &quot;funman.search.search&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.box_search&quot; -&gt; &quot;funman.translate.translate&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.box_search&quot; -&gt; &quot;funman.utils.smtlib_utils&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
+&quot;funman.search.box_search&quot; -&gt; &quot;funman.utils.sympy_utils&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.search&quot; -&gt; &quot;funman&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.search&quot; -&gt; &quot;funman.translate.translate&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];
 &quot;funman.search.simulate&quot; -&gt; &quot;funman&quot; [arrowhead=&quot;open&quot;, arrowtail=&quot;none&quot;];

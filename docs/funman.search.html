@@ -195,6 +195,18 @@ of the search.</p>
                &quot;title&quot;: &quot;Empty Volume Ok&quot;,
                &quot;type&quot;: &quot;boolean&quot;
             },
+            &quot;init_time&quot;: {
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;type&quot;: &quot;integer&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;number&quot;
+                  }
+               ],
+               &quot;default&quot;: 0.0,
+               &quot;title&quot;: &quot;Init Time&quot;
+            },
             &quot;model&quot;: {
                &quot;anyOf&quot;: [
                   {
@@ -488,7 +500,7 @@ of the search.</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -628,7 +640,7 @@ of the search.</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -704,7 +716,7 @@ of the search.</p>
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -772,7 +784,7 @@ of the search.</p>
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1000,12 +1012,19 @@ of the search.</p>
                &quot;type&quot;: &quot;boolean&quot;
             },
             &quot;dreal_prefer_parameters&quot;: {
-               &quot;default&quot;: [],
-               &quot;items&quot;: {
-                  &quot;type&quot;: &quot;string&quot;
-               },
-               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;,
-               &quot;type&quot;: &quot;array&quot;
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;items&quot;: {
+                        &quot;type&quot;: &quot;string&quot;
+                     },
+                     &quot;type&quot;: &quot;array&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;null&quot;
+                  }
+               ],
+               &quot;default&quot;: null,
+               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;
             },
             &quot;point_based_evaluation&quot;: {
                &quot;default&quot;: false,
@@ -1039,7 +1058,7 @@ of the search.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1069,7 +1088,7 @@ of the search.</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1105,7 +1124,7 @@ of the search.</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -1645,7 +1664,7 @@ of the search.</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -2036,7 +2055,7 @@ of the search.</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -2486,7 +2505,6 @@ of the search.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -2988,6 +3006,18 @@ method.</p>
                &quot;title&quot;: &quot;Empty Volume Ok&quot;,
                &quot;type&quot;: &quot;boolean&quot;
             },
+            &quot;init_time&quot;: {
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;type&quot;: &quot;integer&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;number&quot;
+                  }
+               ],
+               &quot;default&quot;: 0.0,
+               &quot;title&quot;: &quot;Init Time&quot;
+            },
             &quot;model&quot;: {
                &quot;anyOf&quot;: [
                   {
@@ -3281,7 +3311,7 @@ method.</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3421,7 +3451,7 @@ method.</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3497,7 +3527,7 @@ method.</p>
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3565,7 +3595,7 @@ method.</p>
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3793,12 +3823,19 @@ method.</p>
                &quot;type&quot;: &quot;boolean&quot;
             },
             &quot;dreal_prefer_parameters&quot;: {
-               &quot;default&quot;: [],
-               &quot;items&quot;: {
-                  &quot;type&quot;: &quot;string&quot;
-               },
-               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;,
-               &quot;type&quot;: &quot;array&quot;
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;items&quot;: {
+                        &quot;type&quot;: &quot;string&quot;
+                     },
+                     &quot;type&quot;: &quot;array&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;null&quot;
+                  }
+               ],
+               &quot;default&quot;: null,
+               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;
             },
             &quot;point_based_evaluation&quot;: {
                &quot;default&quot;: false,
@@ -3832,7 +3869,7 @@ method.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3862,7 +3899,7 @@ method.</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -3898,7 +3935,7 @@ method.</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -4438,7 +4475,7 @@ method.</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -4829,7 +4866,7 @@ method.</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -5279,7 +5316,6 @@ method.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -5925,6 +5961,18 @@ method.</p>
                &quot;title&quot;: &quot;Empty Volume Ok&quot;,
                &quot;type&quot;: &quot;boolean&quot;
             },
+            &quot;init_time&quot;: {
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;type&quot;: &quot;integer&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;number&quot;
+                  }
+               ],
+               &quot;default&quot;: 0.0,
+               &quot;title&quot;: &quot;Init Time&quot;
+            },
             &quot;model&quot;: {
                &quot;anyOf&quot;: [
                   {
@@ -6218,7 +6266,7 @@ method.</p>
          &quot;description&quot;: &quot;A BilayerModel is a complete specification of a Model that uses a BilayerDynamics graph to represent dynamics. It includes the attributes:\n\n* bilayer: the BilayerDynamics graph\n\n* measurements: the BilayerMeasurement graph (used to derive additional variables from the state nodes)\n\n* init_values: a dict mapping from state variables and flux parameters to initial value\n\n* identical_parameters: a list of lists of flux parameters that have identical values\n\n* parameter_bounds: a list of lower and upper bounds on parameters&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6358,7 +6406,7 @@ method.</p>
       &quot;DecapodeModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6434,7 +6482,7 @@ method.</p>
          &quot;description&quot;: &quot;Model that holds an SMT formula encoding a model.  This class is meant to wrap hand-coded SMT formulas.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6502,7 +6550,7 @@ method.</p>
       &quot;EnsembleModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6730,12 +6778,19 @@ method.</p>
                &quot;type&quot;: &quot;boolean&quot;
             },
             &quot;dreal_prefer_parameters&quot;: {
-               &quot;default&quot;: [],
-               &quot;items&quot;: {
-                  &quot;type&quot;: &quot;string&quot;
-               },
-               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;,
-               &quot;type&quot;: &quot;array&quot;
+               &quot;anyOf&quot;: [
+                  {
+                     &quot;items&quot;: {
+                        &quot;type&quot;: &quot;string&quot;
+                     },
+                     &quot;type&quot;: &quot;array&quot;
+                  },
+                  {
+                     &quot;type&quot;: &quot;null&quot;
+                  }
+               ],
+               &quot;default&quot;: null,
+               &quot;title&quot;: &quot;Dreal Prefer Parameters&quot;
             },
             &quot;point_based_evaluation&quot;: {
                &quot;default&quot;: false,
@@ -6769,7 +6824,7 @@ method.</p>
          &quot;description&quot;: &quot;The abstract base class for Models.&quot;,
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6799,7 +6854,7 @@ method.</p>
       &quot;GeneratedPetriNetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -6835,7 +6890,7 @@ method.</p>
       &quot;GeneratedRegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -7375,7 +7430,7 @@ method.</p>
       &quot;PetrinetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -7766,7 +7821,7 @@ method.</p>
       &quot;RegnetModel&quot;: {
          &quot;properties&quot;: {
             &quot;name&quot;: {
-               &quot;default&quot;: &quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;,
+               &quot;default&quot;: &quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;,
                &quot;title&quot;: &quot;Name&quot;,
                &quot;type&quot;: &quot;string&quot;
             },
@@ -8216,7 +8271,6 @@ method.</p>
          &quot;type&quot;: &quot;object&quot;
       },
       &quot;funman__model__generated_models__petrinet__Grounding&quot;: {
-         &quot;additionalProperties&quot;: false,
          &quot;properties&quot;: {
             &quot;identifiers&quot;: {
                &quot;title&quot;: &quot;Identifiers&quot;,
@@ -8776,7 +8830,7 @@ method.</p>
 <span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The abstract base class for Models.&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;model_a6f04917-34c0-45e0-a42c-128947736090&quot;</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;model_e3129585-8004-4b63-8425-a258343f8026&quot;</span><span class="p">,</span>
 <span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Name&quot;</span><span class="p">,</span>
 <span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
 <span class="w">            </span><span class="p">},</span>
@@ -8926,6 +8980,11 @@ method.</p>
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="funman.search.smt_check.SMTCheck.prime_solver">
+<span class="sig-name descname"><span class="pre">prime_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Solver</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#funman.search.smt_check.SMTCheck.prime_solver" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="funman.search.smt_check.SMTCheck.search">
 <span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="funman.html#funman.config.FUNMANConfig" title="funman.config.FUNMANConfig"><span class="pre">FUNMANConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haltEvent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Event</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resultsCallback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="funman.representation.html#funman.representation.parameter_space.ParameterSpace" title="funman.representation.parameter_space.ParameterSpace"><span class="pre">ParameterSpace</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#funman.search.search.SearchEpisode" title="funman.search.search.SearchEpisode"><span class="pre">SearchEpisode</span></a></span></span><a class="headerlink" href="#funman.search.smt_check.SMTCheck.search" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -9056,6 +9115,7 @@ method.</p>
 <li><a class="reference internal" href="#funman.search.smt_check.SMTCheck"><code class="docutils literal notranslate"><span class="pre">SMTCheck</span></code></a><ul>
 <li><a class="reference internal" href="#funman.search.smt_check.SMTCheck.build_formula"><code class="docutils literal notranslate"><span class="pre">SMTCheck.build_formula()</span></code></a></li>
 <li><a class="reference internal" href="#funman.search.smt_check.SMTCheck.expand"><code class="docutils literal notranslate"><span class="pre">SMTCheck.expand()</span></code></a></li>
+<li><a class="reference internal" href="#funman.search.smt_check.SMTCheck.prime_solver"><code class="docutils literal notranslate"><span class="pre">SMTCheck.prime_solver()</span></code></a></li>
 <li><a class="reference internal" href="#funman.search.smt_check.SMTCheck.search"><code class="docutils literal notranslate"><span class="pre">SMTCheck.search()</span></code></a></li>
 <li><a class="reference internal" href="#funman.search.smt_check.SMTCheck.solve_formula"><code class="docutils literal notranslate"><span class="pre">SMTCheck.solve_formula()</span></code></a></li>
 <li><a class="reference internal" href="#funman.search.smt_check.SMTCheck.store_smtlib"><code class="docutils literal notranslate"><span class="pre">SMTCheck.store_smtlib()</span></code></a></li>

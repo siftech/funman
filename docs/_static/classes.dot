@@ -3,6 +3,7 @@ rankdir=BT
 charset="utf-8"
 "funman.model.petrinet.AbstractPetriNetModel" [color="black", fontcolor="black", label=<AbstractPetriNetModel>, shape="record", style="solid"];
 "funman.model.regnet.AbstractRegnetModel" [color="black", fontcolor="black", label=<AbstractRegnetModel>, shape="record", style="solid"];
+"funman.model.petrinet.Abstraction" [color="black", fontcolor="black", label=<Abstraction>, shape="record", style="solid"];
 "funman.scenario.scenario.AnalysisScenario" [color="black", fontcolor="black", label=<AnalysisScenario>, shape="record", style="solid"];
 "funman.scenario.scenario.AnalysisScenarioResult" [color="black", fontcolor="black", label=<AnalysisScenarioResult>, shape="record", style="solid"];
 "funman.scenario.scenario.AnalysisScenarioResultException" [color="black", fontcolor="red", label=<AnalysisScenarioResultException>, shape="record", style="solid"];
@@ -137,10 +138,19 @@ charset="utf-8"
 "funman.search.simulator_check.SimulatorCheck" [color="black", fontcolor="black", label=<SimulatorCheck>, shape="record", style="solid"];
 "funman.model.simulator.SimulatorModel" [color="black", fontcolor="black", label=<SimulatorModel>, shape="record", style="solid"];
 "funman.model.generated_models.petrinet.State" [color="black", fontcolor="black", label=<State>, shape="record", style="solid"];
+"funman.model.petrinet.StateTransition" [color="black", fontcolor="black", label=<StateTransition>, shape="record", style="solid"];
 "funman.representation.constraint.StateVariableConstraint" [color="black", fontcolor="black", label=<StateVariableConstraint>, shape="record", style="solid"];
 "funman.model.generated_models.petrinet.States" [color="black", fontcolor="black", label=<States>, shape="record", style="solid"];
 "funman.representation.parameter.StepSize" [color="black", fontcolor="black", label=<StepSize>, shape="record", style="solid"];
 "funman.server.storage.Storage" [color="black", fontcolor="black", label=<Storage>, shape="record", style="solid"];
+"funman.model.petrinet.StrataTransition" [color="black", fontcolor="black", label=<StrataTransition>, shape="record", style="solid"];
+"funman.model.petrinet.Stratification" [color="black", fontcolor="black", label=<Stratification>, shape="record", style="solid"];
+"funman.model.petrinet.Stratum" [color="black", fontcolor="black", label=<Stratum>, shape="record", style="solid"];
+"funman.model.petrinet.StratumAttribute" [color="black", fontcolor="black", label=<StratumAttribute>, shape="record", style="solid"];
+"funman.model.petrinet.StratumAttributeValue" [color="black", fontcolor="black", label=<StratumAttributeValue>, shape="record", style="solid"];
+"funman.model.petrinet.StratumAttributeValueSet" [color="black", fontcolor="black", label=<StratumAttributeValueSet>, shape="record", style="solid"];
+"funman.model.petrinet.StratumPartition" [color="black", fontcolor="black", label=<StratumPartition>, shape="record", style="solid"];
+"funman.model.petrinet.StratumValuation" [color="black", fontcolor="black", label=<StratumValuation>, shape="record", style="solid"];
 "funman.representation.parameter.StructureParameter" [color="black", fontcolor="black", label=<StructureParameter>, shape="record", style="solid"];
 "funman.utils.sympy_utils.SympyBoundedSubstituter" [color="black", fontcolor="black", label=<SympyBoundedSubstituter>, shape="record", style="solid"];
 "funman.utils.sympy_utils.SympySerializer" [color="black", fontcolor="black", label=<SympySerializer>, shape="record", style="solid"];
@@ -151,6 +161,7 @@ charset="utf-8"
 "funman.representation.representation.Timeseries" [color="black", fontcolor="black", label=<Timeseries>, shape="record", style="solid"];
 "funman.representation.constraint.TimeseriesConstraint" [color="black", fontcolor="black", label=<TimeseriesConstraint>, shape="record", style="solid"];
 "funman.model.generated_models.petrinet.Transition" [color="black", fontcolor="black", label=<Transition>, shape="record", style="solid"];
+"funman.model.petrinet.TransitionMap" [color="black", fontcolor="black", label=<TransitionMap>, shape="record", style="solid"];
 "funman.model.generated_models.petrinet.Transitions" [color="black", fontcolor="black", label=<Transitions>, shape="record", style="solid"];
 "funman.model.generated_models.petrinet.TypingSemantics" [color="black", fontcolor="black", label=<TypingSemantics>, shape="record", style="solid"];
 "funman.model.generated_models.petrinet.Unit" [color="black", fontcolor="black", label=<Unit>, shape="record", style="solid"];
@@ -236,6 +247,8 @@ charset="utf-8"
 "funman.model.generated_models.petrinet.Model" -> "funman.model.generated_models.petrinet.TypingSemantics" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="system", style="solid"];
 "funman.model.generated_models.petrinet.Model" -> "funman.model.petrinet.GeneratedPetriNetModel" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="petrinet", style="solid"];
 "funman.model.generated_models.petrinet.Model1" -> "funman.model.generated_models.petrinet.Model" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="model", style="solid"];
+"funman.model.generated_models.petrinet.State" -> "funman.model.petrinet.StateTransition" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="input", style="solid"];
+"funman.model.generated_models.petrinet.State" -> "funman.model.petrinet.StateTransition" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="output", style="solid"];
 "funman.model.generated_models.petrinet.States" -> "funman.model.generated_models.petrinet.Model1" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="states", style="solid"];
 "funman.model.generated_models.petrinet.Transitions" -> "funman.model.generated_models.petrinet.Model1" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="transitions", style="solid"];
 "funman.model.generated_models.regnet.Header" -> "funman.model.generated_models.regnet.Model" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="header", style="solid"];
@@ -244,6 +257,8 @@ charset="utf-8"
 "funman.model.model.FunmanModel" -> "funman.representation.constraint.ModelConstraint" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="model", style="solid"];
 "funman.model.model.FunmanModel" -> "funman.search.simulate.Simulator" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="model", style="solid"];
 "funman.model.petrinet.PetrinetDynamics" -> "funman.model.petrinet.PetrinetModel" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="petrinet", style="solid"];
+"funman.model.petrinet.Stratum" -> "funman.model.petrinet.Stratification" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="stratum", style="solid"];
+"funman.model.petrinet.StratumPartition" -> "funman.model.petrinet.Stratification" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="partition", style="solid"];
 "funman.model.query.Query" -> "funman.representation.constraint.QueryConstraint" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="query", style="solid"];
 "funman.model.query.Query" -> "funman.scenario.simulation.SimulationScenario" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="query", style="solid"];
 "funman.model.regnet.RegnetDynamics" -> "funman.model.regnet.RegnetModel" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="regnet", style="solid"];
