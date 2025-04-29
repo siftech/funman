@@ -445,8 +445,9 @@ class DRealNative(
         if hasattr(self.config, "random_seed"):
             self.config.random_seed = 0
         if "solver_options" in options:
-            if (hasattr(self.config, "preferred") and \
-                "preferred" in options["solver_options"]
+            if (
+                hasattr(self.config, "preferred")
+                and "preferred" in options["solver_options"]
                 and len(options["solver_options"]["preferred"]) > 0
             ):
                 self.config.preferred = options["solver_options"]["preferred"]
@@ -454,9 +455,11 @@ class DRealNative(
                 self.config.precision = options["solver_options"][
                     "dreal_precision"
                 ]
-            if hasattr(self.config, "preferred") and \
-                "random_seed" in options["solver_options"]:
-                
+            if (
+                hasattr(self.config, "preferred")
+                and "random_seed" in options["solver_options"]
+            ):
+
                 self.config.random_seed = options["solver_options"][
                     "random_seed"
                 ]

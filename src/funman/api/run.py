@@ -2,9 +2,9 @@ import argparse
 import json
 import logging
 import os
-from pathlib import PosixPath
 import random
 from contextlib import contextmanager
+from pathlib import PosixPath
 from time import sleep
 from timeit import default_timer
 from typing import Dict, List, Optional, Tuple, Union
@@ -258,7 +258,9 @@ class Runner:
                     m = _wrap_with_internal_model(model_file)
                     req = None
                     break
-                if isinstance(model_file, str) or isinstance(model_file, PosixPath):
+                if isinstance(model_file, str) or isinstance(
+                    model_file, PosixPath
+                ):
                     with open(model_file, "r") as mf:
                         j = json.load(mf)
                 else:

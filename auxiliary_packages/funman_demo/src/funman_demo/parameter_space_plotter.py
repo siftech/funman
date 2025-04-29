@@ -29,7 +29,7 @@ class ParameterSpacePlotter:
         parameters=None,
         dpi=100,
         synthesized_parameters=None,
-        figsize=(20,20)
+        figsize=(20, 20),
     ):
         if isinstance(parameter_space, ParameterSpace):
             self.ps = parameter_space
