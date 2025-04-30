@@ -9,12 +9,12 @@
 
 \begin{definition}
 	Let $E(v) = \edgesIn{}(v) \cup \edgesOut{}(v)$, and for all $e = (v, v') \in E$,
-        $e \in \edgesOut{}(v)$ and  $e \in \edgesIn{}(v')$.
-        We define the \emph{parent} and \emph{child} of an edge, $\parent( (v, v') ) = v$ and $\child( (v, v') ) = v'$.
-        We define the parents (descendents) of a vertex, $\parents(v)$ ($\children(v)$) as the set of parents (children) of the edges in and out, respectively. 
-        Further, % for all $(v, v') \in E$,
-        if $v \in
-V_X$ then $v' \in V_Z$ and if $v \in V_Z$, then $v' \in V_X$.
+	$e \in \edgesOut{}(v)$ and  $e \in \edgesIn{}(v')$.
+	We define the \emph{parent} and \emph{child} of an edge, $\parent( (v, v') ) = v$ and $\child( (v, v') ) = v'$.
+	We define the parents (descendents) of a vertex, $\parents(v)$ ($\children(v)$) as the set of parents (children) of the edges in and out, respectively.
+	Further, % for all $(v, v') \in E$,
+	if $v \in
+		V_X$ then $v' \in V_Z$ and if $v \in V_Z$, then $v' \in V_X$.
 \end{definition}
 
 \begin{example}
@@ -24,7 +24,7 @@ V_X$ then $v' \in V_Z$ and if $v \in V_Z$, then $v' \in V_X$.
 		V_Z &=& \{ \vinf, \vrec\}\\
 		E &=& \{ (v_{S}, \vinf),(v_{I}, \vinf{}), (\vinf{}, v_{I}), (\vinf{}, v_{I}),  (v_{I}, \vrec{}), (\vrec{}, v_{R})\}
 	\end{eqnarray*}
-        The SIR model is depicted in Figure \ref{fig:sir_model}.
+	The SIR model is depicted in Figure \ref{fig:sir_model}.
 \end{example}
 
 \begin{figure}[ht]
@@ -46,7 +46,7 @@ capture these rates. For example, we may distinguish subpopulations
 with different vaccination status, gender, or age, and there will be a different
 value of $S$, $I$, and $R$ for each.
 
-We facilitate this by extending the state description with discrete variables.
+We facilitate this by annotating the state description with discrete variables.
 Each assignment to the discrete variables describes a different subpopulation.
 For example, $(I, \{(vac=T,
 	gender=M, age=child)\})$ and $(I, \{(vac=T, gender=F, age=child)\})$ refer to
@@ -103,16 +103,16 @@ rates, we could define the set of susceptible, vaccinated children as $(S, g)$, 
 		\frac{d(x, g)}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
 	\end{equation}
 
-        {\color{red}
-          \textbf{Alternative?}
-        \ldots so that for each vertex $v$:
+	% {\color{red}
+	% \textbf{Alternative?}
+	% \ldots so that for each vertex $v$:
 
 
-	\begin{equation*}%\label{eqn:flow}
-		\frac{d({\cal X}(v))}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
-	\end{equation*}
+	% \begin{equation*}%\label{eqn:flow}
+	% 	\frac{d({\cal X}(v))}{dt} = \sum_{(v_z, v) \in E} {\cal R}({\bf p}, {\bf x}, z) - \sum_{(v, v_z)\in E}  {\cal R}({\bf p}, {\bf x}, z)
+	% \end{equation*}
 
-        The above modification drops mention of the state variables corresponding to $v$ because I \emph{think} they are not relevant.}
+	% The above modification drops mention of the state variables corresponding to $v$ because I \emph{think} they are not relevant.}
 
 	\noindent We denote
 	by $\nabla_{\Omega, \Theta}({\bf p}, {\bf x}, t)$, the gradient made up of components defined in
@@ -129,14 +129,14 @@ rates, we could define the set of susceptible, vaccinated children as $(S, g)$, 
 	Each balanced-flow \Petrinet{} transition $z$ defines a set of state transitions
 	\begin{equation*}
 		\begin{split}
-		T(z) = \{((x, g), z, (x', g')) | & (v, z) \in \edgesIn{}(z),\\
-										 & ({\cal X}(v),{\cal D}(v)) = (x, g), \\  
-										 & (z, v') \in \edgesOut{}(z), \\
-										 & ({\cal X}(v'),{\cal D}(v')) = (x', g')\}
+			T(z) = \{((x, g), z, (x', g')) | & (v, z) \in \edgesIn{}(z),\\
+			& ({\cal X}(v),{\cal D}(v)) = (x, g), \\
+			& (z, v') \in \edgesOut{}(z), \\
+			& ({\cal X}(v'),{\cal D}(v')) = (x', g')\}
 		\end{split}
 	\end{equation*}
 
-each of whose elements matches an input state with exactly one output state, and vice versa.
+	each of whose elements matches an input state with exactly one output state, and vice versa.
 \end{definition}
 
 
@@ -144,12 +144,12 @@ each of whose elements matches an input state with exactly one output state, and
 	An independent-transition \Petrinet{} requires that for each transition, there
 	is exactly one $((x, g), z,
 		(x', g')) \in T(z)$ where $(x, g)\not= (x', g')$, and for all other
-	transition components $(x, g)= (x', g')$. 
+	transition components $(x, g)= (x', g')$.
 
 \end{definition}
 
 A balanced-flow, independent-transition \Petrinet{} permits only a single state
-change with each transition.  That is, all flows out of a transition node either return to one of its input nodes or flow into a single output node. 
+change with each transition.  That is, all flows out of a transition node either return to one of its input nodes or flow into a single output node.
 The other edges into the state transitions involve no net flow; they simply serve to identify other variables that influence the rate of the state change.
 These definitions become important for
 defining \Petrinet{} stratification, as described in the following section.
@@ -225,8 +225,8 @@ For example, in Figure \ref{fig:sir_model}, flow through the ``infection'' node 
 		\end{array}\right.\\
 		{\cal D} &=& \left\{
 		\begin{array}{ll}
-			v_I & :G \\
 			v_S & :G \\
+			v_I & :G \\
 			v_R & :G \\
 		\end{array}\right.\\
 		{\cal I} &=& \left\{

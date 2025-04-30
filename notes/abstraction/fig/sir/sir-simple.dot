@@ -5,6 +5,7 @@ digraph petrinet {
 	rec [shape=box]
 	inf [shape=box]
 	I -> inf
+	I -> inf
 	inf -> I
 	rec [shape=box]
 	I -> rec

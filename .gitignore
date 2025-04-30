@@ -332,3 +332,4 @@ undo_S.pdf
 *.csv
 undo_S
 notes/abstraction/main.pdf
+notebooks/out/*

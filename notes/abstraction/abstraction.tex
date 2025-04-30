@@ -1,35 +1,72 @@
-\begin{definition}
-	An abstraction $(\Theta^{A}, \Omega^{A})$ of a \Petrinet{} and the associated
-	semantics $(\Theta, \Omega)$ that is produced by the abstraction operator
-	$A$ has the following properties:
-	\begin{itemize}
-		\item State: For each $x \in X$,  there exists an $x' \in
-			      X^{A}$ where $A(x) = x'$.
-		      % For each vertex $v_x \in V_x$,  $A(v_x) = v_x'$ where $v_x' \in
-		      % V_x'$.   
-		      % For each $x\in X$ where  ${\cal X}(x) =
-		      % V_x$, $A(x) = x'$, and $A(v_x) = v_x'$, then ${\cal X}'(x')=
-		      % v_{x'}'$. 
-		      For each abstract state variable $x' \in X^{A}$, the initial value is the sum of the initial values of state variables mapped to $x'$ by $A$, so that  ${\cal I}^{A}(x') = \sum\limits_{x \in X: A(x) = x'} {\cal I}(x)$.
-		\item Parameters: For each $p \in P$, there exists a $p'\in P^{A}$ where $A(p) = p'$.
-		      For each abstract parameter $p' \in P^{A}$, the value (or interval) is the sum of all parameters mapped to $p'$ by $A$, so that ${\cal P}^{A}(p') = \sum\limits_{p \in P: A(p) = p'} {\cal P}(p)$.
-		\item Transitions: For each $z \in Z$, there exists a $z' \in Z^{A}$ where $A(z) = z'$.
-		\item In Edges: For each edge $(z, x) \in E_{in}$, there exists a $(z',
-			      x')\in E_{in}^{A}$, where $A((z, x)) =
-			      (z', x')$, $A(x) = x'$, and $A(z) = z'$.
-		\item Out Edges: For each edge $(x, z) \in E_{out}$, there exists a $(x',
-			      z')\in E_{out}^{A}$, where $A((x, z))
-			      = (x', z')$, $A(x) = x'$, and $A(z) = z'$.
+Stratification causes an exponential growth in the size of a model and greatly impacts the cost of simulating the model.  Abstraction reverses stratification by grouping related state variables, and hence their transitions and associated rates.  We explore abstraction as a way to reduce the size of highly stratified models and the cost of simulation.  While an explicit reversal of stratification could aggregate population-specific parameters with a mean, we aggregate with lower and upper bounds.  Tracking the bounds, as we elaborate upon in the next section, permits us to check constraints on the state variables (e.g., on upper bounds).
 
+Abstraction involves defining which state variables to group.  These in turn allow us to combine transitions and their rates.  For example, we can abstract the stratified \Petrinet{} from the previous section by specifying the set of state variables $\{(S, \{(vac=F)\}), (S, \{(vac=T)\})\}$ to abstract.  The result is a state variable $(S, \{(vac=F),(vac=T)\})$.  After replacing the abstracted state variables with the result, the transitions $inf_{vac=T}$ and $inv_{vac=F}$ become isomorphic (differing only in parameters in their rates).  We replace those transitions with an abstract transition.
 
-		\item Transition Rates: For each $z' \in Z^{A}$,
-		      \begin{equation}\label{eqn:agg-flow}
-			      {\cal R}^{A}({\bf p}', {\bf
-				      x}', z') = \sum\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf
-				      x}, z)
-		      \end{equation}
-	\end{itemize}
+The rates of the stratified transitions are $S_{vac=F}I\beta_{vac=F}$ and $S_{vac=T}I\beta_{vac=T}$.  We preserve to total flow through these transitions by defining the rate of the abstract transition as the sum $S_{vac=F}I\beta_{vac=F}+S_{vac=T}I\beta_{vac=T}$.  If we let $\beta_*$ denote an aggregate parameter (to be replaced by a lower or upper bound in the next section) and substitute it for $\beta_{vac=F}$ and $\beta_{vac=T}$, then $S_{vac=F}I\beta_*+S_{vac=T}I\beta_* = (S_{vac=F}+S_{vac=T})I\beta_* = SI\beta_*$.  In this manner, we can abstract transitions that were previously stratified.
+
+\begin{definition} (State Abstraction)
+	The state abstraction operator $A_X((\Theta, \Omega), \{(x,g_1), \ldots, (x, g_N)\})$ defines a new set of states $X^A = X \backslash \{(x,g_1), \ldots, (x, g_N)\} \cup \{(x, g)\}$, where $g = \bigcup_{i=1}^N g_i$.  The set of abstract model state variable vertices $V_X^A$ is defined as $V_X^A=V_X\backslash \{v\in V_X|({\cal X}(v), {\cal D}(v)) \in \{(x,g_1), \ldots, (x, g_N)\} \} \cup \{v^A \}$, where $({\cal X}^A(v^A), {\cal D}^A(v^A)) = (x, g)$ and $({\cal X}^A(v), {\cal D}^A(v)) = ({\cal X}(v), {\cal D}(v))$ for all $v \in V_X^A\backslash \{v^A\}$.
 \end{definition}
+
+\begin{definition} (Transition Component Substitution)
+	Let $T(z)[(x, g)] = \{t[(x, g)]| t \in T(z)\}$ denote the set of transition components where each $t[(x,g)]$ substitutes $(x, g)$ for $(x, g')$ if $t=((x, g'), z, (x_b, g_b))$ or $t=((x_a, g_a), z, (x, g'))$.
+\end{definition}
+
+% \begin{definition} (Transition Component Abstraction)
+% 	The transition component abstraction operator $A_T((\Theta, \Omega), \{t_1, \ldots, t_N\})$ abstracts a set of transition components $\{t_1, \ldots, t_M\}$ to define an abstract transition component $t = ((x_a, \cup_{i=1}^N g_{a_i}), z, (x_b, \cup_{i=1}^N g_{b_i}))$.
+% \end{definition}
+
+
+\begin{definition} (Transition Abstraction)
+	The transition abstraction operator $A_Z((\Theta, \Omega), ((x,g_1), \ldots, (x, g_N)), Z')$ defines an abstract transition $z$ in terms of a set of transitions $Z'$ where i) $Z' \subseteq Z$,  ii) $g' = \cup_{i=1}^N g_i$, and iii) for each pair $z_j, z_k \in Z'$, $T(z_j)[(x, g')] = T(z_k)[(x, g')]$.  The abstract transition $z$ defines the transition components $T(z)$ so that $T(z) = T(z_j)[(x, g')]$ for each $z_j \in Z'$.  There may be several sets $Z_1', \ldots, Z_M'$ that are disjoint, and the abstraction defines an abstract transition $z_1, \ldots, z_M$ for each.
+
+	The transitions in the abstracted model are defined as $Z^A = Z \backslash \{z | z \in Z_1' \cup \ldots Z_M'\} \cup \bigcup_{i=1}^M \{z_i\}$.  Similarly, the transition vertices are defined $V_Z^A = V_Z\backslash \{v_{z} \in V_Z| z \in Z_1' \cup \ldots Z_M'\} \cup \bigcup_{i=1}^M \{v_{z_i}\}$
+\end{definition}
+
+
+\begin{definition} (Edge Abstraction)
+	The abstract edges are defined as $E^A = E\backslash\{e \in E(v_z) | z \in Z_1' \cup \ldots Z_M'\} \cup \{(v_{xg}, v_z)| z \in Z^A\backslash Z, ((x, g), z, (x_b, g_b)) \in T(z)\} \cup \{(v_z, v_{xg})| z \in Z^A\backslash Z, ((x_a, g_a), z, (x, g)) \in T(z)\}$.
+\end{definition}
+
+\begin{definition} (Transition Rate Abstraction)
+	For each $z \in Z^{A}$,
+	\begin{equation}\label{eqn:agg-flow}
+		{\cal R}^{A}({\bf p}, {\bf
+			x}, z) = \sum\limits_{z' \in Z'} {\cal R}({\bf p}, {\bf
+			x}, z')
+	\end{equation}
+\end{definition}
+
+% \begin{definition}
+% 	An abstraction operator $A((\Theta, \Omega), ((x,g_1), \ldots, (x, g_N))) = (\Theta^{A}, \Omega^{A})$ applied to a \Petrinet{} and set of state variables defines a abstracted \Petrinet{} according to Definitions \ref{def:abs1} to \ref{def:abs2}
+% 	\begin{itemize}
+% 		\item State: For each $x \in X$,  there exists an $x' \in
+% 			      X^{A}$ where $A(x) = x'$.
+% 		      % For each vertex $v_x \in V_x$,  $A(v_x) = v_x'$ where $v_x' \in
+% 		      % V_x'$.   
+% 		      % For each $x\in X$ where  ${\cal X}(x) =
+% 		      % V_x$, $A(x) = x'$, and $A(v_x) = v_x'$, then ${\cal X}'(x')=
+% 		      % v_{x'}'$. 
+% 		      For each abstract state variable $x' \in X^{A}$, the initial value is the sum of the initial values of state variables mapped to $x'$ by $A$, so that  ${\cal I}^{A}(x') = \sum\limits_{x \in X: A(x) = x'} {\cal I}(x)$.
+% 		\item Parameters: For each $p \in P$, there exists a $p'\in P^{A}$ where $A(p) = p'$.
+% 		      For each abstract parameter $p' \in P^{A}$, the value (or interval) is the sum of all parameters mapped to $p'$ by $A$, so that ${\cal P}^{A}(p') = \sum\limits_{p \in P: A(p) = p'} {\cal P}(p)$.
+% 		\item Transitions: For each $z \in Z$, there exists a $z' \in Z^{A}$ where $A(z) = z'$.
+% 		\item In Edges: For each edge $(z, x) \in E_{in}$, there exists a $(z',
+% 			      x')\in E_{in}^{A}$, where $A((z, x)) =
+% 			      (z', x')$, $A(x) = x'$, and $A(z) = z'$.
+% 		\item Out Edges: For each edge $(x, z) \in E_{out}$, there exists a $(x',
+% 			      z')\in E_{out}^{A}$, where $A((x, z))
+% 			      = (x', z')$, $A(x) = x'$, and $A(z) = z'$.
+
+
+% 		\item Transition Rates: For each $z' \in Z^{A}$,
+% 		      \begin{equation}\label{eqn:agg-flow}
+% 			      {\cal R}^{A}({\bf p}', {\bf
+% 				      x}', z') = \sum\limits_{z \in Z: A(z)=z'} {\cal R}({\bf p}, {\bf
+% 				      x}, z)
+% 		      \end{equation}
+% 	\end{itemize}
+% \end{definition}
 
 \begin{example}\label{ex:abstraction}
 	The abstraction $(\Theta^{A}, \Omega^{A})$ of the stratified SIR model defines
@@ -39,7 +76,7 @@
 		\begin{array}{lll}
 			S      & : S_1     & * \\
 			S      & : S_2     & * \\
-			I      & : I           \\ 
+			I      & : I           \\
 			R      & : R           \\
 			\beta  & : \beta_1 & * \\
 			\beta  & : \beta_2 & * \\

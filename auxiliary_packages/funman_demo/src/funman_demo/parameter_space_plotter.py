@@ -29,6 +29,7 @@ class ParameterSpacePlotter:
         parameters=None,
         dpi=100,
         synthesized_parameters=None,
+        figsize=(20, 20),
     ):
         if isinstance(parameter_space, ParameterSpace):
             self.ps = parameter_space
@@ -37,6 +38,7 @@ class ParameterSpacePlotter:
             self.ps = ParameterSpace.model_validate(parameter_space.to_dict())
 
         self.boxes = boxes
+        self.figsize = figsize
 
         # Expect that parameters are available in the parameter space
         self.parameters = parameters  # [k for k in scenario_parameters if parameters and k in parameters]
@@ -79,7 +81,7 @@ class ParameterSpacePlotter:
             dim_to_plot,
             squeeze=False,
             dpi=self.dpi,
-            figsize=(20, 20),
+            figsize=self.figsize,
         )
         self.fig = fig
         self.axs = axs
