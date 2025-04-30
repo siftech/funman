@@ -1,0 +1,14 @@
+digraph petrinet {
+	"inf([I*S*beta]) = [2.7e-7*I*S]" [shape=box]
+	S -> "inf([I*S*beta]) = [2.7e-7*I*S]"
+	"rec([I*gamma]) = [0.14*I]" [shape=box]
+	"inf([I*S*beta]) = [2.7e-7*I*S]" [shape=box]
+	I -> "inf([I*S*beta]) = [2.7e-7*I*S]"
+	"inf([I*S*beta]) = [2.7e-7*I*S]" -> I [label=1.0]
+	"inf([I*S*beta]) = [2.7e-7*I*S]" -> I [label=1.0]
+	"rec([I*gamma]) = [0.14*I]" [shape=box]
+	I -> "rec([I*gamma]) = [0.14*I]"
+	"inf([I*S*beta]) = [2.7e-7*I*S]" [shape=box]
+	"rec([I*gamma]) = [0.14*I]" [shape=box]
+	"rec([I*gamma]) = [0.14*I]" -> R [label=1.0]
+}

@@ -1,0 +1,483 @@
+{
+    "model": {
+        "id": "56e59083-acf3-4794-9069-4f599b8349d6",
+        "createdOn": "2024-10-26T15:52:14.305+00:00",
+        "updatedOn": "2025-02-03T23:53:21.553+00:00",
+        "name": "SEIRHVTD for 3.3.1, 3.3.2, 3.3.3, 3.4.1, 3.4.2, 3.4.3, part of 3.5.1 and 3.5.2",
+        "fileNames": [],
+        "temporary": false,
+        "publicAsset": false,
+        "header": {
+            "name": "SEIRHVTD for 3.3.1, 3.3.2, 3.3.3, 3.4.1, 3.4.2, 3.4.3, part of 3.5.1 and 3.5.2",
+            "description": "This is a model from equations",
+            "schema": "https://raw.githubusercontent.com/DARPA-ASKEM/Model-Representations/petrinet_v0.6/petrinet/petrinet_schema.json",
+            "schema_name": "petrinet",
+            "model_version": "0.1"
+        },
+        "model": {
+            "transitions": [
+                {
+                    "id": "t0",
+                    "input": [
+                        "I",
+                        "S"
+                    ],
+                    "output": [
+                        "I",
+                        "E"
+                    ],
+                    "properties": {
+                        "name": "t0"
+                    }
+                },
+                {
+                    "id": "t1",
+                    "input": [
+                        "I",
+                        "V"
+                    ],
+                    "output": [
+                        "I",
+                        "E"
+                    ],
+                    "properties": {
+                        "name": "t1"
+                    }
+                },
+                {
+                    "id": "t2",
+                    "input": [
+                        "E"
+                    ],
+                    "output": [
+                        "I"
+                    ],
+                    "properties": {
+                        "name": "t2"
+                    }
+                },
+                {
+                    "id": "t3",
+                    "input": [
+                        "E"
+                    ],
+                    "output": [
+                        "T"
+                    ],
+                    "properties": {
+                        "name": "t3"
+                    }
+                },
+                {
+                    "id": "t4",
+                    "input": [
+                        "T"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "properties": {
+                        "name": "t4"
+                    }
+                },
+                {
+                    "id": "t5",
+                    "input": [
+                        "H"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "properties": {
+                        "name": "t5"
+                    }
+                },
+                {
+                    "id": "t6",
+                    "input": [
+                        "H"
+                    ],
+                    "output": [
+                        "D"
+                    ],
+                    "properties": {
+                        "name": "t6"
+                    }
+                },
+                {
+                    "id": "t7",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "H"
+                    ],
+                    "properties": {
+                        "name": "t7"
+                    }
+                },
+                {
+                    "id": "t8",
+                    "input": [
+                        "I"
+                    ],
+                    "output": [
+                        "R"
+                    ],
+                    "properties": {
+                        "name": "t8"
+                    }
+                }
+            ],
+            "states": [
+                {
+                    "id": "S",
+                    "name": "S",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "E",
+                    "name": "E",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "V",
+                    "name": "V",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "I",
+                    "name": "I",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "T",
+                    "name": "T",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "R",
+                    "name": "R",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "H",
+                    "name": "H",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                },
+                {
+                    "id": "D",
+                    "name": "D",
+                    "grounding": {
+                        "identifiers": {},
+                        "modifiers": {}
+                    }
+                }
+            ]
+        },
+        "properties": {},
+        "semantics": {
+            "ode": {
+                "rates": [
+                    {
+                        "target": "t0",
+                        "expression": "S*I*λ/N",
+                        "expression_mathml": "<apply><divide/><apply><times/><ci>S</ci><ci>I</ci><ci>|&#955;|</ci></apply><ci>N</ci></apply>"
+                    },
+                    {
+                        "target": "t1",
+                        "expression": "V*I*λ/N*(1 - ε_{V})",
+                        "expression_mathml": "<apply><divide/><apply><times/><ci>I</ci><ci>V</ci><ci>|&#955;|</ci><apply><minus/><cn>1</cn><ci>|&#949;QQQ{V}|</ci></apply></apply><ci>N</ci></apply>"
+                    },
+                    {
+                        "target": "t2",
+                        "expression": "E*σ*(1 - p_{T})",
+                        "expression_mathml": "<apply><times/><ci>E</ci><ci>|&#963;|</ci><apply><minus/><cn>1</cn><ci>p_{T}</ci></apply></apply>"
+                    },
+                    {
+                        "target": "t3",
+                        "expression": "E*p_{T}*σ",
+                        "expression_mathml": "<apply><times/><ci>E</ci><ci>p_{T}</ci><ci>|&#963;|</ci></apply>"
+                    },
+                    {
+                        "target": "t4",
+                        "expression": "T*δ",
+                        "expression_mathml": "<apply><times/><ci>T</ci><ci>|&#948;|</ci></apply>"
+                    },
+                    {
+                        "target": "t5",
+                        "expression": "H*κ",
+                        "expression_mathml": "<apply><times/><ci>H</ci><ci>|&#954;|</ci></apply>"
+                    },
+                    {
+                        "target": "t6",
+                        "expression": "H*μ",
+                        "expression_mathml": "<apply><times/><ci>H</ci><ci>|&#956;|</ci></apply>"
+                    },
+                    {
+                        "target": "t7",
+                        "expression": "I*η",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>|&#951;|</ci></apply>"
+                    },
+                    {
+                        "target": "t8",
+                        "expression": "I*δ",
+                        "expression_mathml": "<apply><times/><ci>I</ci><ci>|&#948;|</ci></apply>"
+                    }
+                ],
+                "initials": [
+                    {
+                        "target": "S",
+                        "expression": "40000",
+                        "expression_mathml": "<cn>40000</cn>"
+                    },
+                    {
+                        "target": "E",
+                        "expression": "150",
+                        "expression_mathml": "<cn>150</cn>"
+                    },
+                    {
+                        "target": "V",
+                        "expression": "20000",
+                        "expression_mathml": "<cn>20000</cn>"
+                    },
+                    {
+                        "target": "I",
+                        "expression": "10",
+                        "expression_mathml": "<cn>10</cn>"
+                    },
+                    {
+                        "target": "T",
+                        "expression": "0",
+                        "expression_mathml": "<cn>0</cn>"
+                    },
+                    {
+                        "target": "R",
+                        "expression": "0",
+                        "expression_mathml": "<cn>0</cn>"
+                    },
+                    {
+                        "target": "H",
+                        "expression": "0",
+                        "expression_mathml": "<cn>0</cn>"
+                    },
+                    {
+                        "target": "D",
+                        "expression": "0",
+                        "expression_mathml": "<cn>0</cn>"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "id": "λ",
+                        "name": "λ",
+                        "value": 0.75,
+                        "conceptReference": "λ"
+                    },
+                    {
+                        "id": "ε_{V}",
+                        "name": "ε_{V}",
+                        "value": 0.7,
+                        "conceptReference": "ε_{V}"
+                    },
+                    {
+                        "id": "p_{T}",
+                        "name": "p_{T}",
+                        "value": 0.1,
+                        "conceptReference": "p_{T}"
+                    },
+                    {
+                        "id": "σ",
+                        "name": "σ",
+                        "value": 0.18,
+                        "conceptReference": "σ"
+                    },
+                    {
+                        "id": "δ",
+                        "name": "δ",
+                        "value": 0.25,
+                        "conceptReference": "δ"
+                    },
+                    {
+                        "id": "κ",
+                        "name": "κ",
+                        "value": 0.13,
+                        "conceptReference": "κ"
+                    },
+                    {
+                        "id": "μ",
+                        "name": "μ",
+                        "value": 0.01,
+                        "conceptReference": "μ"
+                    },
+                    {
+                        "id": "N",
+                        "name": "N",
+                        "value": 60160,
+                        "conceptReference": "N"
+                    },
+                    {
+                        "id": "η",
+                        "name": "η",
+                        "value": 0.01,
+                        "conceptReference": "η"
+                    }
+                ],
+                "observables": [],
+                "time": {
+                    "id": "t"
+                }
+            },
+            "span": [],
+            "typing": null
+        },
+        "metadata": {
+            "annotations": {
+                "authors": [],
+                "references": [],
+                "locations": [],
+                "pathogens": [],
+                "diseases": [],
+                "hosts": [],
+                "model_types": []
+            },
+            "source": null,
+            "gollmCard": null,
+            "gollmExtractions": null,
+            "templateCard": null
+        }
+    },
+    "request": {
+        "constraints": [],
+        "parameters": [
+            {
+                "name": "λ",
+                "label": "any",
+                "interval": {
+                    "lb": 0.75,
+                    "ub": 0.75
+                }
+            },
+            {
+                "name": "ε_{V}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.7,
+                    "ub": 0.7
+                }
+            },
+            {
+                "name": "p_{T}",
+                "label": "any",
+                "interval": {
+                    "lb": 0.1,
+                    "ub": 0.1
+                }
+            },
+            {
+                "name": "σ",
+                "label": "any",
+                "interval": {
+                    "lb": 0.18,
+                    "ub": 0.18
+                }
+            },
+            {
+                "name": "δ",
+                "label": "any",
+                "interval": {
+                    "lb": 0.25,
+                    "ub": 0.25
+                }
+            },
+            {
+                "name": "κ",
+                "label": "any",
+                "interval": {
+                    "lb": 0.13,
+                    "ub": 0.13
+                }
+            },
+            {
+                "name": "μ",
+                "label": "any",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.01
+                }
+            },
+            {
+                "name": "N",
+                "label": "any",
+                "interval": {
+                    "lb": 60160,
+                    "ub": 60160
+                }
+            },
+            {
+                "name": "η",
+                "label": "any",
+                "interval": {
+                    "lb": 0.01,
+                    "ub": 0.01
+                }
+            }
+        ],
+        "structure_parameters": [
+            {
+                "name": "schedules",
+                "schedules": [
+                    {
+                        "timepoints": [
+                            0,
+                            2,
+                            4,
+                            6,
+                            8,
+                            10,
+                            20,
+                            30,
+                            40,
+                            50,
+                            60,
+                            70,
+                            80,
+                            90,
+                            95,
+                            100
+                        ]
+                    }
+                ]
+            }
+        ],
+        "config": {
+            "use_compartmental_constraints": true,
+            "normalization_constant": 60160,
+            "normalize": false,
+            "tolerance": 0.2,
+            "verbosity": 0,
+            "save_smtlib": "out/"
+        }
+    }
+}

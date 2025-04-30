@@ -1,0 +1,15 @@
+digraph petrinet {
+    rankdir=LR;
+	inf [shape=box]
+	S -> inf
+	rec [shape=box]
+	inf [shape=box]
+	I -> inf
+	I -> inf
+	inf -> I
+	rec [shape=box]
+	I -> rec
+	inf [shape=box]
+	rec [shape=box]
+	rec -> R
+}

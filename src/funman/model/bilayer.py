@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import Dict, List, Literal, Optional, Union
 
@@ -8,6 +9,8 @@ from funman.config import FUNMANConfig
 from funman.model import FunmanModel
 from funman.representation import Interval
 from funman.representation.parameter import ModelParameter
+
+l = logging.getLogger(__name__)
 
 
 class BilayerMetadata(BaseModel):
@@ -524,3 +527,8 @@ class BilayerModel(FunmanModel):
             raise Exception(
                 f"Cannot calculate the normalization constant for {type(self)} because the initial state variables are not constants. Try setting the 'normalization_constant' in the configuration to constant."
             )
+
+    def observables(self):
+        l.warn("BilayerModel.observables() is not implemented")
+        # raise NotImplementedError()
+        return None

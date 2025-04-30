@@ -136,7 +136,11 @@ class Interval(BaseModel):
 
     def __str__(self):
         ub = "]" if self.closed_upper_bound else ")"
-        return f"[{self.lb:.5f}, {self.ub:.5f}{ub}"
+        try:
+            val = f"[{self.lb:.5f}, {self.ub:.5f}{ub}"
+        except Exception:
+            pass
+        return val
 
     def meets(self, other: "Interval") -> bool:
         """

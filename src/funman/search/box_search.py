@@ -55,6 +55,7 @@ from funman.search import Box, ParameterSpace, Point, Search, SearchEpisode
 from funman.search.search import SearchStaticsMP, SearchStatistics
 from funman.translate.translate import EncodingOptions, EncodingSchedule
 from funman.utils.smtlib_utils import smtlibscript_from_formula_list
+from funman.utils.sympy_utils import rev_replace_reserved
 
 l = logging.getLogger(__name__)
 
@@ -331,7 +332,7 @@ class BoxSearchEpisode(SearchEpisode):
     def _extract_point(self, model, box: Box):
         point = Point(
             values={
-                p[0].symbol_name(): (
+                rev_replace_reserved(p[0].symbol_name()): (
                     (
                         (
                             float(p[1].constant_value())

@@ -63,8 +63,11 @@ def is_observable(
     var_string, model: "FunmanModel", time_pattern: str = f"[\\d]+$"
 ) -> bool:
     vars_pattern = "|".join(model._observable_names())
-    pattern = re.compile(f"^(?:{vars_pattern}).*")
-    return re.match(pattern, var_string) is not None
+    if vars_pattern == "":
+        return False
+    else:
+        pattern = re.compile(f"^(?:{vars_pattern}).*")
+        return re.match(pattern, var_string) is not None
 
 
 class FunmanModel(ABC, BaseModel):

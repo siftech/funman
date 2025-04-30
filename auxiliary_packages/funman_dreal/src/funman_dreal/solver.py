@@ -442,10 +442,12 @@ class DRealNative(
         # self.context.config.use_worklist_fixpoint = True
         self.model = None
         self.log_level = dreal.LogLevel.OFF
-        self.config.random_seed = 0
+        if hasattr(self.config, "random_seed"):
+            self.config.random_seed = 0
         if "solver_options" in options:
             if (
-                "preferred" in options["solver_options"]
+                hasattr(self.config, "preferred")
+                and "preferred" in options["solver_options"]
                 and len(options["solver_options"]["preferred"]) > 0
             ):
                 self.config.preferred = options["solver_options"]["preferred"]
@@ -453,7 +455,11 @@ class DRealNative(
                 self.config.precision = options["solver_options"][
                     "dreal_precision"
                 ]
-            if "random_seed" in options["solver_options"]:
+            if (
+                hasattr(self.config, "preferred")
+                and "random_seed" in options["solver_options"]
+            ):
+
                 self.config.random_seed = options["solver_options"][
                     "random_seed"
                 ]
