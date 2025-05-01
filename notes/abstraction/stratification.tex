@@ -13,7 +13,7 @@ We build up the stratification operator using specific operators for different e
 	The state stratification operator $St_{XG}((x, g), (g_1, \ldots, g_N))$ maps a state variable $(x, g)$ and partition $(g_1, \ldots, g_N)$ of $g$ to a set of states $\{(x, g_1), \ldots, (x, g_N)\}$.  The stratified state variables and annotations are defined so that $X' = X$ and $D'=D$.  If $({\cal X}(v_{xg}),{\cal D}(v_{xg})) = (x, g)$ in $\Omega, \Theta$ for some $v_{xg} \in V$, then in $\Omega', \Theta'$, the state vertex mapping is $({\cal X}'(v_{xg_i}),{\cal D}'(v_{xg_i})) = (x, g_i)$ for each $g_i$ and some $v_{xg_i} \in V'$.  For all other states, ${\cal X}' = {\cal X}$ and ${\cal D}' = {\cal D}$.  The stratified vertices define $V' = V\backslash\{v_{xg}\} \cup \{v_{xg_i} | (x, g_i) \in X'\}$.
 \end{definition}
 
-For example, the result of $St_{XG}((S, \{(vac=T), (vac=F)\}), (\{(vac=T)\}, \{(vac=F)\}))$ is $\{(S, \{(vac=T)\}), (S, \{(vac=F)\})\}$.  In the stratified model, ${\cal X}'$ and ${\cal D}'$ map the unique vertices $v_{ST}$ and $v_{SF}$ to these respective state variables.
+For example, the result of $$St_{XG}((S, \{(vac=T), (vac=F)\}), (\{(vac=T)\}, \{(vac=F)\}))$$ is $$\{(S, \{(vac=T)\}), (S, \{(vac=F)\})\}$$.  In the stratified model, ${\cal X}'$ and ${\cal D}'$ map the unique vertices $v_{ST}$ and $v_{SF}$ to these respective state variables.
 
 \begin{definition} (Stratified Transition Components)
 	The  stratification operator $St_{T}((x, g), (g_1, \ldots, g_N), t_k)$ for a transition component $t_k \in T(z)$ and $z \in Z$ defines a set of transition components $T_k'(z)$.  If $t_k = ((x_a, g_a), z, (x_b, g_b))$, then $T_k'(z)$ corresponds to one of the following:
