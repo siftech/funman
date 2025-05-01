@@ -61,11 +61,11 @@
 
 \section{Introduction}
 
-We describe methods to stratify (refine) and de-stratify (abstract) \Petrinets{} for compartmental models.  The motivation for abstracting a \Petrinet{} is to reduce its size, which can become exponential in the number of stratified variables.  Reducing the size of the model can have a significant impact on runtime, while it may still be possible to answer useful queries (more efficiently) with an abstracted model.  The following sections include background (defining the models), a description of stratification and abstraction, an approach to bound the abstracted models (or to perform parameter synthesis directly in a simulator), and then a comparison of simulation results for several variations of a baseline model that applies stratification, bounding, and abstraction.  
+We describe methods to stratify (refine) and de-stratify (abstract) \Petrinets{} for compartmental epidemiology models.  The motivation for abstracting a \Petrinet{} is to reduce its size, which can become exponential in the number of stratified variables.  Reducing the size of the model can have a significant impact on runtime, while it may still be possible to answer useful queries (more efficiently) with an abstracted model.  The following sections include background (defining the models), a description of stratification and abstraction, an approach to bound the abstracted models (or to perform parameter synthesis directly in a simulator), and then a comparison of simulation results for several variations of a baseline model that applies stratification, bounding, and abstraction.  
 
-\rpg{In the above, do we need a definition of compartmental models?  If this goes only to people who know a little about epidemiology, probably not, but if it goes to a CS audience, maybe we do.  If so, we could add it to background; LMK if you want me to do this.}
-
-\textcolor{blue}{Note from Drisana: I think if we don't provide a definition, maybe saying "compartmental epidemiology models" would get the point across}
+%\rpg{In the above, do we need a definition of compartmental models?  If this goes only to people who know a little about epidemiology, probably not, but if it goes to a CS audience, maybe we do.  If so, we could add it to background; LMK if you want me to do this.}
+%
+%\textcolor{blue}{Note from Drisana: I think if we don't provide a definition, maybe saying "compartmental epidemiology models" would get the point across}
 
 \section{Background}
 \input{background}
