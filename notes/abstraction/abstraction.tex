@@ -2,7 +2,7 @@ Stratification causes an exponential growth in the size of a model and greatly i
 
 Abstraction involves defining which state variables to group.  These in turn allow us to combine transitions and their rates.  For example, we can abstract the stratified \Petrinet{} from the previous section by specifying the set of state variables $\{(S, \{(vac=F)\}), (S, \{(vac=T)\})\}$ to abstract.  The result is a state variable $(S, \{(vac=F),(vac=T)\})$.  After replacing the abstracted state variables with the result, the transitions $inf_{vac=T}$ and $inv_{vac=F}$ become isomorphic (differing only in parameters in their rates).  We replace those transitions with an abstract transition.
 
-The rates of the stratified transitions are $S_{vac=F}I\beta_{vac=F}$ and $S_{vac=T}I\beta_{vac=T}$.  We preserve to total flow through these transitions by defining the rate of the abstract transition as the sum $S_{vac=F}I\beta_{vac=F}+S_{vac=T}I\beta_{vac=T}$.  If we let $\beta_*$ denote an aggregate parameter (to be replaced by a lower or upper bound in the next section) and substitute it for $\beta_{vac=F}$ and $\beta_{vac=T}$, then $S_{vac=F}I\beta_*+S_{vac=T}I\beta_* = (S_{vac=F}+S_{vac=T})I\beta_* = SI\beta_*$.  In this manner, we can abstract transitions that were previously stratified.
+The rates of the stratified transitions are $S_{vac=F}I\beta_{vac=F}$ and $S_{vac=T}I\beta_{vac=T}$.  We preserve to total flow through these transitions by defining the rate of the abstract transition as the sum $$S_{vac=F}I\beta_{vac=F}+S_{vac=T}I\beta_{vac=T}$$.  If we let $\beta_*$ denote an aggregate parameter (to be replaced by a lower or upper bound in the next section) and substitute it for $\beta_{vac=F}$ and $\beta_{vac=T}$, then $$S_{vac=F}I\beta_*+S_{vac=T}I\beta_* = (S_{vac=F}+S_{vac=T})I\beta_* = SI\beta_*$$.  In this manner, we can abstract transitions that were previously stratified.
 
 \begin{definition} (State Abstraction)
 	The state abstraction operator $A_X((\Theta, \Omega), \{(x,g_1), \ldots, (x, g_N)\})$ defines a new set of states $X^A = X \backslash \{(x,g_1), \ldots, (x, g_N)\} \cup \{(x, g)\}$, where $g = \bigcup_{i=1}^N g_i$.  The set of abstract model state variable vertices $V_X^A$ is defined as $V_X^A=V_X\backslash \{v\in V_X|({\cal X}(v), {\cal D}(v)) \in \{(x,g_1), \ldots, (x, g_N)\} \} \cup \{v^A \}$, where $({\cal X}^A(v^A), {\cal D}^A(v^A)) = (x, g)$ and $({\cal X}^A(v), {\cal D}^A(v)) = ({\cal X}(v), {\cal D}(v))$ for all $v \in V_X^A\backslash \{v^A\}$.
@@ -25,7 +25,7 @@ The rates of the stratified transitions are $S_{vac=F}I\beta_{vac=F}$ and $S_{va
 
 
 \begin{definition} (Edge Abstraction)
-	The abstract edges are defined as $E^A = E\backslash\{e \in E(v_z) | z \in Z_1' \cup \ldots Z_M'\} \cup \{(v_{xg}, v_z)| z \in Z^A\backslash Z, ((x, g), z, (x_b, g_b)) \in T(z)\} \cup \{(v_z, v_{xg})| z \in Z^A\backslash Z, ((x_a, g_a), z, (x, g)) \in T(z)\}$.
+	The abstract edges are defined as $$E^A = E\backslash\{e \in E(v_z) | z \in Z_1' \cup \ldots Z_M'\} \cup \{(v_{xg}, v_z)| z \in Z^A\backslash Z, ((x, g), z, (x_b, g_b)) \in T(z)\} \cup \{(v_z, v_{xg})| z \in Z^A\backslash Z, ((x_a, g_a), z, (x, g)) \in T(z)\}.$$
 \end{definition}
 
 \begin{definition} (Transition Rate Abstraction)
@@ -154,6 +154,6 @@ base \Petrinet{} and semantics.  It preserves the flow on consolidated transitio
 expresses the transition rates in terms of the base states.  As such, the
 abstraction compresses the \Petrinet{} graph structure, but at the cost of
 expanding the expressions for transition rates. Moreover, the transition
-rates refer to state variables and parameters (e.g., $\beta_{vac=T}$, $S_{vac=T}$, $\beta_{vac=F}$,  ans $S_{vac=F}$) that are not expressed
+rates refer to state variables and parameters (e.g., $\beta_{vac=T}$, $S_{vac=T}$, $\beta_{vac=F}$,  and $S_{vac=F}$) that are not expressed
 directly by the abstract \Petrinet{} and semantics (e.g., as $\beta$ and $S$), and by extension, the gradient. We address this in the next section.
 
