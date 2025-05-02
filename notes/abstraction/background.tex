@@ -10,7 +10,7 @@
 \begin{definition}
 	Let $E(v) = \edgesIn{}(v) \cup \edgesOut{}(v)$, and for all $e = (v, v') \in E$,
 	$e \in \edgesOut{}(v)$ and  $e \in \edgesIn{}(v')$.
-	We define the \emph{parent} and \emph{child} of an edge, $\parent( (v, v') ) = v$ and $\child( (v, v') ) = v'$.
+	We define the \emph{parent} of an edge $$\parent( (v, v') ) = v$$  and \emph{child} of an edge $$\child( (v, v') ) = v'$$
 	We define the parents (descendents) of a vertex, $\parents(v)$ ($\children(v)$) as the set of parents (children) of the edges in and out, respectively.
 	Further, % for all $(v, v') \in E$,
 	if $v \in
@@ -48,15 +48,15 @@ value of $S$, $I$, and $R$ for each.
 
 We facilitate this by annotating the state description with discrete variables.
 Each assignment to the discrete variables describes a different subpopulation.
-For example, $(I, \{(vac=T,
-	gender=M, age=child)\})$ and $(I, \{(vac=T, gender=F, age=child)\})$ refer to
+For example, $$(I, \{(vac=T,
+	gender=M, age=child)\})$$ and $$(I, \{(vac=T, gender=F, age=child)\})$$ refer to
 the number of infected, vaccinated male children and female children, respectively.  We could
 capture fully-specified discrete states by indexing the state variables to give, for example,
 $I_{TMC}$, and $I_{TFC}$.
 However, later when construct abstractions, it will be more convenient to refer to \emph{sets} of assignments to the discrete variables, of the form $(x, g)$, where $g$ is a \emph{set} of assignments to the discrete variables.
 For example, if gender is not relevant to infection
-rates, we could define the set of susceptible, vaccinated children as $(S, g)$, where $g=
-	\{(vac=T, gender=M, age=child), (vac=T, gender=F, age=child)\}$.
+rates, we could define the set of susceptible, vaccinated children as $(S, g)$, where $$g=
+	\{(vac=T, gender=M, age=child), (vac=T, gender=F, age=child)\}$$.
 
 \begin{definition}
 	The ODE semantics $\Theta$ of the \Petrinet{} $\Omega$ defines a tuple $(P, D, X,
@@ -155,7 +155,7 @@ These definitions become important for
 defining \Petrinet{} stratification, as described in the following section.
 For example, in Figure \ref{fig:sir_model}, flow through the ``infection'' node is entirely from susceptible to infected, S $\rightarrow$ inf $\rightarrow$ I in the figure.  There is also an edge from infected to infection (I $\rightarrow$ inf), but this reflects only the influence of the number already infected on the rate of flow from S to I: there is no flow backwards.
 
-\textcolor{red}{I edited the above a little bit.  Did I get it right?}
+% \textcolor{red}{I edited the above a little bit.  Did I get it right?}
 
 %  We drop
 % the vertex terminology by assuming the following:
